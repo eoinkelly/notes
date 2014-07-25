@@ -130,3 +130,87 @@ filesystem separately.
 
 Q: How does this work in practice?
 Q: What are best practices for managing files in Xcode?
+
+
+### Building Interfaces
+
+Xcode GUI editor is an *object editor*
+* saves stuff in `xib` files (XML docs)
+* which are compiled into `nib` files during build
+* the `nib` files are put in the bundle
+* can have many `xib` files per project (each one compiled to a `nib`)
+
+### Terminology: Bundle
+
+* Used on both Mac and iOS
+* A directory containing the application executable and and any resources it
+  needs
+
+
+
+### Storyboard anatomy
+
+* storyboard seems to be a visual representation of the controller and view objects in the app
+* stores its data as XML (how git friendly is this?)
+
+Scene
+    controller = a reference to (a?/the?) controller in the app
+        View = an instance of UIView
+        Top layout guide =
+        Bottom layout guide =
+    first responder
+        * a relic from desktop - can ignore.
+
+    exit = ?
+
+## MVC in Cocoa
+
+Models usually use standard collection classes
+
+* NSArray
+* NSDictionary
+* NSSet
+
+Standard value types
+
+* NSString
+* NSDate
+* NSNumber
+
+What do these do?
+* IBOutlet
+* IBAction
+
+* Contoller classes names end in `Controller`
+* The view sends user interactions to the controller, not directly to the models
+
+By default Xcode creates a `FooAppDelegate` controller and a `FooViewController`
+when you create a project
+
+### App delegate
+
+* Every iOS app has one.
+* it is a controller
+* it is the *primary controller* of the app
+
+### App entry
+
+* Enters through main() just like an ordinary C app
+
+## Keyboard shortcuts
+
+* cmd+1 -> cmd+7 goes to each navigator in turn
+* cmd+r = build
+
+## Asset catalog ???
+
+## PCH files ???
+
+## plist files
+
+* contain the runtime settings for the app
+* is an XML file.
+* has a fancy editor in Xcode
+* is copied into the bundle
+* named `ProjectName-Info.plist`
+* iOS asks this file about where to find the icons for the project
