@@ -1,3 +1,10 @@
+## Plan
+
+* Finish my old C book
+
+possible next steps
+* do http://c.learncodethehardway.org/book/ex1.html
+* do the K&R book
 
 ## Data types
 
@@ -23,6 +30,20 @@ double d;
 
 * C has no string variable type
 
+### strings
+
+* In C a string literal is a *pointer* e.g. evaluating `"hello"` will return a
+  pointer.
+* This means you can assign string literals to variables that point to `char`
+
+```c
+char *p; // create a pointer to a char
+p = "hi there" // "hi there" evaluates to a memory address that is stored in p
+```
+
+* A string literal is an array of characters
+* the name of an array is a pointer to the first element in it.
+
 ## Variable names
 
 * Only first 31 chars matter
@@ -34,7 +55,8 @@ double d;
 * 0 based index
 * must be sized when created
 * defined by giving 1) type, 2) name, 3) number of elements
-```
+
+```c
 int ages[11];
 ```
 
@@ -49,6 +71,7 @@ int ages[SIZE]
 ## Preprocessor
 
 `define`
+
 * Assocaiates symbolic names with a constant
 * gets substituted in before compilation
 
@@ -169,11 +192,13 @@ round.
 ```
 
 
-# other stuff
 
-const
-typedef
-struct
+# Type qualifiers (const, volatile)
+
+* `const`
+    * make this thing immutable
+    * compiler should complain if you try to assign to this
+    * they are usually initialized to get that first value in there
 
 # Memory organisation
 
@@ -181,7 +206,56 @@ struct
     * where the app instructions are put
 * Stack area
     * a LIFO queue
-    * alloacted automatically by the running code
-    * function parameters, automatic variables are stored here
+    * memory is alloacted and deallocated automatically by the running code
+    * function parameters, automatic (local) variables are stored here
 * Heap
-    * external and static variables are allocated here
+    * `external` and `static` variables are allocated here
+
+# structs
+
+* items in a struct are called _structure members_
+
+```c
+// create structure template (does not allocate any memory)
+struct person
+{
+    int age;
+    char *name;
+    int scores[5];
+}
+```
+* _structure members_ are not necessairly stored contigiously in memory (so can't do pointer math)
+* you create a structure template (but this does not allocate any memory)
+* `.` is the _member selection operator_
+
+* If you have a pointer to a struture you use `->` ?? operator to get at
+  members.
+* structures can be nested.
+
+# typedef
+
+* lets you make a synonym for an _existing_ type.o
+
+```c
+typedef char * STRING;
+
+char *s = "hi";
+STRING s = "yo";
+
+// it does the right thing with multiple declarations separeated by comments
+STING name, comment;
+
+// NB #define would get this wrong
+#define STRING char *
+STRING a, b // becomes
+char *a, b; // a is a pointer to a char, b is a char
+```
+
+* is often used with structures to avoid typing `struct my_thing` every time you
+  need to create one.
+
+# other stuff to revise
+
+enum
+unions
+
