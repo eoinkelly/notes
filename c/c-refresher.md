@@ -75,6 +75,8 @@ int ages[SIZE]
 * Assocaiates symbolic names with a constant
 * gets substituted in before compilation
 
+# IO functions
+
 ## `scanf`
 
 * Reads data from stdin
@@ -83,8 +85,10 @@ int ages[SIZE]
 scanf( "%s", &ages[3] );
 ```
 
+# getting memory address of a variable
+
 * An `&` preceding a variable refers to the address of that variable
-* `&foo` is the address in memory that the variable foo refers to.:w
+* `&foo` is the address in memory that the variable foo refers to.
 
 
 # Storage classes
@@ -224,35 +228,54 @@ struct person
     int scores[5];
 }
 ```
-* _structure members_ are not necessairly stored contigiously in memory (so can't do pointer math)
-* you create a structure template (but this does not allocate any memory)
+* _structure members_ are not necessairly stored contigiously in memory (so you shouldn't do pointer math with them)
+* First you create a structure template (but this does not allocate any memory)
 * `.` is the _member selection operator_
+* If you have a pointer to a struture you use `->` ?? operator to get at members.
 
-* If you have a pointer to a struture you use `->` ?? operator to get at
-  members.
+```c
+struct person
+{
+    char name[255];
+    int age;
+}
+
+typedef struct person PERSON;
+
+struct person eoin = { "Eoin Kelly", 35 };
+struct person *pp;
+perpoi = &eoin;
+
+printf("%s\n", (*perpoi).name); // dereference the pointer and call the member selection operator
+printf("%s\n", perpoi->name);   // same thing (cleaner syntax)
+```
+
+* (nested) structures can be initialized with `{ ... }` same way (nested) arrays can.
 * structures can be nested.
 
 # typedef
 
-* lets you make a synonym for an _existing_ type.o
+* lets you make a synonym for an _existing_ type.
 
 ```c
 typedef char * STRING;
 
+// These do the same thing
 char *s = "hi";
-STRING s = "yo";
+STRING s = "hi";
 
-// it does the right thing with multiple declarations separeated by comments
+// it does the right thing with multiple declarations separated by commas:
 STING name, comment;
 
 // NB #define would get this wrong
 #define STRING char *
-STRING a, b // becomes
-char *a, b; // a is a pointer to a char, b is a char
+STRING a, b, c; // Looks ok but because define is simple text substitution it becomes ...
+char *a, b, c; // a is a pointer to a char, b is a char, c is a char
 ```
 
 * is often used with structures to avoid typing `struct my_thing` every time you
   need to create one.
+* by convention alias is UPPERCASE.
 
 # other stuff to revise
 
