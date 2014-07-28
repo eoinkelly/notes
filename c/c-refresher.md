@@ -1,85 +1,81 @@
-## Plan
-
-* Finish my old C book
-
-possible next steps
-* do http://c.learncodethehardway.org/book/ex1.html
-* do the K&R book
+# C
 
 ## Data types
 
-* char | %c | ? bytes
+type                            | format specifier | num bytes on my mac
+------------------------------------------------------------------------
+char                            | %c                | ? bytes
+int                             | %d                | ? bytes
+unsigned int                    | %u                |
+long int                        | %ld               |
+long (alias for `long int`)     | _see above_       | _see above_
+short int                       | _see above_       | _see above_
+short (alias for `short int`)   | _see above_       | _see above_
+float                           | %f                | ?
+double                          | %lf               | ?
 
-* int           | %d    | ? bytes
-* unsigned int  | %u    |
-* long int      | %ld   |
-* long (alias for `long int`)
-* short int     | % ??  |
-* short (alias for `short int`)
 
-* float         | ? bytes | %f
-* double        | %lf
+## Variable names
 
+* Only first 31 chars matter to the compiler
+* `a-zA-Z0-9_` only. Also must not start with digit
+
+## Arrays
+
+* are homogenous
+* 0 based index
+* must be sized when created
+* defined by giving
+    1. type
+    2. name
+    3. number of elements
 
 ```c
-unsigned long x;
-long y;
-double d;
+// type name[num-elements]
+int ages[11];
 ```
 
+### Strings
 
 * C has no string variable type
+* A string literal is an array of characters
+* The name of an array is a pointer to the first element in it.
+* In C a string literal ...
+    * evaluates to an an array of n+1 (n = num chars in string, +1 for the null byte) ???
 
-### strings
+Are string literals just a shorthand way of making an array???
 
-* In C a string literal is a *pointer* e.g. evaluating `"hello"` will return a
-  pointer.
-* This means you can assign string literals to variables that point to `char`
+```c
+char *foo[6] = { 'h', 'e', 'l', 'l', 'o', '\0' };
+char foo = "hello";
+```
+
+* You can assign string literals to variables that point to `char`
 
 ```c
 char *p; // create a pointer to a char
 p = "hi there" // "hi there" evaluates to a memory address that is stored in p
 ```
 
-* A string literal is an array of characters
-* the name of an array is a pointer to the first element in it.
-
-## Variable names
-
-* Only first 31 chars matter
-* [`a-zA-Z0-9_]` only. must not start with digit
-
-## Arrays
-
-* homogenous
-* 0 based index
-* must be sized when created
-* defined by giving 1) type, 2) name, 3) number of elements
-
-```c
-int ages[11];
-```
-
-```c
-// the size is often put in a perprocessor directive for convenience
-#define SIZE 11
-
-int ages[SIZE]
-```
-
 
 ## Preprocessor
 
-`define`
+`#define`
 
 * Assocaiates symbolic names with a constant
 * gets substituted in before compilation
+* is a simple text replacement
+    * DOn't use it for types - use `typedef` instead becasue `typedef` knows how
+      to handle comma separated variable declarations
 
 # IO functions
 
 ## `scanf`
 
-* Reads data from stdin
+* Reads a string from STDIN, optionally parses bits out of it  and stores stuff
+  in a memory location.
+* First arg is a format specifier.
+* Second arg is the _memory address_ that the data should be put.
 
 ```
 scanf( "%s", &ages[3] );
@@ -243,7 +239,7 @@ struct person
 typedef struct person PERSON;
 
 struct person eoin = { "Eoin Kelly", 35 };
-struct person *pp;
+struct person *perpoi;
 perpoi = &eoin;
 
 printf("%s\n", (*perpoi).name); // dereference the pointer and call the member selection operator
