@@ -9,7 +9,7 @@ int                             | %d                | ? bytes
 unsigned int                    | %u                |
 long int                        | %ld               |
 long (alias for `long int`)     | _see above_       | _see above_
-short int                       | _see above_       | _see above_
+short int                       | ? | ?
 short (alias for `short int`)   | _see above_       | _see above_
 float                           | %f                | ?
 double                          | %lf               | ?
@@ -22,13 +22,17 @@ double                          | %lf               | ?
 
 ## Arrays
 
-* are homogenous
+* are homogenous (all items must be same type)
 * 0 based index
 * must be sized when created
 * defined by giving
     1. type
     2. name
     3. number of elements
+* The name of the array is a pointer to its first element.
+    * `=>` arrays are always passed to functions by reference
+
+TODO: play with passing an array by value
 
 ```c
 // type name[num-elements]
@@ -65,7 +69,7 @@ p = "hi there" // "hi there" evaluates to a memory address that is stored in p
 * Assocaiates symbolic names with a constant
 * gets substituted in before compilation
 * is a simple text replacement
-    * DOn't use it for types - use `typedef` instead becasue `typedef` knows how
+    * Don't use it for types - use `typedef` instead becasue `typedef` knows how
       to handle comma separated variable declarations
 
 # IO functions
@@ -106,11 +110,20 @@ scanf( "%s", &ages[3] );
         * should not be available to any other function
         * needs to be tracked across invocations of that function
         * they are sort of a global that is restricted to just that function.
-    ```
-    void foo() {
+    ```c
+    // x has not been allocated yet
+    void foo()
+    {
+        // ??? It doesn't make sense to use a static with an initializer as it
+        // will just get reset each time.
         static int x = 12;
+
+        // how do you get an intiail value into a static var?
+        static int counter;
+
+        // for (...) { ...; counter++; }
     }
-/   // x is still allocated but not available here
+    // x is still allocated but not available here
     ```
     Q: what does static outside a function do?
     * `static` set on a global variable _or_ function restricts access to it to
