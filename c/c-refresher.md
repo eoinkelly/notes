@@ -2,8 +2,8 @@
 
 ## Data types
 
-type                            | format specifier | num bytes on my mac
-------------------------------------------------------------------------
+type                            | format specifier  | num bytes on my mac
+------------------------------- | ----------------- | -------------------
 char                            | %c                | ? bytes
 int                             | %d                | ? bytes
 unsigned int                    | %u                |
