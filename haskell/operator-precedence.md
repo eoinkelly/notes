@@ -32,7 +32,13 @@ The type namespace is
 * between `class` and `where`
 * between `instance` and `where`
 * between `data` and `=`
+
 # Operator Precedence
+
+
+```haskell
+infixl 7 -- precedence level 7, associates to the left
+```
 
 * There are 10 levels of operator precedence (0-9)
 * function application is always higher (kind of at level 10)
@@ -45,6 +51,10 @@ The type namespace is
     * (`foo`) 4 'a'
     * these are called `sections` and allow you to curry operators just like
       functions
+
+## Fixity
+
+* `fixity` is hte concept of precedence and associtiavity
 
 ## The apply operator `$`
 
