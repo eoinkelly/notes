@@ -34,7 +34,7 @@ A       | Locally added
 D       | Locally deleted
 I       | Ignored
 R       | Replaced in the repository
-–       |The contents of the folder have mixed status; display the contents to see individual status
+\-       | The contents of the folder have mixed status; display the contents to see individual status
 ?       | Not under source control
 
 
@@ -175,8 +175,6 @@ Xcode GUI editor is an *object editor*
 * Used on both Mac and iOS
 * A directory containing the application executable and and any resources it
   needs
-
-
 
 ### Storyboard anatomy
 
