@@ -2,29 +2,32 @@
 
 # objc_msgSend
 
+```objc
 [user logoutNow]
 
-becomes
+// becomes
 
 objc_msgSend(user, @selector(logoutNow), nil);
-// reciever, selector, args
+//          reciever, selector, args
 
+```
 
-# C stirngs vs NSString
+# C strings vs NSString
 
-"hello" // creates a C string
+```objc
+"hello"  // creates a C string
 @"hello" // creates an instance of NSString
+```
 
-
-* ObjC on desktop has GC but not on iPhone
 
 
 # Manual memory management
 
+* ObjC on desktop has GC but not on iPhone
 * ARC is only available on iOS 5+
 * This is how to manually manage release and retain
 
-```
+```objc
 // creating an Objective-C object has two steps
 NSMutableArray *ary = [[NSMutableArray alloc] init];
 
@@ -45,7 +48,7 @@ How to know when you need to release?
 * Did I call retain on this object? Then YES
 * Otherwise NO.
 
-```
+```objc
 // Consider the factory method:
 - (UILabel *)labelWithText: (NSString *)text
 {
@@ -75,7 +78,7 @@ UILabel *myLabel = [[self labelWithText:@"my label"] retain];
 
 # Format of a header file
 
-```objectivec
+```objc
 
 #import <stuff>
 
@@ -107,7 +110,7 @@ UILabel *myLabel = [[self labelWithText:@"my label"] retain];
 
 ```
 
-```objectivec
+```obc
 #import "ourclassname"
 
 // The implementation file repeats the @implementation stuff
@@ -147,7 +150,7 @@ UILabel *myLabel = [[self labelWithText:@"my label"] retain];
 
 # @synthesise
 
-```
+```objc
 @synthesise name = _name;
 // reads as:
 // "Make accessor methods (which ones are controlled by declaration of `name`
