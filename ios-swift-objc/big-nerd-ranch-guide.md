@@ -182,14 +182,15 @@ Xcode GUI editor is an *object editor*
 * stores its data as XML (how git friendly is this?)
 
 Scene
-    controller = a reference to (a?/the?) controller in the app
-        View = an instance of UIView
-        Top layout guide =
-        Bottom layout guide =
-    first responder
-        * a relic from desktop - can ignore.
-
-    exit = ?
+```
+controller = a reference to (a?/the?) controller in the app
+    View = an instance of UIView
+    Top layout guide =
+    Bottom layout guide =
+first responder
+    a relic from desktop - can ignore.
+exit = ?
+```
 
 ## MVC in Cocoa
 
@@ -230,11 +231,69 @@ when you create a project
 * cmd+1 -> cmd+7 goes to each navigator in turn
 * cmd+r = build
 
-## Asset catalog ???
+## lproj files
 
-## PCH files ???
+* Used for internationalisation
+* Xcode has the notion of a `Base` localisation that you build your others on top of
+* They are the folders on the filesystem that contain the localised versions of
+  string files for xcode
+* The UI displays each file in its context e.g. storybard stirngs file will be
+  shown under the storyboard but on disk they are in teh `LANG_CODE.lproj` dirs
+
+## Asset catalog
+
+In Xcode:
+
+```
+`Images.xcassets`
+    AppIcon
+    LaunchImage
+```
+
+is actually on the filesystem as:
+
+```
+Images.xcassets
+    AppIcon.appiconset/
+      Contents.json
+    LaunchImage.launchimage/
+      Contents.json
+```
+
+* You still have to import the images into your project - the asset catalog just
+  provides the link between the image and what is is used for in code (rather
+  than having the name do that)
+
+Advantages:
+
+* lets you refer to the images from code using the catalog name (not file path)
+    * UIImage:imageNamed:
+* lets you avoid the `foo@2x.png` naming convention - you can name your images
+  anything you want
+* on iOS 7+ deployment targets XCode compiles the asset catalogs into a runtime
+  binary format that makes it faster to load.
+
+## PCH files
+
+* Called the `prefix header`
+* It is *automatically included in every source file* in the project without the
+* use of compiler directives.
+* They are _usually_ pre-compiled and cached to speed up build times.
+    * They only have to be parsed once by the compiler
+* they _can_ be used for project wide `#define` but those are a bit of a code
+  smell.
+* You should only `#include` headers in here that change rarely - otherwise the
+  caching will be a net negative
+* Downsides
+    * they create a hidden dependency between your Foo.m|h files and the prefix
+      header which means your source files can't be shared with other projects
+      without it.
+
+* Opinion: http://qualitycoding.org/precompiled-headers/
 
 ## plist files
+* Opinion: http://qualitycoding.org/precompiled-headers/
+
 
 * contain the runtime settings for the app
 * is an XML file.
