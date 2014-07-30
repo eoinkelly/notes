@@ -301,3 +301,6 @@ Advantages:
 * is copied into the bundle
 * named `ProjectName-Info.plist`
 * iOS asks this file about where to find the icons for the project
+
+
+# Chapter 2 - Objective C
