@@ -3,14 +3,19 @@
 ## Chapter 1
 
 * It follows traditional MVC - every button, label etc. is a view
-* `UIView` is the parent class.
-
-UIButton < UIView
+* `UIView` is the parent class of views e.g. `UIButton < UIView`
 
 Q: what template do seasoned programmers use?
 
-Cocoa touch = ?
-Foundation framework = ?
+* Cocoa touch
+    * the UI "framework" (in the general sense, not apple specific) for iOS
+    * it contains Foundation, UIKit, GameKit, MapKit etc.
+
+* Foundation framework
+    * A framework is Apple's dynamically linked library file  and enough headers to
+      link against it
+    * Foundation framework is a framework with many basic classes and is shared
+      between Mac and iOS
 
 ### Xcode & Git
 
@@ -18,6 +23,20 @@ Foundation framework = ?
 * When you create a new app you can initialize a git repo
 * creates a git repo but does not add or commit anything
 * has pretty good git support for basic operations
+
+Meanings of the annotations beside files in the project navigator:
+
+Badge     SCM status
+--------|---------------
+M       | Locally modified
+U       | Updated in repository
+A       | Locally added
+D       | Locally deleted
+I       | Ignored
+R       | Replaced in the repository
+–       |The contents of the folder have mixed status; display the contents to see individual status
+?       | Not under source control
+
 
 #### Questions
 
@@ -75,14 +94,25 @@ A `project package` is a directory that the Finder displays as a file with a
 references to the files that are part of the project, the project's groups,
 build settings, and target definitions.
 
-### Derived data ??
+### Derived data
 
-can be set at project or workspace level
+* is where Xcode caches build artefacts etc.
+* you can clean it out from the Organiser window
+* can be set at project or workspace level
 
-### Snapshots ??
+### Snapshots
 
 Snapshots are archives that include the current state of all project and
 workspace settings and all document files in the project.
+
+* comparing snapshots is not particularly easy (alighto it is possible)
+* they work by storing your source in a private git repo
+* they are a kind of wy of having xcode do automatic commits at certain points
+* for you e.g. after a successful build
+
+### Auto-save
+
+* Xcode autosaves when you build, commit, close the project or create a snapshot
 
 #### Questions
 

@@ -1,6 +1,4 @@
-
-
-Cocoa Frameworks
+# Cocoa Frameworks
 
 * A framework is
     * a collection of compiled code and header files
@@ -94,6 +92,7 @@ Resources
 # Questions
 
 what is the diff between including a framework and just including a dylib?
+
 what is the diff between a dylib and a .a file?
 
 how do I replace a framework in an xcode project?
