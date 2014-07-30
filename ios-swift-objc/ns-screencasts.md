@@ -1,4 +1,4 @@
-
+# NS Screencast #1
 
 # objc_msgSend
 
@@ -12,13 +12,13 @@ objc_msgSend(user, @selector(logoutNow), nil);
 
 ```
 
+
 # C strings vs NSString
 
 ```objc
 "hello"  // creates a C string
 @"hello" // creates an instance of NSString
 ```
-
 
 
 # Manual memory management
@@ -35,6 +35,8 @@ NSMutableArray *ary = [[NSMutableArray alloc] init];
 ```
 
 * Never call `dealloc` yourself
+
+### 2 rules of memory management
 
 1. Methods named `init`, `new`, `copy` the returned object has a retain count of
    and you must release the object when you are finished with it.
@@ -62,8 +64,8 @@ How to know when you need to release?
   return label;
 
 
-  // Put label in the autorelease pool that the runtime  managers
-  // DUring the next time through the runloop the autorelease pool is drained.
+  // Put label in the autorelease pool that the runtime manages
+  // During the next time through the runloop the autorelease pool is drained.
   return [label autorelease];
 }
 
@@ -74,6 +76,8 @@ UILabel *myLabel = [[self labelWithText:@"my label"] retain];
 ```
 
 * Objective C has a run loop
+
+TODO: find out more about it
 
 
 # Format of a header file
@@ -92,6 +96,8 @@ UILabel *myLabel = [[self labelWithText:@"my label"] retain];
 // 4 instance method declarations
 
 // Section 1 (Instance variables) is surrounded by {}
+// ******************************
+
 {
   NSString *_foo;
   // notice we _ the variable to indicate it is for internal class use
@@ -99,28 +105,33 @@ UILabel *myLabel = [[self labelWithText:@"my label"] retain];
 }
 
 // Section 2 (properties)
+// ******************************
 
 // Section 3 (class method declarations)
+// ******************************
 
 // Section 4 (Instance method declarations)
+// ******************************
 
+// Manually make a getter & setter
 - (NSString *)name; // getter for name
 - (void)setName: (NSString *)n;
 @end
-
 ```
 
-```obc
+```objc
 #import "ourclassname"
 
 // The implementation file repeats the @implementation stuff
+
 @implementation ClassName : Parent
 
 // There are ??? sections in here
 
 // 1. Instance method implementations
+// ******************************
 
-// Getters and setters the hard way:
+// Implement getter and setter the hard way:
 
 - (NSString *)name {
   return _name;
@@ -128,11 +139,14 @@ UILabel *myLabel = [[self labelWithText:@"my label"] retain];
 
 // Objective C setters are pretty complex (compared to other langs) because of
 // the memory management
+
 - (void)setName: (NSString *)newName {
   [_name release]; // make sure old value gets releaseed
-  // this would complicate memory management as _name would be another reference
-  // to whatever newName is
+
+  // We cannot simply assign the new name to the old as it would ...
+  ///this would complicate memory management as _name would be another reference to whatever newName is
   // _name = newName;
+
   _name = [newName copy]; // convention is to use copy for string setters
 }
 
@@ -144,9 +158,11 @@ UILabel *myLabel = [[self labelWithText:@"my label"] retain];
 }
 
 // 2. Class method implementions
+// *****************************
 
 @end
 ```
+
 
 # @synthesise
 
@@ -158,4 +174,20 @@ UILabel *myLabel = [[self labelWithText:@"my label"] retain];
 // other methods in the class)"
 ```
 
+# Is ObjC pass by reference or value
+
+* It is a strict superset of C so always passes in a value (even if that value is
+  often a pointer)
+* By implication C is also pass by value
+* In C (and Objective-C) you can simulate pass-by-reference by passing a
+  pointer, but it's important to remember that you're still technically passing
+  a value, which happens to be a the value of a pointer.
+* In Objective-C (and C, for the matter) there is no concept of reference as
+  intended in other languages (such as C++ or Java).
+
+
+
+
 Q: can you get at instance variables wihout a getter/setter in objc?
+Q: what does @selector do?
+
