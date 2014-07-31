@@ -1,19 +1,7 @@
-# Cocoa Frameworks
-
-* A framework is
-    * a collection of compiled code and header files
-    * like a DLL, it is a chunk of compiled code that can be invoked by your app at run-time
-    * The linker takes care of making your code talke to the framework code
-* You can put anything in a framework that you can put in an app bundle
-* You acn store multiple versions of a framework in one _framework bundle_ (but
-  it is not common.
-* Ideally you want it so users of your framework just have to import one header
-  file
-* You can mark the headers in your bundle as public and private to control
-  whether they get copied into the bundle
+# Units of code
 
 
-## The binary
+## `.dylib` binary file
 
 * The framework binary is a `.dylib` file (similar to `.dll` on windows)
 * The `Versions/A/FrameworkName` (in the example below) is a binary that can contain multiple
@@ -27,7 +15,7 @@
   into your app's bundle). The headers are only needed by the compiler/linker.
 
 
-## File structure
+## Framework bundle file structure
 
 * This is created & managed by Xcode
 
@@ -47,7 +35,7 @@
       FrameworkName (a binary file)
 ```
 
-# Where to put frameworks
+## Where to put frameworks
 
 1. System accessible
     * `/Library/Frameworks`
@@ -62,19 +50,18 @@
     * You bundle them wiht your app so it can always access them and doesn't
       depend on something else in your system
 
-# An alternative to using a framework
+## An alternative to using a framework
 
-* Just include the sourcecode of the framework in your app and compile it into
-* your binary
+* Just include the sourcecode of the framework in your app and compile it into your binary
 
-# Important Frameworks
+## Important Frameworks
 
 * Foundation
     * Contains most of the base `NS*` classes
 * UIKIt
     * Contains most of the iOS UI classes
 
-# what is the diff between a dylib and a .a file?
+## what is the diff between a dylib and a .a file?
 
 * The object file format used in OS X is Mach-O
 
@@ -109,6 +96,11 @@
       name ends in the form `frameworkName.framework/Versions/versionName/frameworkName`
       or the form `frameworkName.framework/frameworkName`.
     * e.g. UIKit, Foundation
+    * You can put anything in a framework that you can put in an _application bundle_.
+    * You can store multiple versions of a framework in one _framework bundle_ `.framework`
+    * Ideally you want it so users of your framework just have to import one header file
+    * You can mark the headers in your framework bundle as public and private to control
+      whether they get copied into the bundle
 * Umbrella frameworks
     * collections of frameworks
     * e.g. Cocoa
@@ -126,13 +118,13 @@ More info
 
 * https://developer.apple.com/library/mac/documentation/DeveloperTools/Conceptual/MachOTopics/0-Introduction/introduction.html#//apple_ref/doc/uid/TP40001827-SW1
 
-# What is the diff between including a framework and just including a dylib?
+## What is the diff between including a framework and just including a dylib?
 
 * A framework _is_ a shared library (dylib) (plus any related resources).
   Including a framework *is* including a dylib.
 
 
-# How do I replace a framework in an xcode project?
+## How do I replace a framework in an xcode project?
 
 From my first attempt:
 
