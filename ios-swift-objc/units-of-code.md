@@ -69,12 +69,7 @@
     * the result of compiling a single C file e.g. `foo.c` becomes `foo.o`
     * the smallest unit of machine code + data that can be linked independently with other  code
     * manipulated by `ld` e.g. `ld -r -o output.o in1.o in2.o in3.o`
-* Dynamic linked shared libraries
-    * also called _shared libraries_ or _dylibs_
-    * referenced by your code
-    * loaded _at runtime_ by the dynamic linker
-    * used for larger lumps of code
-* Static archive libaries
+* Static library (aka static archive) file
     * some modules can be grouped into a static archive
     * is basically a group of modules with a table of contents
     * has a `.a` extension by convention e.g. `mylib.a`
@@ -86,6 +81,11 @@
         * `ar -t ./path/to/mylib.a` lists the `.o` files in the archive
     * lumps of code that the static linker can add to your app at _build time_
     * used for smaller lumps of code (presumably because it adds to your binary size)
+* Dynamic library (aka dylib or framework)
+    * also called _shared libraries_ or _dylibs_
+    * referenced by your code
+    * loaded _at runtime_ by the dynamic linker
+    * used for larger lumps of code
 * Kernel extensions
     * packaged similarly to bundles
     * loaded into Kernel memory so built quite differently
