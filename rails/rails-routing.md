@@ -24,6 +24,8 @@ Has 2 purposes
         * is usually a string of the form `controller#action`
         * is a rack endpoint.
     * Q ??? can the value contain segment keys? I thik so?
+        * I think the `:controller` and `:action` key segments might have special
+        meaning
 
 * The URLs crated by the helpers only make sense to the routing system that
   created them - they are not necessairly human understandable.
@@ -102,9 +104,14 @@ The raw form of `link_to` provides values for all the segment keys in the route.
 ```ruby
 # this does not work for a route that doesn't exist
 link_to "Some stuff", controller: "products", action: "show", id: 1
+
 ```
 
+Q: i think `things#do` is just sugar for `controller: 'things', action: 'do'`
+    is this true?
+
 Q: can I use link_to to make a route that doesn't exist in routes.rb?
+    it seems not
 
 * `link_to` does not have any special understanding of what routes exist - it is
   just a pure function that takes some args and builds a string.
@@ -140,6 +147,8 @@ match "/api/v1/:api",
 
 Q: what is a simple rack endpoint?
     I think it is any thing that returns `[status, headers, [body]]`
+
+Q: what is the story with this `match "/foo/:id", :to => redirect("/bar/%{id}s")`
 
 ## The :format field
 
