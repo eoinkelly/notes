@@ -17,10 +17,15 @@ map.resources :books
 ```
 
 # default catch-all routes
+
 ```ruby
 map.connect ':controller/:action/:id'
 map.connect ':controller/:action/:id.:format'
+
+# In rails 3+ this would be expressed as
+match ':controller(/:action(/:id(.:format)))', via: :any
 ```
+
 
 * Catch-all are not recommended in Rails 3+
 

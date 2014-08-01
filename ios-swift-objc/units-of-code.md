@@ -90,7 +90,6 @@
     * packaged similarly to bundles
     * loaded into Kernel memory so built quite differently
 * Frameworks
-    * directories of dynamic shared libraries
     * a shared libary along with resources like localised strings, headers, documentation
     * From a tools perspective, a framework is a shared library whose install
       name ends in the form `frameworkName.framework/Versions/versionName/frameworkName`
