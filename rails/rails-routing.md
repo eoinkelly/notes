@@ -300,6 +300,7 @@ app.polymorphic_path(x, options)
 = link_to 'Edit a deck', edit_deck_path(@deck)
 ```
 
+
 ```ruby
 app.polymorphic_path(User) # => "/users"
 app.polymorphic_path(User.find(3)) # => "/users/3"
@@ -365,9 +366,63 @@ edit_foo_bar GET    /foos/:foo_id/bars/:id/edit(.:format) bars#edit
 * #concern
 * #namespace
 
-# TODO
-what does resource (singluar) do?
-figure out routing concerns, namespaces, collection
+## Concerns
 
+Let you define common routes that can be reused inside
+
+1. inside a resources block
+2. inside a namespace block
+3. inside a scope block
+
+```ruby
+# with concerns
+concern :commentable do
+  resources :comments
+end
+
+resources :messages, concerns: :commentable
+
+concern :image_attachable do
+  resources :images, only: :index
+end
+resources :articles, concerns: [:commentable, :image_attachable]
+
+
+# without
+resources :messages do
+  resources :comments
+end
+
+resources :articles do
+  resources :comments
+  resources :images, only: :index
+end
+
+```
+
+I'm not convinced that they are actually all that useful
+
+I guess if you have a module that adds actions to many of your controllers and
+it needs the same set of routes then a concern is a good choice because if you
+upgrade the gem and need to change the routes in all your models. 
+
+```ruby
+concern :commentable do
+  resources :comments, except: [:index]
+end
+
+resources :articles, concern: :commentable
+resources :posts, concern: :commentable
+resources :pages, concern: :commentable
+```
+
+That doesn't seem like it would be too hard to handle manually ????
+
+
+# TODO
+
+what does resource (singluar) do?
+
+figure out namespaces, collection
 
 
