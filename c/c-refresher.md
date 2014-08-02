@@ -163,6 +163,22 @@ scanf( "%s", &ages[3] );
 
 ## Declaration vs definition vs instantiation
 
+* A definition 
+    * is a special kind of declaration that creates an object.
+    * specifies the type of the object
+    * reserves storage for it
+    * is used to create the object
+    * can occur only once
+* A declaration 
+    * indicates a name and allows you to refer to an object created
+    * can occur many times
+    * describes the type of an object
+    * is used to refer to an object which may be _defined_ elsewhere.
+    * is like a customs declaration - "this is the name and how big it is but the
+      acutal thing is somewhere else"
+    * since you are not allocating memory in a declaration you don't have to
+    * tell the compiler exactly how big it is
+
 * Variables in C are _boxes_ in memory.
 * The name is the identifier that your code will use to refer to the box.
 * The type tells the compiler
