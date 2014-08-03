@@ -188,6 +188,4 @@ TODO: find out more about it
 
 
 
-Q: can you get at instance variables wihout a getter/setter in objc?
-Q: what does @selector do?
 

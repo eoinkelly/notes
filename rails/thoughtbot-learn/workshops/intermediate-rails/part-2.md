@@ -51,7 +51,7 @@ end
   the table
     * why is this bad?
 
-```
+```ruby
 class Owner
 end
 
@@ -71,7 +71,7 @@ end
 
 he thinks about his data models as db columns first
 
-```
+```ruby
 # if shout.content is a polymorphic relationship, render will render the partial
 # name based on the type - this is a pretty neat pattern!
 render shout.content

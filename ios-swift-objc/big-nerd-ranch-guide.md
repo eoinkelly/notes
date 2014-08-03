@@ -156,11 +156,6 @@ means they will be copied into the resulting `.app` directory.
 It seems in Xcode you  have to manage your project navigator view and your
 filesystem separately.
 
-#### Questions
-
-Q: How does this work in practice?
-Q: What are best practices for managing files in Xcode?
-
 
 ### Building Interfaces
 
