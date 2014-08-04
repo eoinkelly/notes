@@ -2,9 +2,19 @@
 
 Has 2 purposes
 
-1. map requests to controller actions
+1. map HTTP requests to controller actions
 2. create methods for dynamic URL generation
     * these all return a string representing a URL or path
+    * these methods just generate URLs - they don't care about HTTP verb - this
+      means a helper URL can be re-used with multiple verbs e.g. in a
+      `resources :books` collection the `book_path` helper is used to make four
+      routes:
+      ```
+      GET book_path(id)     -> books#show
+      PUT book_path(id)     -> books#update
+      PATCH book_path(id)   -> books#update
+      DELETE book_path(id)  -> books#destroy
+      ```
 
 
 ## routes.rb
@@ -12,15 +22,17 @@ Has 2 purposes
 `config/routes.rb` contains a list of _rules_ called routes.
 * eash route is a method call that takes a hash
 * the first _key: value_ in the hash has this form:
-    * The key 
+    * The key
         * is made up of 3 types of thing:
           1. `/` matches literal `/` in the URL
           2. segment keys e.g. `:id`
-          3. static substrings
+              * they look like symbols but aren't
+              * optional segment keys are enclosed in `()`
+          3. static strings
         * provides the pattern for
           1. matching the URL (recognition)
           2. creating the URL in the helper (generation)
-    * The value 
+    * The value
         * is usually a string of the form `controller#action`
         * is a rack endpoint.
     * Q ??? can the value contain segment keys? I thik so?
@@ -63,18 +75,21 @@ ActionDispatch::Routing::RouteSet < Object
 []
 ```
 
-
+## Route syntax overview
 
 ```ruby
 Rails.application.routes.draw do
-  get 'products/:id', to: 'products#show' # old syntax
-  get 'products/:id => 'products#show'    # same as above
+  get 'products/:id', to: 'products#show' # explicit syntax
+  get 'products/:id => 'products#show'    # same as above but shorthand syntax
+
+  match "projects/status" # even more shorthandy!
+  match projects/status" => "projects#status" # same as above
 
   match 'products/:id => 'products#show', via: :get
   get   'products/:id => 'products#show'              # same as above
 
   # the old syntax can be still useful
-  match 'products/:id => 'products#show', via: [:get, :post] 
+  match 'products/:id => 'products#show', via: [:get, :post]
 
   # raises exception because no method specified
   match 'products/:id => 'products#show'
@@ -88,7 +103,24 @@ Rails.application.routes.draw do
 end
 ```
 
-The routing block is evaluated inside `ActionDispatch::Routing::Mapper` class at
+
+* You can add any arbitrary parameters to the routing methods. If they are not
+  recognised as _special_ by the routing system, they are just copied into the
+  `params` hash.
+* The special params are
+    * via
+        * constrain which of the 5 supported HTTP verbs (GET, POST, PUT, PATCH,
+          DELETE) this route will match
+    * as
+        * lets you set a name prefix for the helper methods that the route will
+          create
+        * has nothing to do with the contents of the URL - it is *not* an alias
+          for the route.
+    * ???
+* `match` will match any HTTP verb - use one of the more specifc methods to
+  match a single verb or use `via: [:get, :put]` to match multiple verbs (but
+  not all)
+* The routing block is evaluated inside `ActionDispatch::Routing::Mapper` class at
 runtime.
 
 ## Segment keys
@@ -99,7 +131,10 @@ runtime.
 ## link_to
 
 The raw form of `link_to` provides values for all the segment keys in the route.
-* segment keys are passed to the controller in `params` 
+* segment keys are passed to the controller in `params`
+* `link_to` does the same top to bottom search that happens during route
+  _recognition_ - it stops when it finds the first thing that will let it make a
+  URL
 
 ```ruby
 # this does not work for a route that doesn't exist
@@ -129,14 +164,14 @@ get '/foo', to: redirect('http://www.foo.com/bar')  # absolute URL
 
 # redirect can take a block to do a complex redirect
 match "/api/v1/:api",
-      to: redirect { |params| 
+      to: redirect { |params|
         "/api/v33/#{params[:api].pluralize}"
       },
       via: :any
 
 # same as above with optional status param
 match "/api/v1/:api",
-      to: redirect(status: 301) { |params| 
+      to: redirect(status: 301) { |params|
         "/api/v33/#{params[:api].pluralize}"
       },
       via: :any
@@ -187,7 +222,7 @@ So the rails router can route to _any_ rack endpoint.
 
 ```ruby
 # make a simple rack endpoint inline in the router!
-get '/hithere', to: proc { |env| 
+get '/hithere', to: proc { |env|
   # [status, headers, [body]]
   [200, {}, ["I am the body hi there"]]
 }
@@ -404,7 +439,7 @@ I'm not convinced that they are actually all that useful
 
 I guess if you have a module that adds actions to many of your controllers and
 it needs the same set of routes then a concern is a good choice because if you
-upgrade the gem and need to change the routes in all your models. 
+upgrade the gem and need to change the routes in all your models.
 
 ```ruby
 concern :commentable do

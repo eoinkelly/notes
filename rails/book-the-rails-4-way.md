@@ -2,12 +2,39 @@
 
 ## Chapter 1
 
-* bundler does dependency resolution all at onece
-* ruby gems does it one at a time
+* bundler does dependency resolution all at once
+* ruby gems does it one gem at a time
+
+### Rails assets group
+
+* NB: Rails 4 no longer has a 'assets' group
+    * gems that were in `assets` are now in production
+    * Rails 4 in production will not try to compile assets you forgot to
+      precompile (unlike older versions) so there is no reason not to have the
+      assets gems in production
+    * This is not totally without controversy
+* If you do precompile your assets then you don't need the asset compiliation
+  gems in production at all
+* the rails guys wanted to use coffescript templates in production
+
+The recommended way to precompile assets in Rails 4 is now
+
+```
+RAILS_ENV=production bundle exec rake assets:precompile
+```
 
 ### The Gemspec file
 
-* NB: Rails 4 no longer has a 'assets' group
+The problem bundler solves:
+
+* A requires any version of B between 3 and 7
+* C requires any version of B between 4 and 6
+* If A loads first, then it will load B version 7 (the latest that it supports)
+  but this will make C sad.
+* The old solution was to tweak the load order of your gemfile to make sure C
+  loaded first (which would make A happy)
+
+
 
 * Bundle supports git repos without a `.gemspec`
 * Bundler support getting multiple gems out of the same repo (if it has multiple gemspecs in its root)
@@ -26,23 +53,41 @@ gem 'foo', path: '~/path/to/gem'
 ```
 
 `bundle install`
+
 * _updates_ all dependencies named in the Gemfile to the latest versions that do not conflict with other dependencies
 * writes out its results into `Gemfile.lock`
 * you can skip certain groups using `--without`
-    `$ bundle install --without development test`
+* installs to GEM_HOME (same as rubygems) by default
+    * this means you will see the gems installed by bundler in rubygems
 
-`bundle show`
-* shows _where_ a bundled gem is installed
+```
+# upgrade just production (in normal 3 env setups)
+bundle install --without development test
+```
+
+* bundle outdated = show outdated gems
+* bundle viz = make a PNG of gem dependencies
+* bundle show = show info about a single gem
+    * shows _where_ a bundled gem is installed
 
 `bundle update`
+
 * ???
 
 `bundle package`
-* packages all the gems in the `vendor/cache` dir
+
+* packages all the gems into the `vendor/cache` dir
 * use with `bundle install --local` which will pull your gems from here
     * allows you to use private gems in production
     * allows you to avoid external dependencies at deploy time
 
+
+When do I need to use `bundle exec`
+
+* bundler builds a _bundle_ of gems from your Gemfile
+* executes the given script in the context of the current bundle
+* running the script without using `bundle exec` will work as long as the gem is
+  installed and doesn't conflict with any gems in your bundle.
 
 Q: Why can I sometimes get away with not having to do bundle exec?
 
