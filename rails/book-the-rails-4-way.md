@@ -59,6 +59,10 @@ gem 'foo', path: '~/path/to/gem'
 * you can skip certain groups using `--without`
 * installs to GEM_HOME (same as rubygems) by default
     * this means you will see the gems installed by bundler in rubygems
+    * this is convenient for re-using gems
+    * QUESTION: where is GEM_HOME on my machine
+        * rails seems to be currently: `/Users/eoinkelly/.rbenv/versions/2.1.1/lib/ruby/gems/2.1.0/gems/rails-4.1.1`
+    * TODO: learn how to share gems between rbenv rubies (or at least copy them locally - i think I have a lot of dupes
 
 ```
 # upgrade just production (in normal 3 env setups)
@@ -82,21 +86,72 @@ bundle install --without development test
     * allows you to avoid external dependencies at deploy time
 
 
-When do I need to use `bundle exec`
+### When do I need to use `bundle exec`
 
 * bundler builds a _bundle_ of gems from your Gemfile
 * executes the given script in the context of the current bundle
 * running the script without using `bundle exec` will work as long as the gem is
   installed and doesn't conflict with any gems in your bundle.
 
-Q: Why can I sometimes get away with not having to do bundle exec?
+* More on bundler http://bundler.io
+* TODO: dig more into bundler - it can do a lot of stuff!
 
 ### Binstubs
 
-* scripts in `/bin` that run built-in rails command line tools (bundle, rails, rake, spring)
+* scripts in `/bin` that run built-in rails command line tools (bundle, rails,
+* rake, spring) _in the context of your current bundle_.
 * saves you having to do `bundle exec foo` each time
 * they should be added to git
+* `rake rails:update:bin` will re-make them (if upgrading from Rails 3)
 * you can add your own via `bundle binstubs name-of-gem`
+* TODO: currently I seem to be using rbenv stubs when I run commands like
+  `rails` - is this OK? should I use local ones instead?
+
+Aside: `rails runner`
+  * like rails console but only runs the command you supply on the cmd line
+  * e.g. `rails runner "puts User.all.count"`
+
+### Rails boot process
+
+When you boot a rails app there are 3 files responsibilie for setting it up
+They are run in the order shown below every time you boot the rails
+environment.
+The starting point file for a rails app is ???
+
+1. `config/boot.rb`
+    * sets up BUNDLE_GEMFILE env variable and runs bundler setup
+2. `config/application.rb`
+    * requires and runs `config/boot.rb` (so `boot.rb` runs first)
+    * creates a module for your app and creates your application class within it
+      this is groundwork for running multiple rails apps in the same process in
+      future. TODO: find out more
+    * loads rails gems
+        * here is where you should disable any parts of rails you are not using.
+    * runs `Bundler.require` to load gems from the groups in your Gemfile
+    * loads gems for the chosen RAILS_ENV
+    * configures the app e.g.
+        * timezone
+        * autoload paths
+    * `Rails.groups` is an array of the Gemfile groups (I think. TODO check this)
+        ```
+        [1] pry(main)> Rails.groups
+        [
+            [0] :default,
+            [1] "development"
+        ]
+        ```
+3. `config/environment.rb`
+    * requires and runs `config/application.rb`
+    * Runs `Rails.application.initialize!`
+    * runs all intializers
+
+
+### config/initializers
+
+Put any code you need to run at rails boot in here.
+There are 7 default initializers:
+1. backtrace silencer
+2 ...
 
 ### Spring
 

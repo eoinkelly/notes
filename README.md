@@ -18,6 +18,10 @@ topics that I am still learning. YMMV.
 * It's ok for notes to be messy/wrong. Building them up is an iterative process
   and there is as much value in re-reading and improving them as creating the
   initial draft.
+* Do a _breadth first_ traversal. When learning from a source, just mark any
+* questions/todos that come up - don't follow them too much because
+        1. It is not always clear how much depth I need to go in a topic
+        2. I would never get anything finished
 
 
 # Possible approaches to learning stuff
