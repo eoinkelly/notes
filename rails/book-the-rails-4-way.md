@@ -146,12 +146,100 @@ The starting point file for a rails app is ???
     * runs all intializers
 
 
+### Other settings you can add to config/application.rb
+
+* Log level override `config.log_level`
+* Load path modification `config.autoload_paths`
+
+You can inspect the current configuration in rails console via
+
+```ruby
+# MyAppName::Application.config.config_option
+MyAppName::Application.config.autoload_paths
+MyAppName::Application.config.log_level
+
+# see all available config variables
+MyAppName::Application.config.instance_variables
+
+# Example:
+[24] pry(main)> MyAppName::Application.config.instance_variables
+[
+    [ 0] :@root,
+    [ 1] :@generators,
+    [ 2] :@encoding,
+    [ 3] :@allow_concurrency,
+    [ 4] :@consider_all_requests_local,
+    [ 5] :@filter_parameters,
+    [ 6] :@filter_redirect,
+    [ 7] :@helpers_paths,
+    [ 8] :@serve_static_assets,
+    [ 9] :@static_cache_control,
+    [10] :@force_ssl,
+    [11] :@ssl_options,
+    [12] :@session_store,
+    [13] :@session_options,
+    [14] :@time_zone,
+    [15] :@beginning_of_week,
+    [16] :@log_level,
+    [17] :@middleware,
+    [18] :@cache_store,
+    [19] :@railties_order,
+    [20] :@relative_url_root,
+    [21] :@reload_classes_only_on_change,
+    [22] :@file_watcher,
+    [23] :@exceptions_app,
+    [24] :@autoflush_log,
+    [25] :@log_formatter,
+    [26] :@eager_load,
+    [27] :@secret_token,
+    [28] :@secret_key_base,
+    [29] :@assets,
+    [30] :@paths,
+    [31] :@autoload_paths,
+    [32] :@eager_load_paths,
+    [33] :@autoload_once_paths,
+    [34] :@cache_classes,
+    [35] :@console
+]
+```
+
 ### config/initializers
 
 Put any code you need to run at rails boot in here.
-There are 7 default initializers:
+There are 8 default initializers:
 1. backtrace silencer
-2 ...
+2. Filter parameter logging (tell rails which `params` keys to not log)
+3. Inflections
+    * Teach `ActiveSupport::Inflector` about new pluralisations
+    * You can test inflections in the console:
+        * `ActiveSupport::Inflector.pluralize("thing")`
+        * `"thing".pluralize` (Inflector is mixed into String)
+4. Custom Mime types for use in `respond_to` blocks
+    * View all registered mime types: `Mime::EXTENSION_LOOKUP.each { |m| puts m}`
+5. session store
+    * sets the cookie store type and key
+    * session cookies are encrypted with secret key from `config/secrets.yml`
+6. Wrap parameters
+    * if true, tells `params` to wrap the HTML FORM params it got in a hash
+    * keyed based on the controller name e.g.
+    ```
+    # in NamesController
+    { "name": "Eoin kelly" }
+    # becomes
+    { "name": "Eoin kelly", { "name": { "name": "Eoin kelly"} } }
+    TODO: check that this duplication happens!
+    ```
+    * The key name is the singular of the controller name e.g.
+        * FoosController -> "foo"
+        * ArticlesController -> "article"
+    * by default it is only enabled for JSON ???
+7. Assets
+    * You can add extra files to be precompiled by the asset-pipeline.
+    * You can change the version of your assets
+        * which expires them ...
+        * QUESTION: what is the use case for this?
+8. Cookies serializer
+    * Tell rails what format to serialize cookies in (defaults to JSON)
 
 ### Spring
 
@@ -183,17 +271,86 @@ spring start
 
 ### Schema dumping
 
-`config.acitive_record.schema_format = :sql`
 
 When you run tests
-1. Rails dumps dev DB schema into `schema.rb` (using migrations API). Think of
-   `schema.rb` as one big migration.
+1. Rails dumps the development DB schema into `schema.rb` (using migrations API). Think of
+   `schema.rb` as a really big migration.
 2. Rails loads `schema.rb` into the test DB
 
 THis works great except when you have stuff in your dev DB that cannot be
-expressed with the Rails Migration API. If you do have custom stuff, you need to
-use SQL as the intermediate format i.e. replace `schema.rb` with `schema.sql`
+expressed with the Rails Migration API.
+* If you do have custom stuff, you need to use SQL as the intermediate format
+  i.e. replace `schema.rb` with `schema.sql`
+* If you choose SQL rails will use database specific SQL (so you can't dump from
+  Postgres and expect it to work in MySQL).
+* You can so this by setting
+  `config.active_record.schema_format = :sql`
+  in an initializer file within `config/initializers`
 
 * `schema.rb` is the authorative source of your database *schema* (not data - it contains no data)
 
-good notes up to section 1.2, patchy after that. to do: finish this off
+
+# `config/environments/development.rb`
+
+* `config.cache_classes`
+
+If true Rails uses ruby `require` to do class loading
+If false Rails uses ruby `load` to do class loading
+
+* `require` loads and compiles the file once and then ruby caches the compiled output
+* `load` does not cache the compilation so will read the file every time it is referenced
+
+### Rails autoloading
+
+Why don't we have to use `require` statements in rails code?
+
+Ruby provides a callback mechanism for missing constants
+Rails hooks into this and runs a class loader routine to load a class based on
+naming converntions whenever ruby finds a missing constant
+* You can see the dirs that rails will search via `$LOAD_PATH` in console
+    * These are mostly
+    1. vendor/
+    2. lib/
+    3. sub dirs of app/
+    4. lib directory of your bundled gems
+
+
+### Eager loading
+
+* tells rails to try to load as many classes as possible into memory
+  at boot time - not to wait for those classes to be required by a request
+* Rails 4 does not eager load classes in development or test (so the server
+  boots quicker) but will do so in production
+
+
+
+Requests from localhost are the only ones which get more verbose errors
+(stacktrace etc.) but `config.consider_all_requests_local` will send the verbose
+errors to every client
+
+You can turn caching on to test it in development with
+`config.action_controller.perform_caching`
+
+QUESTION: how exactly does rails caching work?
+
+
+Configuring mail sending in development
+
+* Set `config.action_mailer.perform_deliveries = false` in development to have
+  email only be in your log file.
+
+You can turn off separate asset files in dev via
+`config.assets.debug = false` - this would be handy on slow dev machine
+* it stops sprokets from concatenating and minifying files
+
+
+### Rails & assets
+
+QUESTION: what does `config.serve_static_assets` do exactly?
+also `config.static_cache_control` ?
+
+
+* Rails 4 will throw an exception if you ask for an asset that has not been
+* precompiled
+
+up to 1.5.1

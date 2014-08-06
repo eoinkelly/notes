@@ -303,24 +303,35 @@ x = Deck.find(1) # x is anything that will respond to #id
 app.deck_path(x)
 ```
 
-### #polymorphic_path
+### #polymorphic_url
 
 Rails controller and view methods like:
 
 * form_for
 * link_to
 * redirect_to
+* url_for
 
-* all internally use `#polymorphic_path` under the hood (you can get at it via `app.polymorphic_path` in rails console).
+* all internally use `#polymorphic_url` under the hood (you can get at it via
+* `app.polymorphic_url` or `app.polymorphic_path` in rails console).
 * It takes almost anything railsey and figures out what the path to it would be.
 
-app.polymorphic_path(x, options)
+* app.polymorphic_url(foo, options)
+* options
+    * routing_type: :url|:path
+    * action nil|:new|:edit
+* foo = record or hash or array
+* it expects its second arg to be an options hash so if you have nested routes you need to pass them in an array
 
-*  x could be
+* `polymorphic_path(foo)` is just `polymorphic_url(foo, routing_type: :path)`
+
+*  foo could be
     * A model class name e.g. `User`
     * An instance of an active_record model `User.find(1)`
     * An array of models or classes or ids (for nested resources)
-* it expects its second arg to be an options hash so if you have nested routes you need to pass them in an array
+
+
+
 
 ```ruby
 # all these do the same because #link_to uses #polymorphic_path under the hood
