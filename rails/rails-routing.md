@@ -311,6 +311,7 @@ Rails controller and view methods like:
 * link_to
 * redirect_to
 * url_for
+    * passing a record (e.g. an ActiveRecord object)
 
 * all internally use `#polymorphic_url` under the hood (you can get at it via
 * `app.polymorphic_url` or `app.polymorphic_path` in rails console).

@@ -317,37 +317,34 @@ naming converntions whenever ruby finds a missing constant
 
 ### Eager loading
 
-* tells rails to try to load as many classes as possible into memory
-  at boot time - not to wait for those classes to be required by a request
-* Rails 4 does not eager load classes in development or test (so the server
-  boots quicker) but will do so in production
+* `config.eager_load_classes`
+    * tells rails to try to load as many classes as possible into memory
+      at boot time - not to wait for those classes to be required by a request
+    * Rails 4 does not eager load classes in development or test (so the server
+      boots quicker) but will do so in production.
+`config.consider_all_requests_local`
+    * Requests from localhost are the only ones which get more verbose errors
+      (stacktrace etc.) but `config.consider_all_requests_local` will send the
+      verbose errors to every client.
+* `config.action_controller.perform_caching`
+    * You can turn caching on to test it in development with
+* `config.action_mailer.perform_deliveries`
+    * Set `config.action_mailer.perform_deliveries = false` in development to
+      have email only be in your log file.
+* `config.assets.debug`
+    * You can turn off separate asset files in dev via `config.assets.debug = false`
+    * This would be handy on slow dev machine it stops sprokets from
+      concatenating and minifying files.
 
-
-
-Requests from localhost are the only ones which get more verbose errors
-(stacktrace etc.) but `config.consider_all_requests_local` will send the verbose
-errors to every client
-
-You can turn caching on to test it in development with
-`config.action_controller.perform_caching`
 
 QUESTION: how exactly does rails caching work?
 
-
-Configuring mail sending in development
-
-* Set `config.action_mailer.perform_deliveries = false` in development to have
-  email only be in your log file.
-
-You can turn off separate asset files in dev via
-`config.assets.debug = false` - this would be handy on slow dev machine
-* it stops sprokets from concatenating and minifying files
 
 
 ### Rails & assets
 
 QUESTION: what does `config.serve_static_assets` do exactly?
-also `config.static_cache_control` ?
+QUESTION: also `config.static_cache_control` ?
 
 
 * Rails 4 will throw an exception if you ask for an asset that has not been
