@@ -338,16 +338,78 @@ naming converntions whenever ruby finds a missing constant
 
 
 QUESTION: how exactly does rails caching work?
+  view caching
+  asset caching
 
 
 
-### Rails & assets
+### Rails in production & assets
+
+In production, all precompiled assets are served out of `public/assets`.
+
+Some configuration settings:
+
+* `config.assets.compile = false # rails 4 default`
+    * Rails 4 will throw an exception if you ask for an asset that has not been
+      precompiled. Older versions would compile it on the fly.
+    * Set it to true to use the old behaviour
+* `config.assets.enabled`
+    * controls whether the asset pipeline is used
+    * QUESTION: what do you do if you don't use AP ???
+* `config.action_controller.asset_host`
+    * Tell rails to serve assets from a different server
+    * This is useful for keeping assets on S3 or similar
+
+* TODO: build a toy rails app that serves assets from S3
+    * how do you get the assets on there?
 
 QUESTION: what does `config.serve_static_assets` do exactly?
+
 QUESTION: also `config.static_cache_control` ?
 
 
-* Rails 4 will throw an exception if you ask for an asset that has not been
-* precompiled
+### Rails and databases
 
-up to 1.5.1
+* Do not store database.yml in version control
+* Since Rails 4.1 rails can load the DB from the `DATABASE_URL` environment
+* variable (provided it is set to a valid connection string)
+
+QUESTION: what does a valid connection string look like?
+
+QUESTION: what is the correct database pool size for rails? - read the guide
+
+### Rails secrets.yml
+
+* `config/secrets.yml`
+    * You can put API secret keys etc. in here
+    * Rails requires a `secret_key_base` be set for each environment.
+        * In Rails 4.0 it was set in `config/secret_token.rb`
+        * In Rails 4.1+ it is in `secrets.yml`
+
+They strongly recommend keeping all app secrets as environment vars
+
+```yaml
+# config/secrets.yml
+production:
+  secret_key_base: <%= ENV['SECRET_KEY_BASE'] %>
+```
+
+Aside: You can run ruby in Yaml files because Erb is built-in to ruby
+
+Rails makes the contents of secrets.yml available in `Rails.application.secrets`
+
+```
+[1] pry(main)> Rails.env
+"development"
+[2] pry(main)> Rails.application.secrets
+{
+    :secret_key_base => "secret stuff ..."
+}
+[4] pry(main)> Rails.application.secrets.secret_key_base
+"secret stuff ..."
+```
+
+### Logging
+
+up to 1.8
+

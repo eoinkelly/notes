@@ -1,5 +1,83 @@
 # Postgresql
 
+# authorisation
+
+# psql
+
+## defaults
+
+* built-in defaults:
+    * username: current OS username
+    * password: NONE BUILT-IN
+    * host: localhost
+    * port: 5432
+    * database: NONE BUILT-IN
+
+There are 2 ways to tweak defaults:
+
+1. environment variables
+    * PGDATABASE
+    * PGHOST
+    * PGPORT
+    * PGUSER
+    * PGPASSWORD
+2. the `~/.pgpass` file
+
+### passwords
+
+* There is no way to put your password on the command line because this is
+  insecure (it gets logged to your shell history)
+
+* psql will default to showing a password prompt if the server needs a password
+  (unless you supply `-w` in which case the connection will fail.
+
+## connecting
+
+* The current version of psql defaults to looking for sockets in `/tmp`
+* By default homebrew `pg_hba.conf` looks like
+
+    ```
+    # TYPE  DATABASE        USER            ADDRESS                 METHOD
+
+    # "local" is for Unix domain socket connections only
+    local   all             all                                     trust
+    # IPv4 local connections:
+    host    all             all             127.0.0.1/32            trust
+    # IPv6 local connections:
+    host    all             all             ::1/128                 trust
+    ```
+
+    so it only allows connections (via TCP and unix sockets) from my machine.
+
+* `trust` auth method
+    * postgres assumes that anybody who can get to the machine, should also be given
+      full (any user including root) access to the DB
+    * Allow the connection unconditionally. This method allows anyone that can
+      connect to the PostgreSQL database server to login as any PostgreSQL user
+      they wish, without the need for a password or any other authentication.
+    * Restrictions made in the `database` and `user` columns still apply.
+        * TODO: what does this mean?
+
+### Examples:
+
+```
+# connect to default database with default username on default host, port
+$ psql
+
+# connect to mydb database with default username, host, port
+$ psql mydb
+```
+
+
+### connection info (conninfo) strings
+
+```
+postgres://
+postgresql://
+```
+
+TODO: find out more here
+
 ## archive formats
 
 Both `pg_dump` and `pg_restore` support a number of archive formats
