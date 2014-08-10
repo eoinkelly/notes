@@ -411,5 +411,59 @@ Rails makes the contents of secrets.yml available in `Rails.application.secrets`
 
 ### Logging
 
-up to 1.8
+* Most Rails objects have a `logger` attribute
+* `logger` conforms to the `Log4r` (default ruby 1.8+ logger) interface
 
+```ruby
+# The Log4r interface (in increasing severity)
+logger.debug  # 1
+logger.info   # 2
+logger.warn   # 3
+logger.error  # 4
+logger.fatal  # 5
+```
+
+* even if `logger` isn't available you can use `Rails.logger` which is a global
+  instance of a logger
+
+* use `rake log:clear` to truncate the rails log files
+* the log outputs shows SQL querys executed and hits to the Rails SQL query cache
+
+You can add any arbitrary request object data to the log entry by setting the
+`config.log_tags` setting in
+
+```ruby
+# any property of request can be used here
+config.log_tags = [:subdomain, :original_url] # takes an array
+```
+
+This lets you group log entries together to diagnose problems
+
+TODO: What are the properties available on the rquest object
+
+* times reported by the logger are not super accurate but are good enough to be
+  compared with each other and see trends over time
+
+#### N+1 query problem
+
+* An N+1 problem happens when you are displaying a record along with an associated
+  collection e.g. showing a list of blog posts and the full details of one in a
+  master-detail  view.
+* You can recognise the problem by a series of `SELECT` statements that are
+  different only in the primary key
+* DB problems are worse when your DB is on a different machine to your app as
+  each query has the latency problem to deal with too
+
+#### log tips
+
+* You can replace the default logger objects with your own so you customise
+  logging as much as you want
+* You can even do this in the console on a live running system
+* The logger objects to replace are
+    * `ActiveRecord::Base.logger`
+    * ???
+    * TODO: more at  http://weblog.jamisbuck.org/2007/1/31/more-on-watching-activerecord.
+* You can also send Rails logs to syslog with `SyslogLogger` gem.
+    * syslog can consolidate logs from multiple apps, can log remotely etc.
+* use `less -R` to view colorized output in pager
+* `tail` already supports colorized output
