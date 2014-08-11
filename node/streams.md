@@ -1,4 +1,8 @@
-# Node streams
+# Node streams Handbook
+
+* https://github.com/substack/stream-handbook
+
+_these notes are incomplete - I will return to this when I have done more node_
 
 * streams2 landed in 0.10
 * Streams are an event based API for handling data
@@ -34,13 +38,15 @@ has lots of these e.g.  XHR, WebSockets, IndexedDB, WebWorkers, WebRTC, and DOM
 Events
 
 ## Steam events and their meanings
-* end means no more data will be emitted but if this stream is also writable it
+
+* `end` means no more data will be emitted but if this stream is also writable it
   should stay open for more writes if they need to happen
-* close means whatever this thing was tied to, it's done now. you may dispose of
+* `close` means whatever this thing was tied to, it's done now. you may dispose of
   it, it's gone.
 
-Node uses sterams for all its _I/O bound_ APIs e.g. TCP, file system
-Events implement the observer pattern
+
+* Node uses sterams for all its _I/O bound_ APIs e.g. TCP, file system
+* Events implement the observer pattern
 
 # Destroying a stream
 
@@ -87,3 +93,33 @@ var writable = new Stream ...
 
 readable.pipe(writable)
 ```
+
+
+There are 5 kinds of streams
+
+1. readable
+2. writable
+3. transform
+4. duplex
+5. classic
+    * steams from node 0.4 days
+
+`src.pipe(dst)` returns `dst` so you can chain them together
+
+```
+a.pipe(b)
+b.pipe(c)
+c.pipe(d)
+
+// same as
+
+a.pipe(b).pipe(c).pipe(d)
+
+// create duplex stream
+a.pipe(b).pipe(a)
+```
+
+STDIN and STDOUT are streams in node land. They are represented by
+
+* `process.stdin`
+* `process.stdout`
