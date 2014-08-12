@@ -94,19 +94,129 @@ main
 Object < BasicObject
 ```
 
-* Objects can get methods and behaviours that their class did not give them!
-    * QUESTION: How?
-    * Re-open the object and stuff to its eigenclass
+* Objects can get methods and behaviours that their class did not give them in
+* ??? ways!
+    1. Re-open the object and stuff to its eigenclass. There are two syntaxes
+      for this:
+          1. `def ob_name.method_name`
+          2. `class << ob_name`
+    2. Refinements
 * The class is responsibile for the object being born in memory (instantiation)
-but once there, the object has a life of its own
+  but once there, the object has a life of its own
 * This is a defining principle of ruby code!
 
 ```ruby
 class Foo
 end
 
-f = Foo.new
+f1 = Foo.new
+f2 = Foo.new
 
-QUSTION: how do I add stuff to just object in ruby - see ruby under microsocope
+# Method 1: def ob.meth_name
+############################
+
+# add a method to f1 singleton class
+def f1.thing
+  puts "hi from thing"
+end
+
+# Method 2: <<
+##############
+
+class << f1
+  # create new lexical scope, methods in here go in f1's singleton class
+  def do_other_thing
+    puts "other thing"
+  end
+end
+
+# Method 3: Refinements
+#######################
+
+# Foo will have an extra method when this refinement is invoked
+module SomeThing
+  refine Foo do
+    def local_thing
+      puts "local thing"
+    end
+  end
+end
+
+
+# Usage
+#######
+
+f1.thing # => "hi from thing"
+f2.thing # NoMethodError
+
+f3 = Foo.new
+
+f3.local_thing # NoMethodError
+
+using SomeThing
+
+f3.local_thing # => "local thing"
 ```
 
+## # Checking syntax
+
+Syntastic ruby checking uses `'-w -T1 -c` as args
+
+* `-c` check syntax
+* `-w` show warnings
+* `-T1` run in $SAFE level 1 (turn on tainting checks)
+
+# Taint & Trust
+
+* Ruby considers user input tainted by default
+* You can mark objects as `tainted` in ruby
+* Use the _#taint_ and _#untaint_ methods to control taintedness
+* _#tainted?_ checks the taintedness status of an object
+
+```
+1] pry(main)> str = gets
+Hi there
+"Hi there\n"
+[2] pry(main)> str.tainted?
+true
+[3] pry(main)> str2 = "foo"
+"foo"
+[4] pry(main)> str2.tainted?
+false
+```
+
+Ruby 1.9+ also has the notion of objects being trusted
+
+_#trust_
+_#untrust_
+_#trusted?_
+
+#### $SAFE
+
+All information from the outside world can be marked as tainted. When running in
+a safe mode, potentially dangerous methods will raise a SecurityError if passed
+a tainted object.
+
+* Ruby has differnt levels of paranoia you can access by setting `$SAFE`
+
+more at http://phrogz.net/programmingruby/taint.html
+
+* `RbConfig::CONFIG` is a big hash of the ruby interpreters config variables
+* it seems to always be available in my irb/pry
+
+* rubylibdir
+    * contains the std lib (ruby files)
+* archdir
+    * runtime loadable C extensions (.so, .dll, .bundle)
+* sitedir
+    * a local parallel of the main ruby installation dir for your custom stuff
+    * has its own archdir and libdir (`sitearchdir` and `sitelibdir`)
+* vendordir
+    * some third party stuff installs itself here
+    * it is not yet clear whether it is best practice to install to here or
+      sitedir
+
+
+Q: do require and load force you to use files that end in .rb?
+
+up to 1.2.4
