@@ -62,6 +62,9 @@ Where they are put depends on build system
 
 ## gradle
 
+*  Run the `gradle` command from a dir that has a `build.gradle` file
+
+* gradle tasks <---> ant targets
 
 ## jarsigner
 

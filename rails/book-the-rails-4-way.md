@@ -5,24 +5,6 @@
 * bundler does dependency resolution all at once
 * ruby gems does it one gem at a time
 
-### Rails assets group
-
-* NB: Rails 4 no longer has a 'assets' group
-    * gems that were in `assets` are now in production
-    * Rails 4 in production will not try to compile assets you forgot to
-      precompile (unlike older versions) so there is no reason not to have the
-      assets gems in production
-    * This is not totally without controversy
-* If you do precompile your assets then you don't need the asset compiliation
-  gems in production at all
-* the rails guys wanted to use coffescript templates in production
-
-The recommended way to precompile assets in Rails 4 is now
-
-```
-RAILS_ENV=production bundle exec rake assets:precompile
-```
-
 ### The Gemspec file
 
 The problem bundler solves:
@@ -73,17 +55,12 @@ bundle install --without development test
 * bundle viz = make a PNG of gem dependencies
 * bundle show = show info about a single gem
     * shows _where_ a bundled gem is installed
-
-`bundle update`
-
-* ???
-
-`bundle package`
-
-* packages all the gems into the `vendor/cache` dir
-* use with `bundle install --local` which will pull your gems from here
-    * allows you to use private gems in production
-    * allows you to avoid external dependencies at deploy time
+* `bundle update`
+* `bundle package`
+    * packages all the gems into the `vendor/cache` dir
+    * use with `bundle install --local` which will pull your gems from here
+        * allows you to use private gems in production
+        * allows you to avoid external dependencies at deploy time
 
 
 ### When do I need to use `bundle exec`
@@ -94,12 +71,13 @@ bundle install --without development test
   installed and doesn't conflict with any gems in your bundle.
 
 * More on bundler http://bundler.io
+
 * TODO: dig more into bundler - it can do a lot of stuff!
 
 ### Binstubs
 
-* scripts in `/bin` that run built-in rails command line tools (bundle, rails,
-* rake, spring) _in the context of your current bundle_.
+* shell scripts in `/bin` that run built-in rails command line tools (bundle,
+  rails, rake, spring) _in the context of your current bundle_.
 * saves you having to do `bundle exec foo` each time
 * they should be added to git
 * `rake rails:update:bin` will re-make them (if upgrading from Rails 3)
@@ -107,9 +85,10 @@ bundle install --without development test
 * TODO: currently I seem to be using rbenv stubs when I run commands like
   `rails` - is this OK? should I use local ones instead?
 
-Aside: `rails runner`
-  * like rails console but only runs the command you supply on the cmd line
-  * e.g. `rails runner "puts User.all.count"`
+* Aside: `rails runner`
+    * like rails console but only runs the command you supply on the cmd line
+    e.g. `rails runner "puts User.all.count"`
+    * handy for places where you can't run an interactive environment
 
 ### Rails boot process
 
@@ -300,19 +279,23 @@ If false Rails uses ruby `load` to do class loading
 * `require` loads and compiles the file once and then ruby caches the compiled output
 * `load` does not cache the compilation so will read the file every time it is referenced
 
+
 ### Rails autoloading
 
 Why don't we have to use `require` statements in rails code?
 
-Ruby provides a callback mechanism for missing constants
-Rails hooks into this and runs a class loader routine to load a class based on
-naming converntions whenever ruby finds a missing constant
+* Ruby provides a callback mechanism for missing constants
+* Rails hooks into this and runs a class loader routine to load a class based on
+  naming converntions whenever ruby finds a missing constant
 * You can see the dirs that rails will search via `$LOAD_PATH` in console
     * These are mostly
-    1. vendor/
-    2. lib/
-    3. sub dirs of app/
-    4. lib directory of your bundled gems
+    1. `vendor/`
+    2. `lib/`
+    3. sub dirs of `app/`
+    4. `lib/` directory of each bundled gem
+    * Implications:
+        * `foo_bar.rb` in `lib/` can be loaded in my rails app via `require "foo_bar"`
+        * If my rails app uses `FooBar` rails will load it for me. CHECK THIS
 
 
 ### Eager loading
@@ -343,7 +326,47 @@ QUESTION: how exactly does rails caching work?
 
 
 
-### Rails in production & assets
+### Rails Assets
+
+QUESTIONS about assets
+
+* How do I refer to an asset from a view template?
+* How do I refer to an asset from my controllers, models, (is it diff for each)?
+* How do I refer to asset from sass or JS?
+
+* The asset pipeline arrived in Rail 3.1
+
+URLs to use to check your assets
+
+```
+./app/assets/javascripts/application.js.coffee
+http://localhost:3000/assets/application.js
+
+./app/assets/stylesheets/application.css.scss
+http://localhost:3000/assets/application.css
+
+./app/assets/images/test.jpg
+http://localhost:3000/assets/test.jpg
+
+./app/assets/images/foo/test.jpg
+./app/assets/stylesheets/foo/test.jpg
+./app/assets/javascripts/foo/test.jpg
+http://localhost:3000/assets/foo/test.jpg
+
+./app/assets/foo/test.jpg
+http://localhost:3000/assets/test.jpg
+
+./app/assets/test.jpg
+NOT ACCESSIBLE VIA URL
+```
+
+Some rules about how assets work
+
+* `app/assets` is a _source of assets_
+* it is expected to contain dirs only.
+* the subdir names do not matter to the assets pipeline - they are for humans only
+* `app/assets/ANY_DIRNAME/` becomes `http://localhost:3000/assets/`
+* `app/assets/somefile.png` is NOT ACCESSIBLE
 
 In production, all precompiled assets are served out of `public/assets`.
 
@@ -364,8 +387,27 @@ Some configuration settings:
     * how do you get the assets on there?
 
 QUESTION: what does `config.serve_static_assets` do exactly?
-
 QUESTION: also `config.static_cache_control` ?
+
+
+
+#### Rails assets group
+
+* NB: Rails 4 no longer has a 'assets' group
+    * gems that were in `assets` are now in production
+    * Rails 4 in production will not try to compile assets you forgot to
+      precompile (unlike older versions) so there is no reason not to have the
+      assets gems in production
+    * This is not totally without controversy
+* If you do precompile your assets then you don't need the asset compiliation
+  gems in production at all
+* the rails guys wanted to use coffescript templates in production
+
+The recommended way to precompile assets in Rails 4 is now
+
+```
+RAILS_ENV=production bundle exec rake assets:precompile
+```
 
 
 ### Rails and databases
