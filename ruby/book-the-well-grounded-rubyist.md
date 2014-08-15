@@ -257,9 +257,9 @@ How can I load code at runtime in ruby?
 2. `load`
 
 # load vs require
-* `load FILEPATH`
+* `load(FILENAME, wrap=false) # -> true`
     * simpler than require
-    * FILEPATH can be
+    * _filename_ can be
         * filename: `foo.rb` will search file in
             1. _current working dir_ CWD - this will change if you change CWD at
                runtime
@@ -269,7 +269,7 @@ How can I load code at runtime in ruby?
         * relative path
             * is assumed to be relative to the CWD (so this will change if CWD
               does
-    * FILEPATH must have the `.rb` suffix - load does not fill it in for you!
+    * _filename_ must have the `.rb` suffix - load does not fill it in for you!
     * is a method so will be executed at the point where ruby finds it in my
       file. Implications:
         * you can skip loads by putting them in conditionals
@@ -277,14 +277,145 @@ How can I load code at runtime in ruby?
     * load will not check to see if the file has been loaded already - sometimes
       this is very handy (e.g. playing with a file in _irb_) but most of the
       time it is not what you want.
+    * if _filename_ does not resolve to an absolute path then `$:` is searched
+    * local variables from the loading file will never be available in the
+      current file
+    * _wrap_ decides whether ruby should execute the loading code within an
+      anonymous module to protect the calling environments globals
+    * lives in `Kernel`
+    * In no circumstance will any local variables in the loaded file be
+      propagated to the loading environment.
 
-* `require`
+    * If the optional wrap parameter is true, the loaded script will be executed
+      under an anonymous module, protecting the calling program’s global
+      namespace.
+        * but I can still make globals in the loaded file that will be available
+        * in the main file so how is the namespace "protected" ???
+
+* `require(name) # -> true (or false if name is already loaded)`
+    * can be called many times but will only load its argument the first time
+    * it is more abstract than `load` - you _require_ a _feature_ not a _file_
+    * if name does not resolve to an absolute path then $LOAD_PATH will be
+      searched.
+        including . ???
+    * you can require
+        1. ruby files `require "foo.rb"
+        2. C code `require "foo.so"`
+    * if name ends in rb it is loaded as a ruby file
+    * if it ends in .so|.dll|.o it is loaded as a ruby extension
+    * it name does not have an extension, ruby tries adding .rb|.so etc. until
+      it finds it
+    * It throws a `LoadError` if it fails to find it
+    * The absolute path of the feature is added to `$LOADED_FEATURES` (alias
+    * `$"`) - this is how require keeps track of what is loaded
+
+    * in a rails app there are 2000+ entries in $LOADED_FEATURES
+    * you can use any extension filename (.so|.dll|.bundle|.o) and ruby will
+      load the right one for yoru platform
+
+* `require_relative`
+    * `require_relative "foo"`
+    * tries to load "foo" relative to the requiring file's path
+    * searches relative to the dir of the script doing the loading!!
+        * it does not search relative to the overall programs CWD!!
+    * its big feature is that it will start the search in the dir that the requiring file is
+      in so it avoids the need to manually add CWD to $LOAD_PATH
+
 * `gem`
+    TODO: learn about this
 
-CWD in ruby - what is it by default, how to change it
+TODOL CWD in ruby - what is it by default, how to change it
 
 TODO: implement a simple version of rails auto loading
 
 $: $LOAD_PATH
     * Array of dirs that ruby will search for filenames passed to `load`
     * `.` is not on the load path. `load` is hardwired to search it first anyway
+
+
+### Command line tools
+
+How do I check what command line tools are available in the current ruby?
+
+```sh
+$ ls -l `ruby -e "puts RbConfig::CONFIG['bindir']"`
+```
+
+* Note that ERB is built-in to ruby.
+Q: can ERB be used for stuff other than HTML?
+
+* Note that `ruby -v` shows version *and* executes the provided script in
+* verbose mode.
+
+* `ruby -e` can span many lines (until it is terminated by another `"`)
+    * in zsh at least you cannot edit a line after you have hit <RET>
+* `ruby -rfeaturename`
+    * you can require features at the command line
+    * `ruby -rzlib my_zlib_needing_script.rb`
+    * not sure what use case of this with a scirpt would be? handy for one
+      liners.
+
+```
+➜  Desktop  ruby -e "
+dquote> puts 'this is my program'
+dquote> puts Time.now
+dquote> "
+this is my program
+2014-08-15 07:31:08 +1200
+```
+
+You can see that most of them are small wrappers (except for ruby itself)
+
+In ruby the value of an assigment expression is the RHS of the assigmnet
+
+irb
+--no-echo # don't show return value of expressions
+
+### Rdoc
+
+RDoc format
+
+TODO: get the basics down of this
+http://ruby-doc.org/gems/docs/r/rdoc-4.1.1/RDoc/Markup.html
+
+Tools
+
+* `ri`
+    * lets you view extraced docs
+* `rdoc`
+    * extracts doc comments from source files
+
+```sh
+$ ri String#upcase
+$ ri String::some_class_method
+
+# no pager
+$ ri -T String#upcase
+
+```
+
+### Rake
+
+* `rake`
+    * -T shows only tasks that have descriptions
+    * -P shows all tasks and their prerequisites
+
+
+### gem
+
+~/.gem stores ???
+
+GEM_HOME
+GEM_PATH
+
+gem install foo
+gem uninstall foo
+
+
+```ruby
+# when you want to use a gem but not the most recent version installed on your
+# system:
+gem "foo", "3.6.9"
+```
+
+Q: how does this match up with require?
