@@ -1,2 +1,6 @@
 *private*
 *.class
+
+# haskell compile artefacts
+*.o
+*.hi

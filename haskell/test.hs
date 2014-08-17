@@ -21,19 +21,19 @@ let yyy = "foo foo foo"
 doubleMeAgain x = x + x
 
 
--- a tuple is an list 
--- of a particular length 
--- containing particular types 
+-- a tuple is an list
+-- of a particular length
+-- containing particular types
 -- in a particular order
--- 
+--
 -- a tuple is defined by its
 -- * length
--- * types 
+-- * types
 -- * order that the types are in
--- 
+--
 -- "that is a tuple of length 4 which is 2 integers followed by a float and then a character"
 -- (2,3,5.6,'a')
--- 
+--
 -- it is a sort of strict data object
 -- ("chuck", "norris", 55, "actor")
 -- you can rely on the first element of a tuple always being the same type

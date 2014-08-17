@@ -35,9 +35,10 @@ The type namespace is
 
 # Operator Precedence
 
-
 ```haskell
-infixl 7 -- precedence level 7, associates to the left
+ghci> :info *
+infixl 7
+-- read as precedence level 7, associates to the left
 ```
 
 * There are 10 levels of operator precedence (0-9)
@@ -52,9 +53,42 @@ infixl 7 -- precedence level 7, associates to the left
     * these are called `sections` and allow you to curry operators just like
       functions
 
+Haskell Operator precedence:
+
+```
+| *     | infixl | 7 |
+| `div` | infixl | 7 |
+| `mod` | infixl | 7 |
+| +     | infixl | 6 |
+| -     | infixl | 6 |
+| $     | infixr | 0 |
+```
+
+* Note that the precendence of `+` and `-` is the same
+* Note that the precedence of `div` and `*` is the same
+* You can use parentheses to specify order of operations.
+    * QUESTION: How does this not get confused with creating a tuple?
+* When an expression contains multiple operators with the same precedence,
+* Evaulation happens according to the associativity e.g. `6 - 3 + 4` is `(6 - 3) + 4`
+
+Compare Haskell to the precedence rules in C?
+
+```
+| *     | infixl | 13 |
+| /     | infixl | 13 |
+| %     | infixl | 13 |
+| +     | infixl | 12 |
+| -     | infixl | 12 |
+```
+
+We can see that the relative precedence and associativity is pretty similar.
+It seems like most languages use similar rules for associativity, precedence and
+semantics of mathematical operators.
+
+
 ## Fixity
 
-* `fixity` is hte concept of precedence and associtiavity
+* `fixity` is the concept of precedence and associtiavity together
 
 ## The apply operator `$`
 
