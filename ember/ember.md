@@ -1,5 +1,6 @@
 # The Ember boot process
 
+
 * Ember.Application.create() will automatically schedule a boot at
   DOMContentLoaded (after initializers have run)
 * Implications:
