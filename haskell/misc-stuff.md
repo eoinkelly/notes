@@ -33,13 +33,30 @@ The type namespace is
 * between `instance` and `where`
 * between `data` and `=`
 
-# Operator Precedence
+# Operators
+
+```haskell
+-- infix operator examples
+x ^ a   -- where a is an integer
+x ** a  -- where a is any number type
+x % y   -- get ratio between two number. x, y must be of same type
+```
+
+* Haskell lets you make new operators (which are just binary functions)
+* operators can be applied like normal functions by wrapping them in `()`
+
+```haskell
+(+) 3 4 -- 7
+```
 
 ```haskell
 ghci> :info *
 infixl 7
 -- read as precedence level 7, associates to the left
 ```
+
+# Operator Precedence
+
 
 * There are 10 levels of operator precedence (0-9)
 * function application is always higher (kind of at level 10)
@@ -112,79 +129,6 @@ Definition of it:
 ```haskell
 (f . g) x = f (g x)
 ```
-
-## Indentation rules
-
-Code which is part of some expression should be indented further in than the beginning of that expression
-
-All grouped expressions must be *exactly* aligned
-
-There are 4 layout keywords: `let`, `where`, `do`, `of`
-* They begin _layout blocks_
-* Under the hood Haskell encloses these in `{` and `;`
-
-
-* If the compiler finds a `{` after one of the layout blocks it will parse the
-  block directly (not using the layout rules)
-
-The layout process can be summed up in three translation rules (plus a fourth one
-that doesn't come up very often):
-
-1. If you see one of the layout keywords, (let, where, of, do), insert an open curly brace (right before the stuff that follows it)
-2. If you see something indented to the SAME level, insert a semicolon
-3. If you see something indented LESS, insert a closing curly brace
-4. If you see something unexpected in a list, like where, insert a closing brace before instead of a semicolon.
-
-```
--- this does not work:
-do  thing
-    if condition
-    then foo
-    else bar
-    anotherThing
-
--- because it becomes:
-
-do  { thing
-    ; if condition
-    ; then foo
-    ; else bar
-    ; anotherThing }
-
--- so the solution is
-do  thing
-    if condition
-        then foo
-        else bar
-    anotherThing
-
--- because it becomes:
-
-do  { thing
-    ; if condition
-        then foo
-        else bar
-    ; anotherThing }
-
--- because `if` is not a layout keyword.
-
--- This only happes in do blocks but to avoid issues you should always indent
--- the then and else part of an if expression a bit more than the `if` part.
-```
-
-Things which are considered "one line" in haskell (in the sense of no `{` or `;`
-being inserted):
-
-* function definitions
-    ```
-    doubler
-        x
-        =
-        x
-        +
-        12
-    ```
-* if then else expressions (semicolons are not allowed within an if-then-else)
 
 # Lambdas
 

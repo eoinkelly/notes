@@ -1,7 +1,6 @@
+# Chapter 1
 
-
-Operator precedence
-
+## Representing egative numbers
 
 Represent negative numbers in computations by wrapping them in `()` so that the
 parser does not get confused:
@@ -13,10 +12,23 @@ ghci> 3 + (-4)
 ghci> 3 + -4
 ```
 
-True
-False
+* Comparison operators work as in other languages except in Haskell they are
+* typed (so you can only compare things of the same type).
 
-* Comparison operators work as in other languages except they are typed
+Coparison in
+
+* Ruby
+    * == ???
+    * equal? ???
+    * eql? ???
+* JS
+    * in general I think it is untyped
+    * == untyped
+    * === typed
+
+TODO: answer the above for Ruby, JS, C
+
+The Haskell comparison operators:
 
 ```
 &&
@@ -142,19 +154,19 @@ How do we explicitly make things strict?
 
 * contains the result of the last command in `ghci` - similar to `_` in IRB
 
-
-QUESTION: what is legal syntax in haskell re. whitespace
-
 ### Scope in Haskell
 
-QUESTION: what are the scoping rules in haskell
+* Haskell code is broken up into modules
+* Modules control what identifiers they export
+* A consuming module can alias the names exported if it wants to
+* so there are "scope lines" around modules
+* The top level module is Main. By default it only exports one function (`main`)
 
-code is broken up into modules
-modules control what identifiers they export
-a consuming module can alias the names exported if it wants to
-so there are scope lines around modules
-
-QUESTION: what about within a module?
+QUESTION: what about scope within a module?
+    things taht seem to ahve their own scope:
+        functions
+        let expressions
+        if-else
 
 ## Program entry point is Main.main
 
@@ -170,7 +182,11 @@ QUESTION: what about within a module?
 -- if you want to change what Main exports you need to be explicit
 module Main(main) where
 
--- the declaration said we were exporting main so we need main!
+-- the explicity declaration above said we were exporting main so we need a main function!
 main :: IO ()
 main = ...
 ```
+
+## Whitespace in Haskell
+
+QUESTION: what is legal syntax in haskell re. whitespace

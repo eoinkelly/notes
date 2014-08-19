@@ -279,3 +279,92 @@ TODO: figure out the entry points for Ember in response to
     network event
     user event e.g. click
     timer event
+
+anatomy of a click event
+
+user clicks
+browser wakes up the JS
+JS checks for any handlers that have been registered
+    starts at the DOM element that received the click
+    works its way up to `document` element
+
+
+* W3C Events spec has both capturing (top down) and bubbling (bottom up) phases
+* You can decide which phase to register your handler in using the 3rd arg to
+  `addEventListener` e.g.
+
+```
+element1.addEventListener('click',doSomething2,true) // capturing
+element2.addEventListener('click',doSomething,false) // bubbling
+
+element3.onclick = doSomething2; // defaults to bubbling
+```
+
+e.stopPropagation() // stops propagation in the bubbling phase
+
+// x-browser way to stop propagation of the bubbling phase
+function doSomething(e)
+{
+	if (!e) var e = window.event;
+	e.cancelBubble = true;
+	if (e.stopPropagation) e.stopPropagation();
+}
+
+event.target is always the same in both capturing and bubbling phases
+    * it is the element that acutally received the event
+
+QUESTION: what is the story with adding extra args to a jquery event handler?
+    ember does it, what does it do?
+
+### how ember registers events
+
+
+#### Ember.EventDispatcher
+
+Ember.EventDispatcher (part of ember-views) manages events for Ember
+
+* rootElement defaults to 'body' (a string)
+    * it can be either a DOMElement or a String but Ember uses a String because
+      that can be evaluated before the body DOMElement exists
+* events {}
+    * a hash of DOM event names to handler function names
+* setup()
+    * calls setupHandler for each element in events
+    * will check `customEvents` property of the App for any extras
+    ```js
+    App = Ember.Application.create({
+        customEvents: {
+            // add support for the paste event
+            paste: "paste"
+        }
+    });
+    ```
+setupHandler()
+    * registers two handlers on the given rootElement
+    * I believe these are the entry point to Ember code
+    ```
+    // this is Ember registering its DOM event handlers
+    rootElement.on(event + '.ember', '.ember-view', function(evt, triggeringManager) {
+    rootElement.on(event + '.ember', '[data-ember-action]', function(evt) {
+    ```
+    * Notice that the handlers are all namespaced with `.ember`
+    * The first handler will only handle events that come from a `.ember-view`
+        * consequences:
+            * ember will ignore events that don't come from an ember view
+    * The second will only handle events that come from an element that has the `data-ember-action` attribute
+        * consequences:
+            * ember handles actions differently from normal DOM events
+
+These handlers are the entry point into the Ember app for DOM events
+
+
+ASIDE:
+
+    Unregistering for mousemove might be a good idea
+        although it is not an event that happens on mobile devices
+        QUESTION: what is the performance penalty for listening to mousemove, mouseenter, mouseout etc.
+
+QUESTION: follow the trail of a click that results in some ember action from the
+event handler through ember.
+
+QUESTION: How many runloops does ember run in response to a single click?
