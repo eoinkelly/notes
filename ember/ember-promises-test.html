@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Ember Starter Kit</title>
+  <script src="bower_components/jquery/dist/jquery.js"></script>
+  <script src="bower_components/handlebars/handlebars.js"></script>
+  <script src="bower_components/ember/ember.js"></script>
+  <!-- <script src="bower_components/ember-data/ember-data.js"></script> -->
+
+  <script>
+
+  App = Ember.Application.create();
+
+  App.Router.map(function() {
+    // put your routes here
+  });
+
+  App.IndexRoute = Ember.Route.extend({
+    model: function() {
+      return ['red', 'yellow', 'blue'];
+    }
+  });
+
+  App.IndexController = Ember.ObjectController.extend({
+
+    simple: 'simple controller property',
+
+    computed: function () {
+      return new Date().toString();
+    }.property(),
+
+    // Question: How do I display a value from a promise in a template?
+
+    // When getting an async value I ahve to accept that the template will get two values for the property
+    // 1. whatever starting value it has (usually null)
+    // 2. whatever the resolved value of the promise is
+
+    // Option 1 - DOES NOT WORK
+    // * return the promise from a computed property
+    // ********
+
+    //   prommy: function () {
+    //     return Em.RSVP.Promise(function (res, rej) {
+    //       setTimeout(function () {
+    //         res('hello from future');
+    //       }, 3000);
+    //     });
+    //   }.property(),
+    // * Templates just see the promise as an object and don't know what to do with it
+    // * ??? would this be different with a "DataBoundPromise" ???
+
+
+
+    // Option 2: simple property + observer WORKS
+
+    // * the template will sho the 'starter value' of the simple property
+    // * until the promise resolves at which point it will update with
+    // * whatever it got from the promise.
+    simpleThingy: 'starter value',
+
+    thingy: function () {
+      var self = this;
+      return foo.get('someThing')
+        .then(function (x) {
+          self.set('simpleThingy', x);
+        })
+        .catch(function (err) {
+          // do something with error
+          self.set('simpleThingy', 'oops got an error');
+        });
+    }.on('init')
+    // ??? how do I make this automatically update when the value we got from the promise updates
+
+
+    // Option 3:
+    // http://stackoverflow.com/questions/20623027/rendering-resolved-promise-value-in-ember-handlebars-template
+    // * seems the cleanest/most performant
+    // + can be used anywhere you can use a computed property e.g. in the model, route, controller
+    // + can be used to map an async property (that returns a promise) to a sync property provided
+    //   you consume it somewhere that understands bindings
+
+    // what are the things that understand bindings in ember?
+
+    // Q: How do I map an async value to a sync value for consumption by imperative code?
+    // A: chain a then() onto the promise and put the imperative code in it.
+  });
+
+
+  App.Foo = Ember.Object.extend({
+
+    simple: 'simple model property',
+
+    someThing: function () {
+      return new Em.RSVP.Promise(function (res, rej) {
+        // res('immediate win');
+        setTimeout(function () {
+          res('hello from future');
+        }, 3000);
+      });
+    }.property()
+  });
+
+  var foo = App.Foo.create();
+  </script>
+</head>
+<body>
+
+  <script type="text/x-handlebars">
+    <h2> Welcome to Ember.js</h2>
+
+    {{outlet}}
+  </script>
+
+  <script type="text/x-handlebars" data-template-name="index">
+    <ul>
+    {{#each item in model}}
+      <li>{{item}}</li>
+    {{/each}}
+    </ul>
+    <hr />
+      Simple: {{controller.simple}}
+    <hr />
+      Simple: {{simple}}
+
+    <hr />
+      {{computed}}
+    <hr />
+
+    {{linkedToUpdater}}
+    <hr />
+
+    {{foo}}
+    <hr />
+    {{simpleThingy}}
+  </script>
+</body>
+</html>

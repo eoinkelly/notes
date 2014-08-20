@@ -1,0 +1,129 @@
+# Ember testing
+
+
+# helpers
+
+What is the benefit of creating an ember helper over just creating a global function?
+
+* You could register ember helpers even when app is in production and they won't be avaialbe until you call `Ember.injectTestHelpers()` - not sure how this helps tho
+
+# how to mock model data
+
+
+From the discuss thread
+
+> I would recommend avoiding calling App.reset() between tests and just
+> creating a new app instance and tearing it down with
+> App.create()/App.destroy().
+
+the above was from a guy who had a non-standard api to test
+
+## create() vs. pulling it out of container
+
+container generally gives you back a singleton which means state could leak across tests
+it is an anti-parttern to pull the object under test out of the container for unit tests
+
+
+* registering new ember test helpers seem to be built on the existing helpers
+* they are injected into the global by `App.injectTestHelpers()` (just like the existing helpers)
+* Q: waht is the benefit of usins them vs just making some global functions yourself?
+
+# notes from reading ember-testing source
+
+in general the helpers use `findByAssert()` so they also check that the thing you are looking for exists
+=> they are superior to doing it manually
+
+`findByAssert()` throws `EmberError` - research how this is diff from ordinary `Error`
+
+`click()`
+    * does a `findByAssert` so as well as clicking it will fail if the element is not there
+    * is a bit fancier than just running a jquery click - if the element is an input it triggers 'focusin'
+    * it triggers the following events:
+        * mousedown (optionally `focus`, `focusin` if certain element types),  mouseup, click
+
+`wait()`
+* Ember.Test keeps internal track of asynch work that has been started but not finished e.g.
+    * AJAX
+    * run loop runs
+    * timers in run loop
+    * route transitions in progress
+* all of the helpers that return promises go through `wait()`
+* it is the thing that calls `asyncStart` and asyncEnd` in the adapter
+* is available for use in tests
+    * ??? when would you use it
+* returns a promise that will resolve when all of these are true:
+    * the rotuer has fully finished any transistion it is in
+    * all the waiting ajax requests have returned
+    * the run loop is finished (and any timers scheduled in it)
+* basically `wait()` returns a promise that will be resolved when all the outstanding work has been done - Ember.Test keeps trakc of the async work and `wait()` polls every 10 mS to see if it has completed
+
+`andThen()` just sticks the callback you provide as a then on the promise `wait()` returns
+
+### The magic of lastPromise
+
+* `Ember.Test` provides a constructor for making promises
+    * it passes everything throught to `RSVP` but it also saves the newly created promise into `Test.lastPromise`
+    * this allows it to automatically chain promises that you create wiht the ember async helpers
+## ember-qunit
+
+* based on rspec
+* allows you to write unit specs in isolation
+
+* provieds `window.emq` global
+  globalize() // inject normal ember test helpers onto window
+
+Global methods
+
+```javascript
+
+// Globals
+emq.globalize()
+var res = Ember.DefaultResolver.extend({ namespace: 'App' });
+setResolver(res.create())
+
+// E66 Modules
+emq.globalize()
+import Resolver from '/path/to/resolver';
+import { setResolver } from 'ember-qunit';
+setResolver(Resolver.create());
+```
+
+moduleFor('router:main', 'optional description', callbacks); // arg is a lookup string for container
+moduleForComponent()
+moduleForModel()
+
+moduleFor
+* replaces `module` in your qunit test
+* args
+    * name of factory to lookup
+    * a nice description to see in your test output
+    * an object containing the normal qunit setup, teardown callbacks
+        * which can also contain a `needs` attribute which loads other controllers
+* maintains its own isolate container
+* uses the arg to lookup the factory from the main container
+* copies from main container into isolated one
+* aliases the `create()` of the factory we just copied over as `subject()`
+    * `this.subject()` is like `App.__container__.lookup('thing:subthing').create()`
+* at the end of the test it dumps its container
+
+moduleForComponent()
+* args
+    * short name of comonents that you would use in handlebars e.g. `foo-thing`
+    * other args same as `moduleFor`
+
+this.$() will render the component the first time it is called as will this.append (???)
+
+
+moduleForModel()
+
+
+ember-qunit is part of ember-cli
+
+```javascript
+moduleFor('controller:stuff', 'The suff controller', { needs: ['application']});
+
+test('name', function () {
+  var stuffCtrl = this.subject(); // App.__container__.lookup('controller:stuff')
+  var appCtrl = stuffCtrl.get('controllers.application');
+
+  })

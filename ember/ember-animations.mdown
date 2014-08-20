@@ -1,0 +1,16 @@
+# Ember Animations
+* [slides](http://ef4.github.io/ember-animation-demo/)
+* Animating within a route is the simple case
+    * it is pretty easy to make these be components
+
+* animations between routes is possible but harder
+    * it touches every aspect of the stack
+    * he has a pretty good transition
+    * we want to stall the transition long enough to fade/slide/animate away
+    * we don't want to do that all the time tho e.g. if the user types a different URL in the bar
+    * the willTransition hook is really handy when you want to make things leave the page in a pretty way
+* he implemented modal with query params - had a showModal=true param that was there when
+* lets you make a really nice modal that can be cancled by back button or entered directly via URL
+* he put a named outlet in the application template that is rendered into
+
+he disables ember built-in event handlers and explicitly enables them via components because he thinks it make it faster

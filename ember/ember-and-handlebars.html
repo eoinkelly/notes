@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Ember Starter Kit</title>
+  <script src="bower_components/jquery/dist/jquery.js"></script>
+  <script src="bower_components/handlebars/handlebars.js"></script>
+  <script src="bower_components/ember/ember.js"></script>
+
+  <script>
+
+  App = Ember.Application.create({
+  });
+
+  App.Router.map(function() {
+  });
+
+  App.IndexRoute = Ember.Route.extend({
+    model: function() {
+      return ['red', 'yellow', 'blue'];
+    }
+  });
+
+  App.IndexController = Ember.ObjectController.extend({
+
+    simple: 'simple controller property',
+
+    computed: function() {
+      debugger;
+      return 'Ich bin computed';
+    }.property(),
+
+  });
+
+  App.IndexView = Ember.View.extend({
+    templateName: 'index',
+    click: function(e) {
+      console.log(this.toString(), '#click');
+      debugger;
+    }
+  });
+  var v1 = Ember.View.extend({
+
+    // * You can define template function inline
+    // * Inline templates are good if you want a reusable view
+    template: Ember.Handlebars.compile('<h1>{{name}}</h1>'),
+
+    // OR
+    // * you can reference a template from Ember.TEMPLATES
+    templateName: 'foo', // will be used as lookup into Ember.TEMPLATES object
+  });
+
+
+  </script>
+</head>
+<body>
+<pre>
+What do template functions know about in ember?
+They are a property of the view object
+  and the view has access to the controller (context) object
+  so is the view the one that evaluates the template and inject the view into it?
+
+* Template script tags should be in the <head> of the document
+* You can identify them in either `data-template-name` or `id` attribute
+
+
+From the docs:
+* The HTML contents of a view's rendered representation are determined by its template.
+
+So the final HTML is a _representation_ of the view.
+* A view has a link to its parent
+
+* A context can also be explicitly supplied through the view's context property. If the view has neither context nor controller properties, the parentView's context will be used
+
+    this.get('context') // used as template context if it exists
+    this.get('controller') // used as template context if 'context' does not exist
+    this.get('parentView.controller') // used as context if neither 'context' or 'controller' exist
+
+  => It is the view that provides the context for the template - not the controller!
+  => The template is controlled and invoked by the view
+  => controllers talk to views not templates ???
+
+The default implementation of a view wires the controller as the context of a template
+so you can ignore the view itself.
+
+</pre>
+  <script type="text/x-handlebars" data-template-name="application">
+    <h2> Welcome to Ember.js</h2>
+    {{! comment }}
+    {{!-- also comment --}}
+
+    {{outlet}}
+  </script>
+
+  <script type="text/x-handlebars" id="index">
+  {{! note that we are identified by id, not data-template-name }}
+    <ul>
+    {{#each item in model}}
+      <li>{{item}}</li>
+    {{/each}}
+    </ul>
+    <pre>
+      Simple: {{simple}}
+      Computed: {{computed}}
+    </pre>
+  </script>
+
+</body>
+</html>

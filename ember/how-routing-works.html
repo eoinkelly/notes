@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Ember Starter Kit</title>
+  <script src="bower_components/jquery/dist/jquery.js"></script>
+  <script src="bower_components/handlebars/handlebars.js"></script>
+  <script src="bower_components/ember/ember.js"></script>
+  <!-- <script src="bower_components/ember-data/ember-data.js"></script> -->
+
+  <script>
+  function dmp(ob, label) {
+    console.log('Dump:', ob.toString(), label);
+  }
+
+  App = Ember.Application.create({
+    // LOG_RESOLVER: true,
+    // LOG_TRANSITIONS_INTERNAL: true, // details about what hooks are called
+    // LOG_TRANSITIONS: true // Transitioned into foo.bar.blah
+  });
+
+  App.Router.map(function() {
+    // index
+    // loading
+    // error
+    this.resource('course', function() {
+      this.resource('unit', function() {
+        this.resource('topic', function() {
+          this.route('page');
+        });
+      });
+    });
+
+    this.resource('blog', function() {
+      this.resource('year', function() {
+        this.route('post');
+      });
+      this.resource('month', function() {
+        this.route('post');
+      });
+    });
+  });
+
+  App.MyRoute = Ember.Route.extend({
+
+    // Called once for each route
+    // ********************
+    beforeModel: function() {
+      dmp(this, 'beforeModel');
+      this._super.apply(this, arguments);
+    },
+
+    model: function() {
+      dmp(this, 'model');
+      this._super.apply(this, arguments);
+    },
+
+    afterModel: function() {
+      dmp(this, 'afterModel');
+      this._super.apply(this, arguments);
+    },
+
+    redirect: function() {
+      dmp(this, 'redirect');
+      this._super.apply(this, arguments);
+    },
+
+    // Called each time the route's state changes
+    // **************
+
+    activate: function() {
+      dmp(this, 'activate');
+      this._super.apply(this, arguments);
+    },
+
+    setupController: function() {
+      dmp(this, 'setupController');
+      this._super.apply(this, arguments);
+    },
+
+    renderTemplate: function() {
+      dmp(this, 'renderTemplate');
+      this._super.apply(this, arguments);
+    },
+
+    deactivate: function() {
+      dmp(this, 'deactivate');
+      this._super.apply(this, arguments);
+    },
+  });
+
+  App.ApplicationRoute = App.MyRoute.extend({
+  });
+  App.IndexRoute = App.MyRoute.extend({
+  });
+  App.CourseRoute = App.MyRoute.extend({
+  });
+  App.UnitRoute = App.MyRoute.extend({
+  });
+  App.TopicRoute = App.MyRoute.extend({
+  });
+  App.TopicPageRoute = App.MyRoute.extend({
+  });
+  App.BlogRoute = App.MyRoute.extend({
+  });
+  App.YearRoute = App.MyRoute.extend({
+  });
+  App.YearPostRoute = App.MyRoute.extend({
+  });
+  App.MonthRoute = App.MyRoute.extend({
+  });
+  App.MonthPostRoute = App.MyRoute.extend({
+  });
+
+  </script>
+</head>
+<body>
+
+  <script type="text/x-handlebars" data-template-name="application">
+    <h2>application</h2>
+    {{outlet}}
+  </script>
+
+  <script type="text/x-handlebars" data-template-name="index">
+    <h2>index</h2>
+   {{#link-to 'year.post'}}go to year.post{{/link-to}}
+   {{#link-to 'topic.page'}}go to topic.page{{/link-to}}
+  </script>
+
+  <script type="text/x-handlebars" data-template-name="year/post">
+    year.post
+   {{#link-to 'application'}}go home{{/link-to}}
+   {{#link-to 'topic.page'}}go to topic.page{{/link-to}}
+   {{#link-to 'month.post'}}go to month.post{{/link-to}}
+  </script>
+
+  <script type="text/x-handlebars" data-template-name="topic/page">
+    topic.page
+   {{#link-to 'application'}}go home{{/link-to}}
+   {{#link-to 'year.post'}}go to year.post{{/link-to}}
+  </script>
+</body>
+</html>

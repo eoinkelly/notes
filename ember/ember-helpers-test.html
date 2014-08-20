@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Ember Starter Kit</title>
+  <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/normalize/2.1.0/normalize.css">
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <script src="http://builds.handlebarsjs.com.s3.amazonaws.com/handlebars-v1.3.0.js"></script>
+  <script src="http://builds.emberjs.com/tags/v1.5.1/ember.js"></script>
+
+<script>
+  App = Ember.Application.create();
+
+  App.Router.map(function() {
+    // put your routes here
+  });
+
+  App.IndexRoute = Ember.Route.extend({
+    model: function() {
+      return [
+        {color: 'red', shape: 'square'},
+        {color: 'blue', shape: 'circle'}
+      ];
+    }
+  });
+
+    /*
+      params:
+        * helpers get all the params you pass to them in the template followed by the 'options' object
+        * e.g. {{#doThing a b c}} -> function(a, b, c, options) ...
+        * options
+          * hash
+          * fn()
+            * how we evaluate the template we enclose.
+            * returns a string, takes a context as an arg
+            * options.fn(this) // call our block with the same context as ourselves
+          * inverse()
+            * the alternate block (always exists, a stub one is created if none supplied)
+
+      return
+        * this function should return a string (all handlebars templates return a string)
+
+      this
+        * is set to the context of the template that invoked us (usually its controller or component)
+        * ?? what happens inside an {{each}}
+        *
+
+
+  */
+  // Usage #1: simple "string maker"
+  // gets passed as many args as we supply in template + the options object
+  // by default these helpers are "string makers"
+  // if you pass this an object you can somehow have dependant keys?
+  Ember.Handlebars.helper('foof', function (thing, options) {
+    console.log(arguments);
+    return thing + " hi";
+  });
+
+  // Usage #2:
+  // you can use helper() to create sugar for the {{view}} helper
+  // Normal view usage: {{view App.SomeView}}
+  // Make some sugar: Ember.Handlebars.helper('something', App.SomeView);
+  // Sugary usage: {{something}}
+  // * this seems to be a special ember extension to Handlebars
+  // * if you pass helper() an instance of a view it knows what to do
+
+  // What is the diff between .helper() .regsiterHelper() .registerBoundHelper()
+</script>
+</head>
+<body>
+
+  <script type="text/x-handlebars">
+    <h2> Welcome to Ember.js</h2>
+
+    {{outlet}}
+  </script>
+
+  <script type="text/x-handlebars" data-template-name="index">
+    <ul>
+    {{#each item in model}}
+      <li>{{item}}</li>
+      {{foof this item "hi"}}
+      {{debugger}}
+    {{/each}}
+    </ul>
+
+  </script>
+</body>
+</html>

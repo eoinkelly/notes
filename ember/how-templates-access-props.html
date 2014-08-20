@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Ember Starter Kit</title>
+  <script src="bower_components/jquery/dist/jquery.js"></script>
+  <script src="bower_components/handlebars/handlebars.js"></script>
+  <script src="bower_components/ember/ember.js"></script>
+
+  <script>
+
+  App = Ember.Application.create();
+
+  App.Router.map(function() {
+    // put your routes here
+  });
+
+  App.IndexRoute = Ember.Route.extend({
+    model: function() {
+      return ['red', 'yellow', 'blue'];
+    }
+  });
+
+  App.IndexController = Ember.ObjectController.extend({
+
+    simple: 'simple controller property',
+
+    computed: function () {
+      return new Date().toString();
+    }.property(),
+
+    prommy: function() {
+      var prom = new Ember.RSVP.Promise(function(resolve, reject) {
+        // var value = { // NB value must be an object
+        //   name: "precious value",
+        //   age: 35
+        // };
+        var value = 'hello';
+
+        setTimeout(function() {
+          resolve(value);
+        }, 5000);
+      });
+
+      var PromiseProxy = Ember.ObjectProxy.extend(Ember.PromiseProxyMixin);
+
+      var proxy = PromiseProxy.create({
+        promise: prom
+      });
+
+      return proxy;
+      // proxy.get('isPending')     {{prommy.isPending}}
+      // proxy.get('isSettled')     {{prommy.isSettled}}
+      // proxy.get('isFullfilled')  {{prommy.isFullfilled}}
+      // proxy.get('isRejected')    {{prommy.isRejected}}
+
+      // If value is a primitive it will be in the `content` property
+      // proxy.get('content')       {{prommy.content}}
+      // * this is a bit ugly - the template has to know that the stuff it wants is in the  `content` property
+      // * could get around this with a separate static property + observer - this seems cleaner
+      // * so pattern is
+      //    * have the template ask for simple properties and make observers that will load values into them as required.
+
+
+      // If value is an object, you can get its properties
+      // proxy.get('name')          {{prommy.name}} // initially undefined, updates when promise resolves
+      // proxy.get('age')           {{prommy.age}}  // initially undefined, updates when promise resolves
+      // * here the template has to expect an object back - this could be OK
+
+    }.property(),
+
+
+    // Using obsever to manage async data coming in to a controller
+    // *****************
+    //
+    // in this case the static value of foo is what the template will get first aand
+    // then it will get the promise value when it resolves.
+    //
+    // Features of this approach
+    // * no promise proxy stuff, just using a standard promise then
+    // - this keeps the "setting of the property" separate to the property
+    // + this is neater than the object proxy thing.
+    // - this approach has no way of updating data
+    //
+    // object proxy advantages
+    //  + template can get the state of the promise (to decide what to show) - no extra static property
+    //  - it looks fancier
+    //  + the computed property encapsulates everything to do with it - there are no separate properties
+    //  ? is it bit bad that template knows about "isPending" ?
+    //  ? can object-proxy way react to changes in what the promise returns?
+
+    // here we are simulating the 'isPending' state with a separate static property
+    fooIsReady: false,
+    foo: null,
+
+    fooSetterUpper: function() {
+
+      // normally we would get a promise from somewhere else e.g. network
+      var p = new Ember.RSVP.Promise(function(resolve, reject) {
+        var value = 'hello';
+
+        setTimeout(function() {
+          resolve(value);
+        }, 5000);
+      });
+
+      var self = this;
+      p.then(function(value) {
+        self.set('foo', value);
+        self.set('fooIsReady', true);
+      });
+
+      // var promiseProxy = Ember.ObjectProxy.extend(Ember.PromiseProxyMixin).create({
+      //   promise: p
+      // });
+      // this.set('foo', promiseProxy)
+
+    }.on('init'),
+
+
+    // Q: Is there  a way to have something that gives an async value
+    // (promise) to a controller and that controller deals with it so that a
+    // template can handle it and also watches for changes to that async value?
+    //
+    // Assume the async value comes from the model layer
+    // ? how does ember deal with this out of the box?
+    //    if the route#model hook returns a promise then ember will wait for it to resolve before continuing
+    //    this means that ember will wait for all async values to be settled before proceeding farther into the route
+    //    so #model is the right place to fetch async values for the app.
+    //
+    // ? but how does ember "notice" changes to models?
+    //    those changes come either from the user or the network
+    //    changes from the network are the result of some request we kicked off earlier
+    //    and ember put in a run loop
+
+
+    // I guess what I want is to have one controller observe multiple models
+    // e.g. we have a controller that has 3 models:
+    // controller.get('model')
+    // controller.get('other')
+    // controller.get('thing')
+    // then any template using our controller as a context will react to changes in model|other|thing
+    //
+    // ??? will this work - how special is "model"
+    //    * template will auto add a controller prefix to property lookup {{bar}} becomes {{controller.bar}}
+    //    * controller will auto look in "model" property because it is a proxy for it so {{bar}} becomes {{controller.model.bar}}
+    //    * this latter bit won't work for other ???
+    //        {{foo}} become {{controller.other.foo}} = BROKEN
+    //        i think we'll need {{other.foo}}
+    //
+    //
+    // Do i need to do anything other than set() on the controller to setup an observing relationship
+    // to a model (which can be any ember object)???
+  });
+
+  </script>
+</head>
+<body>
+<pre>
+
+* {{foo}} is just sugar for {{controller.foo}} which becomes equivalent of `controller.get('foo')`
+    * If the controller cannot find `foo` in its own properties it will look in the model that it is proxying
+      but form the template POV it is getting it is getting the property from the controller
+    * This allows us to do {{bar}} where `bar` is a property of the model.
+* We can explicitly reach into the model with {{controller.model.bar}}
+    * you would only do this if you had a property with same name on controller as model property - seems like a bad idea.
+
+
+So templates will access all their lookups through `get()`. The implications of this are:
+  * they must get real values (not promises) OR things that behave like real values!
+  * DS.PromiseArray **looks like an array** to its clients - they don't know that it is wrapping a promise!
+      * they just see a value that starts at some initial value (maybe "undefined") and at
+        some point in the future changes to another value (the resolved value of the promise)
+What are the things that behave like real values?
+  * DS.PromiseArray (looks like an Ember.Array to its clients)
+  * ???
+
+How can i take a promise for a value and wrap it so that a template can use it?
+
+</pre>
+  <script type="text/x-handlebars">
+    <h2> Welcome to Ember.js</h2>
+
+    {{outlet}}
+  </script>
+
+  <script type="text/x-handlebars" data-template-name="index">
+    <ul>
+    {{#each item in model}}
+      <li>{{item}}</li>
+    {{/each}}
+    </ul>
+    <hr />
+    Name: {{prommy.name}}
+    Age: {{prommy.age}}
+    Value: {{prommy.content}}
+    <hr />
+    Foo: {{foo}},
+    fooIsReady: {{fooIsReady}}
+    <hr />
+      Simple: {{controller.simple}}
+    <hr />
+      Simple: {{simple}}
+<hr />
+model: {{controller.model}}
+<hr />
+<pre>
+this shows that the simple array we created in App.IndexRoute#model has been turned into an Ember.Array
+</pre>
+first: {{controller.model.firstObject}}
+    <hr />
+      {{computed}}
+    <hr />
+
+    {{linkedToUpdater}}
+    <hr />
+
+    {{foo}}
+    <hr />
+    {{simpleThingy}}
+  </script>
+</body>
+</html>

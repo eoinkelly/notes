@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+  <script src="bower_components/jquery/jquery.js"></script>
+  <script src="bower_components/handlebars/handlebars.js"></script>
+  <script src="bower_components/ember/ember.js"></script>
+  <script src="bower_components/ember-data/ember-data.js"></script>
+
+<script>
+App = Ember.Application.create();
+
+App.Router.map(function() {
+  // put your routes here
+});
+
+App.IndexRoute = Ember.Route.extend({
+  model: function() {
+    return this.store.find('form', 1);
+    // var f = App.Form.find(1);
+  },
+
+  afterModel: function (model, transition) {
+    model.get('formElements').then(function (elements) {
+      var te = elements.objectAt(0);
+      var ie = elements.objectAt(1);
+      debugger;
+    });
+  }
+});
+
+
+App.ApplicationAdapter = DS.FixtureAdapter.extend();
+
+App.Form = DS.Model.extend({
+  action: DS.attr('string'),
+  formElements: DS.hasMany('formElement', {polymorphic: true, async: true}) // camelized version of the other model's name
+});
+
+// App.FormElement = DS.Model.extend({
+//   form: DS.belongsTo('form')
+// });
+//
+// App.TextElement = App.FormElement.extend({
+//   placeholderText: 'enter your stuff here'
+// });
+//
+// App.InputElement = App.FormElement.extend({
+//   label: 'some default label'
+// });
+
+App.TextElement = DS.Model.extend({
+  // form: DS.belongsTo('form', { inverse: 'formElement'}), 
+  // you can explicitly set the name of the relationship on the other side that
+  // you want to connect to. This is handy when you have multiple relationships
+  // between two models
+  form: DS.belongsTo('form'), // 
+  placeholderText: DS.attr('string')
+});
+
+App.InputElement = DS.Model.extend({
+  form: DS.belongsTo('form'),
+  label: DS.attr('string', {defaultValue: 'foo'}) // this is how to set default values
+  // label: 'foo' // this is not correct
+  // label: DS.attr('string', defaultValue: function () { return someCalculation; } }) // default can also be a function
+});
+
+App.Form.FIXTURES = [
+  {
+  id: 1,
+  action: '/blah/foo.php',
+  formElements: [ // camelized, pluralized version of the other model's name
+     {
+       type: 'textElement', // camelized version of model name
+       id: 2
+     },
+     {
+        type: 'inputElement', // camelized version of model name
+       id: 3
+     }
+   ]
+  }
+];
+
+App.TextElement.FIXTURES = [
+  {
+    id: 2,
+    placeholderText: 'I am text element',
+    form: 1
+  }
+];
+
+App.InputElement.FIXTURES = [
+  {
+    id: 3,
+    label: 'I am label',
+    form: 1
+  }
+];
+
+// var f = App.Form.find(1);
+// f.get('formElements').then(function (x) {
+//   debugger;
+// });
+//
+</script>
+</head>
+<body>
+
+  <script type="text/x-handlebars">
+    <h2> Welcome to Ember.js</h2>
+
+    {{outlet}}
+  </script>
+
+  <script type="text/x-handlebars" data-template-name="index">
+    index template is I!
+  </script>
+</body>
+</html>

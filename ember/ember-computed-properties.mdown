@@ -1,0 +1,27 @@
+# Ember computed properties
+
+* if you do `.property('foo.bar.blah')` then this will be recomputed if any of
+    * foo
+    * bar
+    * blah
+  change i.e. changes to the parents will cause it to recompute.
+
+* if you want to be dependeant on an array use `foo.@each` as this will recalculate when any elements are added/removed/changed from foo (rather than when foo it self is added/removed)
+
+
+model.@each.unlocked // will recalc when unlocked property of any element of model changes
+model.@each.{unlocked,score} // will recalc when either 'unlocked' or 'score' property of any element in model changes
+  * note the brace expansion can only be at the end of the path
+{foo,bar}.blah // does not work
+
+# Computed property macros
+
+As well as those fancy computed properties you can use the computed property macros to give them names e.g.
+
+```js
+unlockedThings: Ember.computed.alias('model', 'unlocked')
+...
+}.property('unlockedThings')
+```
+
+This is probably a better way to go than making very complext computed property strings
