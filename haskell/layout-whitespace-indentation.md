@@ -4,6 +4,18 @@ Sources
 
 * http://en.wikibooks.org/wiki/Haskell/Indentation
 
+*Any* kind of whitespace is also a proper delimiter for lexemes.
+Implications:
+    newline is the same as space and tab as far as the compiler is concerned
+    Q: so why can't i make a funciton with all tokens starting in first line
+        does every file have an implicit module wrapper? if so I am always
+        within a where block
+        => all new statements must start at the same level of indent
+        => if i put my function bits all at same indent the compiler thinks they
+            are separate expressions
+
+QUESTION: is there an implict where at top of all haskell files?
+
 ## Indentation rules
 
 1. Code which is part of some _expression_ should be indented further in than the
@@ -93,3 +105,12 @@ let x = 12
     y = 14
     z = 45
     in x + y + z
+
+
+
+## Aside: `_`
+
+* `_` is a reserved identifier in Haskell
+* compilers are encouraged to supress warnings about unused variables that
+* _begin with_ it.
+* It is a way of telling the complier "I expect this to be unused"

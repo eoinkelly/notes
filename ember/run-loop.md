@@ -368,3 +368,36 @@ QUESTION: follow the trail of a click that results in some ember action from the
 event handler through ember.
 
 QUESTION: How many runloops does ember run in response to a single click?
+
+# run-loop-test results
+
+I setup a minimal ember app with a version of hte runloop that had comments
+added
+
+Ember ran 1 runloop to boot the app and show the page
+
+it ran a runloop heaps whenever I moved my mouse over the area of DOM that the ember app was in
+
+Then I turned off mousemove events to cut down on the noise
+
+QUESTION: is monitoring mousemove a perf problem?
+
+
+```js
+// Disable Ember's built-in events
+Ember.Application.initializer({
+  name: 'disable-built-in-events',
+
+  initialize: function(container, application) {
+    var events = container.lookup('event_dispatcher:main').events;
+    delete events.mousemove;
+    delete events.mouseenter;
+    delete events.mouseleave;
+  }
+});
+```
+
+It seems that ember runs exactly 1 runloop in response to each DOM event that it
+monitors
+
+A click fires 3 DOM events (mousedown, mouseup,  click (in that order)) so triggers 3 runloops
