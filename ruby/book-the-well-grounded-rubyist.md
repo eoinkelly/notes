@@ -7,13 +7,11 @@ Think of ruby as 3 levels of stuff
    your own).
 3. command line tools that _ship with_ ruby.
 
-Ruby code is made of _identifiers_
 
 # Ruby identifiers
 
-There are 4 types of identifier in ruby source code
-
-Every element in ruby source code is one of these:
+Thinking like a parser for a moment, *every* element in ruby source code is one
+of four types of _identifier_.
 
 1. Variables (4 types)
   1. Local
@@ -50,22 +48,29 @@ Every element in ruby source code is one of these:
     * approx 40 keywords in Ruby
 4. Method names
     * same naming rules as local variable except they can _end in_ `!`, `?`, `=`
-    * each of the extra naming suffixes has a meaning
+    * each of the extra naming suffixes has a meaning (by convention, not
+      enforced by ruby)
         * `!` this method is dangerous
         * `?` this method returns true|false (is a predicate)
         * `=` this method is a setter for an instance variable
-    * Ruby enforces any of `!?=` ending the method name e.g.
+    * Ruby does enforce any of `!?=` ending the method name e.g.
       `def foo?bar; puts "blah"; end` will create _#foo?_ that takes one arg
 
 Constructors in ruby can either be Foo.new(...) or some built-in objects have
 special syntax
 
+
 ```ruby
+# Object constructors with special syntax:
+
 "stringy" # String constructor
 23        # Fixnum constructor
 [3,5,6]   # Array constructor
 {a: 4}    # Hash constructor
 4.5       # Float constructor
+:foo      # Symbol constructor
+
+# others ???
 ```
 
 There is a difference between sending a message and the method that implements
@@ -73,14 +78,42 @@ it. In most case they are the same but with stuff like `method_missing` there is
 no garuantee that the message name will match the method name.
 
 
-"some styntatic structures that help you create and manipulate objects are not
-themselves objects"
-TODO: what are these?
+>some styntatic structures that help you create and manipulate objects are not
+>themselves objects
 
+
+* blocks are not strictly object (but can be converted into objects)
+* argument list - contains object but is not an object itself
+* keywords e.g. if, else
+* others ???
+
+**Everything in ruby does _evaluate_ to a single object!**
+
+This is true not only of variables, object literals, and method calls, but of
+control-flow structures, keyword-based statements, class and method definitions,
+and everything else.
+
+```ruby
+# Empty class delcaration evaluates to nil
+class Foo; end          # => nil
+
+# but actually class declarations evaluate to whatever their last expression returns
+class Bar; 4 + 5; end   # => 9
+
+
+# ... so we can use this to get hold of the singleton class for the class
+class Bar2; self; end   # => Bar2
+
+# of course using #singleton_class is easier
+Bar.singleton_class
+
+# conditionals always evaluate to an object
+# they evaluate to nil if no case matched
+```
 
 Bareword method calls (without an explicit receiver) use `self` as the receiver.
 Within a class `self` is a reference to the class. At the global level `self` is
-a refernce to the _default object_
+a refernce to the _default object_.
 
 ```ruby
 >> puts "hi"
