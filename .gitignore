@@ -4,3 +4,6 @@
 # haskell compile artefacts
 *.o
 *.hi
+
+node_modules/
+bower_components/
