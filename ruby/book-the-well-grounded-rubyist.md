@@ -81,7 +81,6 @@ no garuantee that the message name will match the method name.
 >some styntatic structures that help you create and manipulate objects are not
 >themselves objects
 
-
 * blocks are not strictly object (but can be converted into objects)
 * argument list - contains object but is not an object itself
 * keywords e.g. if, else
@@ -126,10 +125,9 @@ main
 Object < BasicObject
 ```
 
-* Objects can get methods and behaviours that their class did not give them in
-* 2 ways!
-    1. Re-open the object and stuff to its eigenclass. There are two syntaxes
-      for this:
+* Objects can get methods and behaviours that their class did not give them in two ways
+    1. Re-open the object and add stuff to its singleton class (eigenclass).
+       There are two syntaxes for this:
           1. `def ob_name.method_name`
           2. `class << ob_name`
     2. Refinements
@@ -224,6 +222,8 @@ _#trust_
 _#untrust_
 _#trusted?_
 
+TODO: find out more about this
+
 #### $SAFE
 
 All information from the outside world can be marked as tainted. When running in
@@ -254,12 +254,6 @@ TODO: find out why $SAFE isn't used much in rails?
       sitedir
 
 
-Q: do require and load force you to use files that end in .rb?
-
-TODO: understand exactly what what the: gem, require, load methods do
-
-up to 1.2.4
-
 Where does ruby code I use live?
 
 1. within _ruby_ binary.
@@ -286,8 +280,10 @@ Terminology
 
 How can I load code at runtime in ruby?
 
-1. `require`
 2. `load`
+1. `require`
+1. `require_relative`
+3. `gem` ???
 
 # load vs require
 * `load(FILENAME, wrap=false) # -> true`

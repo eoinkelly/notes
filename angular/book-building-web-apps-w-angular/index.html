@@ -1,0 +1,99 @@
+<html>
+  <head>
+  <style type="text/css" media="all">
+  .ng-scope {
+    outline: 1px solid red;
+  }
+  </style>
+    <script src="bower_components/angular/angular.js"></script>
+    <script type="text/javascript" charset="utf-8">
+
+    var app = angular.module('App', []);
+
+    app.controller('MainCtrl', function ($scope, $http) {
+
+      // Setup a variable in the outer scope that will be masked by the local
+      // variable within ngRepeat directive
+      $scope.country = {};
+      $scope.country.name = "Eoin";
+
+      $scope.countries = [
+        { name: "ireland", population: "4.5" },
+        { name: "new zeland", population: "5.5" }
+      ];
+
+      var promise = $http.jsonp('http://angularjs.org/greet.php?callback=JSON_CALLBACK', {
+          params: {
+            name: 'World'
+          }
+        });
+      promise.success(function (data) {
+          console.log(data);
+        });
+    });
+
+    // var myMod = angular.module('myMod', []);
+
+    // // myMod.value('foo', function () { // I must be a contstructor });
+    // // myMod.service('foo', function () { // I must be a contstructor });
+    // // myMod.factory('foo', function () { // I can be any func and can return any object });
+    // myMod.constant('foo', 'hello');
+    // myMod.variable('bar', 'goodbye');
+
+    // myMod.provider('complexThing', function () {
+    //     var config = {
+    //       continent: "Oceania"
+    //     };
+
+    //     return {
+    //       // this is the factory function that DI will call when some other module depends on 'complexThing'
+    //       $get: function ($http) {
+    //       },
+
+    //       // this is a setter for some config - it lets clients of this code
+    //       // override the config if they don't want the default value
+    //       setContinent: function (continent) {
+    //         config.continent = continent || config.continent;
+    //       }
+    //     }
+    // });
+
+    </script>
+  </head>
+  <body ng-app="App" ng-init="name = 'Eoin'">
+    <h1>Hello, {{name}}!</h1>
+
+    {{foo}}
+    {{bar}}
+    <form name="eoinForm">
+
+<pre>
+## Data Binding
+
+* angular creates a two-way data binding between an input element and a model
+    * changes in either side are reflected in the other
+    * ng-model directive tells angular the name of the attribute on $scope to bind to
+</pre>
+
+      <input ng-minlength="4" name="firstName" type="text" ng-model="name" />
+    </form>
+<pre>
+firstName $error: {{eoinForm.firstName.$error}}
+firstName valid: {{eoinForm.firstName.$valid}}
+Form $valid: {{eoinForm.$valid}} 
+Form $error: {{eoinForm.$error}} 
+</pre>
+    <pre>
+</pre>
+
+    <div ng-controller="MainCtrl">
+      <ul>
+        <li ng-repeat="country in countries" >
+          {{country.name}} has {{country.population}} people. 
+          I can get to the parent scope through $parent: {{$parent.country.name}}
+        </li>
+      </ul>
+    </div>
+
+  </body>
+</html> 
