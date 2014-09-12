@@ -5,6 +5,9 @@
 *.o
 *.hi
 
+# idris compile artefacts
+*.ibc
+
 bower.json
 node_modules/
 bower_components/
