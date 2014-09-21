@@ -1,14 +1,29 @@
 # Big Nerd Ranch guide to iOS programming
 
+## Introduction
+
+* Class names start with Uppercase
+* Method names start with lowercase
+* methods and functions are different things in ObjC
+    * method:
+        * attached to a class or instance
+        * they are not invoked directly - they are invoked by asking the
+          class|instance to perform them via the `[receiver methodName]` syntax.
+    * function:
+        * plain old C function
+        * applied by appending a parens wrapped list of arguments to the name `funcName(arg1, arg2)`
+
+* ObjC started as a preprocessor for C so all ObjC stuff can be desugared to C
+
 ## Chapter 1
 
 * It follows traditional MVC - every button, label etc. is a view
 * `UIView` is the parent class of views e.g. `UIButton < UIView`
 
-Q: what template do seasoned programmers use?
+QUESTION: what template, if any do seasoned programmers use?
 
 * Cocoa touch
-    * the UI "framework" (in the general sense, not apple specific) for iOS
+    * the UI "umbrella framework" for iOS
     * it contains Foundation, UIKit, GameKit, MapKit etc.
 
 * Foundation framework
@@ -38,27 +53,28 @@ R       | Replaced in the repository
 ?       | Not under source control
 
 
-#### Questions
+QUESTION: Should `.xcuserstate` files be saved to git? Xcode seems to think so.
 
-* SHould `.xcuserstate` files be saved to git? Xcode seems to think so.
-* xcode creates no .gitignore - what is a good one for xcode projects?
+QUESTION: xcode creates no .gitignore - what is a good one for xcode projects?
 
-### Xcode files
+### Your project on the filesystem
 
-If I create a project `Foo`
+If I create a project called `Foo` the Xcode creates 3 folders:
 
-```
-Foo.xcodeproj
-Foo/
-FooTests/
-```
+1. `Foo/Foo.xcodeproj`
+    * (appears as a bundle in Finder)
+    * stores Xcode metadata etc.
+2. `Foo/Foo/`
+    * application code goes in here
+    * has a plist
+        * TODO: what is the signifcance of this?
+3. `Foo/FooTests/`
+    * tests go in here
+    * has a plist
 
-* creates a folder with same name as the project
+## Project Navigator
 
-
-In `project navigator`
-
-There are 3 main levels of organisation
+In `project navigator` there are 3 main levels of organisation
 
 1. projects
 2. groups
@@ -69,7 +85,7 @@ These do not correlate well with the filesystem
 ### Terminology: Group
 
 * groups is the correct term for things with a yellow folder icon
-* groups do not correlate to the filesystem *at all*
+* groups do not correlate to the filesystem **at all**
 
 ### Terminology: Container
 
@@ -105,7 +121,7 @@ build settings, and target definitions.
 Snapshots are archives that include the current state of all project and
 workspace settings and all document files in the project.
 
-* comparing snapshots is not particularly easy (alighto it is possible)
+* comparing snapshots is not particularly easy (although it is possible)
 * they work by storing your source in a private git repo
 * they are a kind of wy of having xcode do automatic commits at certain points
 * for you e.g. after a successful build
@@ -114,10 +130,11 @@ workspace settings and all document files in the project.
 
 * Xcode autosaves when you build, commit, close the project or create a snapshot
 
-#### Questions
+QUESTION: snapshots seem to be a legacy attempt at some sort of SCM - can I ignore them?
 
-* how do snapshots and git work?
-* are snapshots a way of overcoming oddness of git + xcodeproj files?
+QUESTION: how do snapshots and git work?
+
+QUESTION: are snapshots a way of overcoming oddness of git + xcodeproj files?
 
 
 ### Adding existing files & folders to a project
@@ -159,10 +176,11 @@ filesystem separately.
 
 ### Building Interfaces
 
-Xcode GUI editor is an *object editor*
+Xcode GUI editor is an **object editor**
+
 * saves stuff in `xib` files (XML docs)
 * which are compiled into `nib` files during build
-* the `nib` files are put in the bundle
+* the `nib` files are put in the bundle and loaded at runtime by the app
 * can have many `xib` files per project (each one compiled to a `nib`)
 
 ### Terminology: Bundle
@@ -177,6 +195,7 @@ Xcode GUI editor is an *object editor*
 * stores its data as XML (how git friendly is this?)
 
 Scene
+
 ```
 controller = a reference to (a?/the?) controller in the app
     View = an instance of UIView
@@ -201,21 +220,56 @@ Standard value types
 * NSDate
 * NSNumber
 
-What do these do?
-* IBOutlet
-* IBAction
-
 * Contoller classes names end in `Controller`
-* The view sends user interactions to the controller, not directly to the models
+* By default Xcode creates a `AppDelegate` controller and a `ViewController` when you create a project
 
-By default Xcode creates a `FooAppDelegate` controller and a `FooViewController`
-when you create a project
+AppDelegate is a **controller** - I guess it is similar to ApplicationController in rails
+
+## Wiring views and controllers
+
+The view talks with the controller - it does **not** talk to models!
+
+### View -> Controller messages
+
+Examples
+    * I was clicked
+    * I got new text entered
+
+How to do the wiring
+
+1. Declare and implement the controller method that the view should invoke in code
+2. Wire it up to some action on the view visually
+
+* IBAction
+    * This is a type returned by methods that are triggered by view elements
+    * kind of says "make this method visible in the XIB as a target for a view"
+
+
+### Controller -> View messages
+
+Examples:
+
+* Change your text
+* Show or hide yourself
+
+* IBOutlet
+    * defines an "outlet" for the controller
+    * Decorate a pointer to a view element with this and I think you can do the visual wiring up in Xcode ???
+    * the `IBOutlet`s in the controller are its references to views
+
+Outlet = a pointer posessed by a controller that pointst to a view object
+
+How to do the wiring:
+
+1. Create a pointer to the appropriate UIView in the controller and decorate it as an "outlet"
+2. Wire it up visually in the XIB
+    * right-click on controller in storyboard, then drag from the outlet to the UIView you want it to point to.
 
 ### App delegate
 
 * Every iOS app has one.
 * it is a controller
-* it is the *primary controller* of the app
+* it is the **primary controller** of the app
 
 ### App entry
 
@@ -257,7 +311,7 @@ Images.xcassets
 
 * You still have to import the images into your project - the asset catalog just
   provides the link between the image and what is is used for in code (rather
-  than having the name do that)
+  than having the image file name do that)
 
 Advantages:
 
@@ -283,19 +337,111 @@ Advantages:
     * they create a hidden dependency between your Foo.m|h files and the prefix
       header which means your source files can't be shared with other projects
       without it.
+* Xcode 6 does not seem to make a PCH for new projects
 
 * Opinion: http://qualitycoding.org/precompiled-headers/
 
 ## plist files
-* Opinion: http://qualitycoding.org/precompiled-headers/
 
-
-* contain the runtime settings for the app
+* contain the **runtime** settings for the app
 * is an XML file.
 * has a fancy editor in Xcode
 * is copied into the bundle
 * named `ProjectName-Info.plist`
 * iOS asks this file about where to find the icons for the project
 
+## Launch images
+
+* BNR recommends that you make them look like the first screen of your app just without content
+    * a splashscreen would be jarring if it only appeared for a second
+* In Xcode 6 these seem to be actual storyboards rather than images
+
+## Questions
+
+Q: can you get at instance variables wihout a getter/setter in objc?
+
+Q: what does @selector do?
+
+Q: What are best practices for managing files in Xcode?
+
+## Is ObjC and whitespace
+
+In general ObjC seems to only require whitespace if there is no other character
+that can tell it where one token stops and another ends. It does not seem to care how much whitespace you put in or what kind it is (spaces, tabs, newlines)
+
+It does not care about whitespace in method signatures
+
+```objc
+// This is fine ...
+-(IBAction)changeLabel:(id)sender{
+    NSLog(@"you clicked!") ;
+}
+
+// as is this ...
+ - ( IBAction ) changeLabel : ( id ) sender {
+    NSLog(@"you clicked!") ;
+}
+
+// as is crazy shit like
+ - (
+    IBAction
+    )
+changeLabel
+:
+(
+ id
+ ) sender{
+    NSLog(@"you clicked!") ;
+}
+```
+
+It does not care about whitespace between a method name and the opening paren
+
+```objc
+// This is fine
+NSLog(@"you clicked!") ;
+
+// as is this
+NSLog (@"you clicked!") ;
+
+// as is this
+NSLog
+(@"you clicked!") ;
+```
+
+## The 'id' type
+
+* `void *` means "a reference to some random chunk o' memory with untyped/unknown contents"
+* `id` means "a reference to some random Objective-C object of unknown class"
+
+* In GC only or "GC supported modes (of waht?) the compiler will emit write barriers around `id`
+* Never use `void *` and use `id` as little as you can
+* An `NSObject *` is preferable to `id` because the compiler can better validate it.
 
 # Chapter 2 - Objective C
+
+The method names in a class must be unique - there is no overloading based on parameter type. This does not mean that methods cannot share some labels e.g.
+
+```objc
+// this is ok
+- (void) doThingTo: (NSString *)stuff {
+}
+- (void) doThingTo: (NSString *)stuff with: (NSString *)otherThing {
+}
+```
+
+## nil
+
+* The zero pointer
+* Java: `null`
+* C: `NULL`
+* Used to represent the absence of an object
+* is falsy when used in boolean tests
+
+You can send any message to `nil` in ObjC and nothing will happen - opposite of Ruby!
+
+## Destroying objects
+
+Set the pointer that points at it to `nil`
+
+TODO: add release retain to this story

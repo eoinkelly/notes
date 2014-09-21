@@ -47,7 +47,7 @@
     * Mostly useful to Apple only
 
 3. Application accessible
-    * You bundle them wiht your app so it can always access them and doesn't
+    * You bundle them with your app so it can always access them and doesn't
       depend on something else in your system
 
 ## An alternative to using a framework
@@ -79,7 +79,7 @@
         * libtool can also create dynamic libs
     * ar
         * `ar -t ./path/to/mylib.a` lists the `.o` files in the archive
-    * lumps of code that the static linker can add to your app at _build time_
+    * lumps of code that the static linker can add to your binary at _build time_
     * used for smaller lumps of code (presumably because it adds to your binary size)
 * Dynamic library (aka dylib or framework)
     * also called _shared libraries_ or _dylibs_
@@ -95,7 +95,7 @@
       name ends in the form `frameworkName.framework/Versions/versionName/frameworkName`
       or the form `frameworkName.framework/frameworkName`.
     * e.g. UIKit, Foundation
-    * You can put anything in a framework that you can put in an _application bundle_.
+    * You can put anything in a framework that you can put in an _application bundle_ e.g. image assets.
     * You can store multiple versions of a framework in one _framework bundle_ `.framework`
     * Ideally you want it so users of your framework just have to import one header file
     * You can mark the headers in your framework bundle as public and private to control

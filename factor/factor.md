@@ -78,3 +78,21 @@ the things can be named anything to help document the word
 
 * Words are organised into _Vocabularies_ (as functions are organised into
   modules in other langs)
+
+From that google tech talk:
+
+`[a,b]` is a word that takes two numbers off the top of the stack and creates a
+range out of them.
+
+```factor
+: factorial ( n -- n! )
+  1 [a,b] product ;
+
+factorial 100
+```
+
+* code is data in factor - you can quote words to prevent them from being
+  executed and instead pass them around like data
+* words that take other words as arguments are called _combinators_
+* There are no control flow keywords in factor - all control flow is done using
+* _combinators_

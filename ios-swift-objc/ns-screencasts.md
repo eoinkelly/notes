@@ -40,9 +40,8 @@ NSMutableArray *ary = [[NSMutableArray alloc] init];
 
 1. Methods named `init`, `new`, `copy` the returned object has a retain count of
    and you must release the object when you are finished with it.
-      * Any object returned from any other method is assumed to be autorelease.
+    * Any object returned from any other method is assumed to be autorelease.
 2. If you recieve an object and intend to hold on to it you need to `retain` it.
-
 
 How to know when you need to release?
 
@@ -78,7 +77,6 @@ UILabel *myLabel = [[self labelWithText:@"my label"] retain];
 * Objective C has a run loop
 
 TODO: find out more about it
-
 
 # Format of a header file
 
@@ -122,13 +120,22 @@ TODO: find out more about it
 ```objc
 #import "ourclassname"
 
-// The implementation file repeats the @implementation stuff
+// The implementation file has 2? sections
 
+// section 1. @interface
+// *****************************************
+// seems mostly a repeat of header ???
+// QUESTION: is it exactly the same? why is it repeated?
+@inderface ClassName ()
+@end
+
+// Section 2: Implementation
+// **************************
 @implementation ClassName : Parent
 
-// There are ??? sections in here
+// There are ??? sub-sections in here
 
-// 1. Instance method implementations
+// sub 1. Instance method implementations
 // ******************************
 
 // Implement getter and setter the hard way:
@@ -157,7 +164,7 @@ TODO: find out more about it
   [super dealloc]; // should be last line
 }
 
-// 2. Class method implementions
+// sub 2. Class method implementions
 // *****************************
 
 @end
@@ -174,7 +181,7 @@ TODO: find out more about it
 // other methods in the class)"
 ```
 
-# Is ObjC pass by reference or value
+# Is ObjC pass by reference or value?
 
 * It is a strict superset of C so always passes in a value (even if that value is
   often a pointer)

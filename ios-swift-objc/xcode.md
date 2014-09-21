@@ -45,4 +45,13 @@ In Xcode UI you can configure schemes via
     * Analyze
     * Archive
 
-* schemes can be shared ???
+* schemes can be shared somehow ???
+
+
+## How to clean intermediate files in Xcode
+
+* `cmd+shift+k` = clean project
+* hold option, click 'Product' menu, choose 'Clean build folder'
+
+Cleaning a project deleted the derived data. Cleaning the build folder deletes
+the folder that the derived data is stored in.
