@@ -5,7 +5,7 @@
 * bundler does dependency resolution all at once
 * ruby gems does it one gem at a time
 
-### The Gemspec file
+### Bundler & Gemfile
 
 The problem bundler solves:
 
@@ -17,6 +17,7 @@ The problem bundler solves:
   loaded first (which would make A happy)
 
 
+#### Where can I pull gems from?
 
 * Bundle supports git repos without a `.gemspec`
 * Bundler support getting multiple gems out of the same repo (if it has multiple gemspecs in its root)
@@ -27,12 +28,14 @@ The problem bundler solves:
 # git
 gem 'foo', '1.1', git: 'git://github.com/foo/foo.git' # give version if no .gemspec file
 gem 'foo', github: 'git ...' # github repos are directly supported
-gem 'foo', require: 'foo/blah' # if gem name differes from what require statement needs
+gem 'foo', require: 'foo/blah' # if gem name differes from the feature name that should be loaded
 gem 'foo', git: '...', ref: '00023', branch: '4.4-foo', tag: 'hi-there'
 
 # load from filesystem
 gem 'foo', path: '~/path/to/gem'
 ```
+
+#### Available bundler commands
 
 `bundle install`
 
@@ -46,15 +49,24 @@ gem 'foo', path: '~/path/to/gem'
         * rails seems to be currently: `/Users/eoinkelly/.rbenv/versions/2.1.1/lib/ruby/gems/2.1.0/gems/rails-4.1.1`
     * TODO: learn how to share gems between rbenv rubies (or at least copy them locally - i think I have a lot of dupes
 
-```
+```sh
 # upgrade just production (in normal 3 env setups)
-bundle install --without development test
+$ bundle install --without development test
+
+# show all gems that have newer versions in the current Gemfile
+$ bundler outdated
+
+# Only show gems mentioned in the Gemfile - this is similar to `npm outdated`
+# in node world
+$ bundler outdated | grep "Gemfile"
+
+QUESTION: does this show gems that have no version constraints in your gemfile but have not been updated?
 ```
 
 * bundle outdated = show outdated gems
 * bundle viz = make a PNG of gem dependencies
 * bundle show = show info about a single gem
-    * shows _where_ a bundled gem is installed
+    * shows the full path to where a bundled gem is installed
 * `bundle update`
 * `bundle package`
     * packages all the gems into the `vendor/cache` dir
@@ -62,22 +74,68 @@ bundle install --without development test
         * allows you to use private gems in production
         * allows you to avoid external dependencies at deploy time
 
+bundle pack
+    * QUESTION: think it copies all your gems into `vendor/cache`
+    * handy for deployment if you are constrained on the server
 
-### When do I need to use `bundle exec`
+#### How exactly does bundler work?
+
+Bundler is basically a `$LOAD_PATH` manipulator with "bulk require" feature built-in.
+
+* More on bundler http://bundler.io
+
+    TODO: dig more into bundler - it can do a lot of stuff!
+
+You have to setup bundler in your application code before you `require` any
+gems.
+
+```ruby
+# I **think** this is only required on very old ruby
+# require 'rubygems'
+
+
+# This is all you need to bring Bundler into your project - it will:
+# 1. cause bundler to search for a Gemfile
+# 2. **Prepend** the gems in there to $LOAD_PATH
+#
+# Note it will not actually require any features from those gems - the only
+# things now added to $LOADED_FEATURES are those features that bundler itself
+# requires
+require 'bundler/setup'
+
+# At this point bundler has tweaked $LOAD_PATH but no features have yet been
+# required
+
+# Now you can either require the features you need manually or ask bundler to
+# do it for you by calling `Bundler.require` and passing it the names of the
+# groups in the Gemfile that you want to load features for.
+# * :default is the name of the top-level Gemfile group
+Bundler.require(:default, :eoin)
+```
+
+In rails, the `config/boot.rb` file is what has `require 'bundler/setup'`
+
+Reasons not to use Bundler.require:
+
+1. You have a very small Gemfile so the extra require statements are more
+   explicit and probably clearer.
+2. If many of your gems have feature names that differ from their gem name, you
+   will have to tell Bundler about it in the Gemfile (via `require:
+   'gem/blah'`) so it might be easier to just explicitly require.
+
+#### When do I need to use `bundle exec`
 
 * bundler builds a _bundle_ of gems from your Gemfile
 * executes the given script in the context of the current bundle
 * running the script without using `bundle exec` will work as long as the gem is
   installed and doesn't conflict with any gems in your bundle.
 
-* More on bundler http://bundler.io
-
-* TODO: dig more into bundler - it can do a lot of stuff!
 
 ### Binstubs
 
-* shell scripts in `/bin` that run built-in rails command line tools (bundle,
-  rails, rake, spring) _in the context of your current bundle_.
+* shell scripts (written in ruby) in `/bin` that run built-in rails command
+  line tools (bundle, rails, rake, spring) _in the context of your current
+  bundle_.
 * saves you having to do `bundle exec foo` each time
 * they should be added to git
 * `rake rails:update:bin` will re-make them (if upgrading from Rails 3)
@@ -90,11 +148,47 @@ bundle install --without development test
     e.g. `rails runner "puts User.all.count"`
     * handy for places where you can't run an interactive environment
 
+An example of the sass binstub
+
+```ruby
+#!/usr/bin/env ruby
+#
+# This file was generated by Bundler.
+#
+# The application 'sass' is installed as part of a gem, and
+# this file is here to facilitate running it.
+#
+
+require 'pathname'
+ENV['BUNDLE_GEMFILE'] ||= File.expand_path("../../Gemfile",
+  Pathname.new(__FILE__).realpath)
+
+require 'rubygems'
+require 'bundler/setup'
+
+load Gem.bin_path('sass', 'sass')
+```
+
+#### Neat hack to default to using the binstub
+
+```
+export PATH=".git/safe/../../bin:$PATH"
+```
+
+* Bundler puts shell scripts that will run `rails`, `rspec` etc. in the
+  `bin/`directory of your project
+* If you use these you don't need to prefix anything with `bundle exec` anymore.
+* For maximum convenience we want to be able to just run `rails` not
+  `./bin/rails` but adding `./bin` to your PATH is pretty terrible from a
+  security POV.
+* The hack above lets you mark a repo as "safe" by `mkdir .git/safe` and from
+  then on running `rails` will find the version in `bin/rails`.
+
 ### Rails boot process
 
-When you boot a rails app there are 3 files responsibilie for setting it up
-They are run in the order shown below every time you boot the rails
-environment.
+When you boot a rails app there are 3 files responsible for setting it up They
+are run in the order shown below every time you boot the rails environment.
+
 The starting point file for a rails app is ???
 
 1. `config/boot.rb`
@@ -111,7 +205,7 @@ The starting point file for a rails app is ???
     * configures the app e.g.
         * timezone
         * autoload paths
-    * `Rails.groups` is an array of the Gemfile groups (I think. TODO check this)
+    * `Rails.groups` is an array of the **active** Gemfile groups
         ```
         [1] pry(main)> Rails.groups
         [
@@ -131,9 +225,9 @@ The starting point file for a rails app is ???
 * Load path modification `config.autoload_paths`
 
 You can inspect the current configuration in rails console via
+`MyAppName::Application.config.<some config var name>`
 
 ```ruby
-# MyAppName::Application.config.config_option
 MyAppName::Application.config.autoload_paths
 MyAppName::Application.config.log_level
 

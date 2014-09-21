@@ -1,0 +1,7 @@
+source 'https://rubygems.org'
+
+gem "pg"
+
+group :eoin do
+  gem "nokogiri"
+end
