@@ -524,6 +524,16 @@ It uses `$LOADED_FEATURES` to keep track.
 
 Like `require` it works on _features_ not _files_
 
+A relative path passed to `require` will **always be relative to the CWD of the process**
+
+dunder = double underscore
+
+```ruby
+File.expand_path("../../some_file", __FILE__)
+# or
+require_relative '../some_file'
+```
+
 ### RubyGems
 
 Before rubygems if you wanted to add a new feature to your system you had to

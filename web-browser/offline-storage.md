@@ -25,7 +25,7 @@
 ## LevelDB
 
 * is google implementation of IndexedDB
-* is used by Google to implement IndexedDB support in Chrom
+* is used by Google to implement IndexedDB support in Chrome
 * can be used as a backend for Riak
 * soon to be a backend for MariaDB
 * is very fast - outperforms SQLite and Kyoto Cabinet (according to wikipedia)
@@ -67,12 +67,100 @@ allowing them to work offline on subsequent visits to the page
 * http://alistapart.com/article/application-cache-is-a-douchebag
 
 QUESTION: are there newer, better alternatives to this?
-## Conclusions
 
-PouchDB seems the most interesting in the browser
+# Browser storage technologies
+
+http://www.webdirections.org/blog/webstorage-persistent-client-side-data-storage/
+
+1. cookies
+1. local storage
+1. session storage
+
+session = while the "top level browsing context" (window or tab) remains open and the URL points at the same "origin" (domain)
+
+To have access to each other’s webStorage, tabs or windows must have the same
+
+1. protocol
+1. subdomains
+1. top-level domain
+
+### sessionStorage
+
+* stores data during a session and is removed once a session is finished.
+* if user goes to another site and navigates back it is still in the same session
+* is **not** shared between tabs/windows
+* is shared with "sub frames" (? iframes or html frames) on the same page
+* some browsers will persist it across a browser crash, some do not
+
+```js
+
+var ss = window.sessionStorage;
+if(ss) {
+    try {
+        // use it
+        ss.setItem('key', "value");
+        ss.getItem('key');
+        ss.getItem('notThere'); // => null
+        // returns null if key does not exist
+    } catch (e) {
+        //test if this is a QUOTA_EXCEEDED_ERR
+    }
+
+} else {
+    // fallback to cookies or something else
+}
+```
+
+Gotchas
+
+* All data is stored as strings (so objects must be serialized first)
+* JS strings are UTF-16 encoded so each char takes up 2 bytes which effectively halves the available space
+* Browsers do not provide reliable access to it during private browsing
+    * safari: returns null for everything
+    * chrome: lets you read previous values but does not persist localStorage
+* webStorage (includes both localStorage and sessionStorage) is synchronous!
+
+Limits
+
+* Spec recommends 5MB per domain (16 byte JS chars means we get 2.5 MB)
+    QUESTION: as total for session + local or each?
+* `setItem` will throw an error if you try to write past the limit
+
+Events
+
+Only fired when storage is **changed**
+
+QUESTION: is it fired on session, local or both?
+
+```js
+window.addEventListener('storage', function(storageArea) {
+
+}, false);
+```
+
+* The event is mostly not received in the window/tab that changed the storage -
+  it is received in the other open windows/tabs for that domain (some browsers
+  do also issue it in window/tab that madt the change)
+
+### localStorage
+
+* localStorage is almost identical to sessionStorage, but the data stored
+  persists indefinitely, until removed by the application.
+
+Gotchas
+
+* iOS 5/6 will sometimes just delete it
 
 ## TODO:
 
-* listen to web ahead offline eipsode
-* spend a pomodoro digging into indexeddb directly
-    * ? is it usable without a wrapper?
+http://www.webdirections.org/resources/getting-offline-appcache-localstorage-for-html5-apps-that-work-offline-john-allsopp/
+
+QUESTION: is there a viable alternative to app cache
+
+QUESTION: read up more on how to sanely use appcache
+    allsop talks about it on webahead
+    http://alistapart.com/article/application-cache-is-a-douchebag
+
+
+
+
