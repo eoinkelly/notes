@@ -12,12 +12,14 @@ They allow AR to not load other objects from the DB until they are needed
 * @owner
     * the object that holds the association
 * @target
-    * the actual associated object, known as the
+    * the actual associated object
 * @reflection
     * The kind of association any proxy is about. That's an instance of the
       class ActiveRecord::Reflection::AssociationReflection.
 
 ```ruby
+# pseudo code
+
 class PseudoAssociationProxy
   def initialize
     @target
@@ -47,6 +49,32 @@ p.authors.where(name: 'blah')
 
 http://pivotallabs.com/advanced-proxy-usage-part-i/
 
+
+```ruby
+class CourseIntroduction < ActiveRecord::Base
+
+  # param {object} = the instance of the model we are defined in
+  # self = an instance of ActiveRecord_Relation that is part of Page (the other end of the relationship)
+  has_many :pages, ->(obj) {
+    # self and the param are NOT the same in here
+    puts self #
+    puts self.class # Page::ActiveRecord_Relation
+    puts obj # the current instance of CourseIntroduction
+    puts obj.class # CourseIntroduction
+    positioned
+  }, as: :page_collection, dependent: :destroy
+end
+```
+
+Aside: neat way of implementing JS's 'arguments' in ruby
+
+    args = method(__method__).parameters.map { |arg| arg[1] }
+    puts "Method failed with " + args.map { |arg| "#{arg} = #{eval arg}" }.join(', ')
+
+=============================================
+=============================================
+=============================================
+=============================================
 There are 6 types of association
 
 1. belongs_to
@@ -164,3 +192,94 @@ class Grouping < ActiveRecord::Base
 end
 ```
 
+# Scopes
+
+In old days Rails provided the find method and you could pass it a hash of conditions
+
+```ruby
+Book.find(:all, {
+    conditions: ['title LIKE ?', '%bob%'],
+    order: 'title'
+})
+
+```
+
+These were not reusable
+
+
+Rails 2.1 provided "named scopes" via `named_scope` This was improved because
+
+1. it allowed for reuse
+2. it allowed for composition and chaining
+
+```ruby
+# named scopes example
+class Author < ActiveRecord::Base
+    # note: scope is a hash
+    named_scope :published, { :conditions => 'books_count > 0' }
+
+    # this scope is a lambda because it needs to take an arg
+    named_scope :by_first_name, lambda { |name|
+        # returns a hash with conditions for the scope
+        { :conditions => ['first_name = ?', name] }
+    }
+end
+
+Author.published.by_first_name('bob')
+```
+
+
+Rails 3
+    named_scope becomes scope
+    converted the options form the scope hash into sepearate "query methods"
+    :conditions becomes #where
+    :order becomes #order
+    all the query methods are still composable by chaining together
+
+```ruby
+# named scopes example
+class Author < ActiveRecord::Base
+    # note: scope is a hash
+    scope :published, where('books_count > 0')
+
+    # this scope is a lambda because it needs to take an arg
+    scope :by_first_name, lambda { |name|
+        # returns a hash with conditions for the scope
+        where(['first_name = ?', name])
+    }
+end
+
+Author.published.by_first_name('bob')
+```
+
+### An example where using raw SQL is not ideal
+
+LIKE is case sensitive on Postgres but not other Dbs
+Postgres provides ILIKE for case insensitive search but other dbs do not support ILIKE
+So we should arel for queries involving LIKE to the x-db compliance - we need this especially if we are writing a library
+
+```ruby
+# named scopes example
+class Author < ActiveRecord::Base
+
+    def self.name_contains(name)
+        where('name LIKE ?', "%#{name}%") # <-- problem because LIKE
+    end
+end
+
+Author.published.by_first_name('bob')
+```
+
+the arel version
+
+```ruby
+# named scopes example
+class Author < ActiveRecord::Base
+
+    def self.name_contains(name)
+        where(self.arel_table[:name].matches("%#{name}"))
+    end
+end
+
+Author.published.by_first_name('bob')
+```
