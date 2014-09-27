@@ -10,7 +10,8 @@ Set theory has serveral parallels with _logic_
 
 Definition of a **Set**
 
-1. A collection S of distinct _elements_ or _members_ such that given an arbitrary object X it can be determined whether X appears in S.
+1. A collection S of distinct _elements_ or _members_ such that given an
+   arbitrary object X it can be determined whether X appears in S.
 2. Sets do not contain duplicate elements!
 3. Sets do not have an ordering
 4. Elements can be absolutely anything - even other sets
