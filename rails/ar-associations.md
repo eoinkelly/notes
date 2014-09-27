@@ -283,3 +283,17 @@ end
 
 Author.published.by_first_name('bob')
 ```
+
+
+An example of how raw SQL can break merging scopes
+```ruby
+class Author < ActiveRecord::Base
+    scope :by_name, ->(name) { where('name = ?', name) }
+end
+
+class Book < ActiveRecord::Base
+    scope :by_name, ->(name) { where('name = ?', name) }
+end
+
+Author.by_name('Sun Tzu').joins(:book).merge(Book.by_name('The art of war')) # <-- Problem
+```

@@ -1,0 +1,9 @@
+[package]
+
+name = "Hello World"
+version = "0.0.1"
+authors = ["eoin@eoinkelly.info"]
+
+[[bin]]
+
+name = "hello_world"

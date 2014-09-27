@@ -243,7 +243,6 @@ _#trust_
 _#untrust_
 _#trusted?_
 
-TODO: find out more about this - why doesn't rails use it?
 
 #### $SAFE
 
@@ -255,7 +254,9 @@ a tainted object.
 
 more at http://phrogz.net/programmingruby/taint.html
 
-TODO: find out why $SAFE isn't used much in rails?
+Rails apps work almost exclusively with tainted data so they don't use the
+taint and trust mechanisms provided by ruby. Similarly running a rails app with
+$SAFE set to a high level would probably stop it functioning.
 
 ### ruby config
 
@@ -432,23 +433,34 @@ environment so if you need real isolation you can
 1. start a subprocess
 2. use "fork and exec"
 
-    TODO what is diff between these?
+    TODO: what is diff between these?
 
-    > In no circumstance will any local variables in the loaded file be propagated to the loading environment.
-    what exactly happens when you load a file that has unscoped variables
+Wrapped load does an `Module.new.instance_eval` so `self` within it will point
+at the anonymous module which is thrown away and normal load just does a file
+read and eval so it will share semantics with `eval`
 
 #### Aside: eval
 
-what is binding?
-you can pass binding as an optional second arg to pry
-also binding.pry
+    TODO
+
+#### Aside binding
+
+Objects of class `Binding` encapsulate an _execution context_ at some place in
+the code and store this context so you can use it again in future.
+
+Things that are in an _execution context_:
+
+* variables
+* methods
+* value of self
+* an iterator block
+
+* `Kernel#binding` will return a new binding that wraps up whatever execution context you are in when you called it.
+* Instances of `Binding` can be passed as a second arg to `eval` to establish an environment for evaluation
+
+Pry adds a `pry` method to all bindings and when you invoke `binding.pry` you are calling it on the current execution context
 
 
-basically wrapped load does an Module.new.instance_eval
-    so self within it will point at the anonymous module which is thrown away
-and normal load just does a file read and eval so it will share semantics with eval
-
-=> to understand load, I need to understand eval
 #### Aside:
 
 When you create a constant in global scope in ruby it is added to `Object` - it
@@ -612,6 +624,15 @@ GEM_HOME is where gems will be installed (by default).
 
 They don't seem to be set when using rbenv so they are obviously just one way to do it?
 
+#### The gem method
+
+```ruby
+# when you want to use a gem but not the most recent version installed on your system:
+gem "foo", "3.6.9"
+```
+
+QUESTION: how does this match up with require?
+
 #### Why does "requiring a gem" seem to work?
 
 * In reality `require` works with _features_.
@@ -709,25 +730,6 @@ $ ri -T String#upcase
     * -T shows only tasks that have descriptions
     * -P shows all tasks and their prerequisites
 
-
-### gem
-
-~/.gem stores ???
-
-GEM_HOME
-GEM_PATH
-
-gem install foo
-gem uninstall foo
-
-
-```ruby
-# when you want to use a gem but not the most recent version installed on your
-# system:
-gem "foo", "3.6.9"
-```
-
-QUESTION: how does this match up with require?
 
 # Extras
 

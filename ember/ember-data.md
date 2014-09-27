@@ -16,9 +16,9 @@
 
 ### Records (instances of models)
 * are instances of models
-* identified by 
+* identified by
 
-1. a **globally unique** id and 
+1. a **globally unique** id and
     * can be generated client side.
         ???
 2. model name
@@ -79,6 +79,14 @@ Expects JSON:
       name: 'Eoin'
     }
   }
+  ```
 * irregular keys can be mapped with a custom serializer
 
 
+# How do you tell the store to empty records from its cache?
+
+store.unloadAll('post'); unload all records of type 'post' from the store
+
+store.unloadRecord(record);
+
+record.transitionTo('deleted.saved');
