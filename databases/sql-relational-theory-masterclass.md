@@ -12,41 +12,41 @@ CJD contends that
 
 * SQL is complex
 * It is very hard to test exhaustively so you need disipline
-* That disipline of using the SQL "relationally"
+* That disipline is _using SQL "relationally"_
 
-Using SQL relationally is bood because
-
-* helps you write correct programs
+Using SQL relationally is good because helps you write correct programs
 
 This course will
 
-1. Cover relational theory fairl (explaining what it is but often not why)
+1. Cover relational theory (explaining what it is but often not why)
 2. Apply that theory to SQL practice
 
-CJD believes SQL deviates from relational theory
+CJD believes SQL deviates from relational theory in a number of ways
 
-SQL omits some useful parts of relational theory
-SQL implements some parts of relational theory incorrectly
-SQL also impements some things that have nothing to do with relational theory
+1. SQL omits some useful parts of relational theory
+2. SQL implements some parts of relational theory incorrectly
+3. SQL also impements some things that have nothing to do with relational theory
 
 When he refers to SQL he is referring to the standard 2008 version
 
-SQL and the relational model are NOT the same thing.
+Key point: SQL and the relational model are NOT the same thing.
 
 Questions we will ask and answer the following questions:
 
 1. What exactly is the _first normal form_?
-1. What is the connection between _relations_ and _predicates_?
-1. What is _semantic optimization_?
-1. What is an _image relation_?
-1. What is _semidifference_ and why is it important?
-1. Why doesn't _deferred integrity checking_ make sense?
-1. What is a relation variable?
-1. What is _prenex normal form_?
-1. Can a relation have an attribute whose values are themselves relations?
-1. Is SQL relationally complete?
-1. What is the _Information Principle_?
-1. How does XML fit into the relational model?
+2. What is the connection between _relations_ and _predicates_?
+3. What is _semantic optimization_?
+4. What is an _image relation_?
+5. What is _semidifference_ and why is it important?
+6. Why doesn't _deferred integrity checking_ make sense?
+7. What is a relation variable?
+8. What is _prenex normal form_?
+9. Can a relation have an attribute whose values are themselves relations?
+10. Is SQL relationally complete?
+11. What is the _Information Principle_?
+12. How does XML fit into the relational model?
+
+Consider the rough mapping of terms from relational theory to SQL
 
 Relational term | SQL Term
 ----------------|----------
@@ -54,7 +54,6 @@ Relational term | SQL Term
     tuple       | row
     attribute   | column
 
-Note that the above are similar but not the same
 
 SQL terms: operator, function, procedure, routine, method all pretty much mean
 the same thing so this course will use "operator" to cover all these.
@@ -70,12 +69,11 @@ Examples of "operators"
 * SUM
 * GROUP BY
 
-
 Compomises and tradeoffs should be made from a position of strong foundational
 knowledge.
 
 
-Codd's original relational model
+## Codd's original relational model
 
 3 parts to the model
 
@@ -117,22 +115,262 @@ Codd's original relational model
     can never produce anything but relations so things always stay in the same
     area.
 
-    Ted Codd defined the following 8 operations:
-        * Intersection
-        * Union
-        * Difference
-        * Product
-        * Restrict
-        * Project
-        * Join
-        * Divide
     * Relational assignment
         * allows you to take an expression of the algebra and assign it to a variable
             C = A JOIN B (C remembers the value of A JOIN B)
 
-UP TO 23:00
+Relational algebra and relational calculas are related ways of thinking about the relational model
+
+You can formulate the relational model in either of 2 ways:
+
+1. Structure + Intergrity + Relational algebra + an assigment operator
+2. Structure + Intergrity + Relational calculus + an assigment operator
+
+Ted Codd defined the following 8 operations:
+
+1. Intersection
+    * takes two relations
+    * returns a realtion containing only tuples that appear in both
+2. Union
+    * takes two relations
+    * returns a relation that contains all the tuples in both
+3. Difference
+    * has a direction to it like subtraction in arithmetic
+    * A - B is the tuples that appear in A but do not appear in B
+4. Product
+    * is really carthesian product
+    * takes two relations and returns one
+    * Given a relation with N tuples and a relation with M tuples it returns a
+      relation with all possible combinations of tuples N x M
+5. Restrict
+    * Gets a relation as input and picks certain tuples out of it. The output is itself a relation
+    * sometimes called "select" but it is not the same as SQL SELECT
+    * seems to be bit like SQL WHERE
+6. Project
+    * Takes a single relation and picks out certain attributes. The output is itself a relation
+    * seems to be bit like SQL SELECT
+
+7. Join
+    * has many flavours
+        * most important is "natural join" so when CJD says "join" he means "natual join"
+    * takes two relations that have a common attribute
+    * uses the common attribute to create a new relation that merges the original relation on the common attribute
+    * natual join =all possible combinations where values amtch in the common attribute
+8. Divide
+    * most complex of all the operators
+    * takes two relations and returns one
+    * input relation 1 = "the dividend relation"
+    * input relation #2 = the "divisor relation"
+    * result = the "quotient relation"
+    * returns a relation the _attributes_ in ??? which have a corresponding attribute that matches _every_ attribute in the "divisor"
+        * TODO: understand this? is it useful?
+        * https://www.simple-talk.com/sql/t-sql-programming/divided-we-stand-the-sql-of-relational-division/
+
+
+The relational model is a "data model". The phrase "data model" has two different meanings when used:
+
+1. An abstract, self contained, logical definition of the objects and operators of an _abstract machine_ that users will interact with.
+    * objects allow us to model structure
+    * operators allow us to model behaviour
+   The physical realisation _on_ a real machine of the abstract machine in 1.
+    * how the data is stored on disk (rowwise, column wise etc.)
+    * whether there are fast access paths (indexes)
+    * what IO occurs under the covers of a join
+   For example, a "join" is part of the abstract machine but the indexes,
+   optimisations etc. that go to implementing it are part of the implementation.
+2. A model of the persistent data of some particular enterprise
+    * CJD uses "model" in the first sense
+
+
+Don't confuse the model and the implementation. For example:
+* keys = model concept
+* index = implementation concept used to implement keys
+
+If we stick to the model (which is the user interface) then we can chagne the
+implementation. This translates into protection of our investment in data,
+traing. Once of the big goals of teh Codd model was physical data independance
+because prior to the relational model it didn't really exist.
+
+The model has nothing to do with performance. In this sense, "joins are slow"
+does not make sense because "join" is a model property so has nothing to do
+with speed. You can talk about the implementation of joins.
+
+
+# Video 2
+
+### Anatomy of a relation
+
+Every relation has
+
+1. A heading
+    * a (mathematical) set of (attribute-name, type-name) pairs
+    * Note: Underneath every attribute is a type
+2. A body
+    *  a (mathematical) set of tuples that conform to the types in the heading
+
+The no. of attributes in a relation = _the degree_ (no. columns in table)
+The no. of tuples in the body = _the cardinality_ (no. data rows in table)
+
+### Relations and duplicates (nope!)
+
+* If a relation is a mathmatical set then by defnition it cannot contain
+  duplicate tuples.
+* Relations **NEVER** contain duplicate tuples.
+* SQL does not enforce this.
+
+### Relations and ordering (they don't have any)
+
+Relations are sets so they have not built-in ordering.
+
+No row ordering:
+* The tuples of a relationare unordered (again a relation is a set). When we
+  draw a table we have to pick an ordering but ignore it because it isn't
+  really there.
+
+No column ordering:
+
+* The _attributes_ have no ordering left->right Again when we draw on paper we
+  need to pick an order - ignore it, it is not really there
+* The relation heading is also a set => no ordering
+    consequences
+        * there is no "first column"
+        * there are no "previous" and "next" columns
+    SQL departs from the relational model here and CJD hates it.
+
+
+From the rules about sets we can say:
+
+Every subset of a tuple is a tuple
+Every subset a heading is a heading
+    even if your heading has only one element it is still a heading
+Every subset of a body is a body
+    even if your body has only one tuple it is still a body
+
+Equality of tuples
+
+Two tuples are equal iff
+1. they have the same attributes ((attr-name, attr-value) pair)
+2. attributes with the same name have the same value
+
+We call tuples "duplicates" if they are equal.
+
+Many features of the relational model rely on the above e.g. the defn of join, the defn. of what a key is.
+
+
+### Relations are always normalized (1st normal form)
+
+* Relations are always normalized.
+    * At every row and column intersection there is always exactly one value of the appropriate type
+* The terms "normalized" and "in the first normal form" mean exactly the same thing.
+* It is possible to define higher levels of normalizeation e.g. 2nd normal form
+
+
+A relation and a table are not the same thing!
+A table can be regarded as a concrete _picture or sketch_ of an abstract idea
+Tables don't capture some aspects of relations well e.g. lack of ordering
+A table is a picture of a relation - it suggests things about the relation that are not true
+
+Base relations vs derived relations
+
+Base relations
+    * are the primary ones that you think are important enough to be part of the database
+    * always have names
+
+
+Derived relations
+    * are derived from base relations using queries
+    * sometimes have names too e.g. in a view (virtual relation)
+    * views are sort of saved functions that
+    * users can operate on views as if they were base relations.
+    * We can think of views as being materialized in memory at the time the
+      query is run (in reality this would be terriblly slow and would not work
+      for updates so does not happen)
+    * views are saved sub-queries that are run when the referencing query is run
+    * A view **is** a relation and a table **is** a relation. Similarly a view **is** a table
+
+It is all relations!
+
+* snapsnots are relations
+* views are relations
+* base tables are relations
+* query results are relations
+
+CJD thinks it is important not to make a distinction between relations that are
+stored on disk and those that are in memory - you should not care.
+
+e.g. we have a suppliers table but a "suppliers in paris" is a derived relation
+`CREATE TABLE` in SQL creates _base relations_
+
+The relational model has **nothing** to say about physical storage so it is incorrect to say that a "base relations are physically stored" and "derived relations are virtual". All the RM cares about is that the base relations can be somehow figured out from what **is** stored.
+
+
+### Relvars
+
+* So far what we have called "relations" are relational _values_
+* A relvar is a variable whose permitted values are relations
+
+There are 2 types of relvar
+
+1. Base (or "real") relvar - one that is not virtual
+2. Virtual relvar - One that is defined in terms of a relational expression in
+   terms of one or more other relvars.
+
+Table names in SQL are variables that can take on a value that is a relation
+
+`CREATE TABLE t ...`
+
+* t is a relation variable whose values are relation values - its values will change over time
+* t is a relation variable whose current value is a particular relation
+
+
+* What you really have in a database is _relation variables_. Rather than
+  saying "this DB has 4 tables in it" we should say "this DB has 4 relvars in
+  it"
+
+* When you do an insert/update/delete you are assigning _relation values_  to _relation variables_
+* insert, update and delete can be expressed in terms of assignment.
+    `DELETE S WHERE (CITY = paris)`
+    is just a way of saying
+    `S := S WHERE NOT (CITY = paris)`
+    (S is assigned the result of the expression on RHS)
+
+When he says "relation" it is an abbreviation of "relation value". Similarly
+when he says "relvar" he means "relation variable"
+
+CJD has his own "Tutorial D" language which will be used in this course to
+illustrate points where SQL is not "relational enough"
+
+### Values vs variables
+
+* Value
+    * an _individual constant_ (in logic terms)
+    * no location in time or space
+        * a value is alwyas the same no matter when in time you ask about it
+        * they are available for use anywhere in the universe at any place and
+          any time e.g. you can use the integer 4 on multiple countries at the
+          same time to represent very different things
+    * can't be changed (immutable)
+    * can be represented in memory (by some encoding)
+* Variable
+    * a holder for the representation of a value
+    * has a location in time and space
+        * the value of a variable depends on the time it is considered at
+        * e.g. the integer 4 in a variable only has one meaning in space e.g.
+          if it means "we have 4 apples" then it does not mean "we have fired 4
+          missles"
+    * can be updated
+
+OO confuses these thing sometimes
+    Are objects values or variables?
+
+Values and variables can be arbitrarily complex
+
+"All logical differences are big differences" - Wittgenstein
+
+UP TO END VIDEO 2
 
 ## Aside: null
+
 * represents the absence of information
 
 ## Aside: Arithmetic
@@ -146,7 +384,13 @@ UP TO 23:00
     4. division.
 * also includes more advanced operations, such as manipulations of percentages,
   square roots, exponentiation, and logarithmic functions.
-* Arithmetic is performed according to an order of operations.
+* Arithmetic is performed according to an order of operations: PEMDAS
+    * Parenthese
+    * Exponent and root
+    * Multiply
+    * Divide
+    * Add
+    * Subtract
 * Any set of objects upon which all four arithmetic operations (except division
   by 0) can be performed, and where these four operations obey the usual laws,
   is called a _field_.
@@ -166,6 +410,19 @@ UP TO 23:00
   standing for numbers.[6] This allowed proofs of properties that are true no
   matter which numbers are involved.
 
+As it developed, algebra was extended to other non-numerical objects, such as
+vectors, matrices, and polynomials.
 
-As it developed, algebra was extended to other non-numerical objects, such as vectors, matrices, and polynomials.
+## Aside: Calculus
 
+* Calculus is the mathematical study of change,
+* in the same way that geometry is the study of shape and
+* algebra is the study of operations and their application to solving equations.
+
+It has two major branches
+
+1. differential calculus (concerning rates of change and slopes of curves),
+2. integral calculus (concerning accumulation of quantities and the areas under
+   and between curves)
+
+These two branches are related to each other by the fundamental theorem of calculus.
