@@ -102,24 +102,24 @@ knowledge.
         * has to do with foreign keys
         * if B references A then A must exist
 3. Manipulation
-    * Relational algebra (a collecitons of operations on relations)
+    * Relational algebra (a collection of operations on relations)
     Any algebra is a collection of operations on things e.g. matrix algebra
     operates on matrices, relational algebra operates on relations. Each
     operation take a number of relations as input and creates new relations as
     output.
 
     Because the output is the same type of thing as the input, then the output
-    can be used as input for other operations.
-
-    This is called the "closure property" of the algebra - these operataions
-    can never produce anything but relations so things always stay in the same
-    area.
+    can be used as input for other operations. This is called the "closure
+    property" of the algebra - these operataions can never produce anything but
+    relations so things always stay in the same area.
 
     * Relational assignment
         * allows you to take an expression of the algebra and assign it to a variable
             C = A JOIN B (C remembers the value of A JOIN B)
 
-Relational algebra and relational calculas are related ways of thinking about the relational model
+Relational algebra and relational calculas are related ways of thinking about
+the relational model
+    TODO: I don't quite get that statement
 
 You can formulate the relational model in either of 2 ways:
 
@@ -149,7 +149,6 @@ Ted Codd defined the following 8 operations:
 6. Project
     * Takes a single relation and picks out certain attributes. The output is itself a relation
     * seems to be bit like SQL SELECT
-
 7. Join
     * has many flavours
         * most important is "natural join" so when CJD says "join" he means "natual join"
