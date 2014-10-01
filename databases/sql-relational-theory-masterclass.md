@@ -433,24 +433,22 @@ UP TO END VIDEO 2
 
 # Video 3 Domains and types part 1
 
-Relations are defined "over" types
-Every attribute of a relation is of some type
+Relations are defined "over" types - every attribute of a relation is of some type.
 
-The relational model implicitly requires support for user defined types
-=> users can also make user defined operators to operate on those types
+The relational model implicitly requires support for user defined types. This
+implies that users can also make user defined operators to operate on those
+types (otherwise the user defined types wouldn't be much good)
 
-An "object relational" system done right is just a "relational" system done right.
-
-"object relational model" stuff in 90's had one new thing over early SQL systems:
+CJD contends that an "object relational" system done right is just a
+"relational" system done right. The "object relational model" stuff in 90's had
+one new thing over early SQL systems:
 
 1. allow users to define their own types
 
-CJD contends that was a feature that should have been there from day 1
+CJD contends that was a feature that should have been there from day one.
+CJD:"The so called object realtional model is just the relational model"
 
-"The so called object realtional model is just the relational model"
-
-
-Attributes of relationals can have any type. They can be
+Attributes of relations can have almost any type e.g.
 
 * matrices
 * booleans
@@ -458,22 +456,22 @@ Attributes of relationals can have any type. They can be
 * XML documents
     * the right way to put xml in a table is for the XML document to be an attribute of a tuple
 
-They cannot be
+They cannot be:
 
 * pointers
     * Pointers are deliberatle excluded by Codd
-* relations have types themselves. A relation r cannot have an attribute which has the same as r itself
+* relations have types themselves.
+    * A relation r cannot have an attribute which has the same as r itself
 
-There are system defined types and users can define their own types - these should look the same to the user.
+There are system defined types and users can define their own types - these
+should look the same to the user. The relational model perscribes a system type
+of BOOLEAN. Real systems also include CHAR, INTEGER, RATIONAL
 
-The relational model perscribes a system type of BOOLEAN. Real systems also include CHAR, INTEGER, RATIONAL
-
-
-What is the difference between a pointer and a foreign key?
-There are many differences including:
-
-* pointers have a direction: A -> B but you cannot get back to A from B without another pointer
-* foreign keys go both ways
+Question: What is the difference between a pointer and a foreign key?
+Answer: There are many differences including:
+    * pointers have a direction: A -> B but you cannot get back to A from B without
+      another pointer.
+    * foreign keys go both ways
 
 CJD has a whole paper on it somewhere.
 
@@ -483,56 +481,66 @@ Domains and Types are the same thing
 2. Data value atomicity and first normal form
 
 
-"Everybody" knows that two values can be tested for equality if the come from the same domain e.g.
+"Everybody" knows that two values can be tested for equality iff the come from
+the same domain. Consider
 
 SNO = user defined type for supplier numbers
 PNO = user defined type for part numbers
 
 S.SNO = SP.SNO /* ok, same domain(type) */
-S.SNO = P.PNO /* bad, comparing different domains */
+S.SNO = P.PNO /* invalid, comparing different domains */
 
-Any relational operation that calls for an implicit or explicit equality comparison between values of different domains should fail at complile time.
+Any relational operation that calls for an implicit or explicit equality
+comparison between values of different domains should fail at complile time.
 
-explicit = WHERE A = B
-implicity = a join
+explicit equality check e.g. `WHERE A = B`
+implicit equality check e.g. `JOIN`
 
-Any system that implements this "cross domain checking" before comparisions would need a way to override it because sometimes the user will know more than the system does.
+Any system that implements this "cross domain checking" before comparisions
+would need a way to override it because sometimes the user will know more than
+the system does.
 
 Codd has "domain check override" versions of some of his operators
 
-Codd's domain checking says
-    P.QUANTITY = P.WEIGHT /* not ok because not meaningful */
-    P.QUANTITY - P.WEIGHT = 0 /* is ok in domain checking but still not meaningful*/
-both the expressions above have the same semantics but different syntax
-this is odd
+Codd's domain checking says:
 
-CJD claims that domain check override makes no sense at all
+    P.QUANTITY = P.WEIGHT       /* not ok because not meaningful */
+    P.QUANTITY - P.WEIGHT = 0   /* is ok in domain checking but still not meaningful*/
+
+both the expressions above have the same semantics but different syntax. This
+is odd. CJD claims that domain check override makes no sense at all
 
 Consider
+
     S.SNO = 'X4' /* valid, might even be TRUE */
     P.PNO = 'X4' /* valid, might even be TRUE */
     S.SNO = P.PNO /* invalid! */
+
 How can this be?
 
+SNO and PNO have different types but each type might have the same
+representation  e.g. a character string
 
-SNO and PNO have different types but each type might have the same representation  e.g. a character string
+There should be a _logical difference_ (see above) between a type and
+representation. The representation of the type should be kept hidden from the
+user - it is an implementation detail.
 
-There should be a _logical difference_ (see above) between a type and representation.
-The representation of the type should be kept hidden from the user - it is an implementation detail
+CJD recommends having _selector_ operators, named the same as each type that
+convert the underlying representation of it into the type and a corresponding
+operator for the inverse operation
+    It is not clear whether any implementations actually do this ???
 
-CJD recommends having _selector_ operators, named the same as each type that convert the underlying representation of it into the type and a corresponding operator for the inverse operation
+This mechanism provides the domain checking when we need it and the ability to
+override it when we need it it would provide "Cross domain checking" in a
 
-This mechanism
-provides the domain checking when we need it and the ability to override it when we need it
-it would provide "Cross domain checking" in a
-clean
-fully orthogonal
-no ad-hoc
-way
+* clean
+* fully orthogonal
+* no ad-hoc
 
-These selectors are invoked *implicitly* by the system.
+way.
 
-Basically he is tlaking about type coercion between types and their underlying representations
+These selectors are invoked *implicitly* by the system. Basically he is talking
+about type coercion between types and their underlying representations.
 
 S.SNO = 'X4' /* implicitly coerce the chracter string into an SNO type */
 
@@ -542,51 +550,181 @@ P.WEIGHT * P.QUANTITY /* valid, -> WEIGHT, result is total weight */
 P.QUANTITY + P.WEIGHT /* invalid, not a sensible question, caught by type system */
 SPX.QUANTITY + SPY.QUANTITY /* valid, -> QUANTITY, both are quantities */
 
-CJD syas that what Codd called domains are actually types and he will refer to them as such.
+CJD says that what Codd called domains are actually types and he will refer to
+them as such from now on.
 
-Data value atomicity
+### Data value atomicity
 
-First normal form (1NF) requires that every attribute value in every tuple be atomic
-SO what does "atomic" mean?
-Codd defines "atomic" as "nondecomposable by the DBMS (excluding certain special functions)"
-not an awesome definition.
-What do things like strings, times, dates (which are decomposable)?
-we just consider them to be sets
-    string is a set of characters
-    date is a set of numbers
-this might be a bad design but it is a legal relation
+* First normal form (1NF) requires that every attribute value in every tuple be atomic.
+* So what does "atomic" mean?
+* Codd defines "atomic" as "nondecomposable by the DBMS (excluding certain special functions)"
+* Not an awesome definition.
+* Where do things like strings, times, dates (which are decomposable) fit in that definiton?
+* Easy! We just consider them to be sets!
+    * string is a _set_ of characters
+    * date is a _set_ of numbers
+* this might be a bad design but it is a legal relation
 
-if our "atomic" values are really sets then the notion of "atomic" depends on what level you are looking at.
-sometimese we pretend stirngs are indivisible and sometimes we do not
-There is no absolute notion of atomicity!o
-
-You can consider these sets as relations themeselve (they are sets
-
-SQL does not have table valued columns - this is one way that SQL departs from relational theory
-SQL does have columns that contian values that are "multisets" of rows
-
-To sum up
-
-Domains (therefore attributes) can contain absolutely _any_ values: arrays, lists, XML documents. The values can be arbitrarily complex without violating 1NF
-
-Domain tripeq Type
-
-Since the relational model supports user defined types it implies that it also supports user defined operations (types would be useless without them)
-=> An "Object relational" DBMS done right is just a relational DBMS done right!
+If our "atomic" values are really sets then the notion of "atomic" depends on
+what level you are looking at. Sometimes we pretend stirngs are indivisible and
+sometimes we do not. There is no absolute notion of atomicity!
 
 
-The question of what types are supported is independant of (orthogonal to) the question of support for the relational model
-OR
-Types are orthogonal to tables
+You can consider these sets that represent decomposable atoms as relations
+themeselves. Ideally SQL would be able to model this with table valued columns.
+However SQL does not have table valued columns - this is one way that SQL
+departs from relational theory.
 
-The relational model has never perscribed data types - it is not true to say that the relational model can only handle numbers, strings but cannot handle complex types
-    Sure the model supports it but do implementations support making user defined types???
-    It seems postgres at least can http://www.postgresql.org/docs/9.2/static/sql-createtype.html
+SQL does have columns that contian values that are "multisets" of rows.
+    TODO: que ???
+
+To sum up:
+
+Domains (therefore attributes) can contain absolutely _any_ values: arrays,
+lists, XML documents. The values can be arbitrarily complex without violating
+1NF
+
+    Domain ≣ Type
+
+Since the relational model supports user defined types it implies that it also
+supports user defined operations (types would be useless without them). This
+implies that an "Object relational" DBMS done right is just a relational DBMS
+done right!
 
 
+    The question of what types are supported is independant of (orthogonal to)
+    the question of support for the relational model
+
+                OR
+
+    Types are orthogonal to tables
+
+The relational model has never perscribed data types - it is not true to say
+that the relational model can only handle numbers, strings but cannot handle
+complex types! You can make your own types.
+
+* It seems postgres at least can http://www.postgresql.org/docs/9.2/static/sql-createtype.html
+
+Aside: "orthogonal to" is similar usage to "independant of"
+
+A type is a basically a _named set of values_.
+    a named set of all possible values of a particular kind
+
+Every value is an instance of exactly one time (unless there is type inheritance)
+This can also be phrased as "types are disjoint"
+    If a value _is_ an INTEGER it is _not_ a STRING
+Every value carries its type with it.
+
+Things that are declared to be a single type?
+
+* Every attribute of every relation
+* Every variable and relvar
+* Every result every operator that returns a result
+* Every parameter of every operator
+
+To say that variable V is of type T is to say:
+Every value v that can legally be assigned to V is of type T
+
+To say that V is a variable is to say that V is "assignable to" or "updateable"
+
+Every expression denotes some value and is of some type
+This type is set by the return value of the outermost operator
+
+    (a + b) * (c + d) /* return type is whatever return type of * is */
 
 
+Each type has an associated set of oeprators "associated with" it
+associated means operator takes this type as an input
 
-"view definitions in the "catalog""
-what is the catalog???
+For user defined types I have to define my own operators on it.
 
+6 steps to define your own type
+
+1. Specify a name for it
+2. Specify the values that make up the type
+3. Specify a physical representation
+4. Specify a selector op for selecting values of the type
+5. Specify operators that apply to values and variables of the type
+    * must include `=` (equality comparison), `:=` (assignement)
+6. For those operators that return a result, specify the type of the result so that
+    * DBMS knows which expressions are legal
+    * DMBS knows that the expected type of all operations will be before it runs them
+
+More logical differences
+
+Argument vs Parameter
+
+Parameter is the formal operand in terms of which the operator is defined
+When you invoke the operator you give it an argument which replaces the parameter
+
+Operator vs Invocation
+??
+the invocation supplies a particular argument to replace the parameter
+think it is like diff between function and function application
+
+
+A type is a set of values
+
+The values that make up a given type exist before the DB exists, while the DB exists and after the DB exists i.e. they have no place in time and space.
+
+So making a type is just naming a collection of values that already exist
+"We are interested in a certain set of values and we are going to call them type T"
+
+Values do not _belong_ to a particular database
+No database owns the type INTEGER
+
+## Informal distinction of Scalar types vs non-scalar types
+
+Type T is scalar if it has no user visible components, otherwise it is nonscalar
+
+Values and Variables of type T are scalar if T is scalar, nonscalar otherwise
+
+
+Relation types are nonscalar because you can see the insides
+Integer has no visible components so is scalar
+
+"Scalar" is just "atomicity" by another name so there is no strict defn.
+
+So are tuples
+
+Array is not a type, it is a type generator
+    Using the array type generator you can generate all sorts of specific array types
+    array with 100 elements of type CHAR
+    array with two dimensions 5 x 3, all of type INTEGER
+
+Relations are also generated types created using the `RELATION` type generator rather than an explicit `TYPE` statement
+Similarly tuples can be created with the `TUPLE` type generator
+
+Note there is a logical difference between a tuple and a relation that contains a single tuple
+
+END VIDEO 3
+
+Scalar types in SQL
+
+BOOLEAN
+CHARACTER(N)
+CHARACTER VARYING(N)
+FLOAT(P)
+NUMERIC(P,Q)
+DECIMAL(P,Q)
+INTEGER
+SMALLINT
+
+DATE
+TIME
+TIMESTAMP
+INTERVAL
+
+BLOB(N)
+CLOB(N)
+BINARY(N)
+BINARY VARYING(N)
+XML
+BIGINT
+
+ARRAY
+MULTISET
+REF
+
+Note that any of these that take arguments are really type generators e.g.
+CHARACTER(N) makes a particular character type.
