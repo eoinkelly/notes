@@ -7,3 +7,7 @@ authors = [ "Eoin Kelly <eoin@rabidtech.co.nz>" ]
 [[bin]]
 
 name = "haiku_maker"
+
+[dependencies.http]
+
+git = "https://github.com/chris-morgan/rust-http"
