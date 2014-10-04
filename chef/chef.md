@@ -193,18 +193,217 @@ To create a new user in the databag do
 
 1. ???
 
-current policy diffs in /etc/sudoers
+
+## Add a new staff member to the users data bag
+
+The reference docs for this are https://github.com/sethvargo-cookbooks/users
+
+This will setup an account for them on each production server once
+`chef-client` is run on that server again.
+
+In this example _janedoe_ is the name of the new user you are setting up.
+
+#### 1. Get stuff from the new staff member
+
+Get them to send you:
+
+1. A public SSH key (will allow them to SSH without a password)
+2. A hashed version of their chosen password. They can get this by running:
+    ```
+    $  openssl passwd -1 "a password of their choosing"
+    ```
+    Note the space at the start of the command - this keeps it out of your shell history
+
+#### 2. Add them to users data bag
+
+Create a new item in the `users` data bag by running (on your own machine):
+
 ```
-## Polytech only
-vagrant ALL=(ALL) NOPASSWD:ALL
-rabidadmin ALL=(ALL) NOPASSWD:ALL
+$ knife data bag create users janedoe
+```
 
-# Members of the group 'admin' may gain root privileges
-%admin ALL=(ALL) NOPASSWD:ALL
+Use this template as a starting point and replace the appropriate bits with their info
 
-## all other servers
-# Members of the group 'admin' may gain root privileges
-%admin ALL=(ALL) ALL
+```json
+{
+    "id": "janedoe",
+    "groups": [
+        "admin"
+    ],
+    "uid": 1234,
+    "full_name": "Jane Doe",
+    "shell": "/bin/zsh",
+    "ssh_keys": [
+        "THEIR SSH KEY HERE"
+    ],
+    "manage_files": true,
+    "password": "THEIR PASSWORD HASH HERE"
+}
+```
+
+#### 3. Run chef client on each production server
+
+`chef-client` will pull down the `users` data bag and make the users on the system match it.
+
+```
+you@local $ ssh you@someproductionserver.co.nz
+you@someproductionserver $ sudo chef-client
 ```
 
 
+## Aside
+
+```
+# see which groups you are in
+$ groups
+
+# see info about all users
+$ sudo cat /etc/passwd
+```
+
+# To delete a user
+
+```
+sudo userdel newuser
+sudo rm -rf /home/newuser
+```
+
+# Setup a new node to use chef using the server
+
+https://wiki.opscode.com/display/chef/Configuring+Chef+Client
+Starting with a vanilla Ubuntu 14.04 install
+
+first create a node on the server with a runlist
+
+
+then bootstrap the node
+```
+# to bootstrap my vagrant vm, run on my workstation
+
+# remove old host from ~/.ssh/known_hosts
+# remove the client and node from the chef server
+
+trying
+no_lazy_load true
+in client.rb to stop 403 errors
+
+knife bootstrap 33.33.33.10 -x vagrant -N vagrant_kete_test --sudo -r "chef-cookbook::recipe-name"
+
+# this starts chef-client running as a daemon on the target box
+ruby /usr/bin/chef-client -d -P /var/run/chef/client.pid -c /etc/chef/client.rb -i 1800 -s 20 -L /var/log/chef/client.log
+# it defaults to running once every hour (with a splay of 20 seconds)
+
+
+me@workstation $ berks vendor cookbooks
+```
+
+# test a cookbook with vagrant
+
+First r
+
+
+
+# Upload cookbook to chef server
+
+```
+cd path/to/your/chef/repo
+berks install
+berks upload
+```
+
+# Users vs clients
+
+"clients" are instances of "chef client" running on a node
+"users" are humans who have access to the chef server
+
+As a human using the WebUI of the chef server, the "chef-webui" client is actually what is talking to the chef server.
+
+client and user is to distinguish between human and program
+
+users can use the chefAPI and (through the chef-webui "client") the webUI
+clients can only use chefAPI
+
+users can have the admin flag
+clients can have admin or validator flags
+
+
+Examples of client: chef-validator
+
+* an instances of a "chef client"
+* The validator is a special client that has one purpose only: to allow nodes to register themselves as clients on the Chef server.
+* It's used from inside the node on the first Chef run.
+* Once the node is registered, it's good practice to delete the validator key from the node.
+
+
+# Comms between chef client and server
+
+Comms between client and server are always encrypted.
+
+The _first_ time chef-client is run it:
+
+1. is not registered as a "client" on the server
+2. does not have a private key to use for exchanging encrypted messages between client & server
+
+so it cannot connect to the server as the representative of the node it is on.
+
+To get around this 'chef-client' on the node connects as the 'chef-validator'
+client the first time it talks to the server. In this first conversation it:
+
+1. registers itself as a new client on the server
+2. registers its node in the node list (using the same name as the client!)
+3. gets a keypair for future communication with the server - on the node it is stored in `/etc/chef/client.pem`
+
+Once this first conversation is complete, the 'chef-validator' can be deleted from the node
+I think this just deletes `/etc/chef/validation.pem` from the client
+You can use the `delete_validation` recipe from the `chef-client` cookbook to do this.
+
+    QUESTION: how is "chef-client" a cookbook as well as a binary?
+                does the binary run the cookbook?
+
+WHen you use `knife` binary to access the server - you access it as a "user" of the server, not a client.
+
+Implications
+
+* chef-validator is not a separate process
+* it is confusing that `chef-client` the binary is easily confused with "chef clients" (the accounts that robots have on the server)
+* you can think of `/etc/chef/validation.pem` as a sort of "bootstrapping private key"
+* scripts/programs/robots connect to the server as _clients_, humans connect as _users_ (via knife)
+
+
+# ohai
+
+* Does "operating environment" detection e.g.
+    * how much memory
+    * what software installed
+of the node that is run on
+* has plugins that let it understand more things e.g.
+    * nginx plugin lets it understand the nginx config
+
+I think it is run by `chef-client` binary to discover stuff about the node that is then pushed into the "node" structure on the chef server.
+
+# chef solo
+
+A _limited functionality_ version of `chef-client` that does not use a chef server
+
+It requires that the cookbook and all its dependencies be on the same physical disk as the node
+
+It does not support things taht would require the chef server to work e.g.
+* node data storage
+* search indexes
+* centralized distribution of cookbooks
+
+It can be run as a daemon
+It is configured using the `chef-solo` executable
+    => it is NOT the `chef-solo` executable.
+
+It can pull cookbooks from a filesystem dir or a URL that has a .tar.gz
+
+It is configured by the `solo.rb` file
+    where???
+
+* It looks for _data bags_ as JSON files in `var/chef-solo/data_bags`
+    * can be configured with `data_bag_path` in `solo.rb`
+* It looks for _roles_ as JSON or ruby DSL files in `var/chef/roles`
+    * can be configured with `roles_path` in `solo.rb`
+* It looks for _environments_ as JSON or ruby DSL files in `var/chef/environments`
+    * can be configured with `environments_path` in `solo.rb`

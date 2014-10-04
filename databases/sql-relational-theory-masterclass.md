@@ -607,12 +607,13 @@ complex types! You can make your own types.
 
 Aside: "orthogonal to" is similar usage to "independant of"
 
-A type is a basically a _named set of values_.
-    a named set of all possible values of a particular kind
+## More about types
 
-Every value is an instance of exactly one time (unless there is type inheritance)
-This can also be phrased as "types are disjoint"
-    If a value _is_ an INTEGER it is _not_ a STRING
+A type is a basically a _named set of values_.
+It is a named set of all possible values of a particular kind.
+
+Every value is an instance of exactly one type (unless there is type inheritance)
+This can also be phrased as "types are disjoint". If a value _is_ an INTEGER it _is not_ a STRING.
 Every value carries its type with it.
 
 Things that are declared to be a single type?
@@ -633,7 +634,7 @@ This type is set by the return value of the outermost operator
     (a + b) * (c + d) /* return type is whatever return type of * is */
 
 
-Each type has an associated set of oeprators "associated with" it
+Each type has a set of operators "associated with" it
 associated means operator takes this type as an input
 
 For user defined types I have to define my own operators on it.
@@ -643,63 +644,69 @@ For user defined types I have to define my own operators on it.
 1. Specify a name for it
 2. Specify the values that make up the type
 3. Specify a physical representation
-4. Specify a selector op for selecting values of the type
+4. Specify a selector operator for selecting values of the type
 5. Specify operators that apply to values and variables of the type
     * must include `=` (equality comparison), `:=` (assignement)
 6. For those operators that return a result, specify the type of the result so that
     * DBMS knows which expressions are legal
     * DMBS knows that the expected type of all operations will be before it runs them
 
-More logical differences
+### More logical differences
 
-Argument vs Parameter
+#### Argument vs Parameter
 
 Parameter is the formal operand in terms of which the operator is defined
 When you invoke the operator you give it an argument which replaces the parameter
 
-Operator vs Invocation
-??
-the invocation supplies a particular argument to replace the parameter
-think it is like diff between function and function application
+#### Operator vs Invocation
+
+The invocation supplies a particular argument to replace the parameter
+I think it is like diff between function and function application
 
 
 A type is a set of values
 
-The values that make up a given type exist before the DB exists, while the DB exists and after the DB exists i.e. they have no place in time and space.
+The values that make up a given type exist before the DB exists, while the DB
+exists and after the DB exists i.e. they have no particular place in time and
+space.
 
-So making a type is just naming a collection of values that already exist
+So making a type is just naming a collection of values that already exist:
 "We are interested in a certain set of values and we are going to call them type T"
 
-Values do not _belong_ to a particular database
-No database owns the type INTEGER
+Values do not _belong_ to a particular database - no database owns the type INTEGER.
 
-## Informal distinction of Scalar types vs non-scalar types
+## An informal distinction of Scalar types vs non-scalar types
 
-Type T is scalar if it has no user visible components, otherwise it is nonscalar
+Type T is scalar if it has _no user visible components_, otherwise it is nonscalar.
 
 Values and Variables of type T are scalar if T is scalar, nonscalar otherwise
-
 
 Relation types are nonscalar because you can see the insides
 Integer has no visible components so is scalar
 
 "Scalar" is just "atomicity" by another name so there is no strict defn.
 
-So are tuples
+Tuples are also nonscalar
 
-Array is not a type, it is a type generator
-    Using the array type generator you can generate all sorts of specific array types
-    array with 100 elements of type CHAR
-    array with two dimensions 5 x 3, all of type INTEGER
+### Type generators
 
-Relations are also generated types created using the `RELATION` type generator rather than an explicit `TYPE` statement
-Similarly tuples can be created with the `TUPLE` type generator
+Array is not a type, it is a _type generator_
 
-Note there is a logical difference between a tuple and a relation that contains a single tuple
+Using the array type generator you can generate all sorts of specific array types e.g.
 
-END VIDEO 3
+* array with 100 elements of type CHAR
+* array with two dimensions 5 x 3, all of type INTEGER
 
-Scalar types in SQL
+Relations are also generated types created using the `RELATION` type generator
+rather than an explicit `TYPE` statement. Similarly tuples can be created with
+the `TUPLE` type generator.
+
+Note there is a logical difference between a single tuple and a relation that
+contains a single tuple.
+
+# Video 4: Types and domains part II
+
+## Scalar types in SQL
 
 BOOLEAN
 CHARACTER(N)
@@ -714,7 +721,6 @@ DATE
 TIME
 TIMESTAMP
 INTERVAL
-
 BLOB(N)
 CLOB(N)
 BINARY(N)
@@ -723,8 +729,412 @@ XML
 BIGINT
 
 ARRAY
-MULTISET
+MULTISET (also called BAG, like a set but allows duplicate)
+    * The body of  a SQL table is really a _bag_ of rows not a _set_ of rows
 REF
 
 Note that any of these that take arguments are really type generators e.g.
 CHARACTER(N) makes a particular character type.
+
+#### scalar assignment
+
+SQL does has a scalar assignment
+
+Implicit: result of a FETCH
+Explicit: SET X = ???
+    QUESTION: how do is set variables in pg?
+
+#### equality comparison
+
+SQL does equality comparison
+    * Explicit: X = Y
+    * Implicit: while doing DISTINCT, UNION etc.
+
+There are some problems with the way SQL does equality comparison
+
+1. It is not available for XML
+    is this true in postgres?
+2. Can give true even if operands are clearly distnct
+3. You can get false even when the operands are clearly the same
+
+
+### BOOLEAN
+
+* BOOLEAN was added to standard in 1999
+* CJD says support is "deeply flawed" but 2014 postgres support seems fine - I
+  have not found any of the problems he mentioned.
+    * I can make a column type of boolean in postgres
+* Even if type is not supported you can still have comparisons
+
+### Domains
+
+SQL has a "domains" feature
+
+* They are not true relational domains
+* CJD thinks they are unnecessary now that SQL supports user defined types properly
+
+
+### SQL type checking
+
+SQL supports a weak form of strong typing on assignment and equality comparisons
+
+You can compare:
+
+BOOLEAN : BOOLEAN
+Character string : Character string
+Number : Number
+
+SQL often does coercions e.g.
+1. a fixed length string of length 5 can compare equal to a varying character
+   length string of lenght 10 if they have the same contents
+2. float number and decimal number can compare equal
+3. many coercion rules for dates and times
+
+A consequence of this coercion is that you can do a UNION where the result has
+a row which does not appear in iether of the input tables!
+
+#### Recommendations
+
+1. Ensure that columns with the same name are always of the same type
+2. Avoid type coercions where possible
+3. When you can't avoid them, do them explicitly - don't rely on coercions
+    ??? How do i do in postgres?
+
+    TODO: build the coercion oddness example in pg
+    TODO: build the parts suppliers db example in pg too
+
+Some coercions are built into SQL language and you cannot avoid them. They all
+have to do with subqueries.
+
+CJD gives 3 examples:
+
+1. If the table expression _tx_ is used as a _row subquery_ then the table _t_
+   denoted by _tx_ must ahve just one row _r_ and _t_ is coerced to _r_.
+2. If a table expression _tx_ is used as a _scalar subquery_ then the table _t_
+   denoted by _tx_ must ahve just one column and one row and hence contain just
+   one value _v_ and _t_ is doubly coerced to _v_
+3. If the "row exp" _rx_ in the ALL or ANY comparison `rx theta sq` (theta is
+   `>ALL` or `<ANY`, `sq` is a subquery)is in fact a scalar expression the scalar
+   value _v_ denoted by that expression is coerced into a row that just
+   contains _v_
+
+    TODO: que???
+
+He does not dwell on those three examples much.
+
+Type checking and coercion for character strings is more complex
+
+A given string contains chars from exactly one _character set_ and having exactly one _collation_.
+
+### Collation
+
+English defn: is a rule that governs the comparison of characters in the set.
+
+Maths defn:
+
+Taking a collation C on a character set S and two characters a and b
+C must be such that exactly one of
+a = b
+a < b
+a > b
+returns TRUE and the others return FALSE
+
+Collations have options
+PAD SPACE = pads strings with leading and trailing whitespace to make them the same lenght before comparing
+    is this the same result as ignore leading and trailing whitespace???
+CASE_INSENSITIVE = ignores case when comparing
+
+CJD recommends that you not use either of these options
+    TODO: how do I set collation in postgres, presume is in create table?
+    TODO: can i actually set those options mentioned?
+
+v1 = "AAA"
+v2 = "aaa"
+Consider if we have two values _v1_ and _v2_ which are distinguisable but the collation rules are such that `v2 = v1` gives TRUE.
+
+In
+UNION
+JOIN
+MATCH
+LIKE
+UNIQUE
+etc.
+use the implict equality rule is indeed "equal even if distinguishable"
+
+In
+UNION
+JOIN
+GROUP BY
+DISTINCT
+etc.
+
+the DBMS will have to choose which of the "equal but distinguisable" values to put in the result row.
+
+Imagine v1 and v2 are values in an attribute v of table t (reminder: v1 = "AAA", v2 = "aaa")
+
+SELECT MAX(v) FROM t;       /* DBMS can only show us one value, which one? */
+SELECT DISTINCT(v) FROM t;  /* Is is going to show aaa and AAA as different things? */
+
+This collation makes some SQL expressions indeterminate or "possibly
+nondeterministic" because the DBMS can legally can return either v1 or v2 and
+could even return different ones at different times e.g. implementation could
+decide to use the one accessed most often.
+
+    Surely implemnetors do reasonably sane things in this case???
+
+SQL does not allow you to have indeterminate expressions in constraints because
+it would mean that it would be unpredicable whether your INSERT, UPDATE would
+work. Sounds like a bad time.
+
+    CJD gives the theory problem but how do real DBMS manage this???
+
+#### Teminology: indeterminiate
+
+* unpredictable
+* not exactly known, established, or defined.
+
+#### Terminology: deterministic
+
+* In mathematics and physics, a deterministic system is a system in which no
+  randomness is involved in the development of future states of the system.
+* A deterministic model will thus always produce the same output from a given
+  starting condition or initial state.
+
+## Non scalar types
+The relational world has tuple types and the corresponding SQL is "row types"
+
+Relational model has _tuple type generators_ - in SQL has _ROW type constructors_
+
+SQL lets you make "row types"
+when you make a table in postgres it implicitly makes a row type for the rows in that table
+
+In the tuple the order does not matter but in SQL it does
+
+A subquery = a SQL expression in parentheses
+
+Row assignment:
+    SET SINGLE_SUPPLIER = (S WHERE  SNO = 'S1');
+* the stuff in parens is a subquery
+* it assigns a row variable to SINGLE_SUPPLIER
+* Note that SQL is corecing the table that results from the subquery into a single row
+
+Row comparison:
+    he will do later
+
+In relational world we have a "relation type" but SQL does not really have a "table type generator/constructor"
+
+It has CREATE TABLE but that also specifies constraints on columns
+
+    /* using tutorial D language */
+    VAR S BASE
+        RELATION { SNO CHAR, SNAME CHAR, STATUS INTEGER, CITY CHAR }
+        KEY { SNO };
+
+* Creates a variable S whose value is a relation
+
+    /* Using SQL */
+    CREATE TABLE S (
+        SNO VARCHAR(5) NOT NULL,
+        SNAME VARCHAR(25) NOT NULL,
+        STATUS INTEGER NOT NULL,
+        CITY VARCHAR(20) NOT NULL,
+        UNIQUE (SNO)
+    );
+
+Notice that it mixes
+1. column specifications
+2. integrity constaints
+
+The table variable has a type "bag of rows" where the rows themselves have the
+"row type".
+
+SQL'99 has "typed tables" - CJD says not to use them because they are
+intertwined with SQL support for pointers.
+
+CJD is totally dismayed about pointers being in relations
+He says the relational model prohibits pointers
+He storngly recommends not using pointers if you want to be relational
+
+    TODO find CJD paper: "Don't mix pointers and relations"
+
+Quesiton
+In relational world `=` applies to every type
+
+    v1 = v2 is TRUE iff Op(v1) = Op(v2) for all possible operations Op
+
+    QUESTION: I don't get this as a defn of equality
+
+In SQL both percepts are violated.
+
+1. Give examples
+2. What are the consequences
+
+### Examples of when SQL violates '='
+
+= does not apply to XML
+= does not apply to table types ( you cannot ask "does table t1 equal t2")
+= might not apply to user defined types (depends on implementation)
+
+Let X = 'AB' and Y = 'AB ' and let PAD_SPACE apply
+    X = Y gives TRUE
+    CHAR_LENGTH(X) = CHAR_LENGTH(Y) gives FALSE
+
+# Consequences of violating '='
+
+Let '=' not apply to type T. Let column C be of type T
+Then C cannot be used in
+* keys
+* foreign keys
+* DISTINCT
+* GROUP BY
+* ORDER BY
+* WHERE
+* JOIN
+* UNION
+* EXCEPT
+also problems with indexes
+
+Let '=' be user defined for type T and let column C be of type T.  Then using C
+in the context above is "user defined too (at best) and is unpredictable and
+buggy (at worst).
+
+'=' is a _fundemental_ building block of everything we do in relational theory and SQL - it has to be right!
+
+END VIDEO 4
+
+
+# Video 5: Tuples and relations, rows and tables part I
+
+* A _tuple value_ (tuple for short) is a _set_ of components
+
+Each component is a (attribute, attribute value)
+Each attribute is (attribute name, type name)
+
+The _heading_ of a tuple is the _set_ of attributes
+    set => no ordering, no nulls, no dupes
+
+    Heading: { SNO CHAR, SNAME CHAR, STATUS INTEGER, CITY CHAR }
+
+Every value has a type and the type of a tuple value is
+    TUPLE { SNO CHAR, SNAME CHAR, STATUS INTEGER, CITY CHAR }
+    TUPLE <heading>
+
+Consequneces of htis definition:
+
+* by _definition_ there is no left to right ordering of components
+* by _definition_ each tuple contains _exactly_ one value of the appropriate
+  type for each value.
+* tuple values by defn contain values so we have a formal reason for why they
+  cannot contain null.
+
+null is not a value, it is a "marker" for the absence of a value
+don't say "null value" because it does not make sense
+SQL is ambivalent about null - sometimes it recognises that null is not a value and sometimes it does not.
+
+The idea of a "literal" is a special case of a selector invocation
+A precise recursive defn of a lterial
+A literial is a selector invocation where all the argumetns are literals in turn
+
+
+Tuples are basically _sets_
+    so equality an inequality comparisions make sense but < and > do not
+    so every subset of a tuple is a tuple
+    so every subset of a heading is a tuple
+
+The empty set is a subset of all sets
+so the empty tuple is a subset of all tuples (sometimes called the "zero tuple")
+The type of hte zero tuple is
+    TUPLE {}
+The value is also written as (in tutorial D)
+    TUPLE {}
+
+
+Note there is a _logical difference_ between a value v and a tuple of degree 1 that just contains the value v so we need an operator to extract the value
+
+Let t be a tuple e.g. the tuple for supplier S1 in the example
+
+    /* tutorial D */
+    CITY from t
+
+    /* SQL */
+    t.CITY
+
+Relational term         | SQL analog
+------------------------|-----------
+tuple                   | row
+TUPLE type generator    | row type constructor
+tuple selector          | row value constructor
+tuple variable          | row variable
+
+The big difference between relational tuples and SQL rows is that SQL rows have a left to right ordering of their fields i.e. fields are identified by ordinal position not by name
+
+components are called fields in SQL
+
+ROW(
+
+ROW(1,2) not equal ROW(2,1)
+
+althogugh usually inS QL the ROW keyword is optional and is not used so row values are onstructoed with jsut ()
+
+#### Row assignment
+
+Happen implicitly as part of UPDATE
+
+    UPDATE S
+        SET STATUS=20, CITY='London'
+        WHERE CITY='paris'
+
+is logically equivalent to
+
+    UPDATE S
+        SET (STATUS, CITY) =  (20, 'London')
+        WHERE CITY='paris'
+
+notice the assignmetn of row values to a row (in this case a sub-row but all
+sub-rows are rows)
+
+Most boolean expressions in SQL (AND, OR) are defined in terms of rows not scalars
+
+    SELECT SNO FROM S WHERE (STATUS, CITY) = (20, 'Paris')
+    -- ... is logically equivalent to ...
+    SELECT SNO FROM S WHERE STATUS = 20 AND CITY = 'Paris'
+
+    SELECT SNO FROM S WHERE (STATUS, CITY) <> (20, 'Paris')
+    -- ... logically equivalent to ...
+    SELECT SNO FROM S WHERE STATUS <> 20 OR CITY <> 'Paris'
+
+SQL rows are **not** sets of components, they are sequences of components (see
+defn. of component earlier) they can support operations like <, > on rows
+(remember that <,> on tuples makes no sense)
+
+    SELECT SNO FROM S WHERE (STATUS, CITY) > (20, 'Paris')
+    -- ... logically equivalent to ...
+    SELECT SNO FROM S WHERE STATUS > 20 OR (STATUS = 20 AND CITY > 'Paris')
+    -- which is hard to reason about.
+
+So even though SQL defines <,> on rows they are hard to reason about and should
+not be used.
+
+So most boolean operations are defined in terms of rows but many of those
+operations are on rows of degreen 1 - SQL has some special syntax for that:
+
+    SELECT SNO FROM S WHERE (STATUS) = (20)
+    -- SQL has syntax rule that allows us to drop the parens
+    SELECT SNO FROM S WHERE STATUS = 20
+
+The second syntax _looks_ like a scalar comparison but it is actually a row
+comparison with some special coercions going on.
+
+#### Recommendation
+
+Unless the rows you are comparing are of degreen 1 do not use
+`>`, `<`, `>=`, `<=` comparisons in SQL because
+
+1. They rely on left to right column ordering
+2. No straightforward relational counterpoint
+3. Highly error prone
+
+If you want to compare two rows and they are of degree one you can use any
+comparison you want but if they are of degree more than 1 then you should only
+use `=` and `not =`
+
