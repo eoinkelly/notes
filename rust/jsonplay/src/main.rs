@@ -30,4 +30,34 @@ fn main() {
     let encoded = json::encode(&haiku);
 
     println!("{}", encoded);
+
+    struct Point {
+        x: int,
+        y: int
+    }
+
+    struct TuplePoint (int, int);
+
+    let p = Point { x: 23i, y: 34i };
+    let tp = TuplePoint(23i, 34i);
+
+    println!("{}, {}", p.x, p.y);
+
+    // let Point(newx, newy) = p; // Compiler error
+    let TuplePoint(newx, newy) = tp; // Compiler error
+    println!("{}, {}", newx, newy);
+
+    // Enums and match
+    enum MaybeColor {
+        Color(int, int, int),
+        MissingColor
+    }
+
+    // let c = Color(3i,4i,5i);
+    let c = MissingColor;
+
+    match c {
+        Color(r,g,b) => println!("The color is {}, {}, {}.", r, g, b),
+        MissingColor => println!("The color is missing")
+    }
 }

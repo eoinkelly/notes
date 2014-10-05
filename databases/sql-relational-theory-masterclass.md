@@ -1138,3 +1138,4 @@ If you want to compare two rows and they are of degree one you can use any
 comparison you want but if they are of degree more than 1 then you should only
 use `=` and `not =`
 
+# Video 6: Tuples and Relations, Rows and Tables Part 2

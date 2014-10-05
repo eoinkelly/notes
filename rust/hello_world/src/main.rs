@@ -1,12 +1,14 @@
 
 // #[] are attributes
 // they only seem to apply to the thing (function, struct etc.) that hey appear before in the code.
-// Q: how do i disable these for the whole file?
-#[allow(dead_code)]
-#[allow(unused_variable)]
-#[allow(dead_assignment)]
+// #![] sets the attribute for the thing that this line is in, not what follows it immediately
+#![allow(dead_code)]
+#![allow(unused_variable)]
+#![allow(dead_assignment)]
+#![allow(unused_mut)]
+
 // main is the entry point of the program
-fn main() {
+fn play_with_rust() {
 
     // FIXME hi
     let x = 5i;
@@ -153,5 +155,207 @@ fn tupler_returner() -> (int, int) {
     (4i, 6i)
 }
 
-// up to
-// http://doc.rust-lang.org/guide.html#structs
+// QUESTION: how do extract just one field from a tuple?
+
+// Structs can be outside functions
+// QUESTION: Is it true that "items" are what can appear at the top level of a file?
+// * Tuple is a "record type" that has an ordering and you extract fields form it using that
+//   ordering. Structs have no ordering (similar to mathmetical sets) and you extract fields using
+//   names.
+// * Struct names are begin with capital and are camel case (unlike functions and variables)
+//      QUESTION: what about struct field names?
+// * The 'struct' keyword is used to create structs and Tuple-structs
+
+// Meaning #1: 'Point' is the name of the type
+// Meaning #2: 'Point' is also the name of the value constructor
+
+struct Point { // Meaning #1
+    x: int,
+    y: int
+}
+
+fn point_player() {
+    // struct is like a set, there is no implied ordering of fields
+    let place = Point {y: 3i, x: 5i}; // # Meaning #2
+
+    // The mutability of the struct is decided when it is instantiated so you can easily make
+    // mutable and immutable versions of the same struct.
+    let mut mut_place = Point { x: 0i, y: 7i }; // # Meaning #2
+
+    // You get at fields using dot notation
+    println!("{}, {}", place.x, place.y );
+
+    // let Point(newx, newy) = place; // Compiler error (only works for Tuple structs)
+
+    // Rust also has a hybrid struct-tuple called a "Tuple struct"
+    // These are a lot like types in Haskell
+    // Meaning #1: 'Color' is the name of the type
+    // Meaning #2: 'Color' is also the name of the value constructor
+    // Meaning #3: 'Color' is also the name of the selector function that can pick fields out of
+    //              the Tuple struct
+
+    // Meaning #1
+    struct Color (int, int, int);
+
+    struct ThreeDPoint (int, int, int);
+
+    // Note that normally tuples with the same types, values and order are equal but with Tuple
+    // structs they are not. Presumably tuple struct annotates the tuple with some type information
+
+    // Meaning #2
+    let c = Color(1i, 3i, 5i);
+    let pt = ThreeDPoint(1i, 3i, 5i);
+
+    // if c == pt { // error: binary operation `==` cannot be applied to type `point_player::Color`
+    //     println!("same");
+    // } else {
+    //     println!("not the same");
+    // }
+
+    // Meaning #3
+    let Color(r, g, b) = c;
+
+    // In most cases a struct is more suitable than a tuple struct because you get nice names.
+    // The tuple struct can be used to do type aliasing
+    // 'Height' is the name of the struct
+    // 'Height' is the name of the value constructor
+    // 'Height' is the name of the selector function that will pull the value out again.
+
+    struct Height(int);
+
+    let h = Height(10); // construct the type
+    // ... do some stuff
+    let Height(extracted_h) = h;
+
+    println!("extracted height is {}", extracted_h);
+
+}
+
+// http://doc.rust-lang.org/guide.html#enums
+// Enums
+// Rust has enums which are a "sum type"
+
+// enum
+// * functions as a parameterized type i.e. enum value construtors can take other types as
+//   parameters
+fn enums_play() {
+
+    enum TrafficLights {
+        Red,
+        Green,
+        Orange
+    }
+
+    let tls = Red;
+
+    enum MaybeInt {
+        Really(int),
+        Missing
+    }
+
+    let x = Really(4i);
+    let y = Missing;
+
+    // Enums value constructors can take any number of types as arguments
+    // The inside of an enum block is in the domain of types
+    // * This enum contains value constructors that take only one kind of parameter but enums can
+    // be written to use many types i.e. generic enums
+    enum MaybeColor {
+        Color(int, int, int),
+        MissingColor
+    }
+
+    let col = Color(3i, 4i, 5i);
+    let other_col = MissingColor;
+}
+
+// Rush has parameter matching - not in function bodies but using the `match` syntax
+
+fn show_match_syntax() {
+
+    let x = 1i;
+
+    match x {
+        // pattern => code-to-execute
+        1 => println!("hi"),
+        2 => println!("hi"),
+        // rust does exhaustiveness checking of match syntax so we can use `_` as a "catch all"
+        // match to cover all other cases.
+        _ => println!("other")
+    }
+
+    enum MaybeColor {
+        Color(int, int, int),
+        MissingColor
+    }
+
+    let c = Color(3i,4i,5i);
+
+    // the pattern will destructure enums automatically. Notice here that `c` is a MaybeColor but
+    // we were able to directly check for its value constructor.
+    match c {
+        Color(_,_,_) => println!("hi"),
+        MissingColor => println!("missing")
+    }
+
+    // match is an expression not a statement so you can use it in a let statement
+    let result = match c {
+        Color(x,y,_) => "is a color",
+        MissingColor => "is missing"
+    };
+}
+
+// http://doc.rust-lang.org/guide.html#looping
+// Rust has 2 loop constructs
+// 1. for
+// 2. while
+// 3. loop
+
+fn play_with_loops () {
+    for x in range(0i, 10i) {
+        println!("Iteration: {:d}", x);
+    }
+    // The general form:
+    // for var in expression { code }
+    // "expression" must be an iterator
+    //      range() is an iterator, the upper bound is not included
+    // It is a deliberate choice not to have a for loop because it is really easy to get the end
+    // conditions wrong
+    // while loops are the correct choice when you do not know how many times you will need to loop
+    let mut done = false;
+    let mut x = 5u;
+
+    while !done {
+        println!("looping, x: {}", x);
+        x = x + 1;
+        // Rust will warn you if you use unnecessary parens in an if statement!
+        if x % 5 == 0 { done = true }
+    }
+
+    // Rust has break and continue that work as they do in other languages
+    // They can be used in both for and while loops.
+
+    // This is a cleaner rewrite of the loop above that does not need the mutable "done" variable
+    // to keep track of when we should stop.
+    let mut v = 5u;
+    loop {
+        println!("looping, v: {}", v);
+        v = v + 1;
+        if v % 5 == 0 { break }
+    }
+    // Rust has special syntax for infinite loops
+    //
+    // loop { }
+    //
+    // is preferable to
+    //
+    // while true { }
+    //
+    // because it gives the compiler more info about what you intend to happen
+}
+
+// main is the entry point of the program
+fn main() {
+    play_with_loops();
+}
+// up to 11-strings
