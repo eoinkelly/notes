@@ -407,3 +407,52 @@ It is configured by the `solo.rb` file
     * can be configured with `roles_path` in `solo.rb`
 * It looks for _environments_ as JSON or ruby DSL files in `var/chef/environments`
     * can be configured with `environments_path` in `solo.rb`
+
+# Debugging chef recipes
+
+1. start-up a fresh chef-server in vagrant on 33.33.33.50
+1. start-up a fresh test-node in vagrant on 33.33.33.10
+
+
+
+Run chef-client
+
+```
+$ sudo chef-client --log-level debug
+```
+
+# Rbenv cookbook
+
+The rbenv cookbook installs rbenv as a separate `rbenv` user who is a member of the `rbenv` group. Any other users who are also in that group will have more access to the files owned by the `rbenv` user.
+
+
+# LWRP
+
+Lightweight Resource Provider
+
+* Defined in a cookbook
+* Extends chef-client with custom actions
+* Has 2 parts
+    1. lightweight "resource"
+        * defines set of "actions" and "attributes"
+        * controls "what" should happen
+    2. lightweight provider
+        * tells chef-client how to handle each "action" and what to do if certain conditions are met
+        * controls "how" it happens
+
+* becomes a ruby class within an organisation
+* chef-client has a bunch of existing built-in resources
+* "platform resourses" and "platform providers" have a similar relationship to each other
+
+I think the things you invoke in cookbooks are "resources"
+"resources" define the "desired state" of the the item and the "provider" knows "how" to get it to that state
+
+template resource
+    * uses Chef::Provider::File::Template provider
+
+```ruby
+template "/path/to/file" do
+    attribute
+    action :create # :create|:create_if_missing|:touch|:delete
+end
+```

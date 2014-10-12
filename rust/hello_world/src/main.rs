@@ -1,11 +1,22 @@
 
-// #[] are attributes
-// they only seem to apply to the thing (function, struct etc.) that hey appear before in the code.
-// #![] sets the attribute for the thing that this line is in, not what follows it immediately
+// # Attribtes
+// * #[] is the syntax that wraps "attributes"
+// * #![] sets the attribute for the thing that the line is within, not what is on the following
+// line.
+
+// Turn off a bunch of useful warnings that make compiling this dummy code very noisy.
 #![allow(dead_code)]
 #![allow(unused_variable)]
 #![allow(dead_assignment)]
 #![allow(unused_mut)]
+
+// main is the entry point of the program because history.
+fn main() {
+    play_with_loops();
+    play_with_strings();
+    play_with_vectors();
+    play_with_io();
+}
 
 // main is the entry point of the program
 fn play_with_rust() {
@@ -354,8 +365,129 @@ fn play_with_loops () {
     // because it gives the compiler more info about what you intend to happen
 }
 
-// main is the entry point of the program
-fn main() {
-    play_with_loops();
+// # Strings
+//
+// * Strings are variable length data structures
+// * There are 2 types
+//      1. String
+//          * can be made mutable
+//          * if mutable can grow and shrink
+//          * simple references to fixed size chunk of data in memory
+//      2. &str (pronounced "string slice", string literals are this type)
+//          * statically allocated
+//          * a reference to another string
+//          * fixed size, cannot be made mutable
+//          * they are objects that can allocate memory
+//
+// In general all strings:
+// * They are not null terminated (so they can contain null bytes)
+// * They are streams of UTF-8 encoded bytes
+
+
+fn play_with_strings() {
+    println!("## 11. Strings");
+
+    // This string slice is "statically allocated" so it will be compiled into the binary and will be loaded
+    // into memory whenever the binary is.
+    // * 's1' is a binding to this chunk of memory.
+    // * static strings have a fixed size and cannot be made mutable
+    let s1 = "I am compiled into the binary, fixed size, forever immutable";
+    println!("{}", s1);
+
+
+    // String is an "in-memory" string
+    // It is garuanteed to be UTF-8
+    // It can be mutated, it can grow or shrink
+    let mut s2 = "hello".to_string();
+    println!("{}", s2);
+    s2.push_str(" world");
+    println!("{}", s2);
+
+    // So we have 2 types of string, how do we compare them in a typed language?
+    // We can convert between the types using to_string()
+    let str_slice = "hello";
+    let string_object = str_slice.to_string(); // expensive, allocates memory
+    let slice_again = string_object.as_slice(); // cheap, no memory allocation
+
+    // Using to_string() allocates memory so is a comparitively expensive operation so prefer using
+    // as_slice() to compare strings of different types if possible
 }
-// up to 11-strings
+
+// # Vectors
+//
+// Rust has 3 vector types:
+//
+//  1. Vector Vec<T>
+//      * dynamic size
+//      * can be made mutable, will allocate memory if necessary
+//      * created with `vec!()` macro
+//  2. Slice &[T]
+//      * a reference to another array
+//      * ‘borrowed vector’ == ‘slice’
+//  3. Array [T, .. N]
+//      * fixed size, cannot add/remove elements
+//      * can be made mutable
+//
+// * All are indexed from 0
+//
+fn play_with_vectors() {
+    println!("## 12. Vectors");
+
+    // Create vectors
+    // [] and () are interchangeable in Rust macros, we tend to use [] with vec!
+    let x_1 = vec!(2i, 3i, 4i);
+    let x_2 = vec![2i, 3i, 4i]; // exactly same as above
+
+    // Create arrays
+    // * fixed size, cannot add/remove elements
+    // * can be mutable
+    // * Type of a_1 is
+    //      [int, ..3]
+    //   or "an array of ints of length 3"
+    let a_1 = [2i, 3i, 4i];
+    let nums = [3i, ..20]; // shorthand for array of 20 elements, all initialized to 1
+
+    // Create slices
+    let slicey_1 = &[3i, 4i, 5i];
+    let slicey_2 = x_1.as_slice();
+
+    // All 3 kinds of list implement the iter() function which returns an iterator that you can use
+    // with loops
+    for i in x_1.iter() {
+        println!["Vector element: {}", i];
+    }
+    // Aside: i is not available outside the loop construct because Rust is not insane.
+
+    for i in slicey_1.iter() {
+        println!["Slice element: {}", i];
+    }
+
+    // QUESTION: I don't understand diff between array and array slice ???
+}
+
+// Importing modules and crates
+// We could import the function so that we can use it unqualified
+//      use std::io::stdin;
+//      stdin();
+// but this could be confusing so it is better to import the module
+//      use std::io;
+//      io::stdin();
+// so it is clear what module each function is from.
+
+fn play_with_io() {
+    println!("## 13. IO");
+
+    let input_1 = std::io::stdin().read_line().ok().expect("Failed to read line");
+    println!["Input is: {}", input_1];
+
+    let input_2 =
+        std::io::stdin()
+        .read_line() // returns an IoResult<T> (an optional type) which can either have a thing or not
+        .ok() // handle the valid case by doing nothing
+        .expect("Failed to read line"); // handle the "missing" case by
+                                        // terminating the program with an error
+    println!("Second input: {}", input_2);
+}
+
+
+// up to start of 15

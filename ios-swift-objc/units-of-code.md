@@ -111,7 +111,7 @@
         1. the actual object file containing the code
         2. the directory containing the object file and associated resources
     * Applications in OSX are packaged as bundles (the second meaning)
-        * They are displayed in Finder as a single file (they are also know as _Application Packages_
+        * They are displayed in Finder as a single file (they are also know as _Application Packages_)
 
 More info
 
@@ -123,7 +123,7 @@ More info
   Including a framework *is* including a dylib.
 
 
-## How do I replace a framework in an xcode project?
+## How do I replace a framework in an Xcode project?
 
 From my first attempt:
 
