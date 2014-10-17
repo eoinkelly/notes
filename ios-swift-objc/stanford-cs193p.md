@@ -86,7 +86,8 @@ That delegate object is the controller. The pattern in the messages is
 
 A protocol is just a "blind way to communicate with another object"
 
-Views can have references to another kind of delgate called a "data source". This delegate implements a protocol that answers questions about the data e.g.
+Views can have references to another kind of delgate called a "data source".
+This delegate implements a protocol that answers questions about the data e.g.
 
 * Give me the data at ...
 * How many elements in ...
@@ -95,7 +96,8 @@ The controller behaves as this delegate for the view too
 
 ### Views do not own data they display
 
-Views do not own the data they display - they are not the source of truth for that property (same idea as not keeping truth in the DOM)
+Views do not own the data they display - they are not the source of truth for
+that property (same idea as not keeping truth in the DOM)
 
 
 ## How the model communicates with controller
@@ -113,10 +115,11 @@ _Key value observing_
 # Combining MVCs
 
 * He refers to "an MVC". This is 1 model instance, 1 controller instance, and 1
-  view instanceall wired up as above.
+  view instance all wired up as above.
 * A large app is made up of multiple "MVCs" working together.
-* An MVC can use another MVC as its view. This is the main way a large iOS app
-  is structured.
+* An MVC can use another MVC as its view.
+    * This is the main way a large iOS app is structured.
+    * => controllers have delgate relationships ???
 
 This is quite different to the Rails flavour of MVC.
 
@@ -124,7 +127,7 @@ This is quite different to the Rails flavour of MVC.
 
 * A strict _superset_ of C
 
-Properties
+### ObjC Properties
 
 * similar to attr_accessor in ruby
 * we rarely access instance variables directly in ObjC
@@ -160,14 +163,16 @@ Properties
 @property (strong, nonatomic) NSString *contents;
 
 // Notice we can override the getter name to make it read nicer
+// * We don't need strong|weak here because this BOOL is a primitive value and
+//   is statically allocated (not on the heap)
 @property (nonatomic, getter=isMatched) BOOL matched;
 @property (nonatomic, getter=isChosen) BOOL chosen;
 
-
+// Public methods of Card
 - (int)match:(NSArray *)cards;
 
 
-@end // end of interface block
+@end // end of public interface
 ```
 
 
@@ -188,14 +193,16 @@ Properties
 @implementation Card
 
 // *********************************************
-// Automtaiclly created by ObjC via @property
+// Automatically created by ObjC via @property
 // *********************************************
 
-// The following line says _contents is the name of the instance variable where
-// the property 'contents' is going to be stored.
-// "synthesise property contents to use _contents as storage"
-// it allocates space for the contents in the object
-@synthesise contents = _contents;
+// The following line says
+//   "_contents is the name of the instance variable where the property 'contents' is going to be stored".
+// or
+//   "synthesize property contents to use _contents as storage"
+// It allocates space for the contents in the object.
+// "synth-e-size"
+@synthesize contents = _contents;
 
 // getter
 - (NSString *) contents
@@ -212,10 +219,14 @@ Properties
 
 - (int) match:(NSArray *)cards
 {
+    // score is primitive local so is stack allocated
     int score = 0;
 
     // if ([[card contents] isEqualToString:[self contents]]) {
-    // We only use "dot notation" for calling the getter/setter of properties
+
+    // We only use "dot notation" for calling the getter/setter of properties!
+    // Although you can use it to send a message with 0 args to any object it is
+    // bad form to do so.
     for (Card *card in cards) {
         if ([card.contents isEqualToString:self.contents]) {
             score = 1;
@@ -230,9 +241,114 @@ Properties
 
 Objective C
 
-* does _not_ require you to declare things before you use them in a file.
+* does _not_ require you to declare methods before you use them in a file.
 * _all_ objects live on the heap! Consequence:
-    * any variable you have to an ObjectiveC is _alwasy_ a pointer.
-* We can send messages to `nil` pointers in ObjC
+    * any variable you have to an object is _always_ a pointer.
+* We can (and do) send messages to `nil` pointers in ObjC
+    * It does not result in a nul pointer exception as it would in other langs
 * All properties start off as `nil` when you declare them
     * => you don't have to worry about them pointing at arbitrary memory
+
+NSArray
+    * is hetrogenous - it can contain any object
+    * is immutable (use NSMutableArray as mutable version)
+
+NSUInteger
+    * will be different on different platforms e.g. on iPhone 5+ it will be 64bit
+    * is an alias for `unsigned long *` (a pointer to a long on the heap)
+
+
+ QUESTION: what shoudl you do if you don't have a higher res version of an image? add the low res in the slot or jsut leave slot empty?
+
+
+# Lecture 3
+
+## Semi-private properties
+
+A property can be readonly in the public API but read-write in the private API.
+In ruby this would be:
+
+```ruby
+class Foo
+  attr_reader :my_prop
+
+  private
+  attr_writer :my_prop
+end
+```
+
+## Default memory config for properties
+
+The defaults for properties is
+
+strong
+    * only applies if object is heap allocated
+readwrite
+    * properties make both a getter and a setter by default
+
+
+There is no "protected" in ObjC - only "public" and "private"
+
+
+arr[4]
+is sugar for
+[arr insertObjectAtSubstringIndex:4]
+
+`NSArray` and `NSMutableArray` cannot be sparse but you can insert `[NSNull null]` objects to give the appearance of a sparse array.
+
+
+
+## Designated initializers
+
+* If you subclass a class you have to call its designated initializer e.g. `[super initWithBlah...]`
+
+Outlet collections have no ordering
+    * it does not matter what orcder you drag UI elements onto the property
+
+
+# Lecture 4
+
+Ways we create objects on the heap
+
+1. alloc and init
+    NSMutableArray *cards = [[NSMutableArray alloc] init];
+2. class methods
+        + (id) stringWithFormat:(NSString *)format ...
+3. Ask objects to create new objects for you
+        - (NSString *)stringByAppendingString:(NSString *)otherString;
+        - (id)mutableCopy;
+
+Sometimes both a _class creator_ method and some init methods exist
+
+    [NSString stringWithFormat:@"foo"]
+    // is exactly same as
+    [[NSString alloc] initWithFormat:@"foo"]
+
+Both are there for historical reasons. Before ARC the class methods were handy
+because they had good semantics for how memory was allocated.
+
+Tutor favours alloc-init rather than class methods if possible
+
+Not all objects given out by other objects are newly created
+
+Unless the method has the word "copy" in it then you get a pointer to an existing object if one exists. If they object does not exist you are creating it e.g.
+    * NSArray has `- (id)lastObject;`
+
+## nil
+
+* we can send messages to nil
+    * if the method returns a value, it will return 0
+
+```
+int i = [obj methodWhichReturnsInt]; // i will be 0 if obj is nil
+```
+
+Be careful if the method returns a C struct because the value is undefined
+You do not get back a struct with all its members set to 0 - you might get stack garbage
+
+```
+CGPoint p = [obj getLocation]; // p is undefined if obj is nil
+```
+
+Dynamic binding
+

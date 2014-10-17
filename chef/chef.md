@@ -456,3 +456,8 @@ template "/path/to/file" do
     action :create # :create|:create_if_missing|:touch|:delete
 end
 ```
+
+To create a password for a user in a data bag do:
+```
+openssl passwd -1 "plaintextpassword"
+```

@@ -1,5 +1,5 @@
 
-TODO: How does cordova run xcode from cmd line?
+    TODO: How does cordova run xcode from cmd line?
 
 
 # Cordova plugin for iOS
@@ -13,30 +13,33 @@ TODO: How does cordova run xcode from cmd line?
 </feature>
 ```
 
-* feature's name attribute _must_ match the serviceName you use in the `cordova.exec` call
-* add any hosts your plugin needs to the domain whitelist too
+* The name attribute of a feature _must_ match the serviceName you use in the `cordova.exec` call.
+* Add any hosts your plugin needs to the domain whitelist too
 
-## The API is based around
+
+## Shape of the API
 
 1. JS sends a string to native
 2. Native sends another string in response
 
-
 ## From JS
 
 ```javascript
-cordova.exec(success,fail, "serviceName", "actionName", ["arg1", "arg2", ...]);
+cordova.exec(function(winParam) {}, function(error) {}, "serviceName", "actionName", ["arg1", "arg2", 42, false...]);
 ```
 
 * success = the success callback - Gets ?? args
 * fail = the failure callback. Gets ?? args
-* serviceName = name of Native class to call
-* actionName = name of the method within that class
+* serviceName = name of Native _class_ to call
+* actionName = name of the _method_ within that class to call
 * args = the args to pass to that method
+
+    QUESTION: how are types converted? when passing args?
 
 This gets converted into a `CDVInvokedUrlCommand` for native
 
 
+Plugin JS can add properties to window to allow other JS to communicate
 
 ## From Native
 
@@ -58,20 +61,21 @@ This gets converted into a `CDVInvokedUrlCommand` for native
 ### Lifecycle methods in the plugin class
 
 * Each insance of the UIWebView gets an instance of the plugin object
+    * => there will be a single instance of the plugin class in memory
 * plugins are not instantiated until they are first used unless you tell
   `config.xml` to instantiate it on load
 * there is no _designated initializer_ for the plugin - just implement the
   `pluginInitialize` method in the class to run logic on start-up
 
-* onReset - run with the UIWebView navigates to a new page or refreshes (which
-  reloads the JS)
-* pluginInitialize - run when the plugin is initialized
+## Public API that the native class can implement
+
+* onReset -
+    * run with the UIWebView navigates to a new page or refreshes (which reloads the JS)
+* pluginInitialize
+    * run when the plugin is initialized
 * pause
 * resume
 * handleOpenURL
 * app terminate ??
 
 
-## Files
-
-* CDVPlugin.(m|h)

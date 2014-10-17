@@ -205,13 +205,12 @@ Gnupg Keychain access only export format is an base64 encoded file (`.asc` exten
 ???
 
 
-# Exporting from keychian
+# Exporting certificates and keys from keychian
 
 When you export a `.cer` from keychain you export a X509 certificated in DER format. It does not contain the private key. You can inspect the file with
 ```
 openssl x509 -inform der -noout -text -in file.cer
 ```
-
 
 Whe you export a `.p12` you get a PKCS12 certificate, encrypted iwth a password
 that contains both public and private key. You can inspect the file using
@@ -220,3 +219,5 @@ that contains both public and private key. You can inspect the file using
 openssl pkcs12 -in file.p12 -info
 # you will be prompted for password for the file and then a password for the private key
 ```
+
+You can export a single public key as `PEM` file.
