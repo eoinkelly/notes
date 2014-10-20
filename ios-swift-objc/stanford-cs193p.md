@@ -314,7 +314,7 @@ Ways we create objects on the heap
     NSMutableArray *cards = [[NSMutableArray alloc] init];
 2. class methods
         + (id) stringWithFormat:(NSString *)format ...
-3. Ask objects to create new objects for you
+3. Ask objects to create new objects for you with their instance methods e.g.
         - (NSString *)stringByAppendingString:(NSString *)otherString;
         - (id)mutableCopy;
 
@@ -324,31 +324,449 @@ Sometimes both a _class creator_ method and some init methods exist
     // is exactly same as
     [[NSString alloc] initWithFormat:@"foo"]
 
-Both are there for historical reasons. Before ARC the class methods were handy
+* Both are there for historical reasons. Before ARC the class methods were handy
 because they had good semantics for how memory was allocated.
+* The tutor here favours alloc-init rather than class methods if possible.
 
-Tutor favours alloc-init rather than class methods if possible
+ObjC has a naming convention for guessing the memory handlying semantics of a method correctly:
 
-Not all objects given out by other objects are newly created
+Not all objects given out by other objects are **newly** created!
 
-Unless the method has the word "copy" in it then you get a pointer to an existing object if one exists. If they object does not exist you are creating it e.g.
-    * NSArray has `- (id)lastObject;`
+* Method name does not have _copy_
+    * you get a pointer to an existing object if one exists. A new object is
+      created if one does not exist e.g. NSArray has `- (id)lastObject;`
+* Method name does have _copy_ in name
+    * always give you a new object!
 
 ## nil
 
 * we can send messages to nil
-    * if the method returns a value, it will return 0
+* Sending messages to nil is (mostly) ok - no code is executed
+
+What does a method called on nil return?
+
+* if the method normally returns a value, it will return 0 - it is ok to rely on this
+* CAREFUL: if the method returns a C struct because the value is **undefined**!
+    * You do **not** get back a struct with all its members set to 0 - you might get stack garbage
 
 ```
+// obj is nil
 int i = [obj methodWhichReturnsInt]; // i will be 0 if obj is nil
-```
-
-Be careful if the method returns a C struct because the value is undefined
-You do not get back a struct with all its members set to 0 - you might get stack garbage
-
-```
 CGPoint p = [obj getLocation]; // p is undefined if obj is nil
 ```
 
-Dynamic binding
+## Dynamic binding
+
+### id type
+
+* ObjC `id` is a "pointer to an object of unknown/unspecified type"
+* pronounced "eye-dee"
+* consequences
+    * it is already a pointer  - `id *` makes no sense in ObjC because we do not do pointers to pointers.
+All pointers are treated like `id` at runtime because ObjC has dynamic binding i.e. it does not decide what code to execute in response to a message until right before it sends the message at runtime e.g. `NSString *` is same as `id` at runtime
+
+At compile time things like `NSString *` are good because the compiler can help you find bugs
+Consequences:
+    * if you explicitly use `id` type in your code then the compiler cannot help you!
+    * if you were to use `id` everywhere in your code then it would be more like the situation in ruby! ;-)
+
+```
+NSString *s = @"foo" // legal and can get type help from compiler
+id obj = s; // legal, no warning from compiler
+NSArray *a = obj // legal but a terrible idea, no warning from compiler
+```
+ObjC uses _static_ typing and _dynamic_ binding.
+
+```
+id myObject;
+```
+
+The compiler will warn you if the method you are sending is not defined in your program but if it is defined anywhere then the compiler has to assume that what you are sending it to _might_ be a thing that responds to it.
+
+Typecasting does not execute any code - it just tricks the compiler
+
+Use cases for `id`
+
+1. An hetrogenous NSArray
+2. The "blind, structured" communication between controllers and views. The view is sending messages to the delegate it got but it does not know the type of that delgate!
+
+The ways we can protect ourselves are
+
+1. Introspection
+2. Protocols
+
+We do use explicit type casting (which also leaves the compiler blind) and use id sometimes but we do so when we have protection.
+
+### Introspection
+
+We ask the object that we have the pointer for what methods it will respond to.
+
+`NSObject` has a number of introspection methods:
+
+```
+isKindOfClass       Will search up the inheritance heirarchy
+isMemberOfClass     Will not search the inheritance heirarchy
+respondsToSelector
+```
+
+* The answers to these questions are calculated at _runtime_!
+* All introspection methods take a `Class` object as parameter. As in Ruby, get the class of an object by sending the `class` message e.g. `[foo class]`
+
+```objc
+if ([obj isKindOfClass:[NSString class]]) {
+    // notice we explicitly cast obj to what we know it to be now
+    // QUESTION: the cast seems a little redundant here?
+    NSString *s = [(NSString *)obj stringByAppendingString:@"xxx"];
+}
+```
+
+respondsToSelector takes a selector (`SEL`) type. The special `@selector()` _directive_ turns the name of a method into a selector
+
+```objc
+if ([obj respondsToSelector:@selector(shoot)] {
+    [obj shoot];
+} else if ([obj respondsToSelector:@selector(shootAt:)]) // note the
+    [obj shootAt:target];
+}
+
+```
+
+`SEL` is a typedef like `BOOL`. You can delare instances of `SEL`
+
+```objc
+SEL shootSelector = @selector(shoot);
+SEL shootAtSelector = @selector(shootAt:); // <-- includes the :
+```
+
+`NSObject` has some methods that explicitly take selectors as arguments:
+
+```objc
+[obj performSelector:shootSelector];
+[obj performSelector:shootAtSelector withObject:coordinate];
+// Limitation: you can only send messages with 0 or 1 args this way
+```
+
+NSArray has `makeObjectsPerformSelector` which will make each object in the
+array perform the given selector. This is a nice (but not as nice as a `map`) way of running things on all elements of an array.
+
+```objc
+NSArray *ary = ...
+[ary makeObjectsPerformSelector:shootSelector];
+```
+
+Another use case for both `id` and `SEL` is when you are programmatically
+adding a target to a view. The view does not know the type of the delgate but
+we do need to tell it what message to send to the delgate.
+
+```objc
+UIButton *button;
+- (void) button addTarget:(id)target action:@selector(isPressed:) ...
+```
+
+### Protocols
+
+* are inbetween id (most unsafe) and static typing (most safe)
+* We don't specify the class of an object but do specify what methods it should implement
+* example:
+```
+id <UIScrollViewDelegate> scrollViewDelegate;
+```
+
+_will be covered more later_
+
+## Foundation framework
+
+
+NSObjec timplements `description` message
+
+We use it in
+
+1. NSLog the @% returns it
+2. We implement it in our own classes
+
+NSObject also stubs out
+
+```objc
+- (id) copy         // give me an immutable copy of this object
+- (id) mutableCopy  // give me a mutable copy of this object
+```
+
+which are implemented differently by different classes (and will raise an exception if they don't exist).
+
+Note that `copy` will give you an immutable version of a mutable thing if the recierver you send it to is mutable i.e. it is a bit like `freeze` in ruby.
+
+Making copies of collection classes (`NSArray`, `NSDictionary`) is very efficient so don't sweat doing so.
+
+* NSArray
+    * all objects held `strong`ly
+    * is immutable - only objects that are put in there when created will be
+      there.
+    * Has shorthand syntax `@[]`
+* NSMutableArray
+    * inherits from NSArray
+    * usually created with alloc+init
+    ```
+    [[NSMutableArray alloc] init];
+    [NSMutableArray array]; // shorthand as above
+
+    // Class methods
+    - (id)arrayWithCapacity:(NSUInteger *)numItems; // capacity is just a perf hint to the runtime
+
+
+    // Instance methods
+    -(void)insertObject(id)object atIndex:(NSUInteger *)index
+    -(void)removeObjectatIndex:(NSUInteger *)index
+
+    NSMutableArray *a = [NSMutableArray array];
+    [a addObject:@"a"];
+    [a addObject:@"b"];
+    NSLog(@"Array is: %@", a);
+
+    [a setObject:@"foo" atIndexedSubscript:0];
+    a[1] = @"bar"; // same as line above
+
+    NSLog(@"first: %@", [a objectAtIndexedSubscript:0]);
+    NSLog(@"first: %@", a[0]); // same as line above
+
+    NSLog(@"Array is: %@", a);
+    ```
+
+You iterate through an array using `for-in`. Because arrays are hetrogenous you are in essence casting each value as you pull it out
+
+```objc
+NSArray *hopefullyStrings = ...
+
+for (NSString *s in hopefullyStrings) {
+    // do stuff, possibly crash if you get something expected
+}
+
+// For arrays that contain mixed things you can use `id` type and use
+// introspection to figure out exactly what it is.
+for (id thing in hopefullyStrings) {
+    if ([thing isKindOf:[SomeClass class]) {
+        // do thing
+    }
+}
+```
+
+### NSNumber
+
+`NSNumber` is an object wrapper around C scalar numeric primitive types:
+
+* a signed or unsigned char
+* double
+* enum
+* float
+* int
+* long int
+* long long int
+* short int
+
+```objc
+NSNumber *n = [NSNumber numberWithInt:36];
+float f = [n floatValue]; // 36.0 Notice that NSNumber can convert between types
+```
+We usually want to wrap them so we can put them in an array or dictionary. The short-hand syntax for making NSNumber is `@()`
+
+```
+NSNumber *foo = @3 // can omit () for simple numbers
+NSNumber underline = @(NSUnderlineStyleSingle); // enum to NSNumber
+NSNumber val = @([card match:@[otherCard]]); // convert primitive return value to NSNumber
+```
+
+NSNumber also provides a `compare` method for comparing these primitive types
+
+
+### NSValue
+
+`NSValue` is a wrapper for non primitive, non object types e.g. C structs
+
+* NSNumber inherits from it
+* Not used much in this course
+
+A good strategy for working with C structs in ObjC is to turn it to/from a string when you need to put it in arrays etc.
+
+```
++ strings are easy to work with e.g. put in array/dictionary
+- slightly less performant than NSValue
++ ObjC has good function for converting between C structs and strings
+```
+
+### NSData
+
+* just a bag of bits
+### NSDate
+
+* use to find current date or store past and future dates
+* see also NSCalendar, NSDateFormatter, NSDateComponents
+* If you are going to put date UI you have to be aware of localization issues
+
+### NSSet
+
+* Also NSMutableSet
+* like an array but
+    1. no ordering
+    2. all members are unique
+* can union and intersect with other sets
+
+### NSOrderedSet
+
+* Cross between array and set
+* Objects have an order but are also distinct i.e. you can't put the same object in multiple times
+* probably faster for finding things than array
+
+
+## NSDictionary
+
+* An immutable collection of key value pairs
+* keys and values are both objects
+
+```objc
+// @{ key: value, key2: value2, key3: value3 }
+
+NSDictionary *colors = { @"green": [UIColor greenColor],
+                         @"red": [UIColor redColor],
+                         @"blue": [UIColor blueColor] }
+
+UIColor *col = colors[@"green"]; // lookup object with []
+```
+
+* All keys and values are held `strong`ly
+* You can use any object as a key provided it implements `hash` and `isEqual`. Consequences:
+    * `NSString` is a good choice:
+        * `hash` and `isEqual` is based on characters in string
+    * `NSObject` is a bad choice:
+        * pointer is the hash and == is the isEqual
+        * any subclasses of NSObject I create are also poor
+* Neither a key nor value can be `nil` - use `NSNull` instead
+* Has methods to read from and write to disk as a plist file
+* NSMutableDictionary
+    * mutable version
+    * create using alloc/init or one of the `-(id)dictionary ...` methods
+    ```
+    -(
+    ```
+* can loop through them with `for-in`
+    ```
+    for (id key in myDict) {
+        id value = [myDict objectForKey:key]; // value
+        id value = myDict[key] // same as above
+    }
+    ```
+* can get all values as array and all keys as array
+
+
+## Property list
+
+"Property list" just means a "collection of collections". It is _any graph of objects_ containing only:
+
+1. NSArray
+2. NSDictionary
+3. NSData
+4. NSNumber
+5. NSString
+6. NSDate
+
+(or mutable subclasses thereof)
+
+The above are all collections. A property list is
+
+Examples:
+
+* array of strings
+* array of arrays
+* dictionary of arrays of strings
+
+A dictionary is only a property list if both its keys and values are in the above list.
+Note that "property list" is _not_ a type - it is just a phrase we use. It matters because the iOS SDK has a number of APIs that take "property lists" (the type is usually `id`)
+
+
+### NSUserDefaults
+
+* a dictionary that persists across application launches
+* not a full on database
+* only store small things like user preferences
+* is a singleton
+* even if you give it a mutable thing, you will get back an immutable version
+
+```
+[NSUserDefaults standardUserDefaults] // get access to the singleton instance
+[[NSUserDefaults standardUserDefaults] synchronize] // always write changes to disk quickly
+```
+
+
+### NSRange
+
+* is a C struct not a class
+* used to specify sub ranges within strings, arrays etc.
+
+```objc
+typedef struct {
+    NSInteger length;
+    NSInteger location;
+} NSRange;
+```
+
+* has the `NSNotFound` constant which you get back if you ask for a location
+  that is somehow invalid.
+* Notice that the location cannot be negative!
+
+```objc
+NSString *greeting = @"hello there";
+NSString *fragment = @"hi";
+NSRange r = [greeting rangeOfString:fragment];
+
+// notice that we test **location** not the range itself
+if (r.location == NSNotFound) {
+    // failed to find the substring in the string
+}
+```
+
+NSRangePointer is just `NSRange *`
+
+Used by methods that take a reference to an `NSRange` as a parameter and will fill it in. Examples are the C functions
+
+* `NSEqualRanges()`
+* `NSMakeRange()`
+
+
+## UIKit classes
+
+### UIColor
+
+* an object representing a color
+* can be represented as RGB, HSL etc.
+* can even be a pattern (UIImage) - when you draw with the color it will draw with the pattern
+* can also have alpha
+  ```objc
+  UIColor *c = [otherColor colorWithAlphaComponent:0.3];
+  ```
+* there are some "standard" colors that have class methods:
+  ```objc
+  [UIColor greenColor];
+  [UIColor redColor];
+  [UIColor purpleColor];
+  ```
+* there are also some "system" colors that have class methods:
+  ```objc
+  [UIColor lightTextColor];
+  ```
+
+### UIFont
+
+* fonts are very important in iOS
+
+The prefered way of getting an UIFont for _user content_ (not buttons etc.) is
+to ask for the _prefered font_ for a given _text style_.
+
+```objc
+UIFont *f = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
+```
+
+Examples of font styles (UIFontDescriptor):
+
+* UIFontTextStyleBody
+* UIFontTextStyleHeadline
+* UIFontTextStyleCaption1
+* UIFontTextStyleFootnote
 
