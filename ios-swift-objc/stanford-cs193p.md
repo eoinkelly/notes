@@ -770,3 +770,174 @@ Examples of font styles (UIFontDescriptor):
 * UIFontTextStyleCaption1
 * UIFontTextStyleFootnote
 
+There are also "system fonts" designed for use on the app chrome. In general you should never use these for user content.
+
+```objc
++ (UIFont *)systemFontOfSize:(CGFloat)pointSize;
++ (UIFont *)boldSystemFontOfSize:(CGFloat)pointSize;
+```
+
+Aside: `CGFloat` is the float type from _Core Geometry_
+
+### UIFontDescriptor
+* attempts to put categories on fonts
+* tries to map font metrics into stuff we care about as devs
+* it categorizes by family, face, size etc.
+* You can ask for fonts that have those attributes and get a "best match"
+* Consequences: the best "match" for a request for "bold" might not be bold if the font does not include a bold weight
+
+
+### Attributed Strings
+
+The presentation of text depends on a number of things:
+
+* font
+* fill color
+* underline
+* outline
+* stroke width
+
+`NSAttributedString` brings all these together in an object that has a dictionary of attributes for _each character_.
+
+* Note that it is **not** a subclass of `NSString`!
+    * You cannot send it "string" messages.
+    * it has the `string` method
+    ```
+    NSAttributedString *str = ...
+    NSString substr = ...
+    [str string]; // gives us back a real string
+    NSRange r = [[str string] rangeOfString:substring];
+    ```
+    * the string you get back is high performance but volatile
+    * If you want to keep this string around make a copy of it
+* It is immutable
+* Usage:
+    ```objc
+    // we pass in a range which will be filled in to tell us how many characters
+    // have the same attributes as the dictionary we just got
+    // it is ok to pass NULL for the range pointer if you don't care
+    - (NSDictionary *)attributesAtIndex(NSUInteger)index effectiveRange:(NSRangePointer range);
+    ```
+
+`NSMutableAttributedString`
+
+```
+- (void)addAttributes(NSDictionary *)attributes range:(NSRange)range;
+- (void)setAttributes(NSDictionary *)attributes range:(NSRange)range;
+- (void)removeAttribute(NSString *)attributeName range:(NSRange)range;
+```
+
+How do we modify the characters (not attributes) of an `NSMutableAttributedString`?
+
+We use `mutableString` message which gives back an instance of
+`NSMutableString` which magically tracks the contents of our mutable attributed
+string.
+
+```objc
+[mutAttStr mutableString]; // gives back a mutable string
+```
+
+Attributes of attributed strings
+
+```objc
+UIColor *transparentYellow = [[UIColor yellowColor] colorWithAlphaComponent:0.3];
+
+@{
+    NSFontAttributeName: [UIFont preferredFontForTextStyle:UIFontTextStyleHeadline],
+    NSForegroundColorAttributeName: [UIColor greenColor],
+    NSStrokeWidthAttributeName: @-5, // negative means "fill and stroke, positive => stroke only
+    NSStrokeColorAttributeName: [UIColor redColor],
+    NSUnderlineStyleAttributeName: @(NSUnderlineStyleSingle), // NSNumber that has an enum
+    NSBackgroundColorAttributeName: transparentYellow
+}
+```
+
+Places we can use attributed strings:
+
+* UIButton
+    * attributedTitle
+* UILabel
+    * attributedText (immutable property)
+* UITextView
+
+For example:
+
+```objc
+[someUIButton setAttributedTitle:(NSAttributedString *)title forState:...;
+```
+
+Aside: what do I need to do to make space in memory in objC?
+    is declaring a primitive enough
+    "objects" are on the heap so need free/malloc under the hood i.e. some flavour of alloc+init
+
+### UITextView
+
+* A bit like UILabel but is selectable, scrollable, editable
+* Has an `NSTextStorage` property (a subclass of NSMutableAttributedString) that represents its contents
+* Each character has a dictionary of attributes but you can set the font for
+  the UITextView as a whole. THis just sets whatever font you provide as the
+  font for each individual character
+    * Be aware that since traits (bold, italic) are part of each characters
+      font info you will overwrite them when you set the font for the whole
+      UITextView
+* UITextView can do advanced layout with TextKit (new in iOS 7) e.g. exclusion
+  zones. See the docs for the NSTextContainer and NSLayoutManager for full
+  details.
+    * The LayoutManager is the thign that lays the glyphs of a font out on the
+      screen
+
+### View Controller life cycle
+
+A sequence of messages is sent to views as they progress through their life.
+
+* controller is initialized
+* geometry (bounds) changed e.g. screen rotation
+* was put on screen
+* was taken off screen
+* low memory situations
+
+
+Storyboards do not generate code. Tutor explains it as we are editing instances of the view objects live in Xcode - these views are then serialized (think JSON, not code) to disk and deserialized when the app runs
+
+Lifecycle of a ViewController
+
+1. Creation of view controller instance
+1. Outlets are set
+`- (void)viewDidLoad` is called
+    * outlets are set so we can work with the contents of the view e.g. buttons
+    * this is the place to do initialization of the view controller
+    * Note: it is called before the view appears on screen
+    * => the bounds of the view are not set so you can't do any stuff that is to do with the shape of the view on screen
+    * Is only called **once** in the lifecycle of the view controller
+1. `- (void)viewWillAppear:(BOOL)animated` is called
+    * this is called _every time_ your view is about to appear (`viewDidLoad` is only called once)
+    * the boolean arg just tells you whether you are being animated onto the screen or not.
+    * You have geometry information in here so you can do it here but this will not be called when the phone rotates so you might not want to put it here
+        * there is a better place to do it
+        * t
+    * Things to do here:
+        * initialization you need to do in response to data that might have
+          chnaged while you were off screen
+        * you probably want to do expensive work in here. In viewDidLoad you don't know that your view will _ever_ appear on screen
+1. You appear on screen
+1. `- (void)viewDidAppear:(BOOL)animated` is called
+1. You are _about to_ go off-screen
+1. `- (void)viewWillDisappear:(BOOL)animated` is called
+    * Things you should do here:
+    ```objc
+    [super viewWillDisappear]; // let the superclass method have a go
+    ```
+    * Things you can do here:
+    ```objc
+    [self rememberScrollPosition];
+    [self saveToPermenantStorage]; // <-- if time consuming, do in a thread
+    ```
+1. `- (void)viewDidDisappear:(BOOL)animated` is called
+
+
+
+Alwasy let the inherited version of a lifecycle method have a chance to run using `[super viewDidLoad];`
+```objc
+- (void)viewDidLoad
+- (void)viewDidReceiveMemoryWarning
+```
