@@ -901,14 +901,21 @@ Storyboards do not generate code. Tutor explains it as we are editing instances 
 
 Lifecycle of a ViewController
 
-1. Creation of view controller instance
+1. It is allocated from the storyboard
+1. `awakeFromNib` is called
 1. Outlets are set
+    * the consequence of "outlets being set" is that you can now talk to the
+      UIView instances that are connected.
 `- (void)viewDidLoad` is called
     * outlets are set so we can work with the contents of the view e.g. buttons
     * this is the place to do initialization of the view controller
     * Note: it is called before the view appears on screen
-    * => the bounds of the view are not set so you can't do any stuff that is to do with the shape of the view on screen
+    * => the bounds of the view are not set so you can't do any stuff that is
+      to do with the shape of the view on screen
     * Is only called **once** in the lifecycle of the view controller
+1. (geometry is determined)
+1. `viewWillLayoutSubviews` is called
+1. `viewDidLayoutSubviews` is called
 1. `- (void)viewWillAppear:(BOOL)animated` is called
     * this is called _every time_ your view is about to appear (`viewDidLoad` is only called once)
     * the boolean arg just tells you whether you are being animated onto the screen or not.
@@ -934,10 +941,97 @@ Lifecycle of a ViewController
     ```
 1. `- (void)viewDidDisappear:(BOOL)animated` is called
 
+Alwasy let the inherited version of a lifecycle method have a chance to run
+using `[super viewDidLoad];`
 
-
-Alwasy let the inherited version of a lifecycle method have a chance to run using `[super viewDidLoad];`
 ```objc
 - (void)viewDidLoad
 - (void)viewDidReceiveMemoryWarning
 ```
+
+Where to put your response to geometry changes e.g. changes that auto layout
+gets wrong.
+
+```objc
+- (void)viewWillLayoutSubViews;
+// auto layout happens in here (tries to move everything based on your constraints
+- (void)viewDidLayoutSubViews;
+```
+
+There are 3 condistions that must be met for auto rotation to happen
+
+1. ViewController returns YES from `shouldAutoRotate`
+    * can override this for a view controller to stop rotation
+2. The ViewController returns the new orientation from `supportedInterfaceOrientations`
+3. The Application allows rotation to that orientation in its Info.plist
+    * see "Supported Interface Orientations" in the plist
+    * There are 4 possible values in here (set on the project properties page)
+
+There are a few other methods that are called before/after _rotation_
+
+```objc
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)orientation duration:(NSTimeInterval)seconds;
+- (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)orientation duration:(NSTimeInterval)seconds;
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)orientation;
+
+
+// ViewController also have the property
+@property UIInterfaceOrientation interfaceOrientation;
+// that will contain the current orientation
+```
+
+### didReceiveMemoryWarning
+
+* called by the system when it is running low on memory
+* does not necessairly indicate that my app is using too much memory, just that
+  the system as a whole is running low
+* It wants you to delete memory on the heap i.e. set some of your strong
+  pointers to nil
+* Focus on big things e.g.
+    * images
+    * sounds
+    * video
+* iOS can kill your app if it things that you are using "too much" memory
+* being a "good memory citizen" involves freeing up resources that are not in
+  use for the _currently visible_ ViewControllers - you should free memory on
+  `viewWillDisappear` and re-take it again on `viewWillAppear` if possible.
+
+
+### awakeFromNib
+
+* When a UIViewController is "rehydrated" from the storyboard the `init` method
+  is _not_ called.s  A different init method is called:
+    * `- (instancetype)initWithNibName:bundle:` is the designated initializer
+* Also the `awakeFromNib` is called
+    * your outlets are not set when this is called
+    * this method is sent to all objects that come out of a storyboard
+      including your controller
+    * you can put initialization code here but `viewDidLoad` and
+      `viewWillAppear` are probably much better places
+
+You can allocate and instantiate a view controller from _code_ i.e. you built
+it on the fly for some reason you need to handle the "waking up" yourself. In
+this case you have to use a little boilerplate to make sure your setup code is
+called in all possible "creation" scenarios.
+
+```objc
+
+// do all your setup in here
+- (void)setup { };
+
+// make sure your setup is run when you are "rehydrated" from a Nib
+- (void)awakeFromNib { [self setup]; }
+
+// make sure your setup is run when the viewcontroller is created by code
+- (instancetype)initWithNibName:(NSString *)name bundle:(NSBundle *)bundle
+{
+    self = [super initWithNibName:name bundle:bundle];
+    [self setup];
+    return self;
+}
+```
+
+
+Global tint
+
+* Changes all _clickable_ things in the app

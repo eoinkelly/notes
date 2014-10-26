@@ -234,3 +234,6 @@ In all the SDKs the version is prepended to the API calls e.g. `me/events`
 becomes `/2.0/me/events`
 
 
+# Manual login (not using an SDK)
+
+https://developers.facebook.com/docs/facebook-login/manually-build-a-login-flow/v2.1

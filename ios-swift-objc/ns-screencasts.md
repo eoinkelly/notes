@@ -120,13 +120,12 @@ TODO: find out more about it
 ```objc
 #import "ourclassname"
 
-// The implementation file has 2? sections
+// The implementation file has ? sections
 
 // section 1. @interface
 // *****************************************
-// seems mostly a repeat of header ???
-// QUESTION: is it exactly the same? why is it repeated?
-@inderface ClassName ()
+// The "private" @interface (instance variables and declarations
+@interface ClassName ()
 @end
 
 // Section 2: Implementation
