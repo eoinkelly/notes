@@ -1,5 +1,7 @@
 # Grand central dispatch
 
+TODO: good source: https://www.mikeash.com/pyblog/?tag=gcd
+
 * Based on _thread pool pattern_
 * OS manages the thread pool - the dev injects _work packages_ into the pool without knowing its architecture
 * GCD is the marketing name for the open source `libdispatch` library

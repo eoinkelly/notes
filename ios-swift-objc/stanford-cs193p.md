@@ -105,8 +105,9 @@ that property (same idea as not keeping truth in the DOM)
 The controller has a reference to the model but the model does not have a
 reference to the controller.
 
-Sometimes the model will need to tell the view things wihtout the view first
-asking a question. To allow this we use a sort of "radio station" model.
+Sometimes the model will need to tell the controller things wihtout the
+controller first asking a question. To allow this we use a sort of "radio
+station" model.
 
 Model broadcasts info to anyone who is interested - this is _Notification_ and
 _Key value observing_
@@ -116,6 +117,8 @@ _Key value observing_
 
 * He refers to "an MVC". This is 1 model instance, 1 controller instance, and 1
   view instance all wired up as above.
+    * the single view instance can have child views e.g. our single view is the
+      view that encapsulates everything visible on screen.
 * A large app is made up of multiple "MVCs" working together.
 * An MVC can use another MVC as its view.
     * This is the main way a large iOS app is structured.
@@ -136,63 +139,57 @@ This is quite different to the Rails flavour of MVC.
     * getter: just the name of the value e.g. `myValue`
     * setter: `setMyValue`
 
-.h file is the _public API_ of the class
-.m is the implementation of the class (of both public and private methods)
+`.h` file is the _public API_ of the class
+`.m` is the implementation of the class (of both public and private methods)
 
 
 ```objc
-// *********************************************
 // card.h
-// *********************************************
 
 // Import all the public interfaces of all classes in Foundation framework
 @import "Foundation" // magical syntax for Apple frameworks
 #import <Foundation/Foundation.h> // old school way
 
 // begin the public interface of Card which inherits from NSObject ...
-// couls also say NSObject is the _superclass_ of Card
+// we could also say NSObject is the _superclass_ of Card
+
 @interface Card : NSObject
 
 // properties can be either strong|weak
 // strong => keep this in the heap as long as at least one strong pointer left
-// weak   => keep this in memory as long as somebody else has a storn pointer to
+// weak   => keep this in memory as long as somebody else has a strong pointer to
 //           it. If it runs out of strong pointers set this pointer to nil.
 // nonatomic => this property is not thread safe
 // If we don't specify 'nonatomic' the generated getter/setter for the property
 // will contain a bunch of locking code to make it work across threads
+
 @property (strong, nonatomic) NSString *contents;
 
 // Notice we can override the getter name to make it read nicer
-// * We don't need strong|weak here because this BOOL is a primitive value and
-//   is statically allocated (not on the heap)
+// We don't need strong|weak here because this BOOL is a primitive value and
+// is statically allocated (not on the heap)
 @property (nonatomic, getter=isMatched) BOOL matched;
 @property (nonatomic, getter=isChosen) BOOL chosen;
 
 // Public methods of Card
+
 - (int)match:(NSArray *)cards;
 
-
-@end // end of public interface
-```
+@end
 
 
-
-```
-// *********************************************
 // card.m
-// *********************************************
 
 // Import the public interface of our class
 #import "Card.h"
 
-// Begin the private interface of our class
+// Begin a class extension of Card (lets us declare private interface)
 @interface Card()
 @end
 
 // begin the implementation of all interfaces of our class
 @implementation Card
 
-// *********************************************
 // Automatically created by ObjC via @property
 // *********************************************
 
@@ -201,7 +198,7 @@ This is quite different to the Rails flavour of MVC.
 // or
 //   "synthesize property contents to use _contents as storage"
 // It allocates space for the contents in the object.
-// "synth-e-size"
+
 @synthesize contents = _contents;
 
 // getter
@@ -215,6 +212,7 @@ This is quite different to the Rails flavour of MVC.
 {
     _contents = newContents;
 }
+
 // *********************************************
 
 - (int) match:(NSArray *)cards
@@ -236,7 +234,7 @@ This is quite different to the Rails flavour of MVC.
     return score;
 }
 
-@end // end of implementation block
+@end
 ```
 
 Objective C
@@ -245,21 +243,25 @@ Objective C
 * _all_ objects live on the heap! Consequence:
     * any variable you have to an object is _always_ a pointer.
 * We can (and do) send messages to `nil` pointers in ObjC
-    * It does not result in a nul pointer exception as it would in other langs
+    * It does not result in a null pointer exception as it would in other langs
 * All properties start off as `nil` when you declare them
     * => you don't have to worry about them pointing at arbitrary memory
 
 NSArray
     * is hetrogenous - it can contain any object
     * is immutable (use NSMutableArray as mutable version)
+    * `arr[4]` is sugar for `[arr insertObjectAtSubstringIndex:4]`
+    * `NSArray` and `NSMutableArray` cannot be sparse but you can insert `[NSNull null]` objects to give the appearance of a sparse array.
 
 NSUInteger
     * will be different on different platforms e.g. on iPhone 5+ it will be 64bit
     * is an alias for `unsigned long *` (a pointer to a long on the heap)
 
 
- QUESTION: what shoudl you do if you don't have a higher res version of an image? add the low res in the slot or jsut leave slot empty?
+QUESTION: what should you do if you don't have a higher res version of an
+image? add the low res in the slot or jsut leave slot empty?
 
+ANSWER: The XCAssets stuff will fallback to the @1x version of an image if it cannot find the @2x so you should probably put the image in the @1x if you only have a high-res version ???
 
 # Lecture 3
 
@@ -285,17 +287,6 @@ strong
     * only applies if object is heap allocated
 readwrite
     * properties make both a getter and a setter by default
-
-
-There is no "protected" in ObjC - only "public" and "private"
-
-
-arr[4]
-is sugar for
-[arr insertObjectAtSubstringIndex:4]
-
-`NSArray` and `NSMutableArray` cannot be sparse but you can insert `[NSNull null]` objects to give the appearance of a sparse array.
-
 
 
 ## Designated initializers
@@ -328,9 +319,10 @@ Sometimes both a _class creator_ method and some init methods exist
 because they had good semantics for how memory was allocated.
 * The tutor here favours alloc-init rather than class methods if possible.
 
-ObjC has a naming convention for guessing the memory handlying semantics of a method correctly:
-
 Not all objects given out by other objects are **newly** created!
+
+ObjC has a naming convention to help humand guess the memory handlying
+semantics of a method correctly:
 
 * Method name does not have _copy_
     * you get a pointer to an existing object if one exists. A new object is
@@ -362,40 +354,55 @@ CGPoint p = [obj getLocation]; // p is undefined if obj is nil
 * ObjC `id` is a "pointer to an object of unknown/unspecified type"
 * pronounced "eye-dee"
 * consequences
-    * it is already a pointer  - `id *` makes no sense in ObjC because we do not do pointers to pointers.
-All pointers are treated like `id` at runtime because ObjC has dynamic binding i.e. it does not decide what code to execute in response to a message until right before it sends the message at runtime e.g. `NSString *` is same as `id` at runtime
+    * it is already a pointer  - `id *` makes no sense in ObjC because we do
+      not do pointers to pointers.
 
-At compile time things like `NSString *` are good because the compiler can help you find bugs
+All pointers are treated like `id` at runtime because ObjC has dynamic binding
+i.e. it does not decide what code to execute in response to a message until
+right before it sends the message at runtime e.g. `NSString *` is same as `id`
+at runtime
+
+At compile time things like `NSString *` are good because the compiler can help
+you find bugs
 Consequences:
-    * if you explicitly use `id` type in your code then the compiler cannot help you!
-    * if you were to use `id` everywhere in your code then it would be more like the situation in ruby! ;-)
+    * if you explicitly use `id` type in your code then the compiler cannot
+      help you!
+    * if you were to use `id` everywhere in your code then it would be more
+      like the situation in ruby! ;-)
 
-```
+```objc
 NSString *s = @"foo" // legal and can get type help from compiler
 id obj = s; // legal, no warning from compiler
 NSArray *a = obj // legal but a terrible idea, no warning from compiler
 ```
+
 ObjC uses _static_ typing and _dynamic_ binding.
 
 ```
 id myObject;
 ```
 
-The compiler will warn you if the method you are sending is not defined in your program but if it is defined anywhere then the compiler has to assume that what you are sending it to _might_ be a thing that responds to it.
+The compiler will warn you if the method you are sending is not defined in your
+program but if it is defined _anywhere_ then the compiler has to assume that
+what you are sending it to _might_ be a thing that responds to it.
 
 Typecasting does not execute any code - it just tricks the compiler
 
 Use cases for `id`
 
 1. An hetrogenous NSArray
-2. The "blind, structured" communication between controllers and views. The view is sending messages to the delegate it got but it does not know the type of that delgate!
+2. The "blind, structured" communication between controllers and views. The
+   view is sending messages to the delegate it got but it does not know the
+   type of that delgate!
 
 The ways we can protect ourselves are
 
+
+We do use explicit type casting (which also leaves the compiler blind) and use
+id sometimes but we do so when we have the protection of
+
 1. Introspection
 2. Protocols
-
-We do use explicit type casting (which also leaves the compiler blind) and use id sometimes but we do so when we have protection.
 
 ### Introspection
 
@@ -410,7 +417,8 @@ respondsToSelector
 ```
 
 * The answers to these questions are calculated at _runtime_!
-* All introspection methods take a `Class` object as parameter. As in Ruby, get the class of an object by sending the `class` message e.g. `[foo class]`
+* All introspection methods take a `Class` object as parameter. As in Ruby, get
+  the class of an object by sending the `class` message e.g. `[foo class]`
 
 ```objc
 if ([obj isKindOfClass:[NSString class]]) {
@@ -431,7 +439,7 @@ if ([obj respondsToSelector:@selector(shoot)] {
 
 ```
 
-`SEL` is a typedef like `BOOL`. You can delare instances of `SEL`
+`SEL` is a typedef. You can delare instances of `SEL`
 
 ```objc
 SEL shootSelector = @selector(shoot);
@@ -447,7 +455,8 @@ SEL shootAtSelector = @selector(shootAt:); // <-- includes the :
 ```
 
 NSArray has `makeObjectsPerformSelector` which will make each object in the
-array perform the given selector. This is a nice (but not as nice as a `map`) way of running things on all elements of an array.
+array perform the given selector. This is a nice (but not as nice as a `map`)
+way of running things on all elements of an array.
 
 ```objc
 NSArray *ary = ...
@@ -477,7 +486,7 @@ _will be covered more later_
 ## Foundation framework
 
 
-NSObjec timplements `description` message
+NSObject timplements `description` message
 
 We use it in
 
@@ -491,11 +500,14 @@ NSObject also stubs out
 - (id) mutableCopy  // give me a mutable copy of this object
 ```
 
-which are implemented differently by different classes (and will raise an exception if they don't exist).
+which are implemented differently by different classes (and will raise an
+exception if they don't exist).
 
-Note that `copy` will give you an immutable version of a mutable thing if the recierver you send it to is mutable i.e. it is a bit like `freeze` in ruby.
+Note that `copy` will give you an immutable version of a mutable thing if the
+recierver you send it to is mutable i.e. its semantics are a bit like "copy and freeze".
 
-Making copies of collection classes (`NSArray`, `NSDictionary`) is very efficient so don't sweat doing so.
+Making copies of collection classes (`NSArray`, `NSDictionary`) is very
+efficient so don't sweat doing so.
 
 * NSArray
     * all objects held `strong`ly
@@ -531,7 +543,8 @@ Making copies of collection classes (`NSArray`, `NSDictionary`) is very efficien
     NSLog(@"Array is: %@", a);
     ```
 
-You iterate through an array using `for-in`. Because arrays are hetrogenous you are in essence casting each value as you pull it out
+You iterate through an array using `for-in`. Because arrays are hetrogenous you
+are in essence casting each value as you pull it out
 
 ```objc
 NSArray *hopefullyStrings = ...
@@ -554,6 +567,7 @@ for (id thing in hopefullyStrings) {
 `NSNumber` is an object wrapper around C scalar numeric primitive types:
 
 * a signed or unsigned char
+    * a single byte that contains a number from the ASCII table
 * double
 * enum
 * float
@@ -566,7 +580,9 @@ for (id thing in hopefullyStrings) {
 NSNumber *n = [NSNumber numberWithInt:36];
 float f = [n floatValue]; // 36.0 Notice that NSNumber can convert between types
 ```
-We usually want to wrap them so we can put them in an array or dictionary. The short-hand syntax for making NSNumber is `@()`
+
+We usually want to wrap them so we can put them in an array or dictionary. The
+short-hand syntax for making NSNumber is `@()`
 
 ```
 NSNumber *foo = @3 // can omit () for simple numbers
@@ -584,7 +600,8 @@ NSNumber also provides a `compare` method for comparing these primitive types
 * NSNumber inherits from it
 * Not used much in this course
 
-A good strategy for working with C structs in ObjC is to turn it to/from a string when you need to put it in arrays etc.
+A good strategy for working with C structs in ObjC is to turn it to/from a
+string when you need to put it in arrays etc.
 
 ```
 + strings are easy to work with e.g. put in array/dictionary
@@ -595,6 +612,7 @@ A good strategy for working with C structs in ObjC is to turn it to/from a strin
 ### NSData
 
 * just a bag of bits
+
 ### NSDate
 
 * use to find current date or store past and future dates
@@ -619,7 +637,8 @@ A good strategy for working with C structs in ObjC is to turn it to/from a strin
 ## NSDictionary
 
 * An immutable collection of key value pairs
-* keys and values are both objects
+* keys and values are both objects (however see note below on what objects make
+  good keys)
 
 ```objc
 // @{ key: value, key2: value2, key3: value3 }
@@ -677,9 +696,12 @@ Examples:
 * array of arrays
 * dictionary of arrays of strings
 
-A dictionary is only a property list if both its keys and values are in the above list.
-Note that "property list" is _not_ a type - it is just a phrase we use. It matters because the iOS SDK has a number of APIs that take "property lists" (the type is usually `id`)
+A dictionary is only a property list if both its keys and values are in the
+above list.
 
+Note that "property list" is _not_ a type - it is just a phrase we use. It
+matters because the iOS SDK has a number of APIs that take "property lists"
+(the type is usually `id`)
 
 ### NSUserDefaults
 
@@ -694,7 +716,6 @@ Note that "property list" is _not_ a type - it is just a phrase we use. It matte
 [[NSUserDefaults standardUserDefaults] synchronize] // always write changes to disk quickly
 ```
 
-
 ### NSRange
 
 * is a C struct not a class
@@ -708,7 +729,8 @@ typedef struct {
 ```
 
 * has the `NSNotFound` constant which you get back if you ask for a location
-  that is somehow invalid.
+  that is somehow invalid (note: the `location` property has this value not the
+  range as a whole)
 * Notice that the location cannot be negative!
 
 ```objc
@@ -724,7 +746,8 @@ if (r.location == NSNotFound) {
 
 NSRangePointer is just `NSRange *`
 
-Used by methods that take a reference to an `NSRange` as a parameter and will fill it in. Examples are the C functions
+Used by methods that take a reference to an `NSRange` as a parameter and will
+fill it in. Examples are the C functions
 
 * `NSEqualRanges()`
 * `NSMakeRange()`
@@ -780,12 +803,12 @@ There are also "system fonts" designed for use on the app chrome. In general you
 Aside: `CGFloat` is the float type from _Core Geometry_
 
 ### UIFontDescriptor
+
 * attempts to put categories on fonts
 * tries to map font metrics into stuff we care about as devs
 * it categorizes by family, face, size etc.
 * You can ask for fonts that have those attributes and get a "best match"
 * Consequences: the best "match" for a request for "bold" might not be bold if the font does not include a bold weight
-
 
 ### Attributed Strings
 
@@ -801,7 +824,7 @@ The presentation of text depends on a number of things:
 
 * Note that it is **not** a subclass of `NSString`!
     * You cannot send it "string" messages.
-    * it has the `string` method
+    * it has the `string` method which will give back a string representation of itself
     ```
     NSAttributedString *str = ...
     NSString substr = ...
@@ -873,7 +896,8 @@ Aside: what do I need to do to make space in memory in objC?
 ### UITextView
 
 * A bit like UILabel but is selectable, scrollable, editable
-* Has an `NSTextStorage` property (a subclass of NSMutableAttributedString) that represents its contents
+* Has an `NSTextStorage` property (a subclass of NSMutableAttributedString)
+  that represents its contents
 * Each character has a dictionary of attributes but you can set the font for
   the UITextView as a whole. THis just sets whatever font you provide as the
   font for each individual character
@@ -896,8 +920,9 @@ A sequence of messages is sent to views as they progress through their life.
 * was taken off screen
 * low memory situations
 
-
-Storyboards do not generate code. Tutor explains it as we are editing instances of the view objects live in Xcode - these views are then serialized (think JSON, not code) to disk and deserialized when the app runs
+Storyboards do not generate code. Tutor explains it as we are editing instances
+of the view objects live in Xcode - these views are then serialized (think
+JSON, not code) to disk and deserialized when the app runs
 
 Lifecycle of a ViewController
 
@@ -907,7 +932,7 @@ Lifecycle of a ViewController
     * the consequence of "outlets being set" is that you can now talk to the
       UIView instances that are connected.
 `- (void)viewDidLoad` is called
-    * outlets are set so we can work with the contents of the view e.g. buttons
+    * outlets are already set so we can work with the contents of the view e.g. buttons
     * this is the place to do initialization of the view controller
     * Note: it is called before the view appears on screen
     * => the bounds of the view are not set so you can't do any stuff that is
@@ -919,13 +944,14 @@ Lifecycle of a ViewController
 1. `- (void)viewWillAppear:(BOOL)animated` is called
     * this is called _every time_ your view is about to appear (`viewDidLoad` is only called once)
     * the boolean arg just tells you whether you are being animated onto the screen or not.
-    * You have geometry information in here so you can do it here but this will not be called when the phone rotates so you might not want to put it here
-        * there is a better place to do it
-        * t
+    * You have geometry information in here so you can do it here but this will
+      not be called when the phone rotates so you might not want to put it here
+      - see `viewWillLayoutSubViews` instead.
     * Things to do here:
         * initialization you need to do in response to data that might have
           chnaged while you were off screen
-        * you probably want to do expensive work in here. In viewDidLoad you don't know that your view will _ever_ appear on screen
+        * you probably want to do expensive work in here. In viewDidLoad you
+          don't know that your view will _ever_ appear on screen
 1. You appear on screen
 1. `- (void)viewDidAppear:(BOOL)animated` is called
 1. You are _about to_ go off-screen
@@ -1032,6 +1058,135 @@ called in all possible "creation" scenarios.
 ```
 
 
-Global tint
+## Global tint
 
 * Changes all _clickable_ things in the app
+
+
+## NSNotification
+
+* The "radio station" from the MVC slides
+
+* There is a default system "notification center" which has many radio stations which broadcast events such as ???
+
+To register ourselves as a listener
+
+```objc
+[NSNotificationCenter defaultCenter] // get the shared instance of the default notificaiton center
+
+- (void)addObserver:(id)observer // often 'self'
+           selector:(SEL)methodToInvokeWhenSomethingHappens // method to be called
+               name:(NSString *)name // name of the station (a constant)
+             sender:(id)sender // specify which sender we are interested in (can be nil to get all senders)
+
+```
+
+`methodToInvokeWhenSomethingHappens` will be invoked with a single
+`NSNotification` arg. An `NSNotification` has 3 properties
+
+```
+{
+    notification.name // name of notification
+    notification.object // a ref that the sender wanted me to have (sometimes a ref to itself)
+    notification.userinfo // type 'id' - details of what happened (varies by notification)
+}
+```
+
+* Your app is still sandboxed so notifications from the system will have
+  `notification.object` as nil.
+* If the notificaton came from another object in your app then it will be
+  filled in.
+
+* When you are finished listening you should tune out:
+
+    [center removeObserver:self]; // remove yourself from *all* radio stations
+    [center removeObserver:self name:blah object:nil]; // remove yourself from a single radio station (blah)
+
+* NSNotificationCenter keeps an "unsafe unretained" pointer to your object when
+  you register as an observer. For this reason you should always explicitly
+  tune out before your object gets destroyed.
+    * Failure to remove yourself can result in crashing bugs
+    * It is "unsafe retained" not "weak" for backwards compatibility with old iOS
+    * Normally you want to do this when you go off screen but in a pinch you
+      can do it in `dealloc`. Tutor recommends not using `dealloc` as much as
+      possible.
+
+
+QUESTION: What is the diff between importing a header in my .h vs my .m ??
+
+
+In storyboard ctrl+shift+click will popup a menu showing all the things under the mouse
+
+QUESTION: Does objective C have protected?
+
+    yes for members but not methods
+
+
+### UITabViewController
+
+tab bar at the bottom
+
+### UINavigationController
+
+* in the storyboard it is a "container" view - it contains other views
+* replace one view with another and have a back button to go back
+* a touch in one MVC will "segue" to another MVC
+* the embedded MVC tells the `UINavigationController` what to show in the top navigation bar
+    * title
+    * navigationItem.rightButtonItems (NSArray of UIBarButtonItems)
+* the navigation bar also contains an autmatically created "back" button
+    * the text will be the `title` of the previous MVC or the string "Back" if the title will not fit.
+* all UIViewController objects have a `navigationItem` property
+* The embedded MVC has a `toolbarItems` which (if set) will be an array or
+  UIBarButton objects. This toolbar is displayed at the base of the screen
+  iff toolbarItems has items.
+
+* The MVC is embedded by having a `rootViewController` outlet in the UINavigationController that points to the _controller_ of the MVC.
+
+Note: As the view of the UINavigationController is replaced by different MVCs the MVCs that are not visible are **deallocated** i.e. when you swipe from one view to another the old view is deallocated and the new one created from scratch.
+
+#### Segue
+
+The default segue used by UINavigationController is a _push_ segue and a corresponding _pop_ to go back.
+
+* When you create a segue you must give it a unique name so you can refer to it from code.
+* You an move the _grey arrow_ that points at the first view controller on screen. This can be very handy in testing.
+
+We can programmatically
+```objc
+// An example of programmatically triggering segue
+- (IBAction)deleteCurrentRecord
+{
+  // Do the record deletion
+
+  // Get a reference to our enclosing navigation controller and tell it to _pop_ segue.
+  // This will be nil if there isn't one so you can use it to test whether your controller is within an UINavifationController
+  [self.navigationController popViewControllerAnimated:YES];
+
+  // Aside: you almost always want to use animation so the UI is not jumpy
+}
+```
+
+When you trigger a segue by clicking a button the "source view" i.e. the view that contains the button you clicked will have its `prepareForSegue:sender:` method called. This gives the source view a chance to prepare a parcel of info for the view controller that is about to come on screen.
+
+```objc
+/**
+ * Assume we are in ViewController.m
+ * Assume DoStuffViewController is another view controller in the system
+ */
+
+// This is called before *all* segues
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id *)sender
+{
+  // Target a particular segue
+  if ([segue.identifier isEqualToString:@"DoStuff"]) {
+    // Target a particular view controller at the other end of the segue
+    if ([segue.destinationViewController isKindOfClass:[DoStuffViewController class]]) {
+      DoStuffViewController *doStuff = (DoSstuffViewController *)segue.destinationViewController;
+      // Now send messages to the view controller to prepare it e.g.
+      // NB when this is called the outlets of doStuff are **not** set i.e. this is called between awakeFromNib and viewDidLoad
+      doStuff.neededInfo = ...
+
+  }
+}
+```
