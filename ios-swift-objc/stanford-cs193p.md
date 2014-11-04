@@ -1124,7 +1124,15 @@ QUESTION: Does objective C have protected?
 
 ### UITabViewController
 
-tab bar at the bottom
+* shows a tab bar at the bottom of screen
+* encloses a collection of view controllers
+* shows a `title` and `tabBarItem` (icon badge) for each enclosed controller
+* automatically creates a '... more' tab if you have more than 5 UIViewControllers
+* has a `viewControllers` NSArray which holds references to its controllers
+
+```objc
+@property (nonatomic, strong) NSArray *viewControllers;
+```
 
 ### UINavigationController
 
@@ -1190,3 +1198,58 @@ When you trigger a segue by clicking a button the "source view" i.e. the view th
   }
 }
 ```
+
+UP TO END OF VIDEO 6
+
+# Lecture 7
+
+## UIView
+
+* a building block on screen
+* defines a coordinate space
+* draws and handles events in that rectangle
+* are heirarchical
+    * the top of the heirarch is the `view` property of the UIViewController
+    * this top level view
+        * is what will have its bounds changed by rotation
+        * is the superview that you will add subviews to
+        * when you drag views graphically in Xcode you are adding subviews to this view
+* can only have one super view but can have 0-many subviews in a `subviews` array
+*     * order in this array matters. views _later_ in the array are _on top of_ those earlier
+* a view can clip its subviews to its bounds (but does not by default)
+
+THere is a UIWindow class in iOS but it doesn't matter much in iOS because there is only one window.
+
+Adding and removing subviews are slightly different - the parent adds the child
+but the child removes itself.
+
+You send a message to the superview to add a subview
+
+```objc
+- (void)addSubView:(UIView *)view;
+```
+
+You send a mesasge to the subview to remove itself
+
+```objc
+- (void)removeFromSuperview;
+```
+
+
+We sometimes overrride the designated initializer
+
+but we also want to do stuff in `awakeFromNib`
+
+    * `initWithFrame` is **not** called for a UIView coming out of a storyboard but `awakeFromNib` is
+    * This is similar to how `init?` is not called for UIViewControllers coming out of a storyboard but `awakeFromNib` is.
+
+```objc
+// Typical view setup code which allows the view to be setup either from a storyboard for programmatically via alloc/init
+
+- (void)setup { ... }
+- (void)awakeFromNib: { [self setup]; }
+- (void)initWithFrame:(CGRect)aRect {
+    [super initWithFrame:aRect];
+    self = [self setup];
+    return self;
+}
