@@ -1243,6 +1243,10 @@ but we also want to do stuff in `awakeFromNib`
     * `initWithFrame` is **not** called for a UIView coming out of a storyboard but `awakeFromNib` is
     * This is similar to how `init?` is not called for UIViewControllers coming out of a storyboard but `awakeFromNib` is.
 
+`initWithFrame:`
+    * the frame specifies where this view is **relative to its superview**
+    * i.e. in CSS parlance views are always positioning parents for their children
+
 ```objc
 // Typical view setup code which allows the view to be setup either from a storyboard for programmatically via alloc/init
 
