@@ -97,6 +97,7 @@ App.{foo}Route = Ember.Route.extend({
    * afterModel
    *
    * @return nothing by default but if promise then ember will wait
+   *  QUESTION: is it ret val of afterModel that is passed to setup controller
    *
    */
 
@@ -205,9 +206,39 @@ App.{foo}Route = Ember.Route.extend({
     // what params do actions get?
     someAction: function(/* ??? */) {
       // is return value of action used?
+    },
+
+
+    // special handler
+    // What is default implementaiton of it?
+    // this gets called if any of the beforeModel|model|afterModel promises fail
+    error: function(reason) {
+      alert(reason); // "FAIL"
+
+      // Can transition to another route here, e.g.
+      // this.transitionTo('index');
+
+      // Uncomment the line below to bubble this error event:
+      // return true;
+    },
+
+    loading: function(transition, originRoute) {
+      //displayLoadingSpinner();
+
+      // Return true to bubble this event to `FooRoute`
+      // or `ApplicationRoute`.
+      return true;
+    },
+
+    willTransition: function(transition) {
+      if (this.controller.get('userHasEnteredData') &&
+          !confirm("Are you sure you want to abandon progress?")) {
+        transition.abort();
+      } else {
+        // Bubble the `willTransition` action so that
+        // parent routes can decide whether or not to abort.
+        return true;
+      }
     }
-  },
-
-
+  }
 });
-

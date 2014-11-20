@@ -12,6 +12,7 @@
 
 // main is the entry point of the program because history.
 fn main() {
+    play_with_rust();
     play_with_loops();
     play_with_strings();
     play_with_vectors();
@@ -49,7 +50,7 @@ fn play_with_rust() {
     // value, a statement does not. There are only 2 kinds of statements, everything else is an
     // expression:
     //
-    // 1. Declaration statements (let, {there are others})
+    // 1. Declaration statements (let, anything that is an item declaration, {may be others too})
     // 2. Expression statement (use `;` to throw away return value)
     //
     // Declaration statements do **not** return anything so you cannot do
