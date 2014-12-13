@@ -1,3 +1,4 @@
+# toString()
 
 Ember provides toString() on all its objects
 
@@ -11,7 +12,7 @@ Format is
 
 * `{constructor}`
     * `this.constructor.toString()`
-    * the toString of the factory object that created `this`
+    * value is the toString of the factory object that created `this`
 * `{guid}`
     * `guidFor(this)`
 * `{extension}`
@@ -34,4 +35,6 @@ Ember.guidFor()
 
     * for ember objects returns 'ember' + uuid()
 
+```js
 "eoin" + (+ new Date())
+```
