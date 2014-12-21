@@ -2231,26 +2231,3 @@ arr.forEach(function (item) {
 
 a map is a special loop that allows me to transform a list of data into another list of the same length
 
-Creating Memory Leaks in JS
-===========================
-
-* The DOM is the parsed representation of the HTML
-* The DOM is declarative
-* They tried to design the DOM to work with any language from C to JS to others
-* JS is OO by convention only!
-
-JS Objects
-* Separate memory heap/Advanced GC
-* Cycles are not a problem
-
-DOM Objects
-* C/C++ memory heap/ RefCounting: malloc() and free()
-* Cycles are a problem for browser develoeprs
-
-* We can create a memory leak by connecting JS objects and DOM objects
-
-var jsObject = { element: document.body }; // jsObject (a JS object) has a reference to document.body (a DOM object)
-document.body.myAttribute = jsObject; // document.body (a DOM object) now has a reference to jsObject (the JS object which has a reference to a DOM object)
-
-* You have not created a circular reference because you have stuff on the 2 different heaps refering to each other
-* Only a problem for long lived AJAX apps which don't reload pages
