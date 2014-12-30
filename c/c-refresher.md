@@ -97,10 +97,12 @@ scanf( "%s", &ages[3] );
     1. the part of memory where memory is allocated for the variable.
     2. how long the allocation continues to exist
 1. `auto`
-    * default storage class - if you omit a storage class when declaring a
+    * there is an `auto` keyword but it is not commonly used
+    * is the default storage class - if you omit a storage class when declaring a
       variable then `auto` is used.
-    * `auto` variables are allocated when you enter a function and deallocated
+    * `auto` variables are allocated when you enter a block and deallocated
       when you exit it.
+    * access restricted to the block in which they are declared as well as any nested blocks
     * also know as local variables
 2. `static`
     * like `auto` they are scoped to the function they are declared in
@@ -163,13 +165,13 @@ scanf( "%s", &ages[3] );
 
 ## Declaration vs definition vs instantiation
 
-* A definition 
+* A definition
     * is a special kind of declaration that creates an object.
     * specifies the type of the object
     * reserves storage for it
     * is used to create the object
     * can occur only once
-* A declaration 
+* A declaration
     * indicates a name and allows you to refer to an object created
     * can occur many times
     * describes the type of an object

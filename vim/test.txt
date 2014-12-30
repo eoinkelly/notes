@@ -1,1 +1,10 @@
 This is a test file
+
+
+* Open two buffers and go between them as quickly as possible (hint: not :b#)
+
+,,
+
+* print the path the containing dir of the current buffer on the command line
+
+%%

@@ -28,7 +28,7 @@
     * Net services
     * Threading
     * Preferences
-    * URL Utilities ???
+    * URL Utilities
 3. Media (isn't covered much in this course)
     * Core audio
     * OpenAL
@@ -67,7 +67,8 @@ Views can only communicate with controller in a "blind" and "structured" way
 
 ### 1. Target/action
 
-Controller marks (a method??) as a "target" and then it gives the view an "action" (?some sort of reference to that method??)
+Controller marks a method as a "target" and then it gives the view a reference
+to it called an "action".
 
 ### 2. Delegate protocol
 
@@ -105,7 +106,7 @@ that property (same idea as not keeping truth in the DOM)
 The controller has a reference to the model but the model does not have a
 reference to the controller.
 
-Sometimes the model will need to tell the controller things wihtout the
+Sometimes the model will need to tell the controller things without the
 controller first asking a question. To allow this we use a sort of "radio
 station" model.
 
@@ -122,7 +123,7 @@ _Key value observing_
 * A large app is made up of multiple "MVCs" working together.
 * An MVC can use another MVC as its view.
     * This is the main way a large iOS app is structured.
-    * => controllers have delgate relationships ???
+    * The parent controller has the child controller as its "view"
 
 This is quite different to the Rails flavour of MVC.
 
@@ -132,15 +133,14 @@ This is quite different to the Rails flavour of MVC.
 
 ### ObjC Properties
 
-* similar to attr_accessor in ruby
+* similar to `attr_accessor` in ruby
 * we rarely access instance variables directly in ObjC
 * a property is a getter + setter pair that accesses a value
 * naming convention:
     * getter: just the name of the value e.g. `myValue`
     * setter: `setMyValue`
-
-`.h` file is the _public API_ of the class
-`.m` is the implementation of the class (of both public and private methods)
+* `.h` file is the _public API_ of the class
+* `.m` is the implementation of the class (of both public and private methods)
 
 
 ```objc
@@ -247,13 +247,14 @@ Objective C
 * All properties start off as `nil` when you declare them
     * => you don't have to worry about them pointing at arbitrary memory
 
-NSArray
+* NSArray
     * is hetrogenous - it can contain any object
     * is immutable (use NSMutableArray as mutable version)
     * `arr[4]` is sugar for `[arr insertObjectAtSubstringIndex:4]`
-    * `NSArray` and `NSMutableArray` cannot be sparse but you can insert `[NSNull null]` objects to give the appearance of a sparse array.
+    * `NSArray` and `NSMutableArray` cannot be sparse but you can insert
+      `[NSNull null]` objects to give the appearance of a sparse array.
 
-NSUInteger
+* NSUInteger
     * will be different on different platforms e.g. on iPhone 5+ it will be 64bit
     * is an alias for `unsigned long *` (a pointer to a long on the heap)
 
@@ -283,17 +284,16 @@ end
 
 The defaults for properties is
 
-strong
+* strong
     * only applies if object is heap allocated
-readwrite
+* readwrite
     * properties make both a getter and a setter by default
 
 
 ## Designated initializers
 
 * If you subclass a class you have to call its designated initializer e.g. `[super initWithBlah...]`
-
-Outlet collections have no ordering
+* Outlet collections have no ordering
     * it does not matter what orcder you drag UI elements onto the property
 
 
@@ -302,26 +302,34 @@ Outlet collections have no ordering
 Ways we create objects on the heap
 
 1. alloc and init
+    ```objc
     NSMutableArray *cards = [[NSMutableArray alloc] init];
+    ```
 2. class methods
-        + (id) stringWithFormat:(NSString *)format ...
+    ```objc
+    + (id) stringWithFormat:(NSString *)format ...
+    ```
 3. Ask objects to create new objects for you with their instance methods e.g.
-        - (NSString *)stringByAppendingString:(NSString *)otherString;
-        - (id)mutableCopy;
+    ```objc
+    - (NSString *)stringByAppendingString:(NSString *)otherString;
+    - (id)mutableCopy;
+    ```
 
 Sometimes both a _class creator_ method and some init methods exist
 
-    [NSString stringWithFormat:@"foo"]
-    // is exactly same as
-    [[NSString alloc] initWithFormat:@"foo"]
+```objc
+[NSString stringWithFormat:@"foo"]
+// is exactly same as
+[[NSString alloc] initWithFormat:@"foo"]
+```
 
-* Both are there for historical reasons. Before ARC the class methods were handy
-because they had good semantics for how memory was allocated.
+* Both are there for historical reasons. Before ARC the class methods were
+  handy because they had good semantics for how memory was allocated.
 * The tutor here favours alloc-init rather than class methods if possible.
 
 Not all objects given out by other objects are **newly** created!
 
-ObjC has a naming convention to help humand guess the memory handlying
+ObjC has a naming convention to help humans guess the memory handlying
 semantics of a method correctly:
 
 * Method name does not have _copy_
@@ -341,7 +349,7 @@ What does a method called on nil return?
 * CAREFUL: if the method returns a C struct because the value is **undefined**!
     * You do **not** get back a struct with all its members set to 0 - you might get stack garbage
 
-```
+```objc
 // obj is nil
 int i = [obj methodWhichReturnsInt]; // i will be 0 if obj is nil
 CGPoint p = [obj getLocation]; // p is undefined if obj is nil

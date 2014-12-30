@@ -1,3 +1,4 @@
+# NSLog
 
 Usage examples of `NSLog`
 
@@ -12,6 +13,9 @@ NSLog( @"calling: %s", __PRETTY_FUNCTION__ );
 // Get a stack trace
 NSLog(@"%@", [NSThread callStackSymbols]);
 ```
+
+
+Boxing primitives in ObjC
 
 # `#DEBUG` preprocessor macro
 
