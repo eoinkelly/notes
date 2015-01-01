@@ -1,5 +1,17 @@
 # Tests
 
+Tests are compiled into a "bundle" (a plugin that is loaded at runtime by
+another binary) and then loaded into the "host appliation".
+
+```
+// Running file on a compiled tests bundle
+➜  Build  file Products/Debug-iphonesimulator/KatasTests.xctest/KatasTests
+Products/Debug-iphonesimulator/KatasTests.xctest/KatasTests: Mach-O bundle i386
+```
+
+TODO: find out more about bundles, see info in `frameworks.md`
+
+
 The testing framework reckons it can do unit and integration tests
 
 * https://developer.apple.com/videos/wwdc/2013/?id=409
@@ -32,3 +44,17 @@ QUESTION: ObjC seems to compare objects based on value not identity ???
     XCTAssertEqualObjects(a1, a2);
 }
 ```
+
+# Helper things
+
+All of these are available from cocoapods
+
+OCHamcrest https://github.com/hamcrest/OCHamcrest
+    * a library of matchers and a way to write new matchers
+    * available for many languages http://hamcrest.org/ (maybe origins in java)
+* OCMock
+    * very mature, 10 years old
+* OCMockito https://github.com/jonreid/OCMockito
+    * newer
+    * more lightweight than OCMock
+    * an ObjC version of Mockito (a java mocking framework)

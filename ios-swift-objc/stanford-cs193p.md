@@ -494,7 +494,7 @@ _will be covered more later_
 ## Foundation framework
 
 
-NSObject timplements `description` message
+NSObject implements `description` message
 
 We use it in
 
