@@ -1,3 +1,54 @@
+# Ember data
+
+Existing docs:
+
+* http://emberjs.com/blog/2014/03/18/the-road-to-ember-data-1-0.html
+* http://codebrief.com/2013/07/10-things-you-can-do-with-epf/
+* http://emberjs.com/guides/models/
+
+Alternatives:
+
+* http://epf.io/
+    * diff: has no state machine backing each model
+    * supports REST backends, streaming still TODO
+    * last touched july 2014
+* Plain old $.ajax
+    * Discourse uses it.
+    * QUESTION: Where is its sweet spot?
+    * QUESTION: how to use it in such a way that you can grow into ember-data or others?
+* Ember-model https://github.com/ebryn/ember-model
+    * Intentional limited feature set - provides primitves on $.ajax
+    * created by @ebryn
+    * 483 stars, last touched very recently
+* Emu https://github.com/charlieridley/emu
+    * Untouched since oct 2013 - ignore
+
+Size comparison of the alternatives
+
+ metric     | $.ajax    | EPF   | Ember-model   | Ember-data
+ -----------|-----------|-------|---------------|-----------
+ lines      | 0         |       | 2036          | 12944
+ bytes      | 0         |       |               | 394 kb
+
+# Features to compare on
+
+What are the things that we should compare persistence frameworks against each other:
+
+* A model API for the rest of the app to use.
+    * ideally this should wrap all persistence related stuff so the persistence layer could be changed easily
+    * QUESTION: how easily is it to match the semantics of the different peristence options?
+* side loading
+* relationships
+    * embedded or "reference by id"
+        * is having both a bad thing?
+* how does it handle asynchrony
+    * probably making everything return a promise all the time is a good idea
+* performance
+    * speed
+    * memory usage
+* REST and/or real-time
+    * Is hiding this as an implementation detail form the rest of the app a good idea?
+
 ### The Store
 
 * there is exactly one instance of `DS.Store` in the app

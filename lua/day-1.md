@@ -1,3 +1,4 @@
+# Lua
 
 * is a _tabled based_ programming language
 * uses prototype objects - like JS
@@ -7,4 +8,5 @@
       make new instances.
 
 Tables
+
 * array-meets-dictionalry object that can be used for many things

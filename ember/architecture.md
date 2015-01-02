@@ -19,3 +19,8 @@ i typically look to the life-span and reach of an object to decide what it is, i
 Ember.Controller funcitons as a context object for the template
 
 Ember.ObjectController is more like a decorater for the model as it magically merges model properties with controller properties
+
+
+## Data down, actions up
+
+Visualise data flowing down from the model hook of the route
