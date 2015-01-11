@@ -37,3 +37,10 @@ c++               codesign_allocate flex              ld                m4      
 c89               cpp               flex++            lex               mig               rebase            swift             what
 c99               ctags             gcov              libtool           mkdep             redo_prebinding   swift-demangle    yacc
 ```
+
+
+To dump all the build settings for a particular target use:
+
+```
+xcodebuild -showBuildSettings -project ./Katas/Katas.xcodeproj -target Katas
+```

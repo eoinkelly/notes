@@ -141,3 +141,19 @@ store.unloadAll('post'); unload all records of type 'post' from the store
 store.unloadRecord(record);
 
 record.transitionTo('deleted.saved');
+
+# Problems with it
+
+as of july 2013
+    transactions are not promises
+    can't do complex transactions between relationships
+    data is "locked" while it is being saved - if you try to touch a model while it is in-flight it will throw an error
+        this prevents you from "optimistically assuming that the operation will succeed
+        this makes it hard for write heavy apps
+    limited error handling
+    lots of corner cases
+
+
+# why do they have client-id as well as the id from the server
+
+If you send a parent and X children to be saved to the server and you get back the parent and X children you don't know whether it is the same X children - they server might have rejected one child but had a new one from another source to send you. THis is why they use unique client-id as well as the id from the server

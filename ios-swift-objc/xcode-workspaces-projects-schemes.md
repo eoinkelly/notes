@@ -2,6 +2,7 @@
 
 Sources
 
+* https://developer.apple.com/library/ios/featuredarticles/XcodeConcepts/Concept-Workspace.html
 * WWDC 2012 video https://developer.apple.com/videos/wwdc/2012/ "Working with
   Schemes and Projects in Xcode"
 
@@ -18,9 +19,6 @@ There are 5 core concepts to understand:
     * Build rules
 4. Schemes
 5. Run destinations
-
-
-
 
 # 1. Workspaces
 
@@ -77,6 +75,9 @@ $ plutil -p UserInterfaceState.xcuserstate | less
     * `schemes` are stored in here
     * xcode will create it for you the first time you open the project
 
+Every workspace has its own derived data dir (not stored under under your Xcode project dir)
+Multiple copies of the same workspace will use differen derived data dirs.
+
 # 2. Projects
 
 A project contains 4 kinds of thing:
@@ -123,8 +124,19 @@ Katas.xcodeproj
 
 notice the embedded workspace with same set of files as an explicitly created one
 
-`project.pbxproj` is a "sort of JSON ish text file" that contains (from
-inspection, not complete list):
+There is also a top-level `xcsharedata` within the project if you have project data you want to share between all users of the project e.g. schemes.
+
+The Xcode project file (`project.pbxproj`) is a PList file and can be serialized to disk in 2 ways:
+
+1. (OpenStep) ASCII format (looks like a more free-form JSON)
+    * deprecated but still used by Xcode itself
+    * consequence: sometimes your entire project file will change if you have
+      cocoapods installed as it can only use the XML format and Xcode used the
+      ASCII format.
+2. XML format
+    * Used by Cocoapods
+
+It contains (from inspection, not complete list):
 
 * references to each source file and resource
 * info about what groups they are in
@@ -172,11 +184,18 @@ Contains:
 
 * A scheme is an object
 * A scheme is an XML file with extension `.xcscheme`
-    * Lives in the `.xcodeproj/` dir e.g. `PodsPlay.xcodeproj/xcuserdata/eoinkelly.xcuserdatad/xcschemes/PodsPlay.xcscheme`
+    * Lives in the `.xcodeproj/` dir in either `xcuserdata` or `xcsharedata` e.g.
+        * `PodsPlay.xcodeproj/xcuserdata/eoinkelly.xcuserdatad/xcschemes/PodsPlay.xcscheme`
+        * `Foo.xcodeproj/xcsharedata/xcschemes/Bar.xcscheme`
     * It seems that the scheme files live in the project not the workspace
-
 * It is a set of instructions that contains the instructions for building 1+
   targets and then performing actions on the resulting products
+
+* schemes are created automatically for you when you
+    1. create a new target or project
+    2. open a project or workspace for the first time
+    these are created "per user" i.e. they are stored in the per-user data location of the project (path???) but if you tick the "shared" box in the schemes management page the scheme is moved to the shared data location of the project `Foo.xcodeproj/xcsharedata/xcschemes/Bar.xcscheme`
+* schemes are not added to source control by default
 
 You select one of the actions to perform and then the scheme will build a
 particular set of targets in a particular way and then run the action. Note
