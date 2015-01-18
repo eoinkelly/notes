@@ -1,0 +1,5 @@
+[package]
+
+name = "generic_programming_book"
+version = "0.0.1"
+authors = ["Eoin Kelly <eoin@rabidtech.co.nz>"]

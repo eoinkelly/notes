@@ -157,3 +157,12 @@ as of july 2013
 # why do they have client-id as well as the id from the server
 
 If you send a parent and X children to be saved to the server and you get back the parent and X children you don't know whether it is the same X children - they server might have rejected one child but had a new one from another source to send you. THis is why they use unique client-id as well as the id from the server
+
+
+# Ember data models internal state machine
+
+Models have at least 3 states
+
+clean -> dirty -> inFlight
+
+inFlight is when the model is beign saved to the server
