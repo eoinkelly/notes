@@ -35,4 +35,31 @@ def play_with_strings():
     exp = "example {0}".format(10)
     print(exp)
 
+    # you can grab references to functions as in JS
+    fun = "hi".upper
+
+    # and execute them.
+    print(fun())
+
+# what is their "context" (if any)
+
 play_with_strings()
+
+
+# python has function scope and module scope only
+
+# __name__ is an object that holds the name of the current namespace
+#
+# dir(module_name) lists the symbols(maybe wrong term) exported by a particular module
+# dir(module_name) lists the "names" available within a particular modules' namespace
+
+
+# dir() shows symbols in current module
+
+
+class B:
+    def doubler(self, x):
+        return x + x
+
+b = B()
+print(b.doubler(4))

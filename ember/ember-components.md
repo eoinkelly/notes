@@ -124,35 +124,6 @@ parentViewDidChange (is this the thing that includes the component???)
 ```
 
 
-# Communication between components
-
-possible communication paths
-
-1. parent to child
-2. child to parent
-3. siblings (both have same parent)
-4. some random other component on the same page (arbitrary)
-
-
-```
-// ember core is currently considering something like this
-<video-player ref="my-video" src={{src}}></video-player>
-<button {{action 'play' target=(ref 'my-video')}}>Play</button>
-```
-
-## QUESTION: what do other frameworks do to communicate between components on a page
-
-react
-cocoa/uikit
-web components/polymer
-angular
-
-http://discuss.emberjs.com/t/ember-2-0-components-and-routes-only-solving-half-the-problem/7030/9
-
-workaround where component registers itself with the controller on init then
-the controller can send it actions
-http://emberjs.jsbin.com/nazepilifu/2/edit?html,js
-
 # QUESTION: when I sendAction from a nested component does it go to parent component or controller?
 
 ANSWER:
