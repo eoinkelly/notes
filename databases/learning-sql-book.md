@@ -96,6 +96,7 @@ The basic data types are
 * date types
 * numeric types
 
+Be careful in choosing character types as MySQL will truncate data to fit - it will warn you when it does that.
 
 # Aside: Character sets and collations
 
