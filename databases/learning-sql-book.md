@@ -1,3 +1,6 @@
+# Learning SQL
+
+## Chapter 1
 
 ### Heirarchial database system
 
@@ -24,7 +27,7 @@
 
 Normalization = the _process_ of refining a DB design so that each piece of information only appears _once_.
 
-SQL history
+### SQL history
 
 1. Cod proposes DSL/Alpha language for manipulating the relational data
 1. IBM builds simplified version of DSL/Alpha called SQUARE
@@ -39,7 +42,7 @@ Some tables happen to be stored on disk but I should stop thinking about "tables
 
 ```sql
 SELECT * FROM foo;
--- foo can be a table on disk, a view, the result of another query
+# foo can be a table on disk, a view, the result of another query
 ```
 
 There are 3 broad categories of SQL statements
@@ -54,9 +57,7 @@ There are 3 broad categories of SQL statements
 * SQL transaction statements
     * used to begin, end, rollback transactions in the DB
 
-
-SQL is not a full programming language
-Database vendors have languages built on top (the `"Programming Language/* SQL` family) to it that make it one e.g.
+SQL is not a full programming language. Database vendors have languages built on top (the `"Programming Language/* SQL` family) to it to provide one e.g.
 
 * Microsoft Transact-SQL
 * Oracle PL/SQL
@@ -76,6 +77,7 @@ Things like the `pg` gem act as replacements for the client but by default will 
 How to think about building a query:
 
 1. Decide which tables will be needed and add them to the FROM clause
+    * The JOIN type tells the DB how it should combine the tables into one large table
 1. Add conditions to the WHERE clause to filter out which _rows_ will be retrieved
 1. add columns to the SELECT clause to filter which _columns_ will be retrieved
 
@@ -161,7 +163,7 @@ The GROUP BY clause will gather all of the rows together that contain data in th
 
 The GROUP BY statement is used in conjunction with the aggregate functions to group the result-set by one or more columns.
 
-Groups a selected set of rows into a set of summary rows by the values of one or more columns or expressions in SQL Server 2014. One row is returned for each group. Aggregate functions in the SELECT clause <select> list provide information about each group instead of individual rows.
+Groups a selected set of rows into a set of summary rows by the values of one or more columns or expressions in SQL Server 2014. One row is returned for each group. Aggregate functions in the SELECT clause `<select>` list provide information about each group instead of individual rows.
 
 * it is a kind of "scoping" for the aggregate function which would otherwise just return a single value
 so it is a "row collapser"
@@ -193,3 +195,160 @@ How do multiple columns in a GROUP BY work???
 count(*) counts rows (it will include NULL values)
 count(some_col) counts values in some_col (it will ignore NULL values)
 ```
+
+
+# Chapter 5: Querying multiple tables
+
+SELECT {select clause} FROM {from clause}
+
+Joins are part of the {from clause}
+
+t1 INNER JOIN t2 ON t1.id = t2.other_id
+
+Types of JOINs
+
+* JOIN
+    * synonym for INNER JOIN
+* CROSS JOIN
+    * returns every possible different row that can be created by combining two tables
+    * this is what you get if you don't use a "join condition" (i.e. ON|USING)
+    * The basic cross join with no constraints will take tables of (rows x columns) `NxM`, `AxB`
+    and produce a single table of dimensions `(N * A) x (M + B)`
+* INNER JOIN
+    * Important: does not return rows for which the boolean test in the "join condition" fails
+        * so it is like applying a filter to the carthesian product (CROSS JOIN)
+        * "do a CROSS JOIN and filter the results based on a boolean test (the join condition)"
+        * "do a CROSS JOIN then filter based on some criteria"
+        * => it filters more aggressively than OUTER JOIN does
+* LEFT OUTER JOIN
+* RIGHT OUTER JOIN
+* LEFT JOIN
+* RIGHT JOIN
+* NATURAL LEFT OUTER JOIN
+* NATURAL RIGHT OUTER JOIN
+* NATURAL LEFT JOIN
+* NATURAL RIGHT JOIN
+
+* STRAIGHT_JOIN
+    * A MySQL extension that allows you to control JOIN order
+
+* If you don't specify an ON clause you get a CROSS JOIN - the DB gives you the
+  cartesian product of the two tables.  Tables of (rows x columns) `NxM`, `AxB`
+  and produce a single table of dimensions `(N * A) x (M + B)`
+
+### Legacy syntax
+
+There is a pre-ANSI SQL syntax for joins that puts the conditions in WHERE clause but it is not recommended because
+
+1. it is unclear and has no advantages.
+2. it is hard to pick out which parts of WHERE are part of the join and which are just filters
+    * I guess they are almost the smae thing anyway???
+
+### Join condition
+
+* basically a boolean test that is run against each row created by the implicit CROSS JOIN
+* if the column name is the same on both sides of the join you can use `USING(col_name)` as a shorthand for `left.col_name = right.col_name`
+    * => USING is just a shorthand syntax
+
+### Joining multiple tables
+
+The DB will join N tables sequentially by picking one to start with then
+joining the next onto it, then joining the next onto the result of that and so
+on.
+
+Each new table will be joined onto the current result using
+
+1. the join type specified
+2. the join condition specified to filter the rows
+
+You could implement joins using just CROSS JOIN and lots of where clauses but the syntax would be a mess.
+
+The order of joins does not matter i.e. `JOIN` is a binary operator that is commutative
+
+ALl these give the same result:
+
+    A join B join C
+    A join C join B
+    B join A join C
+    etc.
+    etc.
+
+* SQL is **not** procedural - you do not specify _how_ the join happens, only what should happen.
+* The DB picks one of the tables as a _driving table_ and starts with it.
+* While the results of the JOIN do not depend on the order, there may be
+  performance improvements in telling it which table to use e.g.
+    * examples:
+        * STRAIGHT_JOIN in MySQL
+        * ORDERED/LEADING in Oracle
+        * FORCER ORDER in SQL Server
+        * [Postgres explicit joins](http://www.postgresql.org/docs/current/interactive/explicit-joins.html)
+            * from_collapse_limit
+            * join_collapse_limit
+    * These are hints to the DB engine's "query planner"
+    * you are mostly trading off between "planning time" and "run time" to find the optimal time for a particular query
+
+### Aliases are necessary
+
+```sql
+... FROM table_a AS aa ...
+```
+
+Table aliases are not just a nice to have - you need them in joins sometimes
+you will want to join the same table twice as part of the join e.g. a bank
+account could have the bank_branch that it was opened at and the bank_branch
+that its last transaction was at.
+
+### Self joins
+
+Self-joins make sense if you have a column in your table that refernces some
+other column in the table e.g. an employee table might have a a "manager_id"
+column that references its own "id" column.
+
+Just included the same table twice using different aliases.
+
+QUESTION: what do self joins achieve that a WHERE cannot?
+
+Self-joins allow you to have the same input column appear as more than one output column.
+WHERE can only reduce rows, it cannot duplicate (or increase) the no. of columns.
+
+### Equi-join
+
+If the join condition requires one side to match the other exactly it is an equi join
+
+    ON a.id = b.id
+
+but a join condition just has to return a boolean so there are other possible kinds:
+
+    ON a.id <= {user_supplied_int} AND b.id >= {user_supplied_int}
+
+You can join tables that have not foreign-key relationship.
+
+## Exercises
+
+```sql
+# Exercise 5.1
+SELECT e.emp_id, e.fname, e.lname, b.name
+FROM employee e INNER JOIN branch b
+ON e.assigned_branch_id = b.branch_id;
+
+
+# Exercise 5.2
+SELECT a.account_id, c.fed_id, p.name
+FROM customer c
+    INNER JOIN account a ON a.cust_id = c.cust_id
+    INNER JOIN product p ON a.product_cd = p.product_cd
+WHERE cust_type_cd = 'I';
+
+# Exercise 5.3
+
+# ON is for combining two tables, WHERE is for filtering down
+SELECT e.emp_id, e.fname, e.lname
+FROM employee e INNER JOIN employee sup
+# the relationship between superior_emp_id an emp_id is how these two tables are related so we use that in the JOIN clause
+ON e.superior_emp_id = sup.emp_id
+# the department ids not matching is not part of that relationship so this is better expressed as a WHERE clause
+WHERE e.dept_id != sup.dept_id;
+
+```
+
+# Chapter 10: Joins revisited
