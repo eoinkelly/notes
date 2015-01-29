@@ -112,6 +112,7 @@ SHOW CHARACTER SET;
 -- look at the `maxlen` column to see how many bytes required by each character set
 ```
 
+END CHAP 2
 
 
 
@@ -122,79 +123,6 @@ SHOW CHARACTER SET;
 
 
 
-
-
-# Chapter 8: Aggregate functions
-
-Examples:
-
-* sum()
-* count()
-* avg()
-* min()
-* max()
-* count()
-
-* take a _group_ of rows and "aggregate" them into a single row
-* If used in a statement with no `GROUP BY` then an implicit group is the whole result set
-* the GROUP BY clause decides what rows should be fed into an aggregate function
-
-```sql
--- returns 1+ rows
-SELECT * FROM blah;
-
--- always returns 1 row
-SELECT count(*) FROM blah;
-```
-
-The are functions from Column -> Cell
-
-They take a single column and turn it into a single cell
-
-If you use a group function in a statement containing no GROUP BY clause, it is equivalent to grouping on all rows.
-
-# GROUP BY
-
-... GROUP BY blah ...
-
-"taking a table as input show only unique values of "blah" and collapse other selected columns based ither on an aggregate function or just pick the first value you find"
-
-The GROUP BY clause will gather all of the rows together that contain data in the specified column(s) and will allow aggregate functions to be performed on the one or more columns.
-
-The GROUP BY statement is used in conjunction with the aggregate functions to group the result-set by one or more columns.
-
-Groups a selected set of rows into a set of summary rows by the values of one or more columns or expressions in SQL Server 2014. One row is returned for each group. Aggregate functions in the SELECT clause `<select>` list provide information about each group instead of individual rows.
-
-* it is a kind of "scoping" for the aggregate function which would otherwise just return a single value
-so it is a "row collapser"
-it is a way of taking a table and turning it into a table with same or less rows
-
-
-if you use it without aggregate functions you get whatever representative row the DB wants to give you
-    => group by is really just a helper for aggregate functions
-    => without a group by the aggregate functions will take every row in the input table as their input
-
-GROUP BY foo will collapse all foo values into one row for each distinct value
-if you have selected anything else other than `foo` you need to use an aggregate function on it so that the DB knows how to collapse it down. Without an aggregate function it will simply pick a row to show (which is not meaningful)
-
-Each column you select *will* be converted into a single representative value.
-If you don't tell the server _how_ to do this then it is free to choose any
-value from each group, so unless they are the same, the values chosen are
-indeterminate.
-
-How do multiple columns in a GROUP BY work???
-
-
-# `count(*)` vs `count(some_col)`
-
-* count is an aggregate function so it always takes a group as input
-* count takes an _expression_ as parameter
-* count(DISTINCT some_col) will count the no. of unique values of some_col in the group
-
-```
-count(*) counts rows (it will include NULL values)
-count(some_col) counts values in some_col (it will ignore NULL values)
-```
 
 
 # Chapter 5: Querying multiple tables
@@ -210,6 +138,7 @@ Types of JOINs
 * JOIN
     * synonym for INNER JOIN
 * CROSS JOIN
+    * You get this if you do any JOIN without a join condition but it is better to explicitly use CROSS JOIN to let reader know it was deliberate.
     * returns every possible different row that can be created by combining two tables
     * this is what you get if you don't use a "join condition" (i.e. ON|USING)
     * The basic cross join with no constraints will take tables of (rows x columns) `NxM`, `AxB`
@@ -224,13 +153,15 @@ Types of JOINs
 * RIGHT OUTER JOIN
 * LEFT JOIN
 * RIGHT JOIN
-* NATURAL LEFT OUTER JOIN
-* NATURAL RIGHT OUTER JOIN
-* NATURAL LEFT JOIN
-* NATURAL RIGHT JOIN
+
+* NATURAL {any other join type}
+    * Natural prefix allows you to avoid writing the join condition
+    * It infers waht columns should be joined by looking for identically named
+      columns in both tables
+    * Generally speaking it is a bad idea
 
 * STRAIGHT_JOIN
-    * A MySQL extension that allows you to control JOIN order
+    * A MySQL only extension that allows you to control JOIN order
 
 * If you don't specify an ON clause you get a CROSS JOIN - the DB gives you the
   cartesian product of the two tables.  Tables of (rows x columns) `NxM`, `AxB`
@@ -351,4 +282,128 @@ WHERE e.dept_id != sup.dept_id;
 
 ```
 
+# Chapter 8: Aggregate functions
+
+Examples:
+
+* sum()
+* count()
+* avg()
+* min()
+* max()
+* count()
+
+* take a _group_ of rows and "aggregate" them into a single row
+* If used in a statement with no `GROUP BY` then an implicit group is the whole result set
+* the GROUP BY clause decides what rows should be fed into an aggregate function
+
+```sql
+-- returns 1+ rows
+SELECT * FROM blah;
+
+-- always returns 1 row
+SELECT count(*) FROM blah;
+```
+
+The are functions from Column -> Cell
+
+They take a single column and turn it into a single cell
+
+If you use a group function in a statement containing no GROUP BY clause, it is equivalent to grouping on all rows.
+
+# GROUP BY
+
+... GROUP BY blah ...
+
+"taking a table as input show only unique values of "blah" and collapse other selected columns based ither on an aggregate function or just pick the first value you find"
+
+The GROUP BY clause will gather all of the rows together that contain data in the specified column(s) and will allow aggregate functions to be performed on the one or more columns.
+
+The GROUP BY statement is used in conjunction with the aggregate functions to group the result-set by one or more columns.
+
+Groups a selected set of rows into a set of summary rows by the values of one or more columns or expressions in SQL Server 2014. One row is returned for each group. Aggregate functions in the SELECT clause `<select>` list provide information about each group instead of individual rows.
+
+* it is a kind of "scoping" for the aggregate function which would otherwise just return a single value
+so it is a "row collapser"
+it is a way of taking a table and turning it into a table with same or less rows
+
+
+if you use it without aggregate functions you get whatever representative row the DB wants to give you
+    => group by is really just a helper for aggregate functions
+    => without a group by the aggregate functions will take every row in the input table as their input
+
+GROUP BY foo will collapse all foo values into one row for each distinct value
+if you have selected anything else other than `foo` you need to use an aggregate function on it so that the DB knows how to collapse it down. Without an aggregate function it will simply pick a row to show (which is not meaningful)
+
+Each column you select *will* be converted into a single representative value.
+If you don't tell the server _how_ to do this then it is free to choose any
+value from each group, so unless they are the same, the values chosen are
+indeterminate.
+
+How do multiple columns in a GROUP BY work???
+
+
+# `count(*)` vs `count(some_col)`
+
+* count is an aggregate function so it always takes a group as input
+* count takes an _expression_ as parameter
+* count(DISTINCT some_col) will count the no. of unique values of some_col in the group
+
+```
+count(*) counts rows (it will include NULL values)
+count(some_col) counts values in some_col (it will ignore NULL values)
+```
+
+CHAP 8 NOT COMPLETE
+
+
 # Chapter 10: Joins revisited
+
+* An outer join includes _all_ the rows from one table and includes data from the second table only if matching rows are found.
+* A join includes _all_ the rows from one table and adds data to reach row from the second table only if the join condition is satisified.
+* OUTER JOIN reads as "give me all the rows from table t1 and decorate them with some data from t2 if the join condition is true"
+* INNER JOIN is "give me _only_ the rows from t1 and t2 where the join condition is true"
+
+LEFT OUTER JOIN
+
+* => the table on the left of the JOIN operator is what we want all rows from, the rhs is just contributing values
+* => the result will have same number of rows as left side table
+* => "I want all rows from left side table even if there are gaps in the data"
+
+RIGHT OUTER JOIN
+
+* => the opposite of above
+* => the result will have same #rows as rhs table
+
+```sql
+-- these are equivalent
+A RIGHT OUTER JOIN B
+B LEFT OUTER JOIN A
+```
+
+### Natural joins
+
+Natural join are a dubious sugar syntax
+
+```sql
+-- this ...
+A JOIN B ON B.x = B.x
+-- can be written in shorthand using ...
+A NATURAL JOIN B
+```
+
+* In a natural join the DB infers the join condition by inspecting the columns
+  in the two tables involved in the JOIN.
+* For a natural join to work there must be identically named columsn in both tables
+* Author recommends avoiding this join type as it is confusing
+
+FULL OUTER JOIN
+
+* A combination of both LEFT and RIGHT
+* MySQL does not have it. [You can emulate it](http://stackoverflow.com/questions/2384298/why-does-mysql-report-a-syntax-error-on-full-outer-join) but it is clunky.
+
+# Creating new fake tables
+
+Uses SELECT statemetns and UNION ALL to make a "fake" table
+
+TODO: find out about this

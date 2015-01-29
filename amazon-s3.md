@@ -16,3 +16,10 @@ For an app to access files on S3 it needs
 
 1. The S3 credentials (see above)
 2. The name of the bucket that the files are in
+
+
+The `aws s3` commands distinguish between 3 kinds of thing:
+
+object
+prefix
+bucket
