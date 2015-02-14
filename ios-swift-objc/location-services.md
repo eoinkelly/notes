@@ -23,3 +23,21 @@ There are 2 types of location services available:
 1. Standard
 2. Significant change
     * 500 M or more
+
+
+
+* Significatn change location service
+    * will wake up the app after it has been "suspended" or "terminated"
+        * when it is woken up you have to re-start location services and send your update within 10sec
+    * if the user disabled "background app refresh" either globally for for your app then this wake-up will not happen
+        * on phone `Settings > General > Background app refresh`
+
+
+
+currently pack not listed in apps taht require BAR
+
+
+# Terminology
+
+"suspended"
+"terminated"

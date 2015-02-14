@@ -1,9 +1,12 @@
-
+# Rust
 
 
 ```rust
-println!("hi there");
-// "hi there" is statically allocated
+fn main() {
+    // run a macro
+    println!("hi there");
+    // "hi there" string is statically allocated
+}
 ```
 
 Statically allocated: ???
@@ -400,7 +403,7 @@ Rust has 3 patterns of memory management
 
 ### 1. Ownership
 
-* The "thing" that creates an object _owns_ that pointer (physical books are good analogy)
+* The variable that gets assigned when you create an object _owns_ that pointer (physical books are good analogy)
 * It can give that pointer to something else - then it no longer has it.
     * ? ex of give?
 * There is no aliasing because there is only one pointer that is passed around

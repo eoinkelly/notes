@@ -1,7 +1,9 @@
 
-Th _signing identity_ consists of a public-private key pair _that Apple issues_.
+The _signing identity_ consists of a public-private key pair _that Apple issues_.
 
-Any `.cer` downloaded from Apple dev site contains only _public key_ and _identity info about me as a member of Apple developer program_ . It does not include a private key so I presume:
+Any `.cer` downloaded from Apple dev site contains only _public key_ and
+_identity info about me as a member of Apple developer program_ . It does not
+include a private key so I presume:
 
 1. Xcode makes a new public+private key pair
 2. Xcode creates a CSR and sends to Apple
@@ -31,7 +33,8 @@ signed by the _Apple Root CA_ cert which comes installed on all Apple devices.
 * live in `~/Library/MobileDevice/Provisioning Profiles`
     * default file name used by Xcode is {some UUID???}
 * are all ~ 10 KB
-* Xcode will go through all the provision profiles installed on your system and pull the developer certs out of them and put them in the keychain.
+* Xcode will go through all the provision profiles installed on your system and
+  pull the developer certs out of them and put them in the keychain.
 
 * contents
     * app ID
@@ -57,8 +60,6 @@ Consequences:
     * Apple has chosen to use DER not PEM for the signature
 
 http://www.doubleencore.com/2013/04/what-is-a-provisioning-profile-part-1/
-
-:qa
 
 ### Tasks
 

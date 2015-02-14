@@ -1,3 +1,10 @@
+# Concurrent programming on iOS
+
+> Rather than creating threads directly, applications need only define specific
+> tasks and then let the system perform them. By letting the system manage the
+> threads, applications gain a level of scalability not possible with raw
+> threads.
+
 # Grand central dispatch
 
 TODO: good source: https://www.mikeash.com/pyblog/?tag=gcd

@@ -18,6 +18,33 @@ There are 3 categories of "background support" provided by iOS
     * The system maps the modes you declare to sets of events that it will wake
       your app in response to.
 
+
+# code sample
+
+
+```objc
+__block id tself = self;
+
+//
+dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    [tself startLocationUpdates];
+
+    // get the "runloop object" for the current thread and then call run on it
+    [[NSRunLoop currentRunLoop] run];
+});
+```
+
+dispatch_async(queue, block)
+* puts the given block on the given queue
+* returns immediately
+* part of GCD
+
+dispatch_get_global_queue(identifier, flags)
+
+* returns a global concurrent queue that executes at the given quality-of-service class
+
+# background locations
+
 Tracking location in the background is a special case. The options are:
 
 1. significant change location service
