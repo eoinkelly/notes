@@ -32,6 +32,7 @@ Characteristics of `session` (the data structure rails creates for us)
 2. user clears cookies
 3. You change the secret string used to hash session data
 4. You change the digest algorithm used to hash session data
+5. You call `reset_session` in your code which will clear the session from the cookie sent with the next response
 
 ## Typical contents of a session structure
 
@@ -88,9 +89,12 @@ See chap 13 Rails 4 way
     ```
 * Notice that expiry is set on the "session store", not the "session" itself
     * So default session expiry depends on how cookies implement expiry
+* By default rails does not expire sessions
 * You can manually expire a session using `session[:last_seen]` to test how
   long it has been since the session was seen and then `reset_session` to
   "expire" it.
 
 QUESTION: ??? how do we ensure that "logged out" users cannot get back in by just providing the old cookie ???
 QUESTION: how do I manually clear out old cookies or expire sessions?
+
+
