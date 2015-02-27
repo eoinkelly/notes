@@ -9,3 +9,8 @@
 ++ they do provide a good reference for what to do - it is worth learning how they do it so we can streamline pulling in packages
 
 Conclusion: the main barrier to using it is that I don't know what they are doing
+
+
+# Ember-cli 101 book
+
+Express.js has middlewares that can be used for tricks

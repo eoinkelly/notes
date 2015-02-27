@@ -1,13 +1,191 @@
 # Capybara
 
-TODO: summarise exactly which Capybara methods are NOT wait friendly?
-
 ## Sources
 
+* Capybara docs
 * http://robots.thoughtbot.com/write-reliable-asynchronous-integration-tests-with-capybara
 
+## About
 
-# Summary of skillful Capybara usage
+Capybara is a translator layer
+
+```
+test framework layer    [rspec, cucumber                                  ]
+capybara layer          [capybara                                         ]
+driver layer            [Rack::Test    ] [Selenium webdriver] [poltergeist]
+                        [rails][sinatra] [real browsers     ] [phantomjs  ]
+```
+
+Capybara has 2 main parts
+
+* DSL for creating tests
+* Backends e.g.
+    * Selenium webdriver
+    * Rack
+    * Poltergeist
+
+## Classes of interest
+
+* `Capybara::Window`
+    * represents a browser window
+* `Capybara::Session`
+    * represents a single user's interaction with the system
+    * can use any available driver
+    * imporant methods
+        * `#visit`
+        * `#current_path`
+    * delegates many methods to `Capybara::Document`
+    * `page` in your test is an instance of `Capybara::Session`
+* `Capybara::Document`
+    * represents the HTML document
+* `Capybara::Result`
+    * A Result represents a collection of `Capybara::Element` on the page. It
+      is possible to interact with this collection similar to an `Array`
+      because it implements Enumerable and offers the following Array methods
+      through delegation
+* `Capybara::Node::Base`
+* `Capybara::Node::Element`
+* `Capybara::Query`
+    * Does the bulk of the searching work when you call a finder
+        * `#resolve_for` returns the result of the query
+
+Element and Document are both children of Node::Base. They share 3 kinds of methods
+
+1. Finders
+    * examples
+        1. `#all`
+            * returns Capybara::Result
+        2. `#find`
+            * returns Capybara::Node::Element
+        3. `#find_button`
+            * returns Capybara::Node::Element
+            * wrapper around #find
+        4. `#find_by_id`
+            * returns Capybara::Node::Element
+            * wrapper around #find
+        5. `#find_field`
+            * returns Capybara::Node::Element
+            * wrapper around #find
+        6. `#find_link`
+            * returns Capybara::Node::Element
+            * wrapper around #find
+        7. `#first`
+            * returns Capybara::Node::Element
+            * wrapper around #all
+    * most of these methods return instances of Node::Element (< Node::Base) so you call any of these
+      methods on what you get back from a Finder
+    * the exception is #all which returns a Capybara::Result which is an enumerable collection
+    * The `find_*` methods are all simple wrappers for `find`
+    * `find` based methods will wait for `default_wait_time` seconds if the driver supports JS
+    * `first` is a wrapper for `all`
+2. Actions
+    * all these "do stuff" to the the selected Node::Base instance
+    * QUESTION: what do they return? self?
+    * examples
+        1. `#attach_file`
+        2. `#check`
+        3. `#choose`
+        4. `#click_button`
+        5. `#click_link,`
+        6. `#click_link_or_button`
+        7. `#fill_in`
+        8. `#select`
+        9. `#uncheck`
+        10.`` #unselect
+    * Internally these use `#find` to locate what they need and then maniuplate it.
+        * => They inherit `find` wait behaviour
+3. Matchers
+    * these methods fall into 2 categories:
+        1. predicate methods
+            * return true|false
+        2. asserts
+            * return true if pass
+            * return Capybara::ExpectationNotMet if fail
+    * examples
+        1. `#assert_no_selector`
+        2. `#assert_no_text`
+        3. `#assert_selector`
+        4. `#assert_text,`
+
+        5. `#has_button?`
+        6. `#has_checked_field?`
+        7. `#has_css?`
+        8. `#has_field?`
+        9. `#has_link?,`
+        10. `#has_no_button?`
+        11. `#has_no_checked_field?`
+        12. `#has_no_css?`
+        13. `#has_no_field?,`
+        14. `#has_no_link?`
+        15. `#has_no_select?`
+        16. `#has_no_selector?`
+        17. `#has_no_table?,`
+        18. `#has_no_text?`
+        19. `#has_no_unchecked_field?`
+        20. `#has_no_xpath?`
+        21. `#has_select?,`
+        22. `#has_selector?`
+        23. `#has_table?`
+        24. `#has_text?`
+        25. `#has_unchecked_field?`
+        26. `#has_xpath?`
+4. Node methods
+    * These are stubbed out in capybara but must be implemented by whatever driver you use
+    * It seems like drivers subclass Driver::Node
+    * => they have a different implementation in different drivers
+    * Examples:
+        1. `==(other)`
+        2. `[](name)`
+        3. `all_text`
+        4. `checked?`
+        5. `click`
+        6. `disabled?`
+        7. `double_click`
+        8. `drag_to(element)`
+        9. `hover`
+       10. `initialize(driver, native)` constructor
+       11. `inspect`
+       12. `path`
+       13. `right_click`
+       14. `select_option`
+       15. `selected?`
+       16. `set(value, options = {})`
+       17. `tag_name`
+       18. `trigger(event)`
+       19. `unselect_option`
+       20. `value`
+       21. `visible?`
+       22. `visible_text`
+
+If you have an instance of Capybara::Node::Element, how do you find out stuff about it
+
+```ruby
+page.class # Capybara::Session
+page.document.class # Capybara::Document
+page.document.session == page # true
+
+page.find('body').class # Capybara::Node::Element < Capybara::Node::Base
+```
+
+```ruby
+aa = page.find('a') # aa is a Capybara::Node::Element
+
+aa.value    # => nil
+aa.tag_name # => 'a'
+aa.text     # => "text content of the <a> tag
+aa[:href]   # => "/foo/bar" (notice the [] gets attributes (& properties ???) of the node
+```
+
+* use [] to access attributes
+
+## locator
+
+THe concept of a "locator" string is important in Capybara
+The locator is one of
+* a jQuery style css selector to traverse the DOM
+* an XPath expression
+
+# Handling async content with Rspec
 
 * To interact with page prefer _action methods_ over _finder methods_
 * To verify contents of page, prefer _RSpec matchers_ over _node matchers_
@@ -16,91 +194,76 @@ TODO: summarise exactly which Capybara methods are NOT wait friendly?
 * `Capybara.default_wait_time` = amount of time capybara will wait
 * capybara only waits if the driver is capable of running javascript
 
-## X Capybara DSL methods
-
-???
-TODO
-
-## 10 Node Actions
-
-* These have a pattern of using `#find` to locate what they need and then maniuplating it.
-    * => They inherit `find` wait behaviour
-
-- (Object) attach_file(locator, path, options = {})
-- (Object) check(locator, options = {})
-- (Object) choose(locator, options = {})
-- (Object) click_button(locator, options = {})
-- (Object) click_link(locator, options = {})
-- (Object) click_link_or_button(locator, options = {}) (also: #click_on)
-- (Object) fill_in(locator, options = {})
-- (Object) select(value, options = {})
-- (Object) uncheck(locator, options = {})
-- (Object) unselect(value, options = {})
-
-
-## 7 Finder methods
-
-- (Capybara::Result) all([kind], locator, options)
-- (Capybara::Element) find(*args)
-- (Capybara::Element) first([kind], locator, options)
-- (Capybara::Element) find_button(locator, options = {})
-- (Capybara::Element) find_by_id(id, options = {})
-- (Capybara::Element) find_field(locator, options = {}) (also: #field_labeled)
-- (Capybara::Element) find_link(locator, options = {})
-
-* The `find_*` methods are all simple wrappers for `find`
-* `find` based methods will wait for `default_wait_time` seconds if the driver supports JS
-* `first` is a wrapper for `all`
-
 Question: his blog post indicates that #first and #all do not wait
 
-## 13 RSpec Matchers
 
-* These all express expectations about the state of the `page` object.
+Some good/bad ways of getting stuff on the page that is loaded asynchronously by JS
+
+```ruby
+# If you want to make sure there's exactly one
+find(".active").click
+
+# If you just want the first element
+find(".active", match: :first).click
+
+
+# Bad:
+all(".active").each(&:click)
+
+# Good:
+find(".active", match: :first) # waits
+all(".active").each(&:click)
+
+
+# Bad
+execute_script("$('.active').focus()")
+
+# Good (find will wait for .active to be available)
+find(".active")
+execute_script("$('.active').focus()")
+
+
+#NOTE: the following show that have_* methods are friendlier to async content
+
+# Bad:
+expect(find_field("Username").value).to eq("Joe")
+# Capybara will wait for the matching element and then immediately return its
+# value. If the value changes from a page load or Ajax request, it will be too
+# late.
+
+# Good:
+expect(page).to have_field("Username", with: "Joe")
+# Capybara will wait for a matching element and then wait until its value
+# matches, up to two seconds.
+
+
+# Bad:
+expect(has_css?(".active")).to be_false
+# Capybara will immediately return true if the element hasn't been removed from
+# the page yet, causing the test to fail. It will also wait two seconds before
+# returning false, meaning the test will be slow when it passes.
+
+# Good:
+expect(page).not_to have_css(".active")
+```
+
+## Matchers that it adds to RSpec
+
+* These all express expectations about the state of the `page` object (instance of Capybara::Session)
 * They are smart enough to wait up to `default_wait_time` if the don't succeed the first time they try.
 * The are all convenience constructors for `HaveSelector.new(...stuff...)`
 * They are handy in cases where a particular element is on the page but its contents are loaded aysnchronously
 
-- (Object) become_closed(options = {})
-- (Object) have_button(locator, options = {})
-- (Object) have_checked_field(locator, options = {})
-- (Object) have_css(css, options = {})
-- (Object) have_field(locator, options = {})
-- (Object) have_link(locator, options = {})
-- (Object) have_select(locator, options = {})
-- (Object) have_selector(*args)
-- (Object) have_table(locator, options = {})
-- (Object) have_text(*args) (also: #have_content)
-- (Object) have_title(title, options = {})
-- (Object) have_unchecked_field(locator, options = {})
-- (Object) have_xpath(xpath, options = {})
-
-
-## 22 Node methods
-
-* These are stubbed out in capybara but must be implemented by whatever driver you use
-* It seems like drivers subclass Driver::Node
-* => they have a different implementation in different drivers
-
-- (Object) ==(other)
-- (Object) [](name)
-- (Object) all_text
-- (Boolean) checked?
-- (Object) click
-- (Boolean) disabled?
-- (Object) double_click
-- (Object) drag_to(element)
-- (Object) hover
-- (Node) initialize(driver, native) constructor
-- (Object) inspect
-- (Object) path
-- (Object) right_click
-- (Object) select_option
-- (Boolean) selected?
-- (Object) set(value, options = {})
-- (Object) tag_name
-- (Object) trigger(event)
-- (Object) unselect_option
-- (Object) value
-- (Boolean) visible?
-- (Object) visible_text
+- become_closed(options = {})
+- have_button(locator, options = {})
+- have_checked_field(locator, options = {})
+- have_css(css, options = {})
+- have_field(locator, options = {})
+- have_link(locator, options = {})
+- have_select(locator, options = {})
+- have_selector(*args)
+- have_table(locator, options = {})
+- have_text(*args) (also: #have_content)
+- have_title(title, options = {})
+- have_unchecked_field(locator, options = {})
+- have_xpath(xpath, options = {})
