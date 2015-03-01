@@ -14,3 +14,17 @@ Conclusion: the main barrier to using it is that I don't know what they are doin
 # Ember-cli 101 book
 
 Express.js has middlewares that can be used for tricks
+* tests are run by Testem
+    * can run in "CI" or "development" mode
+* compiles down to AMD modules
+* files are named using "kebab case" so-they-look-like-this.thing
+* you can prefix apps with their type e.g. `/routes/index.js` or `routes/route-index.js` are acceptable
+
+
+# Watchman
+
+* runs as a daemon
+* watches for changes in "roots" (directory heirarchies)
+* treats symlinks as ordinary files, does not follow them
+* you can "subscribe" to file changes which occur under a "root"
+* is smart enough to wait for a root to settle down if it changes quickly

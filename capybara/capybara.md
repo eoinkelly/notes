@@ -34,15 +34,15 @@ Capybara has 2 main parts
     * imporant methods
         * `#visit`
         * `#current_path`
-    * delegates many methods to `Capybara::Document`
+    * delegates many methods to `Capybara::Document` so essentially you can
+      think of a Session as having a superset of the Document|Element API
     * `page` in your test is an instance of `Capybara::Session`
 * `Capybara::Document`
     * represents the HTML document
 * `Capybara::Result`
-    * A Result represents a collection of `Capybara::Element` on the page. It
+    * A Result represents a collection of `Capybara::Node::Element` on the page. It
       is possible to interact with this collection similar to an `Array`
-      because it implements Enumerable and offers the following Array methods
-      through delegation
+      because it implements Enumerable and offers Array methods through delegation
 * `Capybara::Node::Base`
 * `Capybara::Node::Element`
 * `Capybara::Query`
@@ -96,11 +96,11 @@ Element and Document are both children of Node::Base. They share 3 kinds of meth
         * => They inherit `find` wait behaviour
 3. Matchers
     * these methods fall into 2 categories:
-        1. predicate methods
-            * return true|false
-        2. asserts
+        1. asserts
             * return true if pass
             * return Capybara::ExpectationNotMet if fail
+        2. predicate methods
+            * return true|false
     * examples
         1. `#assert_no_selector`
         2. `#assert_no_text`
@@ -132,6 +132,7 @@ Element and Document are both children of Node::Base. They share 3 kinds of meth
 4. Node methods
     * These are stubbed out in capybara but must be implemented by whatever driver you use
     * It seems like drivers subclass Driver::Node
+    * The "action" methods above use #find to get the Node::Element and then manipulate it with these
     * => they have a different implementation in different drivers
     * Examples:
         1. `==(other)`
@@ -156,6 +157,88 @@ Element and Document are both children of Node::Base. They share 3 kinds of meth
        20. `value`
        21. `visible?`
        22. `visible_text`
+
+
+
+## Drivers
+
+Inheritance Heirarchy
+
+```
+Object
+    Capybara::Driver::Base
+        RackTest::Driver
+        Selenium::Driver
+    Capybara::Driver::Node
+        RackTest::Node
+        Selenium::Node
+```
+
+* Driver::Base methods:
+    ```
+    accept_modal
+    browser_initialized?
+    close_window
+    current_url
+    current_window_handle
+    dismiss_modal
+    evaluate_script
+    execute_script
+    find_css
+    find_xpath
+    go_back
+    go_forward
+    html
+    invalid_element_errors
+    maximize_window
+    needs_server?
+    no_such_window_error
+    open_new_window
+    reset!
+    resize_window_to
+    response_headers
+    save_screenshot
+    status_code
+    switch_to_window
+    visit
+    wait?
+    window_handles
+    window_size
+    within_frame
+    within_window
+    ```
+* Driver::Node methods
+    ```
+    =
+    []
+    all_text
+    checked?
+    click
+    disabled?
+    double_click
+    drag_to
+    hover
+    initialize
+    inspect
+    path
+    right_click
+    select_option
+    selected?
+    set
+    tag_name
+    trigger
+    unselect_option
+    value
+    visible?
+    visible_text
+    ```
+
+
+
+You can get at the current driver (which will have real implementations of these methods) via `page.driver`
+
+
+# Getting stuff from a Capybara::Node::Element
 
 If you have an instance of Capybara::Node::Element, how do you find out stuff about it
 
