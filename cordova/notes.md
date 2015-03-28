@@ -1,4 +1,42 @@
 
+# Cordova versioning
+
+cordova npm package depends on
+
+    dependencies:
+    { 'cordova-lib': '4.3.0',
+        q: '1.0.1',
+        nopt: '3.0.1',
+        underscore: '1.7.0' },
+
+cordova-lib depends on
+
+    dependencies:
+    { 'bplist-parser': '0.0.6',
+        'cordova-js': '3.8.0',
+        d8: '0.4.4',
+        'dep-graph': '1.1.0',
+        elementtree: '0.1.5',
+        glob: '4.0.6',
+        'init-package-json': '^1.2.0',
+        mime: '1.2.11',
+        npm: '1.3.4',
+        npmconf: '0.1.16',
+        osenv: '0.1.0',
+        plist: '1.1.0',
+        'properties-parser': '0.2.3',
+        q: '1.0.1',
+        rc: '0.5.2',
+        request: '2.47.0',
+        semver: '2.0.11',
+        shelljs: '0.3.0',
+        tar: '1.0.2',
+        through2: '0.6.3',
+        underscore: '1.7.0',
+        unorm: '1.3.3',
+        'valid-identifier': '0.0.1',
+        xcode: '0.6.7' },
+
     TODO: How does cordova run xcode from cmd line?
 
 

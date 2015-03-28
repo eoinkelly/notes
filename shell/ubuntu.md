@@ -1,10 +1,12 @@
 # Ubuntu
 
-Show if a reboot is required then `/var/run/reboot-required` will exist and
-
 ```
-cat /var/run/reboot-required.pkgs
-```
+cat /var/run/reboot-required` # will exist if reboot required
+cat /var/run/reboot-required.pkgs # show packages askig for reboot
 
-will show which packages are asking for the reboot.
+list services running in sv
+service --status-all # shows list of services
+service {service name} status # show status
+# all services have {start|stop|status|restart|force-reload|reload}6 commands
+```
 

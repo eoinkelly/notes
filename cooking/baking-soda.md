@@ -1,8 +1,8 @@
 Read more: http://joyofbaking.com/bakingsoda.html#ixzz3PllL3rSj
 
-Chemical leaveners, like baking powder and baking soda, can lose their potency over time. This is especially true when they are not stored in airtight containers.
-
-
+Chemical leaveners, like baking powder and baking soda, can lose their potency
+over time. This is especially true when they are not stored in airtight
+containers.
 
 # Baking powder
 
