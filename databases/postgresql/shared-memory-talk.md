@@ -7,6 +7,8 @@ Slides: http://momjian.us/main/writings/pgsql/inside_shmem.pdf
 
 PG uses all its data as ordinary files in `/data` on the OS to store everything not raw devices as filesystems are good these days
 
+* Reading from buffers vs reading from disk can be up to 1000x faster!
+
 data/pgx_log
     * write ahead log
     * sync to disk on crash
