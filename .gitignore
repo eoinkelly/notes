@@ -11,3 +11,9 @@
 bower.json
 node_modules/
 bower_components/
+
+# latex
+*.aux
+*.log
+*.out
+*.dvi

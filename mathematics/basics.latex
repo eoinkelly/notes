@@ -1,0 +1,489 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+    \usepackage{xltxtra,xunicode}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase}
+  \newcommand{\euro}{€}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\ifxetex
+  \usepackage[setpagesize=false, % page size defined by xetex
+              unicode=false, % unicode breaks when used with xetex
+              xetex]{hyperref}
+\else
+  \usepackage[unicode=true]{hyperref}
+\fi
+\hypersetup{breaklinks=true,
+            bookmarks=true,
+            pdfauthor={},
+            pdftitle={},
+            colorlinks=true,
+            citecolor=blue,
+            urlcolor=blue,
+            linkcolor=magenta,
+            pdfborder={0 0 0}}
+\urlstyle{same}  % don't use monospace font for urls
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\setcounter{secnumdepth}{0}
+
+\date{}
+
+\begin{document}
+
+\section{Branches of math}\label{branches-of-math}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  Calculus
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    the study of change
+  \item
+    to do with relationships between quantities
+  \item
+    Two major branches
+
+    \begin{enumerate}
+    \def\labelenumi{\arabic{enumi}.}
+    \itemsep1pt\parskip0pt\parsep0pt
+    \item
+      Differential calculus - the study of rates of change and slopes of
+      curves
+    \item
+      Integral calculus - the study of areas under and between curves
+    \end{enumerate}
+  \item
+    The two branches are related using the \emph{fundemental theory of
+    calculus}
+  \item
+    A calculus refers to any system of calculation guided by the
+    symbolic manipulation of expressions e.g.~lambda calculus
+  \end{itemize}
+\item
+  Algebra
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    the study of operations and how they can be applied to solve
+    equations
+  \item
+    from an arabic word meaning the \emph{reunion of broken parts}
+  \item
+    the study of symbols and the rules for manipulating symbols
+  \item
+    a unifying thread of almost all of mathematics
+  \item
+    2 forms: \emph{Elementary} and \emph{Advanced}
+
+    \begin{itemize}
+    \itemsep1pt\parskip0pt\parsep0pt
+    \item
+      Elementary algebra differs from arithmetic in the use of
+      abstractions, such as using letters to stand for numbers that are
+      either unknown or allowed to take on many values
+    \end{itemize}
+  \item
+    Can also be a specialized kind of \emph{mathematical object} e.g.
+    \emph{linear algebra}
+  \end{itemize}
+\item
+  Geometry
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    the study of shape
+  \end{itemize}
+\item
+  Arithmetic
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    The study of numbers, especially the properties of the traditional
+    operations between them --- addition, subtraction, multiplication
+    and division.
+  \item
+    A part of \emph{number theory} - until the 19th century they were
+    pretty much the same thing.
+  \item
+    The oldest and most elementary branch of mathematics - origins
+    around 2000 BCE ish.
+  \item
+    Any \emph{set} of objects on which \emph{all four} of the basic
+    operations can be performed is called a \textbf{field} i.e.~if you
+    can add, subtract, multiply, divide these objects and they follow
+    the normal rules then they are a \emph{field}.
+  \item
+    each \emph{field} has some special elements:
+
+    \begin{itemize}
+    \itemsep1pt\parskip0pt\parsep0pt
+    \item
+      identity element
+
+      \begin{itemize}
+      \itemsep1pt\parskip0pt\parsep0pt
+      \item
+        the element which when operated on with any other element
+        returns the other element
+      \end{itemize}
+    \item
+      inverse element
+
+      \begin{itemize}
+      \itemsep1pt\parskip0pt\parsep0pt
+      \item
+        the element which when operated on with a particular element
+        returns the identity element
+      \end{itemize}
+    \end{itemize}
+  \item
+    4 basic operations:
+
+    \begin{itemize}
+    \itemsep1pt\parskip0pt\parsep0pt
+    \item
+      addition
+
+      \begin{itemize}
+      \itemsep1pt\parskip0pt\parsep0pt
+      \item
+        commutative and associative
+      \item
+        identity element is 0
+      \item
+        inverse element of A is -A
+      \item
+        can be performed using geometry using sticks!
+      \end{itemize}
+    \item
+      subtraction
+
+      \begin{itemize}
+      \itemsep1pt\parskip0pt\parsep0pt
+      \item
+        the inverse of addition
+      \item
+        not commutative, not associative
+      \item
+        because it is less convenient when things are not commutative
+        and associative you can think of \(a - b\) as \(a + (-b)\)
+        instead.
+      \end{itemize}
+    \item
+      multiplication
+
+      \begin{itemize}
+      \itemsep1pt\parskip0pt\parsep0pt
+      \item
+        the second basic operation of arithmetic
+      \item
+        is commutative and associative
+      \item
+        distributive over addition and subtraction - ???
+      \item
+        identity element is 1
+      \item
+        inverse element of an element is its reciprocal i.e.
+        \(x * (1/x) = 1\)
+      \end{itemize}
+    \item
+      division
+
+      \begin{itemize}
+      \itemsep1pt\parskip0pt\parsep0pt
+      \item
+        the inverse of multiplication
+      \item
+        anything divided by 0 is not defined
+      \item
+        not commutative, not associative
+      \item
+        because it is less convenient when things are not commutative
+        and associative you can think of \(a/b\) as \(a * (1/b)\)
+        instead.
+      \end{itemize}
+    \end{itemize}
+  \item
+    note that addition and multiplication are the real \emph{basic}
+    operations - subtraction and division are just their inverses.
+  \item
+    Also are other more advanced operations:
+
+    \begin{itemize}
+    \itemsep1pt\parskip0pt\parsep0pt
+    \item
+      percentages
+    \item
+      square roots
+    \item
+      exponentiation
+    \item
+      logarithms
+    \end{itemize}
+  \end{itemize}
+\end{itemize}
+
+Aside: without the concept of 0 our positional number scheme would not
+be possible!
+
+\subsubsection{Top level divisions of modern
+mathematics}\label{top-level-divisions-of-modern-mathematics}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  Algebra
+\item
+  Geometry
+\item
+  Analysis
+\item
+  Number theory
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    arithmetic is in this division
+  \end{itemize}
+\end{enumerate}
+
+\section{Numbers WIP}\label{numbers-wip}
+
+The heirarchy of groups of numbers:
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  Real numbers \(\mathbb{R}\)
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    includes
+
+    \begin{itemize}
+    \itemsep1pt\parskip0pt\parsep0pt
+    \item
+      transcendental numbers
+    \item
+      irrational numbers
+    \item
+      fractions
+    \end{itemize}
+  \end{itemize}
+\item
+  Complex numbers
+\item
+  Imaginary numbers
+\item
+  Natural numbers
+\item
+  Rational numbers
+\item
+  Irrational numbers
+\item
+  Transcendental numbers
+\end{itemize}
+
+\section{Functions}\label{functions}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  functions can be written in english or more succicently using
+  mathemtatical symbols
+\item
+  functions are the same iff they produce the same output for the same
+  input
+\item
+  it does not matter how they ``look'' i.e.~they don't have to have the
+  same ``rule'' or the same ``way of turning the input into the output''
+\end{itemize}
+
+\subsection{Important functions}\label{important-functions}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  \(f(x) = x\) the identity function
+\item
+  \(f(x) = c\) the constant function
+\item
+  \(f(x) = ax + b\)
+\item
+  \(f(x) = x^n\)
+\item
+  \(f(x) = 2x^3 + 5x^2 - 2x + 1\)
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    a cubic \emph{polynomial}
+  \end{itemize}
+\item
+  \(f(x) = \sqrt{x}\)
+\item
+  \(f(x) = |x|\)
+\item
+  \(f(x) = sin(x)\) (transcendental)
+\item
+  \(f(x) = cos(x)\) (transcendental)
+\item
+  \(f(x) = tan(x)\) (transcendental)
+\end{itemize}
+
+Functions can be \emph{composed} into a sort of conveyor belt that pipes
+the output of one function into the input of another e.g. \(f(g(x))\) or
+\(f \circ g\).
+
+\subsection{Polynomials}\label{polynomials}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  a polynomial is an expression consisting of variables and
+  coefficients, that involves only the operations of addition,
+  subtraction, multiplication, and non-negative integer exponents.
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    http://en.wikipedia.org/wiki/Polynomial
+  \end{itemize}
+\end{itemize}
+
+\subsection{tancendental functions}\label{tancendental-functions}
+
+\begin{quote}
+A transcendental function is an analytic function that does not satisfy
+a polynomial equation, in contrast to an algebraic function. (The
+polynomials are sometimes required to have rational coefficients.) In
+other words, a transcendental function ``transcends'' algebra in that it
+cannot be expressed in terms of a finite sequence of the algebraic
+operations of addition, multiplication, and root extraction. Examples of
+transcendental functions include the exponential function, the
+logarithm, and the trigonometric functions.
+\end{quote}
+
+\subsubsection{Defn: domain of a
+function}\label{defn-domain-of-a-function}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  The set of input values can I put into a function and get a
+  \emph{valid} output
+\item
+  Note: it is a \emph{set} of values
+\item
+  Example: for \(f(x) = x^2\) the domain is \(\{ x \in \mathbb{R}\}\) or
+  \emph{x is contained in the real numbers}
+\item
+  Examples:
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    for \(f(x) = \sqrt{x}\) the domain is \(\{x \in [ -1, \infty ) \}\)
+  \item
+    for \(f(x) = 1/\sqrt{x}\) the domain is
+    \(\{x \in \mathbb{R} | x \neq 0 \}\)
+  \end{itemize}
+\end{itemize}
+
+\subsubsection{Defn: range of a
+function}\label{defn-range-of-a-function}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  The \emph{set} of all possible values the output of a function can
+  take on given all possible inputs
+\end{itemize}
+
+\section{Square root}\label{square-root}
+
+The square root function takes a number an spits out a new number. When
+you multiply that new number by itself you get back the original number.
+
+There are two possible outputs of this function for any given number -
+the positive and negative roots. This means that the function could do
+two different things and still be ``correct'' and we can't say for sure
+which should happen.
+
+The problem is not tow inputs producing the same out put, it is two
+outputs for the same input
+
+This is an ambiguity - it maps one input value to two possible output
+values. In code we could probably have this thing just return an array
+of the possible answers but mathematics is not comfortable with that
+becasue ???
+
+Math realy wants a function that takes \emph{one} number and returns
+\emph{one} number so we \emph{define} the square root function to be
+
+\begin{quote}
+The \emph{non negative} number which squares to x
+\end{quote}
+
+This means that by convention we always pick the positive root. We can
+also have the ``complete and accurate square root function'' that
+returns two values but this is not the common usage.
+
+A somewhat surprising consequence of defining the square root function
+in this way is that
+
+\(\sqrt{x^2} \neq x\)
+
+but we \textbf{can} say that
+
+\(\sqrt{x^2} = |x|\)
+
+The domain of \(\sqrt{}\) is \(\{ x \in [0, \infty) \}\)
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  the domain is described here using an \emph{interval}
+\item
+  The {[} means to include the 0
+\item
+  the ) means to exclude the \(\infty\) (because infinity is not a
+  number)
+\end{itemize}
+
+Aside: Infinity (\(\infty\)) is not a number
+
+\begin{verbatim}
+
+# wolfram alpha command
+plot sqrt(x), x=-10 to 10
+\end{verbatim}
+
+\end{document}
