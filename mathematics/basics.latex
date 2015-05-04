@@ -51,6 +51,14 @@
 
 \section{Branches of math}\label{branches-of-math}
 
+sum\_(i=1)\^{}n i\textsuperscript{3=((n(n+1))/2)}2
+
+\texttt{sum\_(i=1)\^{}n i\^{}3=((n(n+1))/2)\^{}2}
+
+\(sum_(i=1)^n i^3=((n(n+1))/2)^2\)
+
+Handy: \url{http://oeis.org/wiki/List_of_LaTeX_mathematical_symbols}
+
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
 \item
@@ -273,17 +281,45 @@ mathematics}\label{top-level-divisions-of-modern-mathematics}
   \end{itemize}
 \end{enumerate}
 
-\section{Numbers WIP}\label{numbers-wip}
+\section{Common sets of Numbers}\label{common-sets-of-numbers}
 
-The heirarchy of groups of numbers:
+http://algebra.freehomeworkmathhelp.com/Numbers/sets\_of\_all\_numbers\_subsets.GIF
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
+\item
+  Natural numbers \(\mathbb{N}\)
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    Also called \emph{whole numbers}
+  \item
+    Used for counting and ordering
+  \item
+    A natural number is a number that occurs commonly and obviously in
+    nature. As such, it is a whole, non-negative number.
+  \item
+    There is no universal agreement about whether to include zero in the
+    set of natural numbers but including 0 is now the common convention
+    in most branches of mathematics.
+  \item
+    There are a number of ways of defining what exactly the
+    \emph{natural numbers} are e.g.~peano arithmetic
+  \end{itemize}
 \item
   Real numbers \(\mathbb{R}\)
 
   \begin{itemize}
   \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    a real number is a value that represents a quantity along a
+    continuous line.
+  \item
+    a value that can be represented on the number line (also called the
+    \emph{real line})
+  \item
+    reals = rationals + irrationals + transendentals
   \item
     includes
 
@@ -298,17 +334,60 @@ The heirarchy of groups of numbers:
     \end{itemize}
   \end{itemize}
 \item
+  Integers \(\mathbb{Z}\)
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    A number that can be written without a fractional component
+  \item
+    integers =
+    \(\{ naturals, additive inverses of the naturals aka the negative naturals, 0 \}\)
+  \item
+    Examples:
+
+    \begin{itemize}
+    \itemsep1pt\parskip0pt\parsep0pt
+    \item
+      1, 2, 44 are integers
+    \item
+      \(\sqrt{2}\), 4.56, \(3 1/4\) are not integers
+    \end{itemize}
+  \end{itemize}
+\item
   Complex numbers
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    complex numbers are a superset of real numbers
+  \end{itemize}
 \item
   Imaginary numbers
 \item
-  Natural numbers
-\item
   Rational numbers
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    integers + fractions + ???
+  \end{itemize}
 \item
   Irrational numbers
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    Examples: \(\sqrt{2}\)
+  \end{itemize}
 \item
   Transcendental numbers
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    Examples: \(\pi\)
+  \end{itemize}
 \end{itemize}
 
 \section{Functions}\label{functions}
@@ -427,37 +506,36 @@ function}\label{defn-range-of-a-function}
   take on given all possible inputs
 \end{itemize}
 
-\section{Square root}\label{square-root}
+\section{Square root function}\label{square-root-function}
 
-The square root function takes a number an spits out a new number. When
+The square root function takes a number an spits out some outputs. When
 you multiply that new number by itself you get back the original number.
 
 There are two possible outputs of this function for any given number -
 the positive and negative roots. This means that the function could do
 two different things and still be ``correct'' and we can't say for sure
-which should happen.
+which should happen. This is an ambiguity - it maps one input value to
+two possible output values.
 
-The problem is not tow inputs producing the same out put, it is two
-outputs for the same input
+In code we could probably have this thing just return an array of the
+possible answers but mathematics is not comfortable with that becasue
+???.
 
-This is an ambiguity - it maps one input value to two possible output
-values. In code we could probably have this thing just return an array
-of the possible answers but mathematics is not comfortable with that
-becasue ???
+\begin{verbatim}
+QUESTION: Why is it a bad thing for a function to retrun an array of
+answers in math? (Sun 26 Apr 12:34:18 2015)
+\end{verbatim}
 
-Math realy wants a function that takes \emph{one} number and returns
+Math really wants a function that takes \emph{one} number and returns
 \emph{one} number so we \emph{define} the square root function to be
 
 \begin{quote}
 The \emph{non negative} number which squares to x
 \end{quote}
 
-This means that by convention we always pick the positive root. We can
-also have the ``complete and accurate square root function'' that
-returns two values but this is not the common usage.
-
-A somewhat surprising consequence of defining the square root function
-in this way is that
+This means that by convention we always pick the positive root. A
+somewhat surprising consequence of defining the square root function in
+this way is that
 
 \(\sqrt{x^2} \neq x\)
 
@@ -470,7 +548,7 @@ The domain of \(\sqrt{}\) is \(\{ x \in [0, \infty) \}\)
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
 \item
-  the domain is described here using an \emph{interval}
+  the domain here is described here using an \emph{interval}
 \item
   The {[} means to include the 0
 \item
@@ -481,9 +559,16 @@ The domain of \(\sqrt{}\) is \(\{ x \in [0, \infty) \}\)
 Aside: Infinity (\(\infty\)) is not a number
 
 \begin{verbatim}
-
 # wolfram alpha command
 plot sqrt(x), x=-10 to 10
+
+# a quad root
+(1 - x^4)^(1/4) >= 0
 \end{verbatim}
+
+\section{Cube and quad root
+functions}\label{cube-and-quad-root-functions}
+
+Need to think more about these
 
 \end{document}

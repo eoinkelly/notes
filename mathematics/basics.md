@@ -1,5 +1,13 @@
 # Branches of math
 
+sum_(i=1)^n i^3=((n(n+1))/2)^2
+
+`sum_(i=1)^n i^3=((n(n+1))/2)^2`
+
+$sum_(i=1)^n i^3=((n(n+1))/2)^2$
+
+Handy: [http://oeis.org/wiki/List_of_LaTeX_mathematical_symbols](http://oeis.org/wiki/List_of_LaTeX_mathematical_symbols)
+
 * Calculus
     * the study of change
     * to do with relationships between quantities
@@ -81,21 +89,43 @@ Aside: without the concept of 0 our positional number scheme would not be possib
 4. Number theory
     * arithmetic is in this division
 
-# Numbers WIP
+# Common sets of Numbers
 
-The heirarchy of groups of numbers:
+http://algebra.freehomeworkmathhelp.com/Numbers/sets_of_all_numbers_subsets.GIF
 
+* Natural numbers $\mathbb{N}$
+    * Also called _whole numbers_
+    * Used for counting and ordering
+    * A natural number is a number that occurs commonly and obviously in
+      nature. As such, it is a whole, non-negative number.
+    * There is no universal agreement about whether to include zero in the set
+      of natural numbers but including 0 is now the common convention in most
+      branches of mathematics.
+    * There are a number of ways of defining what exactly the _natural numbers_
+      are e.g. peano arithmetic
 * Real numbers $\mathbb{R}$
+    * a real number is a value that represents a quantity along a continuous line.
+    * a value that can be represented on the number line (also called the _real line_)
+    * reals = rationals + irrationals + transendentals
     * includes
         * transcendental numbers
         * irrational numbers
         * fractions
+* Integers $\mathbb{Z}$
+    * A number that can be written without a fractional component
+    * integers = $\{ naturals, additive inverses of the naturals aka the negative naturals, 0 \}$
+    * Examples:
+        * 1, 2, 44 are integers
+        * $\sqrt{2}$, 4.56, $3 1/4$ are not integers
 * Complex numbers
+    * complex numbers are a superset of real numbers
 * Imaginary numbers
-* Natural numbers
 * Rational numbers
+    * integers + fractions + ???
 * Irrational numbers
+    * Examples: $\sqrt{2}$
 * Transcendental numbers
+    * Examples: $\pi$
 
 
 # Functions
@@ -155,33 +185,29 @@ of one function into the input of another e.g. $f(g(x))$ or $f \circ g$.
 
 * The _set_ of all possible values the output of a function can take on given all possible inputs
 
-# Square root
+# Square root function
 
-The square root function takes a number an spits out a new number. When you
+The square root function takes a number an spits out some outputs. When you
 multiply that new number by itself you get back the original number.
 
 There are two possible outputs of this function for any given number - the
 positive and negative roots. This means that the function could do two
 different things and still be "correct" and we can't say for sure which should
-happen.
+happen. This is an ambiguity - it maps one input value to two possible output values.
 
-The problem is not tow inputs producing the same out put, it is two outputs for the same input
-
-This is an ambiguity - it maps one input value to two possible output values.
 In code we could probably have this thing just return an array of the possible
-answers but mathematics is not comfortable with that becasue ???
+answers but mathematics is not comfortable with that becasue ???.
 
-Math realy wants a function that takes _one_ number and returns _one_ number so
-we _define_ the square root function to be
+    QUESTION: Why is it a bad thing for a function to retrun an array of
+    answers in math? (Sun 26 Apr 12:34:18 2015)
+
+Math really wants a function that takes _one_ number and returns _one_ number
+so we _define_ the square root function to be
 
 > The _non negative_ number which squares to x
 
-This means that by convention we always pick the positive root. We can also
-have the "complete and accurate square root function" that returns two values
-but this is not the common usage.
-
-A somewhat surprising consequence of defining the square root function in this
-way is that
+This means that by convention we always pick the positive root. A somewhat
+surprising consequence of defining the square root function in this way is that
 
 $\sqrt{x^2} \neq x$
 
@@ -191,15 +217,20 @@ $\sqrt{x^2} = |x|$
 
 The domain of $\sqrt{}$ is $\{ x \in [0, \infty) \}$
 
-* the domain is described here using an _interval_
+* the domain here is described here using an _interval_
 * The [ means to include the 0
 * the ) means to exclude the $\infty$ (because infinity is not a number)
 
 Aside: Infinity ($\infty$) is not a number
 
 ```
-
 # wolfram alpha command
 plot sqrt(x), x=-10 to 10
+
+# a quad root
+(1 - x^4)^(1/4) >= 0
 ```
 
+# Cube and quad root functions
+
+Need to think more about these

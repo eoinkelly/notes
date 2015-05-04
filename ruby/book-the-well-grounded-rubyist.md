@@ -7,11 +7,10 @@ Think of ruby as 3 levels of stuff
    your own).
 3. command line tools that _ship with_ ruby.
 
-
 # Ruby identifiers
 
 Thinking like a parser for a moment, *every* element in ruby source code is
-oneof four types of _identifier_.
+one of four types of _identifier_.
 
 1. Variables (4 types)
     1. Local
@@ -21,7 +20,6 @@ oneof four types of _identifier_.
 2. Constants
 3. Keywords
 4. Method names
-
 
 In more detail:
 
@@ -39,8 +37,8 @@ In more detail:
         * otherwise same rules as local vars
         * e.g. `@@some_var`
     4. Global
-        *  start with $
-        * does not follow the same conventions as other types of variable
+        * start with `$`
+        * can contain a bunch of special characters (unlike local, instance, class variables)
         * if it begins with a `$` its a global!
         * e.g. $LOAD_PATH, $:, $1, $/
 2. Constants
@@ -104,7 +102,6 @@ class Foo; end          # => nil
 # but actually class declarations evaluate to whatever their last expression returns
 class Bar; 4 + 5; end   # => 9
 
-
 # ... so we can use this to get hold of the singleton class for the class
 class Bar2; self; end   # => Bar2
 
@@ -129,7 +126,6 @@ nil
 24
 [6] pry(main)> case "hix"; when "hi"; 23; 24; end
 nil
-
 ```
 
 Bareword method calls (without an explicit receiver) use `self` as the receiver.
@@ -376,11 +372,13 @@ eval File.read("foo.rb")
     * _filename_ must have the `.rb` suffix - load does no magic here.
     * it looks for the file _directly_ in the dirs of $LOAD_PATH - it does not
       care about specific subdirectories the way ?? does.
-* `load` is a method so will be executed at the point where ruby finds it in my file. Implications:
+* `load` is a method so will be executed at the point where ruby finds it in my
+  file. Implications:
     * you can skip loads by putting them in conditionals
     * you can generate the filename argument dynamically
 * load will not check to see if the file has been loaded already
-    * sometimes this is very handy (e.g. playing with a file in _irb_) but most of the time it is not what you want.
+    * sometimes this is very handy (e.g. playing with a file in _irb_) but most
+      of the time it is not what you want.
 
 ### optional wrapping
 
@@ -735,3 +733,5 @@ $ ri -T String#upcase
 
 Modifying LOAD_PATH
 Since we want our lib to be found first we prepend it to the array with `unshift` rather than appending it to the end.
+
+UP TO END CHAPTER 1
