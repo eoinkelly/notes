@@ -11,6 +11,7 @@ How the browser renders a single frame
     * NOTE: things that are not in viewport or have 0 height are still in the render tree
 3. "layout" (tooling name) (also called "reflow")
     * figure out how much space each element in the render tree needs
+    * turn the tree into widths, heights, and positions on screen i.e. into boxes
     * when layout changes it changes for the whole document i.e. its scope is "whole document"
         * any exceptions to this?
         * you can limit the scope of a layout with a "layout boundary"
@@ -66,3 +67,55 @@ When perf matters most: RAIL
      * keep this work to 50ms chunks so that the app can still respond to an input within 100ms
 1. Load
     * ideally happens within 1s
+
+
+### FLIP: First Last Invert Play
+
+* First = where element starts
+* Last = where the element ends up
+* Invert =
+* Play =
+
+pre-calculate expensive animations
+
+He took the card as layed out on the page and measured teh position of it and its children with getClientBoundingRect and measured its opacity too
+
+## Lesson 1 summary
+
+* result: https://developer.chrome.com/devsummit/
+* code: https://github.com/udacity/devsummit/blob/master/src/static/scripts/components/card.js
+
+A summary time budget of the times you have available for RAIL:
+http://udacity.github.io/60fps/images/time-table.jpg
+
+A key way of keeping layout and paint times down is to reduce how many elements
+they work on.
+
+
+If making a visual update to the screen from JS use `requestAnaimationFrame` to make sure the browser runs it at the right time
+
+
+## requestAnimationFrame
+
+* requestAnimationFrame schedules JS to run at the earliest possible moment in each frame
+* it is better than `setTimeout` and `setInterval` because they don't align their work to frames
+    * their timers will expire in the middle of a frame and delay it so it doesn't get painted in time
+
+* in pretty much everything except IE9 and older
+
+
+The JS profiler box should only be ticked when you know you have a JS problem
+
+
+The cost of "recalculate styles" varies lineraly with the number of elements
+There are cases (odd ones, for sure) where is n squared, and sometimes worse
+
+Complex CSS selectors do take more work
+"complex" => how much up and down the dom tree travel does the browser have to do to figure out the CSS
+
+
+JS properties which reading of will force layout
+
+* offsetHeight
+* scrollY
+* ... TODO
