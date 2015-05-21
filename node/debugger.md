@@ -66,10 +66,20 @@ To debug a node process from outside it
 
 ```sh
 # shell 1
+node --debug foo.js
+
+# or
+
+node foo.js
+ps aux | grep foo
+# get pid
+kill -s USR1 <PID>
+
+# or
+
+# run in debug mode, break on first line
 node --debug-brk foo.js
 
 # shell 2
 node debug localhost:5858
 ```
-
-

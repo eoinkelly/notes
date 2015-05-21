@@ -26,3 +26,13 @@ select pg_size_pretty(pg_database_size('kete_development'));
 
 ???
 
+
+# Drop a database
+
+```
+-- sql
+DROP DATABASE foo;
+
+# shell
+$ dropdb foo
+```

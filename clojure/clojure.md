@@ -32,7 +32,7 @@
             ; notice that we basically monkey-patched String here
                 ```
     * clear distinction between identity and value types
-* takes idions from lisp and java
+* takes idioms from lisp and java
 * immutable local variables
 * "peristent" data structures
 * in ruby "class" acts as a namesapce for data _and_ methods. In clojure there
@@ -62,7 +62,16 @@ and 2 special forms:
 1. lambda
 2. label
 
-* It seems `car` and `cdr` are not available in clojure???
+
+* clojure has
+    * `first` for `car`
+    * `rest` for `cdr`
+    * `cons`
+
+### Aside: iSeq interface
+
+* an interface implemented by list, vector, map, set
+* functions such as `map` work with anything that implements iSeq
 
 ### Aside: special form
 
@@ -73,8 +82,9 @@ clojure special forms:
 
 * fn
 * defn
+* ???
 
-Clojure has macros
+Clojure also has macros
 
 * declare
 
@@ -82,7 +92,9 @@ Clojure has macros
 
 clojure evaluates nested lists from the inside out
 
+```clj
 (foo (bar1 a b) (bar2 a b))
+```
 
 The evaluation order is
 
@@ -94,7 +106,7 @@ so clojure does the args first
 
 ### Aside: on state, value, identity
 
-"mutable state" is an oxymoron
+Why "mutable state" is an oxymoron:
 
 The "identity" of an entity is the combination of the values of its properties
 now and at all times in history.
@@ -103,7 +115,7 @@ At a single instance in time the values of the properties are the entity's
 "state":
 
 * => state is a thing defined at a single instance of time
-* => there is no "state changes" in this definition
+* => the entity can move from one state to another but a state itself cannot change _by definition!_
 * => there is no "mutable state". The state at time A and the state at time B
      are just different states - there is no sense that A turned into B
 
@@ -113,9 +125,9 @@ In OO programming there is no separation of "state" and "identity"
 
 * OO objects live in an endless now
 * In OO we work with things that are "the concresence of states" not a particular state
-* I have a reference to an object but I don't know what _state_ I have a
+* I have a reference to an object in memory but I don't know what _state_ I have a
   reference to - it may change over time.
-* In FP I get a reference to a _state_
+* In FP I get a reference to a _state_ in memory
 
 ## Leiningen
 
@@ -129,6 +141,15 @@ $ java -cp clojure-1.6.0.jar clojure.main
 
 # use lein (which is a better repl btw)
 $ lein repl
+
+
+lein new compojure-app guestbook
+# seems to automatically fetch the clojars it needs
+
+cd guestbook
+lein ring server
+# seems to automatically fetch the clojars it needs
+
 ```
 
 ```clojure
@@ -199,10 +220,21 @@ $ lein repl
 * Keywords
     * symbols that refer to themselves e.g. `:foo`
     * ruby calls symbol what clojure calls keyword
+    * are "self evaluating" i.e. they evaluate to themselves
 * Number
+    * are "self evaluating" i.e. they evaluate to themselves
+    * will expand storage required for the number automatically
+    * uses Java number types underneath the hood
+    * radix notation up to base 38 e.g.
+        * `2r001101101` binary
+        * `16r0A456F` hex
+        * `0x0A456F` hex
+        * `0177` octal (WARNING: easy to fuck this up)
+    * has a rational number type`22/3` (is automatically simplified where possible)
 * Boolean
     * `true`, `false`, `nil`
 * String
+    * are "self evaluating" i.e. they evaluate to themselves
 * Character
     * denoted by `/a`
 * Regular expressions
