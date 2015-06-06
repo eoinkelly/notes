@@ -1,38 +1,3 @@
-
-# Empty things
-
-* there is no null or void type
-* uses `()` as the convertion to denote something empty
-* the type of `()` is `()`
-    ```
-    :t ()
-    () :: ()
-    ```
-* `undefined` is used to represent some sort of error state - it is not something
-  to expect as return value etc.
-    ```
-    :t undefined
-    undefined ::
-    ```
-    * it is a polymorphic constant i.e. a value that can take on any type (no
-      restrictions)
-
-# Two namespaces (types, values)
-
-* Haskell code is split up into two namespaces
-
-1. Types
-2. Values
-
-The type namespace is
-
-* after :: (the stuff on the left is in the value namespace) in function
-  declarations and in record syntax
-* after `type`
-* between `class` and `where`
-* between `instance` and `where`
-* between `data` and `=`
-
 # Operators
 
 ```haskell
@@ -122,29 +87,7 @@ semantics of mathematical operators.
                     f (g (h x))
             * Here f,g,h can all be simple functions that just work on `x`
 
-## The compose operator `.`
-
-Definition of it:
-
-```haskell
-(f . g) x = f (g x)
-```
-
-# Lambdas
-
-```
-\x -> (x, 3, 4)
-```
-
-* a lambda extends from the `\` to the next newline|;|)|}|]
-* you can do pattern matching in lambdas but it is rarely used since you can
-  only write one branch and if it fails you will get a runtime exception
-
-Aside: when pattern matching make sure you have covered all the possibilities or
-you will end up with a runtime exception!
 
 
 
-# Do syntax
 
-* is syntactic sugar for `>>=` and `>>` operators and lambda notation

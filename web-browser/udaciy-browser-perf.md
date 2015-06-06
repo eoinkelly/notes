@@ -230,6 +230,97 @@ A rule: Anytime your JS affects something visilbe on the page, that JS should be
         * The browser will start processing and rendering it before all the HTML has come down
 1. Fetch CSS
 1. Build CSSOM
-1. Combine DOM and CSSOM to build render tree
+1. Combine DOM and CSSOM to build the "render tree"
+    * If a DOM element is not visible on the page it will not be copied into
+      the render tree.
+    * The render tree is a filtered mash-up of the DOM and CSSOM
+
+
+The default viewport width for a browser is 980px
+
+    <meta name="viewport" content="width=device-width" />
+
+tells the browser to set its viewport width to the device width
+
+Anytime we update the render tree by
+
+1. modifying styles
+2. modifying DOM nodes
+
+there is a good chance we have to re-run layout
+
 1. Layout
 1. Paint
+
+If a script is synchronous then it has to wait for the CSSOM to be built before it can be run
+    * I guess JS needs to be able to read properties of the DOM Nodes that CSS
+      must provide so any CSS files found before a synchronous JS file *must*
+      be run first
+
+
+JS can manipulate both the DOM and the CSSOM!
+CSS blocks rendering and also blocks the execution of JS
+
+# Strategies for staying fast
+
+## 1. minify, compress, cache
+
+pretty straighforward
+
+## 2. use media queries to reduce work needed to build CSSOM
+
+You can use any media query in the media attribute of the stylesheet LINK tag -
+this informs the browser that it doesn't need to block rendering of the page
+until these styles are parsed _if_ the media query doesn't currently apply
+
+    # no media attribute so is blocking by default
+    <link rel="stylesheet" href="styles.css" />
+
+    <link rel="stylesheet" href="styles.css" media="screen" />
+
+    # only applies when printing so not render blocking
+    <link rel="stylesheet" href="print-styles.css" media="print" />
+    <link rel="stylesheet" href="landscape-styles.css" media="screen and (orientation landscape)" />
+
+* -- To make this work all media query styles need to be output grouped together
+* -- makes it harder to have MQ that are just for a single piece of content
+* ?? can sass be persuaded to build output like this?
+
+## 3. minimize "Parser blocking" JS
+
+Parser blocking JS = Any JS that prevents the browser from completing building
+the DOM
+
+There are 2 ways to do this/Attributes for controlling scripts:
+
+* async ("don't block the critical rendering path")
+    * tells the browser 2 things:
+        1. do not wait for CSSOM to be built
+        2. do not block DOM construction
+* defer
+    * ???
+
+# Critical path metrics
+
+1. How many critical resources do I have?
+    * How many resources do I need to download before I can render?
+    * Remeber that images don't block that first render
+1. How many critical KB must I download before I can render
+1. What is the minimum critical path length?
+    * How many round-trips must I make to the server before I can render
+    * Each round-trip to the server brings back approx 14 KB so ideally keep
+      resources on the CRP smaller than that
+
+
+# Pre-load scanners
+
+some browsers have a "pre-load scanner" that will peek ahead in the HTML tree
+and initiaite downloads of critical path resources even while parsing is
+blocked (maybe parsing is waiting for CSS or JS)
+
+The answer to the TCP slow start question is 300 mS - this is the wolfram alpha
+formula for it
+
+    100 ms * ceiling(log base 2 of (45 / 10))
+
+https://developers.google.com/speed/pagespeed/insights/

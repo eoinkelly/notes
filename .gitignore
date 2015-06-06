@@ -1,5 +1,6 @@
 *private*
 *.class
+.vagrant/
 
 # haskell compile artefacts
 *.o

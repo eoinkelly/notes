@@ -1,9 +1,12 @@
 # The Rails 4 Way
 
-## Chapter 1
+## Chapter 1: Rails environment and configuration
 
 * bundler does dependency resolution all at once
-* ruby gems does it one gem at a time
+    * sort of: a "dependency compile time"
+* ruby gems does it one gem at a time,
+    * sort of: resolving dependencies at "runtime"
+    * -- this makes dependency problems harder to diagnose
 
 ### Bundler & Gemfile
 
@@ -15,7 +18,6 @@ The problem bundler solves:
   but this will make C sad.
 * The old solution was to tweak the load order of your gemfile to make sure C
   loaded first (which would make A happy)
-
 
 #### Where can I pull gems from?
 
@@ -39,15 +41,15 @@ gem 'foo', path: '~/path/to/gem'
 
 `bundle install`
 
-* _updates_ all dependencies named in the Gemfile to the latest versions that do not conflict with other dependencies
+* _updates_ all dependencies named in the Gemfile to the latest versions that
+  do not conflict with other dependencies
 * writes out its results into `Gemfile.lock`
 * you can skip certain groups using `--without`
-* installs to GEM_HOME (same as rubygems) by default
+* installs to `GEM_HOME` (same as rubygems) by default
     * this means you will see the gems installed by bundler in rubygems
     * this is convenient for re-using gems
-    * QUESTION: where is GEM_HOME on my machine
-        * rails seems to be currently: `/Users/eoinkelly/.rbenv/versions/2.1.1/lib/ruby/gems/2.1.0/gems/rails-4.1.1`
-    * TODO: learn how to share gems between rbenv rubies (or at least copy them locally - i think I have a lot of dupes
+    * QUESTION: where is `GEM_HOME` on my machine
+        * `GEM_HOME` on my laptop seems to be currently: `/Users/eoinkelly/.rbenv/versions/2.1.1/lib/ruby/gems/2.1.0/gems/rails-4.1.1`
 
 ```sh
 # upgrade just production (in normal 3 env setups)
@@ -58,41 +60,32 @@ $ bundler outdated
 
 # Only show gems mentioned in the Gemfile - this is similar to `npm outdated`
 # in node world
-$ bundler outdated | grep "Gemfile"
-
-QUESTION: does this show gems that have no version constraints in your gemfile but have not been updated?
+$ bundler outdated | grep "in group"
 ```
 
 * bundle outdated = show outdated gems
 * bundle viz = make a PNG of gem dependencies
 * bundle show = show info about a single gem
     * shows the full path to where a bundled gem is installed
-* `bundle update`
+* `bundle update xyz`
+    * update the named gem or all gems
 * `bundle package`
     * packages all the gems into the `vendor/cache` dir
     * use with `bundle install --local` which will pull your gems from here
         * allows you to use private gems in production
         * allows you to avoid external dependencies at deploy time
 
-bundle pack
-    * QUESTION: think it copies all your gems into `vendor/cache`
-    * handy for deployment if you are constrained on the server
-
 #### How exactly does bundler work?
 
 Bundler is basically a `$LOAD_PATH` manipulator with "bulk require" feature built-in.
 
 * More on bundler http://bundler.io
-
-    TODO: dig more into bundler - it can do a lot of stuff!
-
-You have to setup bundler in your application code before you `require` any
-gems.
+* You have to setup bundler in your application code before you `require` any
+  gems.
 
 ```ruby
 # I **think** this is only required on very old ruby
 # require 'rubygems'
-
 
 # This is all you need to bring Bundler into your project - it will:
 # 1. cause bundler to search for a Gemfile
@@ -109,7 +102,11 @@ require 'bundler/setup'
 # Now you can either require the features you need manually or ask bundler to
 # do it for you by calling `Bundler.require` and passing it the names of the
 # groups in the Gemfile that you want to load features for.
+#
 # * :default is the name of the top-level Gemfile group
+# * `gem 'foo', require: false` in your Gemfile will cause 'foo' to be ignored
+#    by this step
+#
 Bundler.require(:default, :eoin)
 ```
 
@@ -130,23 +127,48 @@ Reasons not to use Bundler.require:
 * running the script without using `bundle exec` will work as long as the gem is
   installed and doesn't conflict with any gems in your bundle.
 
+### Aside: rails runner
 
-### Binstubs
+* like rails console but only runs the command you supply on the cmd line e.g.
+  `rails runner "puts User.all.count"`
+* handy for places where you can't run an interactive environment
+
+
+### Aside: rake rails:update:\*
+
+The idea of `rake rails:update` is to run it after you upgrade rails version to
+pull in whatever configuration files may have changed
+
+```sh
+# regenerate default initializers, locales, environments, routes,
+# appliation.rb, boot.rb
+#
+# * prompts you to overwrite, ignore, diff etc. for each file with conflicts
+# * a bit like `ember update` (which was prob modelled on this)
+#
+rake rails:update:config
+
+# regenerate default binstubs
+#
+# * prompts you to overwrite, ignore, diff etc. for each file with conflicts
+#
+rake rails:update:bin
+
+# runs both :config and :bin options together
+rake rails:update
+```
+
+### Bundler binstubs
 
 * shell scripts (written in ruby) in `/bin` that run built-in rails command
   line tools (bundle, rails, rake, spring) _in the context of your current
   bundle_.
 * saves you having to do `bundle exec foo` each time
 * they should be added to git
-* `rake rails:update:bin` will re-make them (if upgrading from Rails 3)
+* `rake rails:update:bin` will re-make the default rails ones
 * you can add your own via `bundle binstubs name-of-gem`
 * TODO: currently I seem to be using rbenv stubs when I run commands like
   `rails` - is this OK? should I use local ones instead?
-
-* Aside: `rails runner`
-    * like rails console but only runs the command you supply on the cmd line
-    e.g. `rails runner "puts User.all.count"`
-    * handy for places where you can't run an interactive environment
 
 An example of the sass binstub
 
@@ -184,6 +206,86 @@ export PATH=".git/safe/../../bin:$PATH"
 * The hack above lets you mark a repo as "safe" by `mkdir .git/safe` and from
   then on running `rails` will find the version in `bin/rails`.
 
+### Aside: spring
+
+In 4.2 at least `rails new` seems to have a step where it inserts
+
+```rb
+begin
+  load File.expand_path("../spring", __FILE__)
+rescue LoadError
+end
+```
+
+which causes all invocations of things in `bin/` to also _load_ spring.
+* they do not seem to actually start it tho
+
+Spring setup
+
+1. mention it in the Gemfile
+1. add the chunk above to all bins in `bin/` via
+1. `bundle exec spring binstub --all`
+    * add the chunk of code above to existing executables
+    * creates the `spring` executable (already done in rails 4.2 at least)
+
+Spring transparently povides only the following 4 commands
+
+1. rake
+2. rails console
+3. rails runner
+4. rails generate
+
+Note that spring will not use its "already loaded" copy of rails for:
+
+* `rails server`
+* your tests unless you run them through `rake`
+* rspec unless you install the spring rspec plugin
+
+To start spring run any of the 4 supported commands:
+
+```sh
+# rails console is a supported spring command
+spring rails console                # starts spring
+./bin/rails console                 # starts spring
+bundle execute rails console        # starts spring
+
+# rails server never uses spring
+./bin/rails server                  # does not start spring
+bundle execute rails server         # does not start spring
+spring rails server                 # does not start spring
+```
+
+
+To disable spring temporarily
+
+```sh
+export DISABLE_SPRING=true
+```
+
+To find out waht spring is up to
+
+```sh
+spring stop
+export SPRING_LOG=/tmp/spring.log
+# run any rake/rails command to restart it
+```
+
+To disable spring forever
+
+1. `bin/spring binstub --remove --all`
+1. Remove spring from gemfile
+
+To tell `rails new` to not use spring
+
+```sh
+$ echo "--skip-spring" >> ~/.railsrc
+```
+
+Spring gotchas
+
+* We are not used to having classes reload in the test environment
+    * If you save a reference to a class constant it will become out of date if
+      you edit that class and spring automatically reloads it
 ### Rails boot process
 
 When you boot a rails app there are 3 files responsible for setting it up They
