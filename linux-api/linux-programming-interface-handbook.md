@@ -184,8 +184,140 @@ Family trees:
 
 ## Chapter 2
 
-FINISHED UP TO END CHAP 1
-TODO
+The typical name for the kernel on disk is `/boot/vmlinuz`
+
+* In olden unix the kernel was `/boot/unix`
+* With the advent of VM it became `/boot/vmunix`
+* Replace `x` with `z` to indicate that it is compressed
+
+* Linux does _preemptive multitasking_
+    * processes get put on the CPU for a timeslice then taken off according to
+      the kernel's schedule
+
+A process
+
+* may not necessarily be fully in memory at any one time
+* a process is isolated
+    * from its POV, all RAM is available to it
+    * it has to ask the Kernel to do any interaction with the outside world
+* a process cannot end itself (it has to ask the kernel to do it)
+* the system calls API is how the process and kernel talk
+* can ask the kernel
+    * to end itself `_exit()`
+    * to send receive/bytes from the filesystem
+    * to send receive/bytes from the network
+    * to duplicate itself `fork()`
+* is the result of the kernel taking the bytes of a program from disk, putting them in memory and giving over some resources
+* cwd
+    * has a `cwd` pointer which holds the path to the processes "current
+      working directory"
+    * the login process sets its `cwd` from whatever `/etc/passwd` has as the
+      home directory for that user
+    * other processes inherits its cwd from its parent process
+
+CPU architectures have the idea of "modes" that the CPU can operate in.
+CPU changes modes based on particular hardware instructions
+lTwo important modes
+
+1. kernel/supervisor mode
+    * all virtual memory available = kernel space
+    * can initiate IO, access memory
+2. user mode
+    * a subset of virtual memory is available (protected by the hardware) =
+      user space
+    * many operations are blocked e.g.
+        * cannot halt the machine
+        * cannot initiate IO
+
+Each mode can have areas of virtual memory marked as being available from that
+mode
+
+* virtual memory that can be seen from user mode = user space
+* virtual memory that can be seen from kernel mode = kernel space
+
+Attempt to access virtual memory outside the allocated space raise a "hardware
+exception". The typical configuration is
+
+* kernel mode can see _all_ virtual memory
+* user mode can see a restricted subset of virtual memory
+
+* Process POV
+    * a lot of asynchronous things happen to a process
+        * does not know when it will be put on the CPU
+        * does not know when its timeslice will elapse and it will be taken off CPU
+        * does not know when signals will appear
+        * does not know when IPC events will occur
+    * does not know whether it lives in RAM or in swap (or both)
+    * does not know where in RAM it lives
+* Kernel POV
+    * knows which process will be on CPU next
+    * knows how long that process will get the CPU for
+    * does bookkeeping on processes as it makes changes to their life cycle
+    * has the low-level data structures that map the VM seen by the process to
+      real RAM and swap
+    * Performs all IO through its device drivers e.g. disk driver, network driver
+    * has the low-level data structures to present a disk of bytes as a file system
+
+
+Shell
+    * also called command interpreter
+    * takes commands from user and executes programs
+    * takes output from programs and shows user
+    * is a user process
+    * can run interactive commands and scripts
+    * examples
+        * sh (bourne shell, the original)
+        * csh (came from Berkeley, C-alike syntax, superset of sh)
+        * ksh (korn shell, superset of sh)
+        * bash (gnu reimplementation and superset of sh)
+        * dash (Debian Almquist Shell, mostly subset of bash => faster startup)
+            * posix only, no XSI extensions
+            * not intended for interactive use
+            * intended for fast boottime startup scripts
+    * `sh` is provided by `dash` on Ubuntu (`bash` on other distros)
+
+Login shell
+    * the process that is created to _run a shell_
+    * ??? is it not a shell itself?
+
+Users and groups
+
+* Each user has a unique ID
+* Each user has one primary group and 0-many secondary groups
+    * primary group is mentioned in `/etc/passwd
+    * probably comes from how in early unix a user could only be one group
+    * other groups are defined in `/etc/group`
+        * `/etc/group` is designed to be combined with the group info in
+          `/etc/passwd` to give a full picture of users and their groups
+
+Filesystem
+
+* On unix is a _single heirarchy_ (unlike windows where there is one heirarchy per disk)
+* Filetypes
+    * plain files
+    * directories
+    * sockets
+    * pipes
+    * devices
+    * symbolic links
+
+* Directories are files
+    * can visualise as a simple spreadsheet with the following cols
+        * filename
+        * pointer to its inode
+        * filetype
+        * ??? others
+    * each row in the spreadsheet is a hard link to a file
+    * the same file can appear in multiple directory "tables" so can have
+      multiple links
+* when I `cd` in a shell I am changing which directory file inode the `cwd` for
+  the shell process points to
+* `..` in `/` points back to `/`
+* The 65 "safe" characters are `\_a-zA-Z0-9.`
+
+
+UP TO
+FILE OWNERSHIP AND PERMISSIONS HEADING
 
 ## Chapter 3
 
