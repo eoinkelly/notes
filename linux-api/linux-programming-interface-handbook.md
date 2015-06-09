@@ -258,27 +258,28 @@ exception". The typical configuration is
     * Performs all IO through its device drivers e.g. disk driver, network driver
     * has the low-level data structures to present a disk of bytes as a file system
 
-
 Shell
-    * also called command interpreter
-    * takes commands from user and executes programs
-    * takes output from programs and shows user
-    * is a user process
-    * can run interactive commands and scripts
-    * examples
-        * sh (bourne shell, the original)
-        * csh (came from Berkeley, C-alike syntax, superset of sh)
-        * ksh (korn shell, superset of sh)
-        * bash (gnu reimplementation and superset of sh)
-        * dash (Debian Almquist Shell, mostly subset of bash => faster startup)
-            * posix only, no XSI extensions
-            * not intended for interactive use
-            * intended for fast boottime startup scripts
-    * `sh` is provided by `dash` on Ubuntu (`bash` on other distros)
+
+* also called command interpreter
+* takes commands from user and executes programs
+* takes output from programs and shows user
+* is a user process
+* can run interactive commands and scripts
+* examples
+    * sh (bourne shell, the original)
+    * csh (came from Berkeley, C-alike syntax, superset of sh)
+    * ksh (korn shell, superset of sh)
+    * bash (gnu reimplementation and superset of sh)
+    * dash (Debian Almquist Shell, mostly subset of bash => faster startup)
+        * posix only, no XSI extensions
+        * not intended for interactive use
+        * intended for fast boottime startup scripts
+* `sh` is provided by `dash` on Ubuntu (`bash` on other distros)
 
 Login shell
-    * the process that is created to _run a shell_
-    * ??? is it not a shell itself?
+
+* the process that is created to _run a shell_
+* ??? is it not a shell itself?
 
 Users and groups
 
@@ -292,7 +293,8 @@ Users and groups
 
 Filesystem
 
-* On unix is a _single heirarchy_ (unlike windows where there is one heirarchy per disk)
+* On unix is a _single heirarchy_ (unlike windows where there is one heirarchy
+  per disk)
 * Filetypes
     * plain files
     * directories
@@ -315,9 +317,84 @@ Filesystem
 * `..` in `/` points back to `/`
 * The 65 "safe" characters are `\_a-zA-Z0-9.`
 
+Environment
 
-UP TO
-FILE OWNERSHIP AND PERMISSIONS HEADING
+* maintained in user-space memory
+* when a new process is created it inherits its parent process environment
+    * QUESTION: does it get a reference to same environment or a new copy?
+    * The `exec\*` calls (which replaces a processes executable code with new
+      code can choose whether to keep the parent environment or get a new one
+* available to C programs using the "external" variable `(char **environ)`
+
+Resource limits
+
+* a process can set upper limits on its own resource usage - it is "self regulated"
+* implemented using the `setrlimit()` system call
+* each resource limit has a
+    * soft limit
+        * the process can change its limit for a particular resource from
+          0->hard-limit
+        * this is the limit the kernel will enforce
+    * hard limit
+        * the ceiling that the soft-limit may be raised
+        * can be irreversibly lowered by an unprivileged process
+        * priveleged processes can change hard limit however they want
+    * limits can be set to an "infinity" value
+* when a process copies itself with `fork()` the new "child" copy inherits these limits
+    * QUESTION: I assume this means a parent can set hard-limit and then
+        spawn workers who must obety it?
+* resources which can be limited
+    * max size of process virtual memory in bytes
+    * max core size
+    * max CPU time in seconds
+    * max size of data segment (initialized data, uninitialized data, heap)
+    * max no. of locks the process can take out
+    * max size of files the proces can create
+    * max no. of bytes which may be locked in memory
+    * max size of stack in bytes
+    * other stuff ... `man setrlimit` for the full story
+
+* you can change the limits of your shell process using `ulimit`
+    * this will change the limits of the processes that the shell creates
+
+```sh
+# linux
+$ ulimit -a
+core file size          (blocks, -c) 0
+data seg size           (kbytes, -d) unlimited
+scheduling priority             (-e) 0
+file size               (blocks, -f) unlimited
+pending signals                 (-i) 1913
+max locked memory       (kbytes, -l) 64
+max memory size         (kbytes, -m) unlimited
+open files                      (-n) 1024
+pipe size            (512 bytes, -p) 8
+POSIX message queues     (bytes, -q) 819200
+real-time priority              (-r) 0
+stack size              (kbytes, -s) 8192
+cpu time               (seconds, -t) unlimited
+max user processes              (-u) 1913
+virtual memory          (kbytes, -v) unlimited
+file locks                      (-x) unlimited
+
+# mac
+$ ulimit -a
+-t: cpu time (seconds)              unlimited
+-f: file size (blocks)              unlimited
+-d: data seg size (kbytes)          unlimited
+-s: stack size (kbytes)             8192
+-c: core file size (blocks)         0
+-v: address space (kbytes)          unlimited
+-l: locked-in-memory size (kbytes)  unlimited
+-u: processes                       709
+-n: file descriptors                2560
+```
+
+mmap
+
+* `mmap()` system call creates a new memory mapping
+
+UP TO 2.8 MMAP
 
 ## Chapter 3
 
