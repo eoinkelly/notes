@@ -2,23 +2,22 @@
 
 ## Aside: Building C files
 
-
 ```sh
 # Works on Mac and Linux
 
 vim foo.c
-
 gcc foo.c -o exe_name
 ./exe_name
 
 # make can build a single file without a Makefile
+vim foo.c
 make foo
 ./foo
 ```
 
 ## Aside: Tracing system calls
 
-strace = dtruss
+* strace on linux ~ dtruss on mac
 
 ```sh
 #linux
@@ -34,11 +33,28 @@ dtruss -p 1234
 ## Aside: Seeing which shared libs a binary depends on
 
 * `ldd` prints shared library dependencies
-* `otool -L` is equivalent on mac
+    * usually invokes the "standard dynamic linker" with a TRACE flag set
+    * in some cases it may invoke the program to find out so be careful!
+* `objdump /bin/date | grep NEED` will do same thing
+    * objdump shows info from object files
+    * is safe to use on untrusted executables
+* `otool -L` seems to be mac equivalent of `objdump`
+    * `otool -L` shows shared lib dependencies
 
 ```sh
-ldd /bin/date # linux
-otool -L /bin/date # mac
+ldd /bin/date                   # linux
+objdump /bin/date | grep NEED   # linux
+otool -L /bin/date              # mac
+```
+
+## Aside: mac equivalent of libc
+
+* `/usr/lib/libSystem.B.dylib` seems to be it
+
+```sh
+$ otool -L /bin/date
+bin/date:
+    /usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1213.0.0)
 ```
 
 ## Aside: LibC on Ubuntu Vivid
@@ -63,7 +79,6 @@ Available extensions:
     BIND-8.2.3-T5B
 libc ABIs: UNIQUE IFUNC
 For bug reporting instructions, please see:
-<https://bugs.launchpad.net/ubuntu/+source/glibc/+bugs>.
 ```
 
 ## Preface
@@ -72,6 +87,7 @@ Standards
 
 * POSIX.1-2001 (Portable Operating System Interface)
 * SUSv3 (Single UNIX Specification version 3)
+
 
 * SUSv4 (Single UNIX Specification version 3)
 * POSIX.1-2008
@@ -102,7 +118,7 @@ Number of man pages on MacOS Yosemite organised by section (Calcuated by:
 
 1. 1763
 2. 160
-3
+3. 1635
 4. 32
 5. 221
 6. 1
@@ -416,3 +432,103 @@ Always the return status of a system call!
 
 
 UP TO FIRST PAGE CHAP 3
+
+
+# Chapter 6: Processes
+
+A process is:
+
+* An instance of an executing program
+
+A "program" is a file containing the information that the kernel needs to create a process
+* A program is a blueprint for a process
+
+Program files containing
+
+1. Binary format identification
+1. Machine language instructions
+1. Program entry-point address
+    * The location of the first instruction that the process crreated from this program should execute
+1. data
+  * the values required to initialize variables and constants in the program
+1. Symbol and relocation tables
+    * These tables contain the locations of variables and functions used by the program
+1. Shared library and dynamic linking information
+    * fields listing the shared libraries the program needs at runtime
+    * the pathname to the linker
+1. Other info
+    * misc other stuff
+
+## Aside: size utility
+
+Prints the sizes of the text, initialized data (data), uninitialized data (bss) sections in a binary
+
+* The
+
+```sh
+# linux
+vagrant@vagrant-ubuntu-vivid-64:~$ size  -t /bin/date
+   text    data     bss     dec     hex filename
+  58889    1236     448   60573    ec9d /bin/date
+
+vagrant@vagrant-ubuntu-vivid-64:~$ size --format=SysV  /bin/date
+/bin/date  :
+section               size      addr
+.interp                 28   4194872
+.note.ABI-tag           32   4194900
+.note.gnu.build-id      36   4194932
+.gnu.hash               72   4194968
+.dynsym               1944   4195040
+.dynstr                849   4196984
+.gnu.version           162   4197834
+.gnu.version_r         112   4198000
+.rela.dyn              192   4198112
+.rela.plt             1704   4198304
+.init                   26   4200008
+.plt                  1152   4200048
+.text                31786   4201200
+.fini                    9   4232988
+.rodata              15689   4233024
+.eh_frame_hdr          764   4248716
+.eh_frame             4332   4249480
+.init_array              8   6352400
+.fini_array              8   6352408
+.jcr                     8   6352416
+.dynamic               464   6352424
+.got                     8   6352888
+.got.plt               592   6352896
+.data                  148   6353504
+.bss                   448   6353664
+.gnu_debuglink          12         0
+Total                60585
+```
+
+```sh
+# mac
+
+➜  linux-api git:(master) size  /bin/date
+__TEXT  __DATA  __OBJC  others  dec hex
+12288   4096    0   4294975488  4294991872  100006000
+➜  linux-api git:(master) size -m -l /bin/date
+Segment __PAGEZERO: 4294967296 (vmaddr 0x0 fileoff 0)
+Segment __TEXT: 12288 (vmaddr 0x100000000 fileoff 0)
+    Section __text: 6305 (addr 0x100000e1c offset 3612)
+    Section __stubs: 270 (addr 0x1000026be offset 9918)
+    Section __stub_helper: 466 (addr 0x1000027cc offset 10188)
+    Section __const: 344 (addr 0x1000029a0 offset 10656)
+    Section __cstring: 1062 (addr 0x100002af8 offset 11000)
+    Section __unwind_info: 140 (addr 0x100002f20 offset 12064)
+    Section __eh_frame: 72 (addr 0x100002fb0 offset 12208)
+    total 8659
+Segment __DATA: 4096 (vmaddr 0x100003000 fileoff 12288)
+    Section __got: 40 (addr 0x100003000 offset 12288)
+    Section __nl_symbol_ptr: 16 (addr 0x100003028 offset 12328)
+    Section __la_symbol_ptr: 360 (addr 0x100003038 offset 12344)
+    Section __data: 552 (addr 0x1000031a0 offset 12704)
+    Section __common: 8 (addr 0x1000033c8 offset 0)
+    Section __bss: 8 (addr 0x1000033d0 offset 0)
+    total 984
+Segment __LINKEDIT: 8192 (vmaddr 0x100004000 fileoff 16384)
+total 4294991872
+➜  linux-api git:(master)
+```

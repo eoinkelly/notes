@@ -14,7 +14,6 @@ short (alias for `short int`)   | _see above_       | _see above_
 float                           | %f                | ?
 double                          | %lf               | ?
 
-
 ## Variable names
 
 * Only first 31 chars matter to the compiler
@@ -31,6 +30,7 @@ double                          | %lf               | ?
     3. number of elements
 * The name of the array is a pointer to its first element.
     * `=>` arrays are always passed to functions by reference
+* Used to implement strings in C (string is an array of characters terminated by `\0` (null byte))
 
 TODO: play with passing an array by value
 
@@ -44,19 +44,19 @@ int ages[11];
 * C has no string variable type
 * A string literal is an array of characters
 * The name of an array is a pointer to the first element in it.
-* In C a string literal ...
-    * evaluates to an an array of n+1 (n = num chars in string, +1 for the null byte) ???
-
-Are string literals just a shorthand way of making an array???
-
-```c
-char *foo[6] = { 'h', 'e', 'l', 'l', 'o', '\0' };
-char foo = "hello";
-```
-
-* You can assign string literals to variables that point to `char`
+    * => the name of a string literal is _a pointer_ to a character
+    * => You can assign string literals to variables that point to `char`
+* In C a string literal evaluates to an an array of
+  length n+1 (n = num chars in string, +1 for the null
+  byte)
+* string literals just a shorthand way of making an array
+  of characters
 
 ```c
+// equivalent
+char foo[6] = { 'h', 'e', 'l', 'l', 'o', '\0' };
+char* foo = "hello";
+
 char *p; // create a pointer to a char
 p = "hi there" // "hi there" evaluates to a memory address that is stored in p
 ```
@@ -134,21 +134,33 @@ scanf( "%s", &ages[3] );
         * it is a primitive form or access control
     * functions are _external_ storage class by default but can be made static.
 3. `register`
-    * supposodely stored in registers not in main memory
+    * tells compiler you would prefer if this variable was stored in registers not in main memory
     * a way of suggesting to the compiler that we will need fast access to this
       variable - implementations do not garuantee they will do it.
     * they have the same scope as automatic variables (function local)
 4. `extern`
-    * used to tell the compiler that you want to use the _global_ copies of the
-      named variables (PHP has a similar thing with its `global`)
-    * they last for the lifetime of the program
-    * functions in C are external by default (available to all source files)
+    * declare without defining
+    * The compiler converts a single `.c` file into a `.o` file. `extern` tells
+      the compiler "hey don't worry about resolving this variable from the
+      source file you are currently compiling - the linker will find the
+      definition for you.
+        * extern variables are compiled without the variable being resolved - it is
+        resolved by the linking process.
+    ```c
+    extern int foo2; // alwasy a declaration (no memory allocated
+    int foo3 = 12; // always a definition (memory is allocated)
+    int foo1; // could either be definition or declaration depending on compiler
+    ```
+    * if used within a function it tells the compiler that you want to use the
+      _global_ named variable
+    * creates global variables
+        * they last for the lifetime of the program
+    * function declarations are implicitly extern
+        * functions in C are external by default (available to all source files)
     * there is one box in memory and all source files can use it.
     * `extern int foo; this keyword tells the compiler that "hey this integer
       called foo already has storage allocated for it by some other file so
       don't make a new box".
-    * extern variables are compiled without the variable being resolved - it is
-      resolved by the linking process.
     * to make a global
         * just declare the variable as normal in `file1.c` - it needs to be
           declared outside the scope of any function
@@ -160,8 +172,9 @@ scanf( "%s", &ages[3] );
          the file.
        * all code following the declation can access that variable no matter
          what file it is in.
-    * `extern` is used to tell the compiler that you want to reference global
-      variables from within your function.
+    * `extern` within a function:
+        * `extern` is used to tell the compiler that you want to reference
+          global variables from within your function.
 
 ## Declaration vs definition vs instantiation
 
@@ -230,6 +243,9 @@ round.
     * make this thing immutable
     * compiler should complain if you try to assign to this
     * they are usually initialized to get that first value in there
+* `volatile`
+    * tells compiler not to optimize the variable
+    * useful if you are using `setjmp()` and `longjmp()` stuff
 
 # Memory organisation
 
