@@ -1,3 +1,33 @@
+# API design
+
+Github API is seen as a good one.
+
+Docs: https://developer.github.com/v3/
+
+Things it does:
+
+* version is not in the URL - it is sent as a header
+    ```
+    X-GitHub-Media-Type: github.v3
+    ```
+    You request a version of the api using the Accept header:
+    ```
+    Accept: application/vnd.github.v3+json
+    ```
+
+* very explorable, they seem to have embraced hypermedia apis
+* blank fields are included as null not ommited
+* all times are in ISO 8601 timestamp format.
+    * they also allow setting timezone with the `Time-Zone` header
+* error objects contain a `documentation_url` property that links to their docs
+* when there are urls that need parameters added they demo them in the URL wrapped in `{}` e.g.
+    ```
+    members_url: "https://api.github.com/orgs/GritLearning/members{/member}",
+    ```
+* properties ending in `*_url` are in RFC 6570 URL Template format so you can use a URL templating library to work iwth them
+    * http://tools.ietf.org/html/rfc6570
+
+
 # JSON API
 
 Heroku has a good post on API design https://github.com/interagent/http-api-design

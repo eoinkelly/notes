@@ -59,7 +59,7 @@ bin/date:
 
 ## Aside: LibC on Ubuntu Vivid
 
-```sh
+```
 # find the location of libc on the system
 $ ldd /bin/date | grep libc
 
@@ -85,12 +85,12 @@ For bug reporting instructions, please see:
 
 Standards
 
-* POSIX.1-2001 (Portable Operating System Interface)
-* SUSv3 (Single UNIX Specification version 3)
-
-
-* SUSv4 (Single UNIX Specification version 3)
-* POSIX.1-2008
+* circa 2001
+    * POSIX.1-2001 (Portable Operating System Interface)
+    * SUSv3 (Single UNIX Specification version 3)
+* circa 2008
+    * SUSv4 (Single UNIX Specification version 4)
+    * POSIX.1-2008
 
 ## Aside: man pages
 
@@ -178,7 +178,7 @@ Family trees:
         * TODO: find out which version of C is most widely used
     * C2011
 * POSIX
-    * designed to provide cross-unix compatibility at the source code level
+    * designed to provide cross-unix compatibility at the _source code level_
     * POSIX.1 - 1988
         * documents an API that should be made available by a "conforming" OS
           to a program
@@ -204,7 +204,7 @@ The typical name for the kernel on disk is `/boot/vmlinuz`
 
 * In olden unix the kernel was `/boot/unix`
 * With the advent of VM it became `/boot/vmunix`
-* Replace `x` with `z` to indicate that it is compressed
+* Replaced the `x` with `z` to indicate that it is compressed
 
 * Linux does _preemptive multitasking_
     * processes get put on the CPU for a timeslice then taken off according to
@@ -225,37 +225,39 @@ A process
     * to duplicate itself `fork()`
 * is the result of the kernel taking the bytes of a program from disk, putting them in memory and giving over some resources
 * cwd
-    * has a `cwd` pointer which holds the path to the processes "current
+    * has a `cwd` pointer which holds the path to the "current
       working directory"
     * the login process sets its `cwd` from whatever `/etc/passwd` has as the
       home directory for that user
-    * other processes inherits its cwd from its parent process
+    * other processes inherits their cwd from their parent process but can
+      change it
 
-CPU architectures have the idea of "modes" that the CPU can operate in.
-CPU changes modes based on particular hardware instructions
-lTwo important modes
-
-1. kernel/supervisor mode
-    * all virtual memory available = kernel space
-    * can initiate IO, access memory
-2. user mode
-    * a subset of virtual memory is available (protected by the hardware) =
-      user space
-    * many operations are blocked e.g.
-        * cannot halt the machine
-        * cannot initiate IO
-
-Each mode can have areas of virtual memory marked as being available from that
-mode
-
-* virtual memory that can be seen from user mode = user space
-* virtual memory that can be seen from kernel mode = kernel space
+* CPU modes
+    * CPU architectures have the idea of "modes" that the CPU can operate in.
+    * CPU changes modes based on particular hardware instructions
+    * Two important modes
+        1. kernel/supervisor mode
+            * all virtual memory available = kernel space
+            * can initiate IO, access memory
+        2. user mode
+            * a subset of virtual memory is available (protected by the hardware) =
+            user space
+            * many operations are blocked e.g.
+                * cannot halt the machine
+                * cannot initiate IO
+    * Each mode can have areas of virtual memory marked as being available from that
+    mode
+* virtual memory
+    * virtual memory that can be seen from user mode = user space
+    * virtual memory that can be seen from kernel mode = kernel space
 
 Attempt to access virtual memory outside the allocated space raise a "hardware
 exception". The typical configuration is
 
 * kernel mode can see _all_ virtual memory
 * user mode can see a restricted subset of virtual memory
+
+Consider how the world looks from a process POV and from the kernel POV
 
 * Process POV
     * a lot of asynchronous things happen to a process
@@ -301,7 +303,7 @@ Users and groups
 
 * Each user has a unique ID
 * Each user has one primary group and 0-many secondary groups
-    * primary group is mentioned in `/etc/passwd
+    * primary group is mentioned in `/etc/passwd`
     * probably comes from how in early unix a user could only be one group
     * other groups are defined in `/etc/group`
         * `/etc/group` is designed to be combined with the group info in
@@ -336,11 +338,13 @@ Filesystem
 Environment
 
 * maintained in user-space memory
-* when a new process is created it inherits its parent process environment
-    * QUESTION: does it get a reference to same environment or a new copy?
-    * The `exec\*` calls (which replaces a processes executable code with new
-      code can choose whether to keep the parent environment or get a new one
+* when a new process is created its environment is initialized to be the same
+  as its parent at the time of creation.
+    * The child gets a _copy_ of the parent environment not a reference to it!
+    * The `exec\*` calls (which replace a processes executable code with new
+      code) can choose whether to keep the parent environment or make changes
 * available to C programs using the "external" variable `(char **environ)`
+    * see `environment.c` for some playing around with this
 
 Resource limits
 
@@ -358,7 +362,7 @@ Resource limits
     * limits can be set to an "infinity" value
 * when a process copies itself with `fork()` the new "child" copy inherits these limits
     * QUESTION: I assume this means a parent can set hard-limit and then
-        spawn workers who must obety it?
+        spawn workers who must obey it?
 * resources which can be limited
     * max size of process virtual memory in bytes
     * max core size
@@ -373,7 +377,7 @@ Resource limits
 * you can change the limits of your shell process using `ulimit`
     * this will change the limits of the processes that the shell creates
 
-```sh
+```
 # linux
 $ ulimit -a
 core file size          (blocks, -c) 0
@@ -410,7 +414,110 @@ mmap
 
 * `mmap()` system call creates a new memory mapping
 
-UP TO 2.8 MMAP
+* file mapping
+    * maps _a region_ of a file into the calling process's virtual memory
+    * the VM system takes care of loading the right pages of the mapping into
+      RAM when you need them
+* anonymous mapping
+    * not backed by any file
+    * pages in the mapping are initialized to 0
+
+When a mapping is created it can specify what access permissions should be
+enforced on the pages of the mapping:
+
+    * none
+    * read
+    * write
+    * execute
+
+Mappings have options - examples of which are:
+
+* MAP_PRIVATE
+    * modifications to the mapping of pages are "private" i.e. copy on
+        write
+        * i.e. processes can share pages until they modify them - at that
+            point the system will make a new copy of the page for the process
+    * other processes cannot see the modifications
+    * modifications are not carried through to the file
+* MAP_SHARED
+    * modifications to the mapping are visible to other processes who also
+        map this file
+    * other processes can see the modifications
+    * modifications are carried through to the file
+* MAP_NOCACHE
+    * pages in this mapping are not kept in kernel memory cache
+
+Things memory mapping lets us do
+
+1. memory mapping is how the code from the ELF binary is loaded into the
+   process's TEXT segment
+1. allocate new 0 filled memory
+1. file I/O
+1. Interprocess communication (via shared mapping)
+
+An "object library" is a file containing the compiled object code for a set of functions
+
+There are two types of _object library_
+
+1. static library
+    * also called "archive"
+    * a bundle of compiled object modules (.o files)
+    * when a `.a` file is linked with a program
+    1. the linker resolves all the symbols that the library provides (function names, variable names etc.) that the program needs
+    2. it then _copies_ those object modules into the program executable - this is _static linking_
+    * static linking = copy and paste at compile time
+2. shared library
+    * linker writes a record into the executable to indicate which object libraries the program needs at runtime
+    * when the program is run, a separate program called the "dynamic linker" makes sure the library required is loaded into memory and the symbols resolved
+
+Linux has 7 Interprocess communication methods
+
+1. signals
+2. pipes and FIFOs
+3. sockets
+4. file locking
+    * locks can be obtained for part of a file (does not need to be whole file)
+5. message queues
+6. semaphores
+7. shared memory
+
+There are so many because of the messy history of UNIX e.g. domain sockets
+(SYSV) and FIFOs (BSD) are pretty much the same.
+
+
+Signals
+
+* software interrupts
+* have lots of uses
+* each signal is identified by a different int and has a symbolic name SIGXXX
+    * `kill -l` to see signal names
+* signal sources:
+    * the kernel
+    * another process (with suitable permissions)
+    * the process itself
+* `kill` shell command sends signals to processes. `kill()` system call does
+  the same
+* many shells also have a builtin kill command
+    * use `/bin/kill` explicitly to avoid the builtin if you need to.
+        * QUESTION: any reason to do this ???
+
+How a signal is delivered to a process:
+
+1. signal source sends signal to the process via `kill()`
+2. kernel starts delivery if sender has permissions to send that signal
+3. signal is "pending" for recipient, waiting for recipient to get on CPU again
+4. kernel checkes "signal mask" for the recipeint - if this signal is blocked
+   then the signal remains pending
+5. signal is delivered when it is not blocked by mask anymore and the recipient
+   is on the CPU
+
+When a process receives a signal it can
+
+1. run a custom "signal handler" function it registered earlier in its life
+1. ignore the signal
+1. take the default action for that signal e.g. kill or suspend itself
+
+UP TO 2.12 THREADS
 
 ## Chapter 3
 

@@ -3,7 +3,7 @@
 # Goals
 
 1. minimize number of requests between client & server
-1. minimize amount of data transmitted between client & server
+2. minimize amount of data transmitted between client & server
 
 # Media type
 
@@ -11,18 +11,12 @@ Both clients and servers must use the official media type to exchange data
 
     Content-Type: application/vnd.api+json
 
-* JSON-API Resources gem does this
-
-QUESTION: Does ActiveModel::Serializers ??
-    ember-data ???
-
 # Document structure
 
 * objects MUST NOT contain any members not defined in the spec - clients and
   servers MUST ignore any extra properties on those objects
 
 * A JSON _object_ is at the root of every response _containing data_.
-    ??? waht about empty responses?
 * A document must contain at least one of the `data`, `errors`, `meta` members
 * `data` and `errors` cannot be in the same document
 * Optionally the root object can have `links` or `included`
@@ -61,7 +55,6 @@ QUESTION: Does ActiveModel::Serializers ??
 * `links`
     * URLs related to the primnary data
 
-
 ### Terms:
 
 * Resource object
@@ -82,7 +75,7 @@ QUESTION: Does ActiveModel::Serializers ??
             * contains more or more "relationship objects"
             * a _relationship object_:
                 * contains at least one of `links`, `data`, `meta`
-                * `links` contains at least one ofhas the form
+                * `links` contains at least one of
                    * `self` = a URL for the _relationship itself_. This allows
                      the client to directly manipulate the relationship itself
                      e.g. delte the relationship without deleting any of the
@@ -117,7 +110,7 @@ QUESTION: Does ActiveModel::Serializers ??
 
 Things which are common to both resource objects and resource identifier objects:
 * type
-    * can be plural or singular but should be consistent eithe way
+    * can be plural or singular but should be consistent either way
 * id
 
 Links object
@@ -128,11 +121,11 @@ A links object can appear at many levels e.g.
 * within a relationship object
 * within a resource object
 
-but they always have the sa
+but they always have the same form:
 
 * self
 * related
-* paginaation
+* pagination
 
 There are two formas of an individual "link" object
 
@@ -160,10 +153,8 @@ There are two formas of an individual "link" object
     * must: id, type
     * may: attributes, relationships, links
 
-
-If you ask for a resource that does not exist the serve should give you a response with `null` or `[]` in the data key - it should not giv e you a 404
-
-
+If you ask for a resource that does not exist the server should give you a
+response with `null` or `[]` in the data key - it should not give you a 404
 
 # Asking for related resource
 
@@ -192,6 +183,7 @@ Prefix the field name with `-` to sort descending
 # Pagination
 
 Server may paginate data. If it does it must include a links object with the keys
+
 * first
 * prev
 * next
@@ -206,9 +198,13 @@ have much else to say about it.
 
 # Creating resources
 
-Server may allow client to CUD resources
-If the client supplies an id for a resource it SHOULD be a UUID. This isn't locked down to a MUST as there are some edge cases where you might be importing data that has some other globally unique naming scheme but in general client created `id`s should follow UUID spec
-
-Updating resources happens over a `PATCH` request. Server should interpret missing attributes of an object as not needing change (not that those attributes should be set to `null`
-
-Relationships may be updated by either updating the objects involved or sending `PATCH` request to the relationship URL
+* Server may allow client to CUD resources
+* If the client supplies an id for a resource it SHOULD be a UUID. This isn't
+  locked down to a MUST as there are some edge cases where you might be
+  importing data that has some other globally unique naming scheme but in
+  general client created `id`s should follow UUID spec
+* Updating resources happens over a `PATCH` request. Server should interpret
+  missing attributes of an object as not needing change (not that those
+  attributes should be set to `null`)
+* Relationships may be updated by either updating the objects involved or
+  sending `PATCH` request to the relationship URL
