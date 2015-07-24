@@ -1,4 +1,10 @@
-From linux:
+# Unix % CPU usage
+
+* CPU is the percentage of the time period specified by the counting mode that the processor spent in various work.
+* A CPU core is either totally busy or totally idle at any moment in time.
+* CPU% usage is calculated by asking the core at regular intervals whether is busy or not and tallying the no. of times it said yes!
+
+From linux top command:
 
 ```
 top - 15:25:56 up  4:24,  3 users,  load average: 1.91, 2.00, 2.29
@@ -8,7 +14,7 @@ KiB Mem:   4100944 total,  4074272 used,    26672 free,   151060 buffers
 KiB Swap:   131068 total,      120 used,   130948 free.  2864544 cached Mem
 ```
 
-From a mac:
+From a mac top:
 
 ```
 Processes: 326 total, 2 running, 17 stuck, 307 sleeping, 1666 threads                                        15:29:28
@@ -18,9 +24,6 @@ PhysMem: 8072M used (1249M wired), 119M unused.
 VM: 824G vsize, 1349M framework vsize, 28120024(0) swapins, 29804030(0) swapouts.
 Networks: packets: 42470890/40G in, 58719901/37G out. Disks: 29324535/539G read, 15528537/523G written.
 ```
-
-CPU is the percentage of the time period specified by the counting mode that
-the processor spent in various work.
 
 It seems that linux shows more detail than mac on this
 
@@ -48,8 +51,6 @@ It seems that linux shows more detail than mac on this
               essentially block the current CPU while they are running, kernel
               hardware interrupt handlers are written to be as fast and simple
               as possible.
-
-
         * si: software irq (or) % CPU time spent servicing/handling software interrupts
             * If long or complex processing needs to be done, these tasks are
               deferred using a mechanism call softirqs. These are scheduled
@@ -62,6 +63,7 @@ It seems that linux shows more detail than mac on this
             current virtual machine - it was "stolen" from that VM by the
             hypervisor (either to run another VM, or for its own needs).
 
+```
 us -- User CPU time
 The time the CPU has spent running users' processes that are not niced.
 sy -- System CPU time
@@ -83,92 +85,4 @@ NOTE: st time is significant for our VMs as it indicates time that wasn't availa
 free(1), iostat(1), mpstat(1), ps(1), sar(1), top(1)
 man vmstat
 man mpstat
-
-* mac
-    * user
-    * sys
-    * idle
-
-
-# Load averages
-
-Load "average" over 1, 5, 15 mins - it is the _average_ no. of "jobs" in the "run queue"
-It is not strictly an "average" - strictly speaking the values are calculated
-by an exponential decay function but for our purposes we can consider it an
-"average"
-
-> reading from left to right, one can examine the aging trend and/or duration
-> of the particular system state. The state in question is CPU load—not to be
-> confused with CPU percentage. In fact, it is precisely the CPU load that is
-> measured, because load averages do not include any processes or threads
-> waiting on I/O, networking, databases or anything else not demanding the CPU.
-> It narrowly focuses on what is actively demanding CPU time. This differs
-> greatly from the CPU percentage. The CPU percentage is the amount of a time
-> interval (that is, the sampling interval) that the system's processes were
-> found to be active on the CPU. If top reports that your program is taking 45%
-> CPU, 45% of the samples taken by top found your process active on the CPU.
-> The rest of the time your application was in a wait.
-
-> (It is important to remember that a CPU is a discrete state machine. It
-> really can be at only 100%, executing an instruction, or at 0%, waiting for
-> something to do. There is no such thing as using 45% of a CPU. The CPU
-> percentage is a function of time.)
-
-> However, it is likely that your application's rest periods include waiting to
-> be dispatched on a CPU and not on external devices. That part of the wait
-> percentage is then very relevant to understanding your overall CPU usage
-> pattern.
-
-> The load averages differ from CPU percentage in two significant ways: 1) load
-> averages measure the trend in CPU utilization not only an instantaneous
-> snapshot, as does percentage, and 2) load averages include all demand for the
-> CPU not only how much was active at the time of measurement.
-
-It is measuring processes that are marked running or uninterruptible.
-
-* http://blog.scoutapp.com/articles/2009/07/31/understanding-load-averages
-* You can think of cores as lanes of traffic on a bridge (4 core CPU ~= 4 lane bridge)
-
-> for the purposes of sizing up the CPU load value, the total number of cores
-> is what matters, regardless of how many physical processors those cores are
-> spread across.
-
-On a single CPU/core machine
-
-* 0.0 means no jobs are going through the CPU
-* 1.0 means that single CPU is exactly at capacity
-* 1+ means that jobs are waiting to get on the CPU
-
-If you have 4 cores then 4.0 would be all 4 cores exactly at capacity
-
-
-Rules of thumb:
-
-1. No. of cores = max load
-2. Cores is cores
-    * Roughly speakinggeneral a 4 processor of 1 core machine == 1 processor of 4 core machine
-3. 0.7 per core/cpu is about the most you want in reality as it gives you some headroom
-4. 1.0 per core is too high for comfort
-5. 5.0 or above for core is a really serious problem
-6. The 5 and 15 min averages matter more than the 1 min (which could be a short spike)
-
-For a 2 core server:
-
-* 1.4 is the max 5 or 15 min average you would want to see regularly
-* 2.0 is the CPU at max capacity
-
-Both `top` and `uptime` show load averages.
-
-To find out how many cores your system has:
-
 ```
-# Linux
-$ cat /proc/cpuinfo
-
-# Mac
-$ sysctl hw.ncpu
-# $ sysctl -n hw.ncpu' # gets just number, handy to use programmatically
-```
-
-
-

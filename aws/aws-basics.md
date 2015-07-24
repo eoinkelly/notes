@@ -1,5 +1,9 @@
 # AWS
 
+Tools
+
+* https://cloudharmony.com/speedtest
+
 # Services
 
 * Elastic cloud compute (EC2)
@@ -12,7 +16,7 @@
         * pricing
             * pay by hour and pay by GB that is transfered through the load balancer
 * Identity and access management (IAM)
-    * ???
+    * does authentication and authorization
 * Route53
     * A DNS service
     * Can do "latency based routing"
