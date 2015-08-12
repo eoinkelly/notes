@@ -3,7 +3,8 @@ require 'action_controller'
 raw = {
   user: {
     username: 'john',
-    age: 123
+    age: 123,
+    is_admin: true
   },
   things: [12, 34, 58],
   nested: [12, { foo: 'bar' }, 58],

@@ -1,4 +1,4 @@
-
+# Misc stuff from ruby tapas
 ```ruby
 # he uses inline assigns - ugh?
 gateway = instance_spy("SomeGateway", do_thing_func: result = double('the result'))
@@ -58,4 +58,22 @@ class Thing
 end
 
 expect { thing.foo }.to raise_error(Thing::Error)
+```
+
+
+# Converting between numbers and strings
+
+```rb
+# number to string
+#
+42.to_s # => "42" a string of the decimal (base 10) representation
+42.to_s(2) # => "101010" a string of the binary representation
+42.to_s(16) # => "2a" a string of the binary representation
+
+
+# string to number
+#
+"FFEE".to_i(16) # returns 0 if it fails
+# Integer is better as it will raise error if it fails
+Integer("FFEE", 16)
 ```
