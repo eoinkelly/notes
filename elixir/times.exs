@@ -5,9 +5,9 @@ defmodule Times do
   end
 
   # doc strings must be outside the definition
-  @doc """
-  The 2 arg version of adder
-  """
+  # @doc """
+  # The 2 arg version of adder
+  # """
   # def adder(a,b) do
   #   a + b
   # end
