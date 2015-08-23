@@ -1,3 +1,6 @@
+# helper function (see anonymous-functions.exs for details)
+header = fn msg -> IO.puts "\n** #{msg} **\n" end
+
 # Unicode
 # #######
 
@@ -11,6 +14,7 @@
 
 # Strings
 # #######
+header.("Strings")
 
 # * Elixir has "bitstrings" - arbitrary length collections of bits
 # * A "binary" is a bitstring where the no. of bits is divisible by 8
@@ -36,6 +40,14 @@ IO.inspect ?ł # => 322
 IO.inspect to_char_list("I am a string")
 IO.inspect is_binary("I am a string") # => true
 
+# Exlixir convention on naming functions that count things
+#
+# * size => constant time
+# * length => linear time
+
+IO.inspect byte_size "foo"
+IO.inspect String.length "foo"
+
 # Char lists
 # ##########
 #
@@ -48,8 +60,27 @@ IO.inspect is_binary("I am a string") # => true
 IO.inspect to_string('I am a char list')
 IO.inspect is_binary('I am a char list') # => false
 
+
+long_str = """
+I am a multiline
+string - also known as a "heredoc"
+"""
+IO.puts long_str
+
+# Sigils
+# ######
+
+# elxir has a number of sigils that can be used to creat things.
+# * similar to ruby %r, %w, %W etc.
+#
+# ~r creates a regex
+# ~w creates a list of works
+# ~S is the elixir sigil for creating a heredoc strings without having to quote
+#    " that appears within it
+
 # atoms
 # #####
+header.("Atoms")
 
 # * atoms in elixir are like symbols in ruby
 
@@ -62,25 +93,65 @@ IO.inspect :"func/4"
 
 # Regex
 # #####
+header.("Regex")
 
 # syntax is `~r{}`
 IO.inspect Regex.split ~r{[aeiou]}, "caterpillar"
 # => ["c", "t", "rp", "ll", "r"]
 
-# ## Compound data structures
-#
-# {} is a tuple - closest to a ruby array (despite syntax)
-#
+# Tuples
+# ######
+header.("Tuples")
+
+# * tuples are the closest thing to a ruby array in elixir (despite syntax)
+# * are hetregenous
+# * elements are stored contigiously in memory
+#     * => lookup by index and getting tuple size is fast
+#     * => changing the size of a tuple (by appending or prepending) is slow
+
+IO.inspect {} # an empty tuple
+IO.inspect {:ok, "Some return value"} # 2-tuple of atom, string
+IO.inspect tuple_size {:ok, "Some return value", 23} # 3-tuple of atom, string, number
+
+# Map/Dictionay/Hash
+# ##################
+header.("Maps")
+
 # %{} is a map (hash)
-#
-#     ek = %{ :name => "Eoin", :age => "36" }
-#     ek[:name] # works
-#     ek.name # special syntax for atom keys
-#
-# [] is a list (linked list) not an array!
+
+# basic syntax
+IO.inspect ek = %{ :name => "Eoin", :age => "36" }
+IO.inspect ek[:name] # works
+IO.inspect ek.name # special syntax for atom keys
+
+
+# Lists
+# #####
+header.("Lists")
+
+# * lists in elixir are linked lists (even though syntax makes them look like ruby array
+# * this has implications for what operations are fast on elixir lists
+# * prepending to a list is fast
+# * appending to a list is slow
+
+# lists are hetreogenous
+example_list = [:a, :b, "c", 23]
+
+IO.inspect length(example_list)
+IO.inspect example_list ++ ["Hi", :there]
+IO.inspect example_list -- [:a]
+
+IO.inspect [:new] ++ example_list # fast to prepend
+IO.inspect example_list ++ [:new] # slow to append
+
+# elixir will display lists of numbers as characters if they are ALL in the
+# printable range - this is a holdover from erlang
+IO.inspect [104, 101, 108, 108, 111]
+
 
 # Booleans
 # ########
+header.("Booleans")
 
 # `true` is alias for `:true` (`false` and `nil` also have symbol aliases)
 IO.inspect :true === true

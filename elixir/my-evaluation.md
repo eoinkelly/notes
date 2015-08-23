@@ -11,5 +11,9 @@ Things I like
 On haml
 
 * converting haml from ruby land to elixir land, the fact that '' is anot a real string in elixir requires a bit of work
-* by default the rendered html is in one big line
+* by default the rendered html is in one big line - not as nice to read in dev tools
 * seems to not evaluate function calls in interpolated strings
+
+
+
+No new relic, no raygun client :-(

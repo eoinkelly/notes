@@ -1,3 +1,23 @@
+# Tests
+# =====
+# `mix test`
+# * runs files matching `test/**/*_test.exs`
+# * automatically loads test/test_helper.exs
+# => always call test dir 'test'
+# ExUnit.start
+#
+# # 2) Create a new test module (test case) and use [`ExUnit.Case`](ExUnit.Case.html).
+# defmodule BuzzerTest do
+#   # 3) Notice we pass `async: true`, this runs the test case
+#   #    concurrently with other test cases
+#   use ExUnit.Case, async: true
+#
+#   # 4) Use the `test` macro instead of `def` for clarity.
+#   test "first two args are 0" do
+#     assert buzzer.(0, 0, "foo") === "FizzBuzz"
+#   end
+# end
+
 defmodule Buzzer do
   def buzz(0, 0, _), do: "FizzBuzz"
   def buzz(0, _, _), do: "Fizz"

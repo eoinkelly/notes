@@ -1,4 +1,4 @@
-defmodule Chop do
+defmodule Guesser do
   def guess(actual, range, guess \\ :no_guess)
 
   def guess(actual, range, :no_guess) do
@@ -24,4 +24,4 @@ defmodule Chop do
   end
 end
 
-Chop.guess(273, 1..1000)
+Guesser.guess(273, 1..1000)

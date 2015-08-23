@@ -1,12 +1,5 @@
-# Elixir basics
-
-# # Matching not assignment
-#
-# A = B does a pattern match between A and B, not assignment of B to A!
-#
-#     # uses of matches to indicate success/failure
-#     # match will fail if it returns :error as first atom
-#     { :ok, file } = File.open("/not/there.txt")
+# Anonymous functions
+# ###################
 
 # definining functions and binding them to names
 sum = fn (a, b) -> a + b end
@@ -22,10 +15,6 @@ IO.puts fun.() # parens *required* for anonymous functions
 # :file.format_error/1 is an Erlang function
 # this is how you use Erlang stuff in Elixir
 handle_open = fn
-  # cannot have @doc inside fn ????  thiss breaks:
-  # @doc """
-  # I am a *markdown formatted* docstring
-  # """
   {:ok, file} -> "Read data: #{IO.read(file, :line)}"
   {_, error} -> "Error: #{:file.format_error(error)}"
 end
@@ -73,26 +62,6 @@ IO.puts fizz_buzz.(13)
 IO.puts fizz_buzz.(14)
 IO.puts fizz_buzz.(15)
 IO.puts fizz_buzz.(16)
-
-# Tests
-# =====
-# `mix test`
-# * runs files matching `test/**/*_test.exs`
-# * automatically loads test/test_helper.exs
-# => always call test dir 'test'
-# ExUnit.start
-#
-# # 2) Create a new test module (test case) and use [`ExUnit.Case`](ExUnit.Case.html).
-# defmodule BuzzerTest do
-#   # 3) Notice we pass `async: true`, this runs the test case
-#   #    concurrently with other test cases
-#   use ExUnit.Case, async: true
-#
-#   # 4) Use the `test` macro instead of `def` for clarity.
-#   test "first two args are 0" do
-#     assert buzzer.(0, 0, "foo") === "FizzBuzz"
-#   end
-# end
 
 # # Closures
 #
@@ -156,10 +125,3 @@ Enum.each [1,2,3,4], &IO.inspect/1
 # their syntax is  do: (<STATEMENTS SEPARATED BY NEWLINES>)
 # but the do..end syntax is more common
 
-# Pipes
-# #####
-
-# EXPR |> FUNC(A, B)
-# becomes
-# FUNC((EXPR), A, B)
-IO.inspect (1..20) |> Enum.map(&(&1 * &1)) |> Enum.filter(&(&1 < 100))
