@@ -11,10 +11,12 @@ for use by anybody other than me so YMMV on readability and even accuracy.
   depth I learn a particular topic. To commit to a whole book lets the author
   decide on the depth that might not be a good investment of time for me.
 * I organise notes by topic, not by source. These notes are for
+ 
     1. Revising what I have learned
     2. Express what I have learned to help me find holes in my understanding
-  and organised by topic helps these goals.
+    
 * I try to do a _breadth first_ traversal of topics. I try to mark any
-  questions/todos that come up and not follow them too deeply because
-        1. It is not always clear how much depth I need to go in a topic
-        2. I would never get anything finished!
+  questions/todos that come up and not follow them too deeply because:
+
+    1. It is not always clear how much depth I need to go in a topic.
+    2. I would never get anything finished!
