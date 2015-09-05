@@ -73,8 +73,8 @@ https://tour.golang.org/welcome/1
 * interfaces
     * interfaces are declared explicitly but satisfied implicitly
         * a form of duck typing that is checkable at compile time
-    * interfacesa are usually small (0-2 methods)
-    * an object can satisfy many interafces
+    * interfaces are usually small (0-2 methods)
+    * an object can satisfy many interfaces
     * the "empty interface" is an interface with no methods that all objects
       satisfy
         * this is useful for creating methods can can take any object - you can

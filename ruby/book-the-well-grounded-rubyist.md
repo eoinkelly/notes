@@ -305,7 +305,7 @@ How can I load code at runtime in ruby?
 
 # load vs require
 
-## unix cwd
+## precursor: unix cwd
 
 * Every unix process has a "current working directory"
 * It is stored in the process by the Kernel
@@ -330,14 +330,14 @@ lsof -p 12345| grep cwd
 * You can pass it a block which will change the dir for the block only (changes
   it back after the block ends - neat!
 
-$: $LOAD_PATH
+`$:` or `$LOAD_PATH`
     * Array of dirs that ruby will search for filenames passed to `load`
     * `.` is not on the load path. `load` is hardwired to search it first anyway
 
 ## load
 
 Load basically reads a file into a string and evals it. It is also smart enough
-to look for the file in entries on the $LOAD_PATH and can wrap the contents of
+to look for the file in entries on the `$LOAD_PATH` and can wrap the contents of
 the string in an anonymous module for you to provide _some_ protection from it.
 
 There is no "units of code" like other langs have - there is just text in files
@@ -359,19 +359,22 @@ eval File.read("foo.rb")
         * `load` will search for the file in
             1. The _current working dir_ of the process. Note this is probably
                not the directory that the including file is in!
-            2. Each directory in global `$:` (`$LOAD_PATH`) array
+            2. Each directory in global `$:` (`$LOAD_PATH`) array.
+                * Note that the CWD of the process is *not* on `$LOAD_PATH` by
+                  default
     2. relative path
-        * is assumed to be relative to the current working directory of the process (which can change)
+        * is assumed to be relative to the current working directory of the
+          process (which can change)
         * it will **not** search $LOAD_PATH in this case
     3. absolute path
         * e.g. `/var/thing/foo.rb`
         * it will **not** search $LOAD_PATH in this case
 * Notice
-    * you don't have to manually add CWD to the $LOAD_PATH with `load`
-    * the only time it will search $LOAD_PATH if you give it a _filename_!
+    * you don't have to manually add CWD to the `$LOAD_PATH` with `load`
+    * the only time it will search `$LOAD_PATH` if you give it a _filename_!
     * _filename_ must have the `.rb` suffix - load does no magic here.
-    * it looks for the file _directly_ in the dirs of $LOAD_PATH - it does not
-      care about specific subdirectories the way ?? does.
+    * it looks for the file _directly_ in the dirs of `$LOAD_PATH` - it does not
+      care about specific subdirectories
 * `load` is a method so will be executed at the point where ruby finds it in my
   file. Implications:
     * you can skip loads by putting them in conditionals
@@ -383,7 +386,16 @@ eval File.read("foo.rb")
 ### optional wrapping
 
 ```ruby
-# loader.rb
+# ./loadee.rb
+local_var= 12
+def local_method; 23; end
+LocalConst = 34
+class SomeClassName; end
+::NASTY = 'hi'
+$globally = "everywhere"
+
+
+# ./loader_default.rb
 load "loadee.rb"
 
 # puts local_var        # hidden
@@ -393,23 +405,15 @@ load "loadee.rb"
 # puts NASTY            # leaks because we explicitly attached the constant to Object
 # puts $globally        # leaks because it is global
 
-# load("loadee.rb", true)
+# ./loader_wrapped.rb
+load("loadee.rb", true)
 
-# puts local_var        # hidden
-# puts local_method     # hidden
-# puts LocalConst       # hidden
-# puts SomeClassName    # hidden
-# puts NASTY            # leaks
-# puts $globally        # leaks
-
-
-# loadee.rb
-local_var= 12
-def local_method; 23; end
-LocalConst = 34
-class SomeClassName; end
-::NASTY = 'hi'
-$globally = "everywhere"
+puts local_var        # hidden
+puts local_method     # hidden
+puts LocalConst       # hidden
+puts SomeClassName    # hidden
+puts NASTY            # leaks
+puts $globally        # leaks
 ```
 
 If the optional wrap parameter is true, the loaded script will be executed
@@ -479,47 +483,69 @@ NoMethodError: undefined method `constants' for main:Object
 
 ```
 
+## Aside: running command from specific gem
+
+* rubygems will check the command you run for the first arg
+* if first arg is wrapped in `_` e.g. `_1.2.3_` it will steal it and run the
+  command from that specific version of the gem
+
 ## require
 
-Protects you from loading files more than once
+* Protects you from loading files more than once
     this can cause bugs depending on what the files do
 
-require keeps a global list of all the files it has evaluated already
-$LOADED_FEATURES
-    an array of fully qualified filenames of every file that has been required
-    using abolsute paths means that require won't be fooled by different strings
+* require keeps a global list of all the files it has evaluated already:
+  $LOADED_FEATURES
+    * an array of fully qualified filenames of every file that has been required
+    * it uses absolute filename paths so that it won't be fooled by different
+      strings
+    ```
+    # same file, different strings passed to require
     require "./foo"
+    require "/Users/joe/code/foo"
     require "foo"
+    ```
 
-require works with "features" as opposed to files to allow it to work with dynamic libraries - the idea si that the if I am using a gem I shouldn't know whether it is implemented as a ruby file or as a C dylib
+* require works with "features" as opposed to files to allow it to work with
+  dynamic libraries - the idea si that the if I am using a gem I shouldn't know
+  whether it is implemented as a ruby file or as a C dylib
 
-require takes a "feature name" not a "file name"
-it hten tries to resolve the "feature anem" to a "file"
-this file could be ruby, C etc.
-
-require returns true if it actually did the load, false if it was already loaded
+* require takes a "feature name" not a "file name"
+* it then tries to resolve the "feature name" to a "file" - this file could be
+  ruby, C etc.
+* require returns true if it actually did the load, false if it was already loaded
 
 * `require(name) # -> true (or false if name is already loaded)`
     * can be called many times but will only load its argument the first time
     * it is more abstract than `load` - you _require_ a _feature_ not a _file_
-    * if name does not resolve to an absolute path then $LOAD_PATH will be
+    * if name does not "resolve to an absolute path" then $LOAD_PATH will be
       searched.
-        including . ???
-    * you can require
-        1. ruby files `require "foo.rb"
-        2. C code `require "foo.so"`
-    * if name ends in rb it is loaded as a ruby file
-    * if it ends in .so|.dll|.o it is loaded as a ruby extension
-    * it name does not have an extension, ruby tries adding .rb|.so etc. until
-      it finds it
-    * It throws a `LoadError` if it fails to find it
+      ```
+      require "foo" # will not load ./foo.rb
+      require "./foo" # will load ./foo.rb
+      ```
+    * if `require` gets just a feature name it only searches the `$LOAD_PATH`
+    * if `require` gets a relative or absolute path then it converts it to an
+      absolute path and loads the feature from it
+        * QUESTION: will it alos search load path if you give it a "pathish" string?
+    * file name extensions
+        * you can require
+            1. ruby files `require "foo.rb"
+            2. C code `require "foo.so"`
+        * if name ends in rb it is loaded as a ruby file
+        * if it ends in .so|.dll|.o it is loaded as a ruby extension
+        * you can use any extension filename (.so|.dll|.bundle|.o) and ruby
+          will load the right one for your platform
+        * it name does not have an extension, ruby tries adding .rb|.so etc.
+          until it finds it
+    * require throws a `LoadError` if it fails to find the feature
     * The absolute path of the feature is added to `$LOADED_FEATURES` (alias
-    * `$"`) - this is how require keeps track of what is loaded
-
+      `$"`) - this is how require keeps track of what is loaded
     * in a rails app there are 2000+ entries in $LOADED_FEATURES
-    * you can use any extension filename (.so|.dll|.bundle|.o) and ruby will
-      load the right one for your platform
-Notice that `require` looks for the feature _directly_ in the dirs on $LOAD_PATH - it does not search sub directories or have any knowledge about the directory structure.
+
+Notice that `require` looks for the feature _directly_ in the dirs on
+`$LOAD_PATH` - it does not search sub directories or have any knowledge about the
+directory structure.
 
 #### How does `require` not load the same code twice?
 
@@ -527,16 +553,18 @@ It uses `$LOADED_FEATURES` to keep track.
 
 ### require_relative
 
-* its big feature is that it will start the search in the directory that the requiring file is in
-* can be thought of as "require_relative_to_the_requiring_file"
-* tries to load "foo" relative to the requiring file's path not just the `$LOAD_PATH`
-* It removes the need to manually prepend stuff to the $LOAD_PATH
+* its big feature is that it will start the search in the directory that the
+  requiring file is in
+* can be thought of as `require_relative_to_the_requiring_file`
+* tries to load "foo" relative to the requiring file's path not just the
+  `$LOAD_PATH`
+* It removes the need to manually prepend stuff to the `$LOAD_PATH`
+* Like `require` it works on _features_ not _files_
+* A relative path passed to `require` will **always be relative to the CWD of
+  the process** but a relative path passed to `require_relative` will be
+  relative to the file you are currently in.
 
-Like `require` it works on _features_ not _files_
-
-A relative path passed to `require` will **always be relative to the CWD of the process**
-
-dunder = double underscore
+Aside: dunder = double underscore
 
 ```ruby
 File.expand_path("../../some_file", __FILE__)
@@ -544,12 +572,15 @@ File.expand_path("../../some_file", __FILE__)
 require_relative '../some_file'
 ```
 
+TODO: rebuild require function in ruby code
+
 ### RubyGems
 
 Before rubygems if you wanted to add a new feature to your system you had to
 
 1. modify `$LOAD_PATH` so that the file could be found
-2. Install it into a dir which is already on the load path e.g. `vendor_ruby` or `site_ruby`
+2. Install it into a dir which is already on the load path e.g. `vendor_ruby`
+   or `site_ruby`
 
 This was bad because:
 
@@ -562,19 +593,37 @@ Enter Rubygems
 * All gems live within a gems directory
 * Each gem version has its own container directory within the gems directory
 * each version of each gem has its own code, docs, tests etc.
+* rubygems overrides the built-in require with one that knows how to find
+  features in gems
+* The correct terminology is to "require a _feature_ **within** a gem"
 
 `Gem.path` is the path that ruby will use to find gems
 
-* The `$LOAD_PATH` is used to find ruby files directly but the `Gem.path` just finds gem container directories. Once the gem container directory is found, the gemspec in there is consulted and the `require_path` paths are added to the $LOAD_PATH
+```
+[2] pry(main)> Gem.path
+=> ["/Users/eoinkelly/.gem/ruby/2.2.0",
+ "/Users/eoinkelly/.rbenv/versions/2.2.3/lib/ruby/gems/2.2.0"]
+```
 
+* The `$LOAD_PATH` is used to find _features_ - `Gem.path` finds gem container
+  directories. `"#{Gem.path}/gem_name" is the gem directory
+* Once the gem container directory is found, the gemspec in there is consulted
+  and the `require_path` paths are added to the $LOAD_PATH
 
-`Gem.path` gets ruby to the gem container dir. Then rubygems reads the gemspecs in `specifications/`
-`gemname.gemspec` file within it tells ruby what paths to add to the `$LOAD_PATH`
+```ruby
+# pseudocode for how gems are loaded
+
+# read the spec for the required gem
+spec = eval File.read("#{Gem.path}/specifications/#{some_gem_name}.gemspec")
+
+# add all require_paths to $LOAD_PATH
+spec.require_paths.each { |p| $LOAD_PATH << p }
+```
 
 ```sh
 # To inspect your gem environment on command line:
 $ gem env
-$ gem env path
+$ gem env path # same as `Gem.path` in irb
 ```
 
 ```ruby
@@ -611,25 +660,20 @@ lfs = $LOADED_FEATURES - old_lf
 lfs.each { |lf| puts lf }
 ```
 
-* rubygems overrides the built-in require with one that knows how to find features in gems
-* The correct terminology is to "require a _feature_ **within** a gem"
-
 #### GEM_HOME and GEM_PATH
 
-GEM_PATH provides the locations (there may be several) where gems can be found.
-GEM_HOME is where gems will be installed (by default).
-(Therefore GEM_PATH should include GEM_HOME).
+* GEM_PATH
+    * the directories (there may be several) where gems can be found.
+    * `gem env path`
+* GEM_HOME
+    * where gems will be installed (by default).
+    * `gem env home`
 
-They don't seem to be set when using rbenv so they are obviously just one way to do it?
+Therefore GEM_PATH should include GEM_HOME
 
-#### The gem method
-
-```ruby
-# when you want to use a gem but not the most recent version installed on your system:
-gem "foo", "3.6.9"
-```
-
-QUESTION: how does this match up with require?
+* Rubygems has built in environment which contains default values for these
+* These are in rubygems env not the shell env by default i.e. use `gem env
+  path` to see `GEM_PATH` not `env|grep GEM_PATH`
 
 #### Why does "requiring a gem" seem to work?
 
@@ -653,9 +697,36 @@ from the `rake` gem.
 You cannot "require a whole gem" but you can require a feature that loads all
 the code in the gem.
 
-#### Other stuff
+#### The gem method
 
-* You can disable ruby gems with `ruby --disable=gems`. This will revert `require` back to the built-in ruby version.
+* `gem` is used as a workaround for require not understanding gems
+* I think you would only need it on old versions of ruby whose `require` is not
+  gem aware.
+
+```ruby
+# capture original load path
+old_load_path = $LOAD_PATH.dup
+
+gem 'bundler', '1.10.6'
+
+# notice that the bundler gem /lib has been added to LOAD_PATH
+p $LOAD_PATH - old_load_path
+# => ["/Users/eoinkelly/.rbenv/versions/2.2.3/lib/ruby/gems/2.2.0/gems/bundler-1.10.6/lib"]
+
+# require now works as usual
+require 'bundler'
+```
+#### Reverting to ruby built-in require
+
+* You can disable ruby gems with `ruby --disable=gems`. This will revert
+  `require` back to the built-in ruby version.
+
+
+#### Direct manipulation of $LOAD_PATH
+
+You don't need to directly manipulate the `$LOAD_PATH` because `require` and
+`require_relative` provide a lot of flexibility. It is still possible to do it
+but is now an anti-pattern.
 
 ### auto loading
 
@@ -670,34 +741,38 @@ $ ls -l `ruby -e "puts RbConfig::CONFIG['bindir']"`
 ```
 
 * Note that ERB is built-in to ruby.
-
-    QUESTION: can ERB be used for stuff other than HTML?
-
-* Note that `ruby -v` shows version *and* enabled _verbose mode_. Use `ruby --version` to just see version string.
-
+    * ERB can be used for files other than HTML!
+* Note that `ruby -v` shows version *and* enabled _verbose mode_. Use `ruby
+  --version` to just see version string.
 * `ruby -e` can span many lines (until it is terminated by another `"`)
     * in zsh at least you cannot edit a line after you have hit <RET>
+    ```
+    ➜  ruby -e "
+    dquote> puts 'this is my program'
+    dquote> puts Time.now
+    dquote> "
+    this is my program
+    2014-08-15 07:31:08 +1200
+    ```
 * `ruby -rfeaturename`
     * you can require features at the command line
     * `ruby -rzlib my_zlib_needing_script.rb`
-    * not sure what use case of this with a scirpt would be? handy for one
-      liners.
+    * `ruby -rtime -e "puts Time.now.iso8601"`
+    * not sure what use case of this with a scirpt would be?
+    * this is handy for one liners as it is more concise than `require
+      "some_feature"`
 
-```
-➜  Desktop  ruby -e "
-dquote> puts 'this is my program'
-dquote> puts Time.now
-dquote> "
-this is my program
-2014-08-15 07:31:08 +1200
-```
 
 You can see that most of them are small wrappers (except for ruby itself)
 
 In ruby the value of an assigment expression is the RHS of the assigmnet
 
-irb
+### irb
+
+```
+# options
 --no-echo # don't show return value of expressions
+```
 
 ### Rdoc
 
@@ -728,10 +803,192 @@ $ ri -T String#upcase
     * -T shows only tasks that have descriptions
     * -P shows all tasks and their prerequisites
 
-
-# Extras
-
-Modifying LOAD_PATH
-Since we want our lib to be found first we prepend it to the array with `unshift` rather than appending it to the end.
-
 UP TO END CHAPTER 1
+# Chapter 2
+
+* Objects in a program should not be constrained by the "real world"
+* You can make an object to represent *anything* - the world of objects is an imaginary one!
+
+* Classes are _one_ way in ruby to bundle and label behaviours
+* Each object can learn behaviours that its class did not teach it
+* The concept of "classes" is built on top of "objects" - not the other way round.
+
+
+ruby can return multiple values - they get automatically wrapped by an Array
+
+```ruby
+[1] pry(main)> def foo; return 33, "hello", 4.3; end
+=> :foo
+[2] pry(main)> foo
+=> [33, "hello", 4.3]
+```
+
+Ruby methods _always_ return some value
+
+```ruby
+[3] pry(main)> def bar; end
+=> :bar
+[4] pry(main)> bar
+=> nil
+```
+
+Objects are "born" with innate behaviours  (from their class and modules) but can "learn" new behaviours at any time in their life
+
+
+## BasicObject
+
+* has 7 methods
+    * ???
+    * does not implement #methods so cannot inspect them
+
+Public instance methods
+
+1. #!
+2. #!=
+3. #==
+4. #__id__ aka #object_id
+5. #__send__ aka #send
+6. #equal?
+7. #instance_eval
+8. #instance_exec
+
+Private instance methods
+
+1. #method_missing
+2. #singleton_method_added
+3. #singleton_method_removed
+4. #singleton_method_undefined
+
+* ruby defines `__send__` and `__id__` so that you can add your own `#send` and `#id` methods to objects and still get at the built-in ruby methods
+
+## `*` in ruby
+
+### Sponge parameters
+
+```ruby
+# usage 1: as a "sponge parameter"
+# capture 0+ method args into a single array
+# any args captured by *rest are optional
+def do_thing(a, b, *rest)
+end
+
+# capture all args into an unnamed array (capture and ignore)
+def do_other(*)
+end
+
+# sponge parameters have the lowest priority when ruby is matching arguments to
+# formal parameters so the following works
+def do_other(head, second, *rest, last)
+end
+
+```
+* sponge parameters have lower priority than default parameters so ruby will
+  try to override defaults before giving any args to the sponge
+* ruby will bind _every_ named parameter to a local variable - even if it is
+  bound to an empty array or nil. "If it's named, it's local"
+
+* only one sponge param is allowed in each method signature
+
+Each ruby method argument has to be in _one_ of these categories:
+
+1. required - `a`
+2. default valued - `a=:foo`
+3. optional - `*a`
+
+There are 2 ways to create local variables in ruby
+
+1. explicit assignment
+2. binding of method arguments to method parameters
+
+
+All variables in ruby are _references_ to object except for the following _immediate values_
+
+1. integers
+1. symbols
+1. true
+1. false
+1. nil
+
+```
+[12] pry(main)> false.object_id
+=> 0
+[13] pry(main)> true.object_id
+=> 20
+[14] pry(main)> nil.object_id
+=> 8
+[15] pry(main)> 1.object_id
+=> 3
+[16] pry(main)> 2.object_id
+=> 5
+[17] pry(main)> :foo.object_id
+=> 1651548
+```
+
+In the case of the immediate values the variable holds the value directly not a
+reference to it. In practice you don't really notice because all the immedaite
+values above are immutable.
+
+The immediate values are all basically immutable global variables
+
+Ruby does not have pre and post increment operators because integers are stored
+as immediate values. `11` is just a value and it does not know how to deal with
+operators
+
+There is only one `23` object in the system - all variables that contain `23`
+
+```
+x = 23
+x++ #
+x-- # syntax error
+--x # noop
+++x # noop
+
+# ++ will add numbers
+x ++ x # => 46
+x + +x # => 46
+
+
+23 -- 4 # => 27
+is same as
+23 - -4
+23 ++ 4 # => 27
+23 + +4
+23 + 4  # => 27
+23 - 4  # => 19
+```
+
+lvalues = local, class, instance variables
+lvalues = things on the left side (or target) of an assignment
+all ruby variables are really references to objects so if you pass them into a function they will mutate that variable
+
+# clone and dup
+
+* `#dup`
+    * makes a "shallow" copy of an object - the ivars are copied but not the
+      objects those ivars reference
+    * modules that the object has been extended with will not be copied
+    * copies tainted state
+    * does not copy frozen state (DIFFERENCE)
+    * does not copy the singleton class (DIFFERENCE)
+    * dup typically uses the class to create a new instance
+* `#clone`
+    * makes a shallow copy of the object
+    * copies frozen and tainted state of an object (DIFFERENCE)
+    * copies the singleton class (DIFFERENCE)
+    * duplicates an object including its internal state
+
+Classes can implement `#initialize_copy` to tweak how clone and dup work
+
+
+Important difference in ActiveRecord objects
+* clone = create a new record with the same id so that when #save is called it
+  will overwrite the existing record in the DB
+* dup = create a new object with no id set so that #save will create a new
+  record in the DB
+
+* rails offers #deep_dup on Array, Hash, Object
+
+# freeze
+
+* freeze makes object immutable
+* if you freeze and array it does NOT freeze each object in the array
