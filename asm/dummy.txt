@@ -1,0 +1,23 @@
+➜  asm git:(master) ✗ nm dummy
+
+0000000100000000 T __mh_execute_header
+                 U _exit
+0000000100000f30 T _main
+                 U _printf
+                 U dyld_stub_binder
+
+➜  asm git:(master) ✗ otool -Vt dummy
+
+dummy:
+(__TEXT,__text) section
+_main:
+0000000100000f30  pushq %rbp
+0000000100000f31  movq  %rsp, %rbp
+0000000100000f34  subq  $0x10, %rsp
+0000000100000f38  leaq  0x4d(%rip), %rdi        ## literal pool for: "hello"
+0000000100000f3f  movl  $0x0, -0x4(%rbp)
+0000000100000f46  movb  $0x0, %al
+0000000100000f48  callq 0x100000f60             ## symbol stub for: _printf
+0000000100000f4d  movl  $0x16, %edi
+0000000100000f52  movl  %eax, -0x8(%rbp)
+0000000100000f55  callq 0x100000f5a             ## symbol stub for: _exit

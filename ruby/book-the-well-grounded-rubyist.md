@@ -832,14 +832,13 @@ Ruby methods _always_ return some value
 => nil
 ```
 
-Objects are "born" with innate behaviours  (from their class and modules) but can "learn" new behaviours at any time in their life
-
+Objects are "born" with innate behaviours  (from their class and modules) but
+can "learn" new behaviours at any time in their life
 
 ## BasicObject
 
 * has 7 methods
-    * ???
-    * does not implement #methods so cannot inspect them
+* does not implement #methods so cannot inspect them
 
 Public instance methods
 
@@ -859,7 +858,9 @@ Private instance methods
 3. #singleton_method_removed
 4. #singleton_method_undefined
 
-* ruby defines `__send__` and `__id__` so that you can add your own `#send` and `#id` methods to objects and still get at the built-in ruby methods
+* ruby defines `__send__` and `__id__` so that you can add your own `#send` and
+  `#id` methods to objects and still get at the built-in ruby methods
+    * hand if e.g. your class sends emails
 
 ## `*` in ruby
 
@@ -900,8 +901,8 @@ There are 2 ways to create local variables in ruby
 1. explicit assignment
 2. binding of method arguments to method parameters
 
-
-All variables in ruby are _references_ to object except for the following _immediate values_
+All variables in ruby are _references_ to object except for the following
+_immediate values_:
 
 1. integers
 1. symbols
@@ -930,9 +931,13 @@ values above are immutable.
 
 The immediate values are all basically immutable global variables
 
-Ruby does not have pre and post increment operators because integers are stored
-as immediate values. `11` is just a value and it does not know how to deal with
-operators
+> Ruby does not have pre and post increment operators because integers are
+> stored as immediate values. `11` is just a value and it does not know how to
+> deal with operators.
+
+that explanation feels wrong to me - ruby can autowrap `11` in an object to `11.times` so why not `11++`?
+
+    TODO: dig deeper
 
 There is only one `23` object in the system - all variables that contain `23`
 
@@ -947,7 +952,6 @@ x-- # syntax error
 x ++ x # => 46
 x + +x # => 46
 
-
 23 -- 4 # => 27
 is same as
 23 - -4
@@ -957,9 +961,13 @@ is same as
 23 - 4  # => 19
 ```
 
-lvalues = local, class, instance variables
-lvalues = things on the left side (or target) of an assignment
-all ruby variables are really references to objects so if you pass them into a function they will mutate that variable
+    lvalues = local, class, instance variables
+
+    lvalues = things on the left side (or target) of an assignment
+
+All (except for the few immutable exceptions) ruby variables are really
+references to objects so if you pass them into a function they will mutate that
+variable.
 
 # clone and dup
 
@@ -977,10 +985,15 @@ all ruby variables are really references to objects so if you pass them into a f
     * copies the singleton class (DIFFERENCE)
     * duplicates an object including its internal state
 
-Classes can implement `#initialize_copy` to tweak how clone and dup work
+Classes can tweak how clone and dup work by implementing
+
+* `#initialize_copy`
+* `#initialize_clone`
+* `#initialize_dup`
 
 
 Important difference in ActiveRecord objects
+
 * clone = create a new record with the same id so that when #save is called it
   will overwrite the existing record in the DB
 * dup = create a new object with no id set so that #save will create a new
