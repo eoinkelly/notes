@@ -128,7 +128,10 @@ QUESTION: is the lenght restriction on string types in bytes and if so how are
 multi-byte chars handled
 
 * default character set is `latin1`
-* you can specify character set at the database or column level (table level???)
+* you can specify character set at the server, database table or column level
+* MySQL lets you mix and match character sets and encodings at all levels
+
+    See separate file on character sets, encodings, unicode etc.
 
 ```sql
 SHOW CHARACTER SET;

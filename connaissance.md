@@ -142,7 +142,8 @@ have no intrinsic meaning.
 * Stability
 
 
-DRY and SRP try to keep locality manageagel
+DRY and SRP try to keep locality manageable
+
 depend on things which are stable - Connascence is more acceptable on things that are very stable
 
 # Contranascences

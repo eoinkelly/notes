@@ -839,3 +839,27 @@ Conditional control flow
 * if/else
 * switch
 * for, while loops
+
+
+# Introduction to 64 bit Assembly Language Programming for Linux
+
+In 64 bit
+
+* segment registers are "essentially obsolete" because of the extra register size
+* more register usage is general purpose
+    * except "repeat-string" loops which use specific registers and have no operands
+* 16 general purpose registers
+* 16 floating point registers
+
+Pages in memory begin with addresses that the 3 right most bits are 0
+
+    0x???? ???? ???? ?000
+
+* 1st gen language: Machine language
+    * enter all intructions and bytes as hex data
+    * you have to manually calculate and know the addresses of your data
+    * the destination addresses of your JMPs will change as you
+    add/delete source code so all those calculations would change
+    every time!
+* 2nd gen language: Assembly languages
+* 3rd gen language: Cobol & Fortran
