@@ -8,11 +8,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = "ubuntu/trusty64"
   # config.vm.network "forwarded_port", guest: 3000, host: 3001 
 
-  # config.vm.provider "virtualbox" do |vb|
-  #   # Increase memory to a more sensible default for running asset
-  #   # precompilation and other memory-intensive tasks
-  #   vb.customize ["modifyvm", :id, "--memory", "1024"]
-  # end
+  config.vm.provider "virtualbox" do |vb|
+    vb.name = "Assembly Language Play"
+    # Increase memory to a more sensible default for running asset
+    # precompilation and other memory-intensive tasks
+    # vb.customize ["modifyvm", :id, "--memory", "1024"]
+  end
 
   # Speed up provisioning by turning on caching of:
   #
@@ -27,5 +28,5 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   config.berkshelf.enabled = false
-  # config.vm.provision "shell", path: "provisioner/wrapper.sh"
+  config.vm.provision "shell", path: "provision.sh"
 end

@@ -1,0 +1,13 @@
+     1                                 %line 1+1 hello2.s
+     2                                 
+     3                                 [segment .text]
+     4                                 
+     5                                 
+     6                                 [global _start]
+     7                                 
+     8                                 
+     9                                 _start:
+    10 00000000 48C7C001000000          mov rax, 1
+    11 00000007 48C7C306000000          mov rbx, 6
+    12 0000000E CD80                    int 0x80
+    13                                 
