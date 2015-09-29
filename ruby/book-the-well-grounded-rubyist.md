@@ -497,6 +497,7 @@ NoMethodError: undefined method `constants' for main:Object
 * require keeps a global list of all the files it has evaluated already:
   $LOADED_FEATURES
     * an array of fully qualified filenames of every file that has been required
+        * is acutally a hash in MRI C land (so lookups are fast) but appears in ruby land as a hash
     * it uses absolute filename paths so that it won't be fooled by different
       strings
     ```
@@ -573,6 +574,20 @@ require_relative '../some_file'
 ```
 
 TODO: rebuild require function in ruby code
+
+### autoload
+
+? a way of laoding constants as soon as they are referenced
+
+```ruby
+module Foo
+  autoload :Bar, "xyz"
+end
+
+p Foo::Bar # xyz is loaded on this line, same rules as require
+```
+
+TODO: find out more about this, it seem rarely used
 
 ### RubyGems
 
