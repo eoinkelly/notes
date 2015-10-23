@@ -24,7 +24,7 @@
     * a "surrogate key" is a primary key containing columns inserted just to
       have a unique key e.g. an "id" column
     * a "compound key" is a key containing more than one column
-    * a "foreign key" is one or more columns which can be used togother to
+    * a "foreign key" is one or more columns which can be used together to
       uniquely idenify a single row in another table
         * whose only function as a way of linking this record to a record in
           another table
@@ -124,14 +124,11 @@ will warn you when it does that.
 
 # Aside: Character sets and collations
 
-QUESTION: is the lenght restriction on string types in bytes and if so how are
-multi-byte chars handled
-
 * default character set is `latin1`
 * you can specify character set at the server, database table or column level
 * MySQL lets you mix and match character sets and encodings at all levels
 
-    See separate file on character sets, encodings, unicode etc.
+    See my other notes on character sets, encodings, unicode etc.
 
 ```sql
 SHOW CHARACTER SET;
@@ -139,9 +136,177 @@ SHOW CHARACTER SET;
 set
 ```
 
-END CHAP 2
+# Chapter 3: Queries
+
+When query is sent f
+
+1. client (lib or tool) makes connection to server
+1. client sends query text
+1. query is checked
+    * syntax correct
+    * user has permission to access data
+    * user has permission to execute the query (functions etc.)
+1. query is handed to the optimizer to create an "execution plan"
+1. server executes the execution plan
+1. server returns table of results to client
+
+## Query clauses
+
+Queries are made up of 6 clauses
+
+### 1. Select
+
+```
+http://www.postgresqltutorial.com/postgresql-select-distinct/
+```
+
+* first clause in the syntax but almost the last clause to be evaluated
+* filters columns from the big "in memory table" that From clause will build
+* things included as a column in the results are
+    * column names from table created by Join clause
+    * literals: number, string etc. `"foo"`, `33`
+    * expressions: `some_col * 3`
+    * built-in function calls
+    * user defined function calls
+* allows you to define "column aliases" via 2 ways (AS is optional)
+    1. `some_val result`
+    1. `some_val AS result`
+* has two forms (three in postgres)
+    1. `SELECT ALL ...`
+        * ALL (the default) will return all candidate rows, including duplicates.
+    1. `SELECT DISTINCT <column list> ...`
+        * DISTINCT eliminates duplicate rows from the result. (one row is kept
+          from each group of duplicates)
+        * If you specify multiple columns, the DISTINCT clause will evaluate
+          the duplicate based on the combination of values of those columns.
+        * note that the 'DISTINCT` does not apply to a single column
+    1. `SELECT DISTINCT ON (<expression>) <column list> FROM ...`
+        * DISTINCT ON calcluates the result of `<expression>` for all rows and eliminates all but the first row for each group where the result is the same
+
+Gotchas
+
+* `SELECT DISTINCT` without an `ORDER BY` clause is a code smell!
+    * the "first row" of each set is unpredictable unless ORDER BY is used to
+      ensure that the desired row appears first.
+* Notice that the DISTINCT ON expression must match the leftmost expression in
+  the ORDER BY clause.
+
+```sql
+-- * these functions are defined in SQL (alternatives: pgsql, C, python, ruby etc.)
+-- * functions persist longer than just each query so we have to drop them each time we run this script
+drop function IF EXISTS one();
+CREATE FUNCTION one() RETURNS integer AS $$
+    SELECT 1 AS result;
+$$ LANGUAGE SQL;
+
+drop function IF EXISTS add_em(INTEGER, INTEGER);
+CREATE FUNCTION add_em(integer, integer) RETURNS integer AS $$
+    SELECT $1 + $2;
+$$ LANGUAGE SQL;
+
+SELECT id,
+    bt_transaction_id,
+    'hello'         AS literal_string,
+    'other'         no_as_literal_string,
+    33              AS literal_int,
+    4 * 5           AS expression,
+    one()           AS user_defined_func,
+    add_em(4,6)     AS user_defined_func_2,
+    round(3.1459)   AS built_in_func
+FROM settled_transactions;
+```
 
 
+### 2. From
+
+* identifies tables to pull data from and how they should be joined into a single table
+* types of table
+    1. permenant table
+        * stored on disk
+    2. temporary table
+        * created as teh result of a subquery
+        * `SELECT a.foo, b.foo FROM (SELECT ... FROM ... WHERE ...) AS a;`
+    3. virtual table
+        * views
+
+Subqueries
+
+* a query embedded in another query
+* returns a table that can be used by the outer query
+* it is very common to alias the returned table so it can easily be used by the
+  outer query
+* covered more in chap 9
+
+Syntax is:
+
+```sql
+SELECT ... FROM (subquery) AS subq_result WHERE ...
+SELECT a.foo, b.foo FROM (SELECT ... FROM ... WHERE ...) AS a;
+```
+
+View
+
+* a query which is stored in the "data dictionary"
+* its data is not stored on disk
+
+```sql
+CREATE VIEW <view_name> AS <select statement>
+CREATE VIEW some_view AS SELECT a, b, c FROM ...
+```
+
+Joins
+
+* specify how to combine the given permenant, virtual, temporary tables into
+  one large table
+* it is very common to alias tables uses in a join
+
+```sql
+SELECT <things> FROM <table-a> AS a <join condition> <table-b> AS b ON <on-condition>
+-- again the AS keyword is optional
+```
+
+UP TO START WHERE CLAUSE
+### 3. Where
+
+* filters unwanted rows from the big "in memory table" or "result set table"
+  that From will build.
+* WHERE takes one or more "filter conditions"
+* each filter condition is combined using a logical AND, OR, NOT.
+* note that `=` is the equality symbol in a filter condition (not `==` as it is in most programming languages)
+```
+WHERE <filter-condition> and|or|not <filter-condition> ...
+```
+
+### 4. Order by
+
+* sort the rows of the final result set by one or more columns
+
+
+### 5. Group by
+
+* finds trends in data
+* groups rows together by common column values
+* HAVING filters grouped data the same way WHERE filters raw data
+* described more fully in chap 8
+* each row in the result table that GROUP BY creates is a "group"!
+* GROUP BY is all about collapsing multiple rows in the results table - it does not change columns.
+* To collapse multiple rows into a single row we need to instruct the DB about how to do it for each column
+    * some columns will have the same value for each row so the output value can just be the input
+        * this is the case for the columns you specify in the GROUP BY clause (because we have chosen to use these columns to make our categories)
+    * other columns will need a function to help with a signature a bit like
+        * `function boil_down(column_values: Set<T>) -> <T>`
+    * examples of "boil down" functions are
+        * sum()
+        * max()
+        * min()
+
+### 6. Having
+
+* filters out unwanted groups
+* HAVING filters grouped data the same way WHERE filters raw data
+
+
+UP TO END OF SELECT CLAUSE IN CHAP 3
 
 
 

@@ -22,7 +22,8 @@ header.("Strings")
 #   Unicode codepoints.
 # * => Elixir strings are "UTF-8 encoded binaries"
 #
-# The "weird l" has code point 322 so cannot be represented as one byte
+# The "weird l" in the example below has code point 322 so cannot be
+# represented as one byte
 #
 # iex(1)> ex = "hełło"
 # "hełło"
@@ -51,8 +52,8 @@ IO.inspect String.length "foo"
 # Char lists
 # ##########
 #
-# * is a list of code point integers
-# * is delimited by single quotes
+# * delimited by single quotes
+# * a list of code point integers
 # * will display it as the glyphs not the codepoints as long as all the
 #   codepoints are within the 0-255 range
 # * are useful when interfacing with Erlang (strings are lists in Erlang)

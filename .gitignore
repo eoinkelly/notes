@@ -2,6 +2,7 @@
 *.class
 .vagrant/
 
+/dist/
 # haskell compile artefacts
 *.o
 *.hi

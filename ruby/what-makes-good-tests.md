@@ -74,6 +74,14 @@ Ideas:
         all the things it uses e.g. no magic introduction of variables
     * are the given, when, then stanzas clear within each test
 
+## *every* public method should have a describe block (not 100% sure about this)
+
+* even simple ones should be visible in the test output for the reader
+* what about super simple ones that don't need tests?
+    * ++ makes the tests be better docs
+    * -- not very high-value tests for checking correctness of the module
+    * ++ does make you think about whether that method really should be public
+
 ## what jobs do unit tests have?
 
 1. verify and demonstrate the class responds appropriately to the message with
@@ -135,34 +143,40 @@ ClassName
 
 ## Specific RSpec features
 
+In general I think I am favoring using the minimum amount of rspec sugar - it's
+just more stuff that a reader has to understand to grok the tests.
+
 ### subject
 
-* i think it throws away an opportuntiy to use a better name for the subject
+* -- I think it throws away an opportuntiy to use a better name for the subject
   e.g. `foo_with_some_val`
-* I don't like it, can't articulate why - TODO figure this out
+* ++ It is quite a descriptive name I guess as long as it is clear exactly what the subject is
+* -- just some sugar syntax that doesn't add much value - `let(:subject) { ... }` is clearer
 
 ### On let and let!
 
-* are they too magical?
-* do we do too much drying up of tests?
+* be careful not to use them to make specs too dry
+* ++ let is very convenient
+* -- let is most convenient if you are creating slow collaborators that you want to memoize
+    * might be much less of an issue if test style is mockist ???
+* -- let! is less useful, might be better in a before block ???
 
 ### rspec custom matchers
 
-* are custom matchers good?
-    * ++ they do read nicely
-    * -- they hide the precise details of how the test passed/failed
-    * -- they hide an opportunity to show to to use the object
+* ++ they do read nicely and make the test less noisy
+* -- they hide the detail of how the test passed/failed
+* -- they hide an opportunity to show to to introspect the object
+* -- not likely the reader will know exactly how they work without searching
 
 ### shared examples
 
-I like them I think
+* ++ good for behaviours that are common to 2+ methods
 
-### naming of doubles
+# naming of doubles
 
-no suffix
-fake_foo
-foo_double
-???
+* I now prefer naming doubles without a prefix e.g. `foo` not `fake_foo` or `foo_double`
+    * the suffix seems noisy and unnecessary - it shouldn't matter in the
+      context of the test whether the collaborator is real or not
 
 # On DRY in tests
 
@@ -175,6 +189,13 @@ foo_double
         * as custom rspec matcher
 
 what are pros/cons of moving functionality out of the it block???
+
+* I now believe that tests should not be dried up outside the boundary of the
+  method level describe block. Reasons:
+    * test readers will start at the it block but it is probably overkill to
+      repeat *everything* in each it block
+    * moving code outside of this is tempting but makes the tests less "local"
+      so should happen rarely
 
 ## aside: sandi metz rules
 
@@ -217,11 +238,4 @@ What are the actions my method can take on the system as a whole
 
 She just recommends the kinds of tests for each category of method - she
 doesn't say "write one test case for each of these"
-
-### should *every* public method be mentioned in the rspec doc output?
-
-* what about super simple ones that don't need tests?
-    * ++ makes the tests be better docs
-    * -- not very high-value tests for checking correctness of the module
-    * ++ does make you think about whether that method really should be public
 

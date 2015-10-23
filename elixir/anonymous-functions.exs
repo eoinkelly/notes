@@ -30,7 +30,7 @@ IO.puts handle_open.(File.open("./notthere.txt"))
 # return “FizzBuzz.” If the first is zero, return “Fizz.” If the second is
 # zero, return “Buzz.” Otherwise return the third argument”
 
-# note: no static types for args or return value!
+# note: no enforced types for args or return value!
 buzzer = fn
   0, 0, _ -> "FizzBuzz"
   0, _, _ -> "Fizz"
@@ -87,8 +87,10 @@ IO.puts apply.(add_two, 55)
 # & the "function capture" operator
 # =================================
 
+# these are equivalent
 doubler_1 = fn x -> x * 2 end
 doubler_2 = &(&1 * 2)
+
 # & operator
 
 # Uses:
@@ -110,8 +112,10 @@ isp = &Kernel.inspect(&1)
 isp = &Kernel.inspect/1 # same as above
 
 list = [1,3,5,7,9]
+
 IO.puts Kernel.inspect(Enum.map(list, doubler_2))
-IO.puts isp.(Enum.map(list, doubler_2))
+IO.puts isp.(Enum.map(list, doubler_2)) # note it is invoked as anonymous func i.e. isp.(things)
+
 IO.puts Kernel.inspect(Enum.map(list, &(&1 * 2))) # short syntax nice for quick inline functions
 IO.inspect Enum.map(list, &(&1 * 2)) # short syntax nice for quick inline functions
 
@@ -121,7 +125,9 @@ Enum.each [1,2,3,4], fn x -> IO.inspect x end
 Enum.each [1,2,3,4], &IO.inspect/1
 
 
+# Blocks
+# ======
+
 # blocks are used to create scopes in elixir
 # their syntax is  do: (<STATEMENTS SEPARATED BY NEWLINES>)
 # but the do..end syntax is more common
-

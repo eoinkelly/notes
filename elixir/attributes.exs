@@ -19,7 +19,8 @@ defmodule Foo do
     IO.puts "#{@author} at #{@version}"
   end
 
-  # you can redefine attributes - what is the use-case for this?
+  # you can redefine attributes - a good example of this is using @doc to
+  # document functions
   @author "Totoro"
   @version "blah"
 
