@@ -39,9 +39,9 @@ A GUI that shows
 
 ## Types
 
-* Strongly types
+* BEAM is strongly typed
     * small set of types
-* Dynamically typed
+* BEAM is Dynamically typed
     * Optional typing
     * @spec directive
         * does type annotations
@@ -63,7 +63,6 @@ A GUI that shows
             * research version, free
 * Concurrency testing
     * Concuerror
-
 
 ## Behaviours
 

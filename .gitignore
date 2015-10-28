@@ -1,6 +1,7 @@
 *private*
 *.class
 .vagrant/
+*.beam
 
 /dist/
 # haskell compile artefacts
