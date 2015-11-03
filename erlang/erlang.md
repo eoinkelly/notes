@@ -149,10 +149,17 @@ C. %%  12
 ### lists
 
 * are hetrogenous
-* strings are just lists - there is no "real string" in erlang
-* erlang will print a list of numbers as a string if the numbers are printable
-* erlang has no built-in string type for historical reasons
-* this is improving over time - the VM now supports unicode
+* erlang strings
+    * are just lists - there is no "real string" in erlang
+    * erlang will print a list of numbers as a string if the numbers are printable
+    * uses ~ to denote _tokens_ in strings
+    * tokens behave a bit like printf placeholders and special char escapes in
+      other langs. `io:format("Value is ~p and title is ~s~n", [Value, Title]).`
+        * ~s = replace with a string
+        * ~n = replace with newline
+        * ~p = replace with a pretty printed erlang value
+    * erlang has no built-in string type for historical reasons
+    * this is improving over time - the VM now supports unicode
 * list operators
     * ++ concatenates lists
     * -- remove from LHS any element that is a member of RHS
@@ -354,47 +361,51 @@ io:format("\e[H\e[J").
     * _most_ of its functions are always automatically imported in erlang
     * access the explicitly via `erlang:length([3,4])`
 * function access syntax is `module_name:func_name(args...)`
-* module names are lowercase
-
-* Modules have attributes at the start of the file
+* Modules have _attributes_ at the start of the file
 * Attributes setup metadata about the module
-* Name is the only required piece of that metadata
+* Module name is the only required piece of that metadata
     * module name is an atom (hence is always lowercase)
-* Attributes
-    * -module(modname).
-        * takes a atom representing module name
-        * filename should be `modname.erl`
-    * -export([func/arity, func/arity, ... ]).
-        * takes a list
-        * list is of function/arity
-        * ??? what type is that ???
-    * -behaviour( ???
-    * -import(module, [func/arity, func/arity ...]).
-        * is just a shortcut for writing code
-        * many erlang devs believe using import hurts readability
-    * -define(MACRO, expression).
-        * Erlang macros are pretty close to C #define
-        * simple expresstions that will be text replaced by compiler before
-          compilation
-        * useful for constants etc.
-        * used as `?MACRO` inside the file
-        * macros are module attributes so are presumably? scoped to a single file
-    * -compile([flag1, flag2, ... flagN]).
-        * an alternative to defining compiler flags on command line or in shell
-    * -vsn('some unique vsn probably a terrible idea').
-        * specify the unique fingerprint used in hot code loading
-        * not sure about uses for this
+
+Module Attributes
+
+* -module(modname).
+    * takes a atom representing module name
+    * filename should be `modname.erl`
+* -export([func/arity, func/arity, ... ]).
+    * takes a list
+    * list is of function/arity
+    * ??? what type is that ???
+* -behaviour( ???
+* -import(module, [func/arity, func/arity ...]).
+    * is just a shortcut for writing code
+    * many erlang devs believe using import hurts readability
+* -define(MACRO, expression).
+    * Erlang macros are pretty close to C #define
+    * simple expresstions that will be text replaced by compiler before
+        compilation
+    * useful for constants etc.
+    * used as `?MACRO` inside the file
+    * macros are module attributes so are presumably? scoped to a single file
+* -compile([flag1, flag2, ... flagN]).
+    * an alternative to defining compiler flags on command line or in shell
+* -vsn('some unique vsn probably a terrible idea').
+    * specify the unique fingerprint used in hot code loading
+    * not sure about uses for this
 
 ```erlang
-%% -AttributeName(AttributeValue)
+%% The form is: -AttributeName(AttributeValue)
 
 %% module name is an atom
 -module(eoinsmodule).
 ```
 
-There seems to be a pattern of modules exporting some helper functions that explain what they are about e.g. `hipe:help().`
+There seems to be a pattern of modules exporting some helper functions that
+explain what they are about e.g. `hipe:help().`
 
-Modules automatically define module_info/0 and module_info/1 which dump the metadata about the module e.g.
+## Module introspection
+
+Modules automatically define `module_info/0` and `module_info/1` which dump the
+metadata about the module e.g.
 
 ```erlang
 adder:module_info().
@@ -411,8 +422,7 @@ adder:module_info().
            {time,{2015,10,28,18,17,57}},
            {source,"/Users/eoinkelly/Dropbox/Eoin/Notes/on-github/erlang/adder.erl"}]},
  {native,true},
- {md5,<<79,213,217,205,26,221,80,140,114,89,102,195,227,
-        76,24,46>>}]
+ {md5,<<79,213,217,205,26,221,80,140,114,89,102,195,227,76,24,46>>}]
 
 %% can also filter by the first atom in each tuple
 adder:module_info(exports).
@@ -425,7 +435,7 @@ List.module_info()
 List.module_info(exports)
 ```
 
-VSN
+#### VSN
 
 * An automatically generated unique fingerprint for each version your code (excluding comments)
 * used in hot code loading
@@ -433,18 +443,152 @@ VSN
 
 ### Functions
 
-General form is:
+* Function clause
+    * general form is
+    ```
+    name(args) -> body
+    ```
+* Function declaration
+    * A function declaration is a ; separeated collection of function clauses
+      that ends with a .
+    * counts as one statement so ends in `.`
 
-name(args) -> body
+```erlang
+-module(greeter).
+-export([greet/2]).
 
-* name must be an atom
-* body is one or more erlang expressions separated by commas
+greet(irish, Name) ->
+  io:format("Cead mile failte ~s~n", [Name]);
+greet(kiwi, Name) ->
+  io:format("Kia ora ~s~n", [Name]);
+greet(_, Name) ->
+  io:format("Hello there ~s~n", [Name]).
+```
+
+* function name must be an atom
+* function body is one or more erlang expressions separated by commas
 * erlang has no return keyword, it uses implicit returns
 * last expression in the function ends in .
 * erlang functions _always_ return a value (like ruby)
 
 
-Erlang uses ~ not \ to escape special chars in strings
+Aside: function clauses vs a big case statement in othe langs
+
+If function clauses are good then why don't I wrap the contents of my ruby methods ina  big case statement?
+
+* in ruby we would have to bind all possible parameters. Function clause mean only the params you care about are bound - this makes the function bodies simpler.
+* You can check on type of args in both cases
+* the syntax is nicer in erlang/haskell etc.
+* erlang pattern matching means that a lot of breaking down of args can happen in the function signature - ruby would have to do that manually
+
+
+Pattern matching
+
+* erlang function signature pattern matching is advanced
+* Can bind variables in it
+
+```erlang
+valid_date_2(Date = {Y, M, D}, Time = {H, Min, S}) ->
+  %% stuff
+```
+
+Guards
+
+* pattern matching can
+    * specify a particular number of args
+    * break down compound types (tuples, lists) into their scalar parts
+    * filter compound types (tuples, lists)
+* pattern matching cannot
+    * say anything about the value of a particular type
+
+Guard expression
+
+* is added to the fuction clause signature
+* must retrun true for erlang to consider this clause a match for the args it has
+* guard fails if it returns false or throws exception
+* functions you can use in guards
+    * there is a subset of built-in functions you can use
+        * comparison and boolean evaluation
+        * type checking
+        * math operations
+    * guards cannot accept user defined functions because guards need to be
+      pure functions - erlang has no way to verify that your guard function
+      would be pure so it disallows it.
+* guards can be separeated by , or ;
+    * `,` acts like `andalso` except
+        * `andalso` can be nested in a guard but `,` cannot
+        * `OP1 orelse OP2` will always fail if OP1 throws an exception
+    * `;` acts like `orelse`
+        * `orelse` can be nested in a guard but `;` cannot
+        * `OP1 ; OP2` will not fail if OP1 throws an exception but OP2 passes
+
+```
+name(arg, arg ... arg) when guard sep guard sep ... sep guard ->
+where sep is , or ;
+```
+
+### if
+
+erlang if statements
+
+* should probably be named something else because they don't function like other lang ifs
+* return a value
+* behaves a lot like a guard clause
+    * `;` and `,` work the same as in guard clause
+* have many "branches"
+* sometimes have a "true branch" aka else statement
+    * erlang programmers are encouraged not to use "true branches" but rather
+      to cover all the logical possibilities with other if statements because
+      it makes code easier to read.
+
+```erlang
+basic_if(A, B) ->
+  %% note the ; at end of each branch except the last
+  RetVal = if A =:= B -> io:format("are equal~n");
+              A > B -> io:format("first is bigger~n");
+              true -> io:format("fell into true branch~n")
+           end,
+  %% A contrived example to show that if expressions return a value
+  {all_well, RetVal}.
+
+other_if(A, B) ->
+  %% a contrived and broken example to show usage of , and ; in else clause
+  if A =:= B, A > 5; B < 20 -> io:format("are big and equal~n");
+     true -> io:format("NOT big and equal~n")
+  end.
+```
+
+### case of
+
+* a `case...of` expression is basically the same as a bunch of function heads
+  with guards.
+    * each branch of the case statment could be converted into a function head
+    * the right one to use depends on context
+    * sometimes a case statement is a good alternative to having a function
+      destructure some args and then call a multi-head private function which
+      destructures w. guards
+* can take a variable and run pattern matching on it and then run guards as well
+
+```erlang
+case THING of
+  DESTRUCTURED_THING when GUARDS -> do_thing;
+  TEST_RESULT_2 -> do_thing;
+  TEST_RESULT_3 -> do_thing;
+end
+```
+
+When to use case...of, multiple function heads
+
+* both work in a very similar way
+* both are represented in a very similar way in BEAM level so both have very
+  similar performance characteristics
+* it is not super well defined when to use each
+
+Why use if when case...of is can do the job?
+
+if was added to the language as a shorthand when you want guards but don't need pattern matching
+
+
 
 ## Compiling
 
@@ -456,7 +600,7 @@ BEAM = Bogdan/Björn's Erlang Abstract Machine
 Code can be compiled to be
 
 1. a cross-platform BEAM file
-2. a "native" beam file via hipe
+2. a "native" beam file via HiPE (High Performance Erlang) project
     * contains some native and cross-platform parts
     * runs faster
     * not available on all platforms (seems ok on OSX)
@@ -494,4 +638,23 @@ hipe:c(things).
 c(things, [native]).
 ```
 
-GOT TO START OF http://learnyousomeerlang.com/syntax-in-functions
+### Types
+
+* atom
+* list
+* binary
+* term
+* float
+* tuple
+* integer
+* iolist
+* pid
+* port
+* ref
+
+Erlang is strongly typed => no automatic type coercion. You can do explicit type conversions via a family of `<type>_to_<type>/1` functions e.g. `erlang:atom_to_binary/1`
+
+There are a bunch of `is_<type>/1` functions you can use to check type in guards
+
+Erlang does _not_ have the equivalent of `foo.class` in ruby i.e. there is no way to introspect the type of a value. The stated reasoning for this is that erlang is about programming for the happy path and "let it crash".
+Erlang has no null/nil value
