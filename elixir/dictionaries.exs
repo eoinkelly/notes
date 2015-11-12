@@ -1,16 +1,3 @@
-# dictionary types
-# ################
-
-# todo:
-# map
-# erlang dict
-# HashDict
-# Set
-# Struct
-#
-# Erlang 17 has maps but they are not fast until 18
-
-
 # Keyword lists
 # #############
 
@@ -78,6 +65,9 @@ IO.inspect Keyword.get_values(dups_list, :name)
 # i guess because of the duplicate values ???
 #
 
+# Dictionary types
+# ################
+
 # Dictionary types must implement the following protocols in elixir
 #
 # * Dict
@@ -85,7 +75,7 @@ IO.inspect Keyword.get_values(dups_list, :name)
 # * Enumerable
 # * Collectable
 
-# Things which implment the "dict" behavior
+# Things which implment the "dict" behavior in Elixir 1.1
 #
 # 1. Map
 # 2. hashDict
@@ -95,6 +85,31 @@ IO.inspect Keyword.get_values(dups_list, :name)
 # interact with dictionary types in elixir
 #
 # Hint: Use Enum.into to convert between dict types
+
+# Dictionary types:
+#
+# Elixir 1.1
+#
+# 1. Map (linear time with no. of keys, can be slow)
+# 1. HashDict
+# 1. Keyword
+#
+# All of the above use the Dict API
+#
+# Elixir 1.2
+#
+# Map
+#     * supports pattern matching
+#     * are fast in Erlang 18
+#     * cannot control ordering
+#
+# All of these are deprecated in Elixir 1.2
+#
+# 1. HashDict
+# 2. Dict
+# 3. Set
+# 4. HashSet
+
 
 key_list = [name: 'John', height: 133]
 

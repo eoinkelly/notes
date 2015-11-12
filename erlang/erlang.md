@@ -1,5 +1,10 @@
 # Erlang
 
+Erlang has two paradigms
+
+1. Functional
+2. Concurrent
+
 Sources:
 
 * http://learnyousomeerlang.com
@@ -658,3 +663,169 @@ There are a bunch of `is_<type>/1` functions you can use to check type in guards
 
 Erlang does _not_ have the equivalent of `foo.class` in ruby i.e. there is no way to introspect the type of a value. The stated reasoning for this is that erlang is about programming for the happy path and "let it crash".
 Erlang has no null/nil value
+
+
+## Error handling
+
+Types of error
+
+1. compile-time error
+    * errors that can be found by the compiler
+1. logical error
+    * hardest to debug
+    * they don't cause your program to crash
+    * it just does not do what it is supposed to
+    * testing is your only friend here
+1. run-time error
+    * exceptions
+1. generated error
+
+
+There are three kinds of exception in Erlang
+
+1. errors
+    * are a way for a function to stop its execution if it has no way to reliably continue
+    ```erlang
+    erlang:error(no_api_available).
+    ```
+    * reason
+        * is an atom
+        * can be any name
+        * erlang has some built-in reason names (they will include a message when displayed)
+            * badarith
+            * badarg
+            * undef
+            * badfun
+            * badmatch
+            * if_clause
+            * case_clause
+            * function_clause
+        * you will probably never generate an error with a built-in reason
+1. exits
+    * two kinds
+        1. internal
+            * triggered by `exit/1`
+            * makes current process stop execution
+        1. external
+            * triggered by `exit/2`
+    * they have very similar use cases to errors
+    * they do not return a stack trace
+    * used when it would be impractical or unnecessary to send a stacktrace to
+      all listening processes
+1. throws
+    * does not crash the process - just changes control flow
+    * provides a sort of non-local return or goto
+    * used for error situations that the process can handle
+    * `throw(any_atom_describing_reason).`
+    * good idea to limit usage of throw to a single module - otherwise
+      debugging gets very hard
+
+## Processes
+
+Erlang process is a function with some hidden state (mailbox)
+* each process has a `pid` which is used to communicate with it
+
+
+You can see whether the VM is in SMP mode or not from the status line
+
+```
+Erlang/OTP 18 [erts-7.1] [source] [64-bit] [smp:4:4] [async-threads:10] [hipe] [kernel-poll:false] [dtrace]
+```
+
+```
+[smp:X:Y]
+X = number of cores available
+Y = number of schedulers
+
+[rq:Z]
+Z = number of run queues available
+```
+
+* `self/0` returns the pid of the current process (handy to use in shell)
+* process mailbox
+    * keeps messages in the order received
+    * a message is taken out of the mailbox when it is read
+    * use `flush/0` to inspect the contents of the current processes mailbox
+
+Send messages to processes using `!`
+
+```erlang
+%% send <message> to a process mailbox (represented by pid)
+<pid> ! <message>.
+
+%% send <message> to multiple pids mailboxes
+<pid1> ! <pid2> ! <pid3> ! <message>.
+```
+
+* receive blocks
+* syntastically similar to `case ... of`
+
+```erlang
+receive
+    Pattern1 when Guard1 ->
+        Expression1;
+    Pattern2 when Guard2 ->
+        Expression2;
+    Pattern3 when Guard3 ->
+        Expression3;
+    Pattern4 ->
+        Expression4
+end.
+```
+
+
+Aside: inspecting process state
+
+sys:get_status(SomePid). %% only works if Pid is an OTP app
+
+SASL is the error reporting daemon in OTP - `rb` is the module used to collect the reports.
+
+`proc_lib` can be used to make a short-lived process OTP compatible
+
+tracing is intended for debugging only, not for use in production
+
+
+Process links
+* `link(Pid)`
+* `unlink(Pid)`
+* links cannot be stacked - no matter how many times you call link/1 with a given Pid only one link will be created between the processes
+* link two processes together so that
+* if one crashes (from a throw, error, exit) then the other dies too due to a special message it receives from the crashing process
+* this special message is not sent if the process (function) exits cleanly
+* are bi-directional
+* use spawn_link/1-3 to spawn a process and link it atomically
+    * prevents errors from of your process dies before it is linked
+    * (safer than doing it as separate steps)
+
+
+Exit signals are an example of "special" kind of message called "signal"
+
+* system process
+    * like a normal process but can convert a signal into a normal message
+
+```
+process_flag(trap_exit, true).
+```
+
+### Registered names for processes
+
+If you have a process with a supervisor that is able to restart the process if
+it dies then you can't rely on the pid always being the same. Erlang solves
+this by allowing you to register a name for a process
+
+```erlang
+regsiter(Pid, some_name).
+
+registered(). %% see all registered processes
+
+CurrentPid = whereis(some_name).
+```
+
+* the registered name is shared global state
+    * many processes can modify it at same time
+    * can be a source of race conditions
+* only use named processes for
+    * services unique to an instance of the VM
+    * processes that will run for the whole lifetime of your app
+
+
