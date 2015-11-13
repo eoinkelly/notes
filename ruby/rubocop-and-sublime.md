@@ -18,7 +18,7 @@ live linter for ruby files in Sublime do:
         ```
     1. Add the *directory* that contains ruby to the **top** of `/etc/paths`
        e.g.  in this case you could do `sudo $EDITOR /etc/paths` and put
-       `Users/eoinkelly/.rbenv/shims` at the top of the file.
+       `/somepath/somewhere/.rbenv/shims` at the top of the file.
 
        Aside: `/etc/paths` sets paths on OS X for all apps - even those that do
        not use a shell.
