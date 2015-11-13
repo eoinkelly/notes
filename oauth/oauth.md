@@ -217,7 +217,7 @@ The requirement for profiles
 * You must use the defined profiles to build real systems
 
 
-Client registration
+### Client registration process
 
 * Before the protocol it is assume that the client has already registered with the authorization server
 * _How_ registation happens is mostly outside of OAuth but there are some bits
@@ -231,6 +231,16 @@ Client registration
         * website
         * description
         * logo
+* Focusing on the redirection endpoint:
+    * When does a client need to register a redirect URI?
+        * registration of a redirection endpoint is _required_ for
+            * public clients
+            * confidential clients using the implicit grant type
+        * registration of a redirection endpoint is _optional_ for
+            * confidential clients using the authorization-code grant type
+            * even then the spec recommends all authorization servers require registration
+    * It is allowed for the client to register multiple redirection endpoints
+        * ??? usage example ???
 * examples
     * creating a Facebook app that allows your app (the "client") to access
       user data protected by facebooks resource servers.
@@ -310,9 +320,12 @@ The authorization process uses up to two authorization server endpoints and one 
             * authorization code
             * implicit
     2. Token endpoint
-        * used by the client to exchange an authorization grant for an access token
+        * used by the client to exchange an authorization grant or refresh token for an access token
             * "typically wtih client authentication" ????
                 * does that mean the client has to authenticate itself with the authorization server before hitting this endpoint????
+        * used for every grant type except _implicit_.
+        * client use use HTTP POST method to get access tokens
+        * spec does not specify a way for the client to figure out the URI of the token endpoint - it is usually hardcoded
 * Client
     1. Redirection endpoint
         * Used by the authorization server to return responses containaing authorization credentaisl to the client via th resource owner user-agent
