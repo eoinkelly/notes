@@ -3,7 +3,8 @@
 
 # import
 #
-# * makes all the functions and macros in the named module be in the current modules namespace
+# * makes all the functions and macros in the named module be in the current
+#   modules namespace
 # * can be filtered with
 #     * `only: [func_name: arity, func_name2: arity2]`
 #     * `except: [func_name: arity, func_name2: arity2]`
@@ -11,7 +12,8 @@
 
 # alias
 #
-# * make a short name for an existing, in scope module (does not work on functions)
+# * make a short name for an existing, in scope module (does not work on
+#   functions)
 # * works at module or function level
 
 # require

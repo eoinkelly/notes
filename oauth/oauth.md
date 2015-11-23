@@ -101,20 +101,113 @@ There are roughly three "phases" (my term) in OAuth 2
       resource
 * ??? is the authorization grant the same as a refresh token ???
 * There are four defined grant types:
-    1. authorization code
+    1. authorization code grant type
         * is an "intermediate credential"
         * flow
-            1. client-app sends user to auth server
-            1. user authenticates themselves with auth server
+            1. client-app begins authentication by redirecting user to the authorization server
+                * parameters (embedded in the URI that the user is redirected to)
+                    * response_type=code (required)
+                    * client_id (required)
+                    * redirect_uri (optional)
+                    * scope (optional)
+                    * state (recommended)
+                        * used to prevent CSRF (see section 10.12) TODO
+                        * client-app can send an opaque "state" parameter with
+                          this redirect.
+                        * The authorization server must pass this parameter
+                          back to the client-app when the user has finished.
+                * example
+                ```
+                GET /authorize?response_type=code&client_id=s6BhdRkqt3&state=xyz
+                        &redirect_uri=https%3A%2F%2Fclient%2Eexample%2Ecom%2Fcb HTTP/1.1
+                Host: server.example.com
+                ```
+            1. authorization server checks that the request is valid
+            1. user authenticates themselves with authorization server
             1. user chooses what kind of access to give the client-app to their
-            protected resources
-            1. auth server creates an "authorization code" that represents this
-            granting of access
-            1. auth server redirects user back to client-app passing along the
-            "authorization code"
-            1. client-app uses the authorization code to get an acess token
-            which can then be used to get the protected resource
-        * pros/cons
+               protected resources
+            1. authorization server creates an "authorization code" that
+               represents this granting of access
+            1. auth server redirects user back to the `redirect_uri` it got from the client-app
+                * parameters (appended to the redirect URI)
+                    * code (required)
+                        * the authorization code
+                        * recommended that this code
+                            * only remain valid for 10mins max
+                            * can only be used once - if client tries to use it
+                              more than once the authorization server should
+                              revoke all tokens issued based on that code
+                    * state (recommended)
+                        * the state pararameter received from the client-app
+                    * example
+                    ```
+                    HTTP/1.1 302 Found
+                    Location: https://client.example.com/cb?code=SplxlOBeZQQYbYS6WxSbIA&state=xyz
+                    ```
+                * any errors in the process are communicated back to the client via an error response e.g.
+                  ```
+                  HTTP/1.1 302 Found
+                  Location: https://client.example.com/cb?error=access_denied&state=xyz
+                  ```
+                  * paramenters
+                    * error (required)
+                        * values are one of
+                            * invalid_request
+                            * unauthorized_client
+                            * access_denied
+                            * invalid_scope
+                            * unsupported_response_type
+                            * server_error
+                            * termporarily_unavailable
+                    * error_description (optional)
+                        * human readable description of error
+                    * error_uri (optional)
+                        * URI for human to find out more about error
+                    * state (required if client gave server a state parameter)
+            1. client-app makes a request to the authorization server token endpoint
+                * client-app authenticates _itself_ with the authorization server during this step
+                    * usually this will be by sending a "secret" via the HTTP Authorization header
+                * parameters
+                    * grant_type=authorization_code (required)
+                    * code (required)
+                        * the authorization code from the previous steps
+                    * redirect_uri (required)
+                        * this redirect uri MUST match the one sent by the client as part of trying to get the authorization grant in the previous steps
+                    * client_id (required)
+                        * part of how the client authenticates itself with the authorization server
+                * example
+                    ```
+                    POST /token HTTP/1.1
+                    Host: server.example.com
+                    Authorization: Basic czZCaGRSa3F0MzpnWDFmQmF0M2JW
+                    Content-Type: application/x-www-form-urlencoded
+
+                    grant_type=authorization_code&code=SplxlOBeZQQYbYS6WxSbIA
+                    &redirect_uri=https%3A%2F%2Fclient%2Eexample%2Ecom%2Fcb
+                    ```
+            1. server does some checks
+                * is client authentication ok?
+                * does the redirect_uri match the one stored in the previous steps
+                * is the authorization code valid?
+                    * has it expired?
+                    * has it been used before?
+            1. authorization server replies with an access token (and optional refresh token) to the client
+                * example
+                ```
+                HTTP/1.1 200 OK
+                Content-Type: application/json;charset=UTF-8
+                Cache-Control: no-store
+                Pragma: no-cache
+
+                {
+                "access_token":"2YotnFZFEjr1zCsicMWpAA",
+                "token_type":"example",
+                "expires_in":3600,
+                "refresh_token":"tGzv3JOkF0XG5Qx2TlKWIA",
+                "example_parameter":"example_value"
+                }
+                ```
+        * pros/cons of this grant type
             * ++ the access token is sent directly to the client, not through
               the user's "user agent"
             * ++ the client-app can be authenticated with a secret token agreed
@@ -122,31 +215,70 @@ There are roughly three "phases" (my term) in OAuth 2
               does this)
             * -- quite a few round trips required to get the protected resource
               (performance penalty)
-    2. implicit
+    2. implicit grant type
         * a simplified flow
         * optimized for in-browser client-apps e.g. JS apps
         * access token is issued directly - no authorization code step
+        * does not support refresh tokens
         * flow
-            1. client-app sends user to auth-server
-            1. user authenticates themselves with auth-server
-            1. user chooses what kind of access to give the client-app to their
-            protected resources
-            1. auth-server creates an "access token" that allows client-app to
-            access protected resource
-            1. auth-server redirects back to client-app passing along the
-            access token
-            1. client-app uses the access token to access the protected
-            resource
-        * the auth-server does NOT authenticate the client-app in this flow
-        * in some cases this may be possible by inspecting the redirect URI
-          used to get from client-app to auth-server but
-            * -- this URI is exposed to the user and their user-agent (browser)
+            1. client registers itself with the authorization server
+                * it gets a client id but NOT a client secret (the browser could not keep it secure so no secret is used)
+                * this may happen a long time before the other steps
+            1. client-app sends user to authorization server
+                * parameters
+                    * response_type=token (required)
+                    * client_id (required)
+                    * redirect_uri (optional)
+                    * scope (optional)
+                    * state (recommended)
+                * example
+                  ```
+                  GET /authorize?response_type=token&client_id=s6BhdRkqt3&state=xyz
+                      &redirect_uri=https%3A%2F%2Fclient%2Eexample%2Ecom%2Fcb HTTP/1.1
+                  Host: server.example.com
+                  ```
+            1. authorization server validates request and checks that the redirect_uri is actually registered by the given client_id
+            1. user authenticates themselves with authorization server
+            1. user chooses what kind of access to give the client-app to their protected resources
+            1. auth-server creates an "access token" that allows client-app to access protected resource
+            1. auth-server redirects responds to the request with a HTTP 302
+               and a `Location` header that is the client provided redirect_uri
+               with some parameters appended.
+                * parameters:
+                    * acces_token (required)
+                    * token_type (required)
+                    * expires_in (recommended)
+                    * scope (optional)
+                    * state (required)
+                * the authoriztion server MUST NOT issue a refresh token
+                * example
+                ```
+                HTTP/1.1 302 Found
+                Location: http://example.com/cb#access_token=2YotnFZFEjr1zCsicMWpAA
+                        &state=xyz&token_type=example&expires_in=3600
+                ```
+                * An error is returned if somethign goes wrong - see section 4.2.2.1 for details
+                    * error example
+                    ```
+                        HTTP/1.1 302 Found
+                        Location: https://client.example.com/cb#error=access_denied&state=xyz
+                    ```
+            1. The client makes a request to the `Location` HTTP header it got from the previous step
+            1. This loads a new HTML document with both the access_token and JS that can make use of it
+            1. client (JS app) uses the access token to access protected resource on a server
         * pros/cons
-            * -- no solid way for auth-server to verify identity of client-app
+            * -- no authentication of the client by the authorization server
+                * browser cannot be trusted with a client secret
+                * in some cases this may be possible by inspecting the redirect URI
+                  used to get from client-app to auth-server but this URI is
+                  exposed to the user and their user-agent (browser)
+            * -- the access token is embedded in the redirection URI so can be visible to
+                1. resourse owner
+                2. other applications on the same device
             * ++ less round-trips require to obtain access
-    3. resource owner password credentials
-        * user's credentials are entered into the client-app and used to obtain
-          an access token
+            * ++ useful for JS apps that need access to a resource for a short time (few hours)
+    3. resource owner password credentials grant type
+        * user's credentials are entered into the client and used to obtain an access token
         * flow
             1. client-app shows UI to allow user to enter their credentials
             1. client-app sends credeitals to auth-server which sends back
@@ -177,7 +309,7 @@ There are roughly three "phases" (my term) in OAuth 2
 * more grant types can be defined via an extensibility mechanism
     * ??? are there others actually in use ???
 
-Access token
+### Access token
 
 * a string representing an authorization issued to the client-app
     * has scopes
@@ -192,7 +324,7 @@ Access token
     * RFC6750 has more details on the format of access tokens
 
 
-Refresh token
+### Refresh token
 
 * a string
 * used to obtain access tokens
@@ -320,6 +452,7 @@ The authorization process uses up to two authorization server endpoints and one 
             * authorization code
             * implicit
     2. Token endpoint
+        * the client must have authenticated itself with the authorization server _before_ it hits the token endpoint
         * used by the client to exchange an authorization grant or refresh token for an access token
             * "typically wtih client authentication" ????
                 * does that mean the client has to authenticate itself with the authorization server before hitting this endpoint????
@@ -333,9 +466,58 @@ The authorization process uses up to two authorization server endpoints and one 
 * Not every authorization grant type uses both endpoints
 * Spec allows extensible grant types to define their own endpoints
 
-UP TO 3.1.2.2.
+Both authorisation server endpoints (authorization, token) allow the client to provide a "scope" parameter
 
-OAuth 2 has 7 flows
+* If the client provides a scope parameter, the server will return the scope in the respone to indicate to the client which scopes it actually got
+* a "scope" is
+    * a space delimited set of strings
+    * order does not matter
+    * defines the access the client wants
+* if the client does not send a scope parameter the server should fall back to a default scope
+
+I _think_ scopes are a way of the client requiesting access to a subset of the resources it _could_ get.
+??? can scopes be a superset of the default scope ???
+
+
+
+## How multiple redirect_uri work
+
+* Most OAuth2 authorization services allow you to specify multiple `redirect_uri` values when you register your client application
+* These are the list of "legal" redirect URIs that the server should accept for your client application
+* The spec (3.1.2.2) says that
+    * the server should force you to register the full URI `scheme://authority/path?query` so you can only vary the `state` query parameter.
+    * but at the very least it should force you to register `scheme://authority/path`
+
+The `redirect_uri` is sent from client to authorization server twice during the authorization code flow:
+
+1. `redirect_uri` 1 == the client sends to authorization server when trying to get the authorization code
+2. `redirect_uri` 2 == the client sends to authorization server when trying to exchange authorization code for access token
+
+not all providers perform exact matches of the redirect URI, although the spec
+requires it. To counter this the spec tries to add a layer of security by
+having the server check that the second redirect_uri it gets matches the first and also that they match one of the registered URIs
+
+http://security.stackexchange.com/questions/44214/what-is-the-purpose-of-oauth-2-0-redirect-uri-checking
+
+
+# Token profiles (Bearer vs Holder of Key)
+
+from http://nordicapis.com/api-security-oauth-openid-connect-depth/
+
+There are two token profiles
+
+1. Bearer tokens
+2. Holder of Key (HoK) tokens (still in draft I think)
+
+You can think of bearer tokens like cash. If you find a dollar bill on the ground and present it at a shop, the merchant will happily accept it. She looks at the issuer of the bill, and trusts that authority. The saleswomen doesn’t care that you found it somewhere. Bearer tokens are the same. The API gets the bearer token and accepts the contents of the token because it trusts the issuer (the OAuth server). The API does not know if the client presenting the token really is the one who originally obtained it. This may or may not be a bad thing. Bearer tokens are helpful in some cases, but risky in others. Where some sort of proof that the client is the one to who the token was issued for, HoK tokens should be used.
+
+HoK tokens are like a credit card. If you find my credit card on the street and try to use it at a shop, the merchant will (hopefully) ask for some form of ID or a PIN that unlocks the card. This extra credential assures the merchant that the one presenting the credit card is the one to whom it was issued. If your API requires this sort of proof, you will need HoK key tokens. This profile is still a draft, but you should follow this before doing your own thing.
+
+
+
+
+
+OAuth 2 has 7 flows (I don't know how flows map onto what I have read in spec yet)
 
 1. original OAuth 1.0 flow
     * ??? I thought 2 was not compatible with 1 ???
@@ -391,18 +573,21 @@ OAuth 2 has 7 flows
     * Lots of community strategies available
     * A strategy is a rack middleware so will work with anything that uses rack
 
-```ruby
+## Doorkeeper
 
-require 'httparty'
+In doorkeeper will look for the access token in the request object as follows
 
-token = "1c4b40471046fdb5d0ff81570c7564fe244940c2"
+1. The HTTP_AUTHORIZATION header
+2. params.access_token
+3. params.bearer_token
 
-user = HTTParty.get "https://api.github.com/user",
-        :headers => {
-                        "Authorization" => "token #{token}",
-                        "User-Agent" => "codecademy"
-                    }
+so you can either use the `Authorization` header or encode the token in the body of the request
 
-puts "Hi, my username is #{user["login"]}"
+Authorization header is probably easiest
 
+Note that the correct way to encode an access token as the HTTP Basic Auth header is
+
+```
+Authorization: Bearer <access token>
+Authorization: Bearer 2dc7fedf1c59eeb78345e4bfaf45ea6552038ebcd9dc94d47b25b39780c20fdd
 ```
