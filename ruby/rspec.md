@@ -92,3 +92,30 @@ Aliases:
 * describe, context, feature (from Capybara)
 * it, specify, scenario (from Capybara)
 
+There are 14 rspec matchers that can take matchers as arguments
+
+Array, String
+
+4. end_with(matcher, matcher, ...)
+11. start_with(matcher, matcher, ...)
+
+Array
+
+3. contain_exactly(matcher, matcher, matcher)
+
+Array, Hash, String (anything that responds to #include?
+
+5. include(matcher, matcher, ...)
+6. include(:key => matcher, :other => matcher)
+
+
+1. change { }.by(matcher)
+2. change { }.from(matcher).to(matcher)
+7. match(arbitrary_nested_structure_with_matchers)
+8. output(matcher).to_stdout
+9. output(matcher).to_stderr
+10. raise_error(ErrorClass, matcher)
+12. throw_symbol(:sym, matcher)
+13. yield_with_args(matcher, matcher, ...)
+14. yield_successive_args(matcher, matcher, ...)
+

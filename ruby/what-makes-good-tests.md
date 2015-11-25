@@ -243,7 +243,6 @@ doesn't say "write one test case for each of these"
 
 https://www.youtube.com/watch?v=VD51AkG8EZw
 
-* suite without a plan are problematic
 
 From the perspective of prevention he discusses
 
@@ -388,6 +387,7 @@ From the perspective of prevention he discusses
             * can be faster than factories
         * "self priming tests"
             * you have to use the app UI to get the app into a state that you can run the test
+            * you have to do this if you need to test something in production
 * superlinear build slowdown
     * the time a single test takes to run is
         * app time + test time + setup and teardown time
@@ -411,3 +411,30 @@ From the perspective of prevention he discusses
         2. redundant tests
             * i changed some code but lots of tests depended on it
     * track whether each build failure is a true or false negative and how long it took you to fix it
+
+#### Summary
+
+Test suites without a plan are problematic - Team should agree on some choices
+for their suites:
+
+* discuss the defnintion of a successful test suite:
+    1. is the purpose of each test readily apparent
+    1. does the test suite promote consistency?
+* discuss and agree on the boundaries of "realisim" in our tests and what we are willing to accept
+* agree on how we use mocking
+    * don't have a mix of mocks and real objects
+    * don't use mocks as a way to avoid difficult to setup objects - that is fixing the symptom, not the cause of test pain
+    * mock or real all 3rd party APIs?
+    * mock or real all collaborator objects?
+* don't be haphazard with mocking - have a plan
+* decide how many suites we should have and what level of isolation they have
+* set a maximum build time and agree we will refactor tests/delete them to keep within it
+* only use `rails_helper` when you really need it
+* agree not to create an integration test for each feature
+    * agree to try and have integration tests that cover a lot of ground - maybe like a real user would
+
+things about beemo test suite
+* we use rails_helper everywhere
+* we don't have an agreement on mocking/levels of isolation
+* we have some controller tests - should they be more integrated?
+* our suites are organised by type not by level of isolation
