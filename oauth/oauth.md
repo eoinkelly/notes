@@ -5,6 +5,9 @@
 * NOTE: you cannot run OAuth without SSL and expect it to be secure because you
   have to send the "token" and the "secret" to the client somehow
 
+* OAuth is really for delegation not authorization - maybe should have been called "ODelegate"
+    * delegates authorization to a authorization provider
+
 ## Sources
 
 * http://oauth.net/
@@ -323,7 +326,58 @@ There are roughly three "phases" (my term) in OAuth 2
 * details are not defined in the main RFC
     * RFC6750 has more details on the format of access tokens
 
+* token analogy
+    * access token is like a session
+    * refresh token is like a password
 
+Tokens can be
+* passed by value
+    * all the information required is embedded in the token
+* passed by reference
+    * a reference/pointer to the acutal data
+    * for these, the resource server has to make a call to the authorization server to "dereference it" and check that the user is authorized
+
+Token profiles
+* bearer token
+    * a bit like cash
+    * it has the issuer on there, the merchant you are transacting with is happy to take it because they trust the issuer
+* holder of key
+    * a bit like a credit card
+    * ties the holder to the token
+    * merchant has to ask for identification as the token is presented
+* OAuth spec does not say waht kind of tokens are exchangted
+* there are many pssible tokens you can use with OAuth
+    * WS-Security
+    * SAML
+    * JWT
+    * Custom
+        * Home-grown
+        * Oracle Access Manager
+        * SiteMinder
+    * etc.
+* this token flexibility simplifies integration for enterprises
+
+
+### Json identiy protocol suite
+
+* Suite of JSON based identity protocols
+    * Tokens (JWT)
+        * pronounced "jot"
+        * lightweight, designed to be passed in HTTP headers and query strings
+            * more suitable for IoT and mobile devices
+        * Akin to SAML tokens
+            * less expressive
+            * less security optionds
+            * more compact
+            * encoded w. JSON not XML
+    * Keys (JWK)
+    * Algorithms (JWA)
+    * Encrpytion (JWE)
+    * Signatures (JWS)
+* The bearer token spec explains how to use with OAuth
+* these are being defined in the IETF
+
+"nonce" stands for "not more than once"
 ### Refresh token
 
 * a string
