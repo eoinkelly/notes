@@ -95,3 +95,6 @@ If *anything* on the ancestors chain refers to an insance variable it is always 
 => ancestors manipulate the state of the object
 => can think of the ancestors tree of being collapsed into a big list of methods that the object can access
 => no matter where the method comes from, the state it operates on is in the current object
+
+
+The texture of ruby is very much not bringing everything together until runtime
