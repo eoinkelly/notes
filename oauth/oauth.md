@@ -284,14 +284,42 @@ There are roughly three "phases" (my term) in OAuth 2
         * user's credentials are entered into the client and used to obtain an access token
         * flow
             1. client-app shows UI to allow user to enter their credentials
-            1. client-app sends credeitals to auth-server which sends back
-            access token
+                * oauth spec does not specify how this happens
+            1. client-app sends user credeitals and its own client credentials
+               (to authenticate itself) to auth-server which sends back access
+               token (and optional refresh token)
+               * params must be sent as `application/x-www-form-encoded` body
+                 of the GET request (the headers are reserved for the client
+                 app to authenicate itself)
+               * params are
+                    * grant_type=password (required)
+                    * username (required)
+                    * password (required)
+                    * scope (optional
+            1. authorization server sends back a response with the new token(s) e.g.
+                ```
+                HTTP/1.1 200 OK
+                Content-Type: application/json;charset=UTF-8
+                Cache-Control: no-store
+                Pragma: no-cache
+
+                {
+                "access_token":"2YotnFZFEjr1zCsicMWpAA",
+                "token_type":"example",
+                "expires_in":3600,
+                "refresh_token":"tGzv3JOkF0XG5Qx2TlKWIA",
+                "example_parameter":"example_value"
+                }
+                ```
+
             1. client (ideally) discards user credentials and uses access token
             from then on
-                * ??? client-app may also get a "refresh token" to allow it to
-                  get new access tokens ???
-                    * I presum the win here is that the refresh token is safer
+                * client-app may also get a "refresh token" to allow it to get new access tokens
+                    * the win here is that the refresh token is safer
                       to store in client-app than the users creds
+        * use cases
+            * used to migrate existing clients using HTTP basic auth to OAuth
+            * useful when the resource owner has a "trust relationship" with the client
         * pros/cons
             * -- only useful is there is a high level of trust between
               client-app and auth-server
@@ -299,20 +327,147 @@ There are roughly three "phases" (my term) in OAuth 2
             * ++ client-app only needs the users credentials to get the access
               token so it doesn't have to store them or put them on the wire
               for each request
-    4. client credentials
+    4. client credentials grant
         * some for of client-app authentication (e.g. username+password or
           secret key) is used as the authorization grant
-        * used when the authorization scope is limited to things the client-app
-          already has
-        * used when the client-app is also the resource-owner i.e. it is acting
-          on its own behalf
-        * in a way the client-app is asking the auth server to allow it to
-          access things it already has
-        * ??? not sure of the use cases here ???
-* more grant types can be defined via an extensibility mechanism
-    * ??? are there others actually in use ???
+        * use cases
+            * when the authorization scope is limited to things the client-app already has
+            * used when the client-app is also the resource-owner i.e. it is acting on its own behalf
+            * when the resource owner has done "something" to tell the
+              authorization server that it should allow this client to access
+              these protected resources and that "something" is out of scope of
+              the OAuth spec
+        * flow
+            1. client sends it authentication to the authorization server
+                    ```
+                    POST /token HTTP/1.1
+                    Host: server.example.com
+                    Authorization: Basic czZCaGRSa3F0MzpnWDFmQmF0M2JW
+                    Content-Type: application/x-www-form-urlencoded
 
-### Access token
+                    grant_type=client_credentials
+                    ```
+            1. server authenticates the client and if valid replies with access token(s)
+                    ```
+                    HTTP/1.1 200 OK
+                    Content-Type: application/json;charset=UTF-8
+                    Cache-Control: no-store
+                    Pragma: no-cache
+
+                    {
+                    "access_token":"2YotnFZFEjr1zCsicMWpAA",
+                    "token_type":"example",
+                    "expires_in":3600,
+                    "example_parameter":"example_value"
+                    }
+                    ```
+        * params (encoded as `application/x-www-form-encoded` in GET request body)
+            * grant_type=client_credentials (required)
+            * scope (optional)
+            * client must send some sort of authentication HTTP headers
+
+        * pros/cons
+            *
+* more grant types can be defined via an extensibility mechanism
+    * a client uses an "extension grant type" by
+        1. using an absolute URI (which has been defined by the authorization server) as the `grant_type` parameter
+        2. sending any extra parameters required
+    * example: Security Assertion Markup Language (SAML)
+    * grant_type=urn:ietf:params:oauth:grant-type:saml2-bearer
+    * example
+        ```
+        POST /token HTTP/1.1
+        Host: server.example.com
+        Content-Type: application/x-www-form-urlencoded
+
+        grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Asaml2-bearer
+        &assertion=PEFzc2VydGlvbiBJc3N1ZUluc3RhbnQ9IjIwMTEtMDUaG5TdGF0ZW1lbnQ-PC9Bc3NlcnRpb24-
+        ```
+
+### Rules for authorization server responses
+
+* authorization server replies must be JSON with the `Cache-control: no-store` HTTP header
+
+Error responses from the authorization server are JSON and have the form
+
+```
+HTTP/1.1 400 Bad Request
+Content-Type: application/json;charset=UTF-8
+Cache-Control: no-store
+Pragma: no-cache
+
+{
+    "error":"invalid_request"
+}
+```
+
+The legal keys are
+
+* error (required)
+    * values are one of
+        * invalid_request
+        * unauthorized_client
+        * access_denied
+        * invalid_scope
+        * unsupported_response_type
+        * server_error
+        * termporarily_unavailable
+* error_description (optional)
+    * human readable description of error
+* error_uri (optional)
+    * URI for human to find out more about error
+
+### Refreshing an access token
+
+Client can use its refresh token to get a new access token
+
+* refresh token request
+    * parameters must be included in HTTP request body as `application/x-www-form-urlencoded` values
+    * Parameters
+        * grant_type=refresh_token (required)
+        * refresh_token (required)
+        * scope (optional)
+            * must not include any scope not granted in the original token grant
+    * the client _may_ authenticate itself again when refreshing the access token
+    * example
+        ```
+        POST /token HTTP/1.1
+        Host: server.example.com
+        Authorization: Basic czZCaGRSa3F0MzpnWDFmQmF0M2JW
+        Content-Type: application/x-www-form-urlencoded
+
+        grant_type=refresh_token&refresh_token=tGzv3JOkF0XG5Qx2TlKWIA
+        ```
+* Refresh token response
+    * looks the same as the original authorization token grant
+* flow
+    1. client send refresh token request (and optionally its own authentication details)
+    1. server checks the refresh token is valid, client authentication is valid and the scope matches the original scope
+
+### Native apps
+
+The spec says that native apps have two choices
+
+1. External user-agent
+    * aka user the device web browser
+    * ++ users *might* be able to use existing sessions or password managment to help them auth
+    * -- kind of a shitty UX to flip between apps
+    * the native app registers a URL scheme with the OS that will cause it to be invoked when that type of URL is redirected to
+    * workflow
+        1. send uwer from app to browser
+        1. user authenticates in browser and grants access to the app
+        1. authorization server redirects browser to a URL scheme that will cause it to re-open the native app
+        1. native app reads the tokens from the redirect URI
+2. Embedded user-agent
+    * aka webview
+    * ++ keeps the user in the app
+    * -- they don't get to re-use any sessions they might have in main browser
+
+Spec recommend
+
+* native apps using authorization code grant should not authenticate themselves because they can't store a secret safely
+* when using implicit grant flow a refresh token should not be returned
+### Access tokens
 
 * a string representing an authorization issued to the client-app
     * has scopes
@@ -331,13 +486,16 @@ There are roughly three "phases" (my term) in OAuth 2
     * refresh token is like a password
 
 Tokens can be
+
 * passed by value
     * all the information required is embedded in the token
 * passed by reference
     * a reference/pointer to the acutal data
-    * for these, the resource server has to make a call to the authorization server to "dereference it" and check that the user is authorized
+    * for these, the resource server has to make a call to the authorization
+      server to "dereference it" and check that the user is authorized
 
-Token profiles
+#### Token profiles
+
 * bearer token
     * a bit like cash
     * it has the issuer on there, the merchant you are transacting with is happy to take it because they trust the issuer
@@ -356,6 +514,31 @@ Token profiles
         * SiteMinder
     * etc.
 * this token flexibility simplifies integration for enterprises
+
+from http://nordicapis.com/api-security-oauth-openid-connect-depth/
+
+There are two token profiles
+
+1. Bearer tokens
+    * You can think of bearer tokens like cash. If you find a dollar bill on
+      the ground and present it at a shop, the merchant will happily accept it.
+      She looks at the issuer of the bill, and trusts that authority. The
+      saleswomen doesn’t care that you found it somewhere. Bearer tokens are
+      the same. The API gets the bearer token and accepts the contents of the
+      token because it trusts the issuer (the OAuth server). The API does not
+      know if the client presenting the token really is the one who originally
+      obtained it. This may or may not be a bad thing. Bearer tokens are
+      helpful in some cases, but risky in others. Where some sort of proof that
+      the client is the one to who the token was issued for, HoK tokens should
+      be used.
+2. Holder of Key (HoK) tokens (still in draft)
+    * HoK tokens are like a credit card. If you find my credit card on the
+      street and try to use it at a shop, the merchant will (hopefully) ask for
+      some form of ID or a PIN that unlocks the card. This extra credential
+      assures the merchant that the one presenting the credit card is the one
+      to whom it was issued. If your API requires this sort of proof, you will
+      need HoK key tokens. This profile is still a draft, but you should follow
+      this before doing your own thing.
 
 
 ### Json identiy protocol suite
@@ -378,6 +561,7 @@ Token profiles
 * these are being defined in the IETF
 
 "nonce" stands for "not more than once"
+
 ### Refresh token
 
 * a string
@@ -539,7 +723,9 @@ I _think_ scopes are a way of the client requiesting access to a subset of the r
 * Most OAuth2 authorization services allow you to specify multiple `redirect_uri` values when you register your client application
 * These are the list of "legal" redirect URIs that the server should accept for your client application
 * The spec (3.1.2.2) says that
-    * the server should force you to register the full URI `scheme://authority/path?query` so you can only vary the `state` query parameter.
+    * the server should force you to register the full URI
+      `scheme://authority/path?query` so you can only vary the `state` query
+      parameter.
     * but at the very least it should force you to register `scheme://authority/path`
 
 The `redirect_uri` is sent from client to authorization server twice during the authorization code flow:
@@ -547,25 +733,12 @@ The `redirect_uri` is sent from client to authorization server twice during the 
 1. `redirect_uri` 1 == the client sends to authorization server when trying to get the authorization code
 2. `redirect_uri` 2 == the client sends to authorization server when trying to exchange authorization code for access token
 
-not all providers perform exact matches of the redirect URI, although the spec
+Not all providers perform exact matches of the redirect URI, although the spec
 requires it. To counter this the spec tries to add a layer of security by
-having the server check that the second redirect_uri it gets matches the first and also that they match one of the registered URIs
+having the server check that the second `redirect_uri` it gets matches the first
+and also that they match one of the registered URIs.
 
-http://security.stackexchange.com/questions/44214/what-is-the-purpose-of-oauth-2-0-redirect-uri-checking
-
-
-# Token profiles (Bearer vs Holder of Key)
-
-from http://nordicapis.com/api-security-oauth-openid-connect-depth/
-
-There are two token profiles
-
-1. Bearer tokens
-2. Holder of Key (HoK) tokens (still in draft I think)
-
-You can think of bearer tokens like cash. If you find a dollar bill on the ground and present it at a shop, the merchant will happily accept it. She looks at the issuer of the bill, and trusts that authority. The saleswomen doesn’t care that you found it somewhere. Bearer tokens are the same. The API gets the bearer token and accepts the contents of the token because it trusts the issuer (the OAuth server). The API does not know if the client presenting the token really is the one who originally obtained it. This may or may not be a bad thing. Bearer tokens are helpful in some cases, but risky in others. Where some sort of proof that the client is the one to who the token was issued for, HoK tokens should be used.
-
-HoK tokens are like a credit card. If you find my credit card on the street and try to use it at a shop, the merchant will (hopefully) ask for some form of ID or a PIN that unlocks the card. This extra credential assures the merchant that the one presenting the credit card is the one to whom it was issued. If your API requires this sort of proof, you will need HoK key tokens. This profile is still a draft, but you should follow this before doing your own thing.
+See http://security.stackexchange.com/questions/44214/what-is-the-purpose-of-oauth-2-0-redirect-uri-checking
 
 
 
