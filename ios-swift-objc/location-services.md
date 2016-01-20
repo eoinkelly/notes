@@ -41,3 +41,24 @@ currently pack not listed in apps taht require BAR
 
 "suspended"
 "terminated"
+
+# background locations
+
+Tracking location in the background is a special case. The options are:
+
+1. significant change location service
+    * does not provide "high precision" location data
+    * is the most battery friendly way to do location tracking
+    * the system will wake the app whenever the users location changes "significantly"
+    * if the app is terminated after starting this service the system will restart it to get the update
+2. foreground only location services
+    * uses standard Core Location service to get location data
+    * stops delivering updates if the app is suspended
+3. background location services
+    * uses standard Core Location service to get location data
+    * requires that the system monitor location via radio so is battery hungry
+    * enabled by setting UIBackgroundModes to 'location' in Info.plist
+    * does not prevent the system from suspending the app (unlike 'audio' which
+      does prevent your app from entering the "suspended" state).
+    * does tell the system that it should wake the app whenever there is a new location to deliver
+        * if the user force quits you this will not happen

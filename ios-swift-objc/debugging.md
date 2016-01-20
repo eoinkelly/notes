@@ -27,3 +27,5 @@ Xcode defines this to be 1 for debug builds and 0 for release builds so we can u
     NSLog(...
 #endif
 ```
+TODO: does this apply to swift?
+

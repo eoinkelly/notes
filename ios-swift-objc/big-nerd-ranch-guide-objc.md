@@ -27,7 +27,7 @@ QUESTION: what template, if any do seasoned programmers use?
     * it contains Foundation, UIKit, GameKit, MapKit etc.
 
 * Foundation framework
-    * A framework is Apple's dynamically linked library file  and enough headers to
+    * A framework is an (Apple format) dynamically linked library file plus enough headers to
       link against it
     * Foundation framework is a framework with many basic classes and is shared
       between Mac and iOS
@@ -51,11 +51,6 @@ I       | Ignored
 R       | Replaced in the repository
 \-       | The contents of the folder have mixed status; display the contents to see individual status
 ?       | Not under source control
-
-
-QUESTION: Should `.xcuserstate` files be saved to git? Xcode seems to think so.
-
-QUESTION: xcode creates no .gitignore - what is a good one for xcode projects?
 
 ### Your project on the filesystem
 
@@ -123,8 +118,8 @@ workspace settings and all document files in the project.
 
 * comparing snapshots is not particularly easy (although it is possible)
 * they work by storing your source in a private git repo
-* they are a kind of wy of having xcode do automatic commits at certain points
-* for you e.g. after a successful build
+* they are a kind of way of having xcode do automatic commits at certain points
+  for you e.g. after a successful build
 
 ### Auto-save
 
@@ -144,10 +139,11 @@ Adding files & folders to Xcode does not move them on disk (unless you tick the
 are two kinds of reference you can create:
 
 1. Folder reference
+    * shows up as a blue folder in project navigator
 2. Group
+    * show up as yellow folder in project navigator
 
 * `folder reference` is a reference in the project navigator to a real folder on the filesystem.
-* it shows up as a blue folder in project navigator (groups show up as yellow folders)
 
 What is the differences between a `Group` and a `Folder Reference`?
 
@@ -170,9 +166,8 @@ filesystem folders in the thing you pick
 You can also choose to include those files in any of the available builds - this
 means they will be copied into the resulting `.app` directory.
 
-It seems in Xcode you  have to manage your project navigator view and your
+It seems in Xcode you have to manage your project navigator view and your
 filesystem separately.
-
 
 ### Building Interfaces
 
@@ -279,76 +274,6 @@ How to do the wiring:
 
 * cmd+1 -> cmd+7 goes to each navigator in turn
 * cmd+r = build
-
-## lproj files
-
-* Used for internationalisation
-* Xcode has the notion of a `Base` localisation that you build your others on top of
-* They are the folders on the filesystem that contain the localised versions of
-  string files for xcode
-* The UI displays each file in its context e.g. storybard stirngs file will be
-  shown under the storyboard but on disk they are in teh `LANG_CODE.lproj` dirs
-
-## Asset catalog
-
-In Xcode:
-
-```
-`Images.xcassets`
-    AppIcon
-    LaunchImage
-```
-
-is actually on the filesystem as:
-
-```
-Images.xcassets
-    AppIcon.appiconset/
-      Contents.json
-    LaunchImage.launchimage/
-      Contents.json
-```
-
-* You still have to import the images into your project - the asset catalog just
-  provides the link between the image and what is is used for in code (rather
-  than having the image file name do that)
-
-Advantages:
-
-* lets you refer to the images from code using the catalog name (not file path)
-    * UIImage:imageNamed:
-* lets you avoid the `foo@2x.png` naming convention - you can name your images
-  anything you want
-* on iOS 7+ deployment targets XCode compiles the asset catalogs into a runtime
-  binary format that makes it faster to load.
-
-## PCH files
-
-* Called the `prefix header`
-* It is *automatically included in every source file* in the project without the
-* use of compiler directives.
-* They are _usually_ pre-compiled and cached to speed up build times.
-    * They only have to be parsed once by the compiler
-* they _can_ be used for project wide `#define` but those are a bit of a code
-  smell.
-* You should only `#include` headers in here that change rarely - otherwise the
-  caching will be a net negative
-* Downsides
-    * they create a hidden dependency between your Foo.m|h files and the prefix
-      header which means your source files can't be shared with other projects
-      without it.
-* Xcode 6 does not seem to make a PCH for new projects
-
-* Opinion: http://qualitycoding.org/precompiled-headers/
-
-## plist files
-
-* contain the **runtime** settings for the app
-* is an XML file.
-* has a fancy editor in Xcode
-* is copied into the bundle
-* named `ProjectName-Info.plist`
-* iOS asks this file about where to find the icons for the project
 
 ## Launch images
 

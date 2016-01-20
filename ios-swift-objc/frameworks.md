@@ -1,5 +1,12 @@
 # Units of code
 
+## `.tbd` binary file
+
+https://forums.developer.apple.com/message/9176#9176
+
+>  .tbd files are new "text-based stub libraries", that provide a much more
+>  compact version of the stub libraries for use in the SDK, and help to
+>  significantly reduce its download size.
 
 ## `.dylib` binary file
 

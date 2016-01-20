@@ -190,11 +190,3 @@ TODO: find out more about it
   a value, which happens to be a the value of a pointer.
 * In Objective-C (and C, for the matter) there is no concept of reference as
   intended in other languages (such as C++ or Java).
-
-
-
-
-# #3 - UITableView Basics
-
-
-

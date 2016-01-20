@@ -10,10 +10,12 @@ An general archive is a timestamped bundle with:
 * Verification and submissions status for the app
 * your own comments
 
-An "application archive" is a particular kind of archive that contains nothing but the application - only _application arichves_ can be submitted to the store.
+An "application archive" is a particular kind of archive that contains nothing
+but the application - only _application arichves_ can be submitted to the
+store.
 
-It is a common problem that frameworks and libraries will, as well as linking with the app, be copied into the archive
-
+It is a common problem that frameworks and libraries will, as well as linking
+with the app, be copied into the archive
 
 To release your app on the store you have to embed both libraries and frameworks.
 
