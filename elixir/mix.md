@@ -1,11 +1,13 @@
 # Built-ins
 
 * Erlang is more than a language, it is also an operating system for your applications.
-* Erlang developers rarely write standalone modules, they write libraries or applications, and then bundle those into what is called a release.
-* A release contains the Erlang VM plus all applications required to run the node, so it can be pushed to production directly.
+* Erlang developers rarely write standalone modules, they write libraries or
+  applications, and then bundle those into what is called a release.
+* A release contains the Erlang VM plus all applications required to run the
+  node, so it can be pushed to production directly.
 
 * `mix` `elixirc`, `elixir`, `iex` commands come with elixir and live in the exlixir install dir
-* `/Users/eoinkelly/.exenv/versions/1.1.1/lib/mix/ebin
+* `/Users/eoinkelly/.exenv/versions/1.1.1/lib/mix/ebin`
 * mix is a mix.app and a bunch of .beam files
 
 # Archives
@@ -17,24 +19,42 @@
 * Archives are kept in `~/.mix/archives`
 * Currently my installation only contains `.ez` files for `phoenix_new` and `hex`
 
-How does mix find tasks and files and know what to build?
+IMPORANT: the syntax for getting help is `mix help COMMAND_NAME` not `mix COMMAND_NAME --help`
 
-naming convention?
+To upgrade a phoenix project:
 
+```
+mix hex.outdated # see what needs updating
+# edit mix.exs to reflect the constraints you want
+mix deps.unlock --all
+mix deps.update
+mix deps.compile
+```
 
 # Standard mix tasks
+
+## mix hex.outdated
+
+* `mix hex.outdated` shows only the out of date _installed_ depencencies i.e. if its not downloaded it you won't see it
 
 ## mix deps
 
 * only makes sense within an existing project dir
-* manages the dependencies of a particular project - a bit like `bundler`
-* `mix hex.outdated` shows only the out of date depencencies
+* manages the dependencies of a particular project
 * `mix deps` shows all dependences
+
+* check the state of dependencies
+* if it says something like
+    ```
+    * phoenix_haml 0.2.0 (Hex package) (mix)
+    locked at 0.2.0 (phoenix_haml)
+    ok
+    ```
+then the dependency has been downloaded and compiled.
 
 ## mix hex
 
 * interacts with the package manager
-* `mix hex ...` is a bit like `gem ...` in ruby
 
 ## mix archive
 
@@ -45,6 +65,36 @@ naming convention?
 ## mix local
 
 * ???
+
+## mix deps.unlock --all
+
+* rewrites `mix.lock`to contain only an empty Map (but does not delete the file)
+
+## mix deps.clean --all
+
+* wipes the slate clean
+* empties the `_build` dir (but does not delete it)
+* empties the `deps` dir
+
+## mix.get
+
+* download dependencies into `/deps`
+* Can download and untar hex and rebar packages
+* e.g. a hex package is `https://s3.amazonaws.com/s3.hex.pm/tarballs/bbmustache-1.0.3.tar`
+* each hex package is a tar file which contains
+    * VERSION
+    * CHECKSUM
+    * metadata.config
+    * contents.tar.gz
+
+## mix.compile
+
+* Compile the dependencies
+* compiles each dependency in its own dir in `deps/`
+* creates `_build/` in project root and puts links in there to the `ebin` dir of each dependency
+* after this point `mix deps` tells you everything has compiled OK
+
+# List of mix commands
 
 ```
 iex -S mix              # Starts IEx and run the default task
@@ -114,3 +164,7 @@ mix release             # Build a release for the current mix application.
 mix release.clean       # Clean up any release-related files.
 mix release.plugins     # View information about active release plugins
 ```
+
+QUESTION: How does mix find tasks and files and know what to build?
+    naming convention?
+
