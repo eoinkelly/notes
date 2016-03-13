@@ -1,4 +1,4 @@
-
+# Ecto
 
 Query language
     * can build layered queries (bit like rails scopes, LINQ queries)

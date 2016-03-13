@@ -14,6 +14,9 @@ IO.puts fun.() # parens *required* for anonymous functions
 # File.open is an elixir module
 # :file.format_error/1 is an Erlang function
 # this is how you use Erlang stuff in Elixir
+
+
+# Anonymous functions can have multiple heads too
 handle_open = fn
   {:ok, file} -> "Read data: #{IO.read(file, :line)}"
   {_, error} -> "Error: #{:file.format_error(error)}"
@@ -63,7 +66,7 @@ IO.puts fizz_buzz.(14)
 IO.puts fizz_buzz.(15)
 IO.puts fizz_buzz.(16)
 
-# # Closures
+# # Lexical Closures
 #
 # * elixir has lexical closures that work pretty much how you expect -
 #   functions can return other functions and will keep access to all the

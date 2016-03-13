@@ -1,7 +1,9 @@
 # Protocols
 
 # * lets us send multiple types to a method and have elixir automatically pick
-#   the implementation to use based on the type
+#   the implementation to use based on the type without having
+# * For built-in types we could replicate this with a function that has one head
+#   per type (checked in a guard clause) but this wouldn't work for structs.
 # * Passing a data type that does not implement the protocol raises an error
 
 defprotocol Blank do
@@ -74,6 +76,9 @@ end
 
 # ... when we create a new struct we can tell it to "derive" the Blank3
 #     protocol i.e. opt-in to using the Any implementation of that protocol.
+#
+# * ++ this is more explicit
+
 defmodule User2 do
   @derive Blank3
   defstruct name: "Eoin", age: 36

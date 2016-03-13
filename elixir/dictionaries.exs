@@ -50,6 +50,9 @@ IO.inspect odd_list[:age] # works
 # are optional.
 #   * where ruby makes an anonymous hash, elixir makes a keyword list
 
+# do_thing :now, name: "Wake up", time: "0830", day: :today # shorthand version
+# do_thing(:now, [{:name, "Wake up"}, {:time, "0830"}, {:day, :today}]) # full syntax version
+
 dups_list = [name: "Eoin", name: "Kelly", age: 36, age: 37]
 
 # [] only finds the first of each duplicate key
@@ -74,12 +77,6 @@ IO.inspect Keyword.get_values(dups_list, :name)
 # * Access
 # * Enumerable
 # * Collectable
-
-# Things which implment the "dict" behavior in Elixir 1.1
-#
-# 1. Map
-# 2. hashDict
-# 3. Keyword
 #
 # Dict is also a module of functions that contains the methods you use to
 # interact with dictionary types in elixir
@@ -88,28 +85,18 @@ IO.inspect Keyword.get_values(dups_list, :name)
 
 # Dictionary types:
 #
-# Elixir 1.1
-#
-# 1. Map (linear time with no. of keys, can be slow)
-# 1. HashDict
-# 1. Keyword
-#
-# All of the above use the Dict API
-#
-# Elixir 1.2
-#
-# Map
+# * Keyword
+# * Map
 #     * supports pattern matching
 #     * are fast in Erlang 18
 #     * cannot control ordering
 #
-# All of these are deprecated in Elixir 1.2
+# The following types are deprecated since Elixir 1.2
 #
 # 1. HashDict
 # 2. Dict
 # 3. Set
 # 4. HashSet
-
 
 key_list = [name: 'John', height: 133]
 
@@ -118,14 +105,6 @@ IO.inspect key_list |> Enum.into HashDict.new
 
 IO.inspect key_list |> Enum.into Map.new
 
-
-
-# HashDict
-# ########
-#
-# * represented internally as a struct %HashDict{}
-# * implemented using "tries" which grows in space as the no. of keys grows ???
-
 # Map
 # ###
 #
@@ -133,6 +112,6 @@ IO.inspect key_list |> Enum.into Map.new
 # * created with the %{} "special form"
 
 example_map = %{ name: "John", height: 133 }
+
 IO.inspect Dict.values(example_map)
 IO.inspect Dict.keys(example_map)
-

@@ -41,7 +41,7 @@ IO.inspect ?ł # => 322
 IO.inspect to_char_list("I am a string")
 IO.inspect is_binary("I am a string") # => true
 
-# Exlixir convention on naming functions that count things
+# Elixir convention on naming functions that count things
 #
 # * size => constant time
 # * length => linear time
@@ -75,7 +75,7 @@ IO.puts long_str
 # * similar to ruby %r, %w, %W etc.
 #
 # ~r creates a regex
-# ~w creates a list of works
+# ~w creates a list of words
 # ~S is the elixir sigil for creating a heredoc strings without having to quote
 #    " that appears within it
 
@@ -121,9 +121,10 @@ header.("Maps")
 # %{} is a map (hash)
 
 # basic syntax
-IO.inspect ek = %{ :name => "Eoin", :age => "36" }
-IO.inspect ek[:name] # works
-IO.inspect ek.name # special syntax for atom keys
+IO.inspect ek1 = %{ :name => "Eoin", :age => "36" }
+IO.inspect e22 = %{ name: "Eoin", age: "36" } # same as above
+IO.inspect ek1[:name] # works
+IO.inspect ek1.name # special syntax for atom keys
 
 
 # Lists

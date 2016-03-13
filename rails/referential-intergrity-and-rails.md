@@ -10,7 +10,7 @@
 rails relationship macros don't lock down a relationship
 There are things that acitverecord encoruages but it prevents very little!
 
-Rails `has_one <--> belongs_to`
+### Rails default: has_one <--> belongs_to
 
 ```
 class Foo

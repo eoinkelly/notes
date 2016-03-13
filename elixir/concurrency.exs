@@ -4,8 +4,8 @@
 #     * similar to futures in other langs
 # * will only return to the process that called them
 # 2. Agents
-* A simple abstraction over storing state
-* They run in a separate process and provide access to global state
+# * A simple abstraction over storing state
+# * They run in a separate process and provide access to global state
 
 ## Task
 
@@ -18,5 +18,3 @@ greeter.("Early riser")
 
 Task.await(task1)
 Task.await(task2)
-
-

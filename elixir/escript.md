@@ -12,8 +12,9 @@ http://elixir-lang.org/docs/v1.0/mix/Mix.Tasks.Escript.Build.html
   compiled and packages them inside an escript.
 * the escript file is a pkzip file with a short text header
 * `unzip` command works on it
-    * it unzips to a bunch of `elixir_*.beam` files and a afew `*.app` files
-    * `.app` files are text and contain what seems like a text representation of an elixir map that shows the metadata and dependencies of the app.
+    * it unzips to a bunch of `elixir_*.beam` files and a few `*.app` files
+    * `.app` files are text and contain what seems like a text representation
+      of an elixir map that shows the metadata and dependencies of the app.
 
 ```
 $ head ./some_escript_built_with_mix
@@ -21,8 +22,9 @@ $ head ./some_escript_built_with_mix
 %%
 %%! -escript main v2015_10_04_escript
 <PKZIPPED DATA>
+```
 
-
+```
 $ unzip my_app
 $ cat my_app.app
 
