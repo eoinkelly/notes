@@ -17,12 +17,41 @@
 typedef char * String;
 typedef int Coordinate;
 
-// TODO: syntax seems different for function pointers?
-typedef int (*funky)(char *, char *)
+// this creates funky as an alias for a function which takes two `char *` and
+// returns an int. It is just an alias and does not allocate any storage for a
+// pointer!
+typedef int (*funky)(char *, char *);
+
+// allocate storage for a function pointer
+funky pf;
 
 // Examples from standard library
 //
 // * size_t
 // * ptrdiff_t
 ```
+
+# typedef
+
+* lets you make a synonym for an _existing_ type.
+
+```c
+typedef char * STRING;
+
+// These do the same thing
+char *s = "hi";
+STRING s = "hi";
+
+// it does the right thing with multiple declarations separated by commas:
+STING name, comment;
+
+// NB #define would get this wrong
+#define STRING char *
+STRING a, b, c; // Looks ok but because define is simple text substitution it becomes ...
+char *a, b, c; // a is a pointer to a char, b is a char, c is a char
+```
+
+* is often used with structures to avoid typing `struct my_thing` every time you
+  need to create one.
+* by convention alias is UPPERCASE.
 
