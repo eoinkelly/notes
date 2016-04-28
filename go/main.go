@@ -1,8 +1,7 @@
 package main
 
-// QUESTION: is it one package per file?
-
 // import some packages
+// a package is a directory so import will pull in 1+ files
 import (
 	"fmt"
 )
@@ -11,6 +10,7 @@ import (
 // *************
 
 // note: uppercase type name and member names
+// * indicate this struct should be exposed to packages that import us
 type Person struct {
 	Name string
 	Age  int

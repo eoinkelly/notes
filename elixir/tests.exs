@@ -53,3 +53,44 @@ defmodule BuzzerTest do
     assert Buzzer.fizz_buzz(15) === "FizzBuzz"
   end
 end
+
+
+
+
+
+ExUnit.start
+# IO.inspect ExUnit.configuration
+# => keyword list (a linked list of tuples where each tuple is (atom, anything))
+# [formatters: [ExUnit.CLIFormatter],
+#  exclude: [],
+#  capture_log: false,
+#  include: [],
+#  refute_receive_timeout: 100,
+#  included_applications: [],
+#  timeout: 60000,
+#  autorun: false,
+#  colors: [],
+#  stacktrace_depth: 20,
+#  trace: false,
+#  assert_receive_timeout: 100]
+
+defmodule SmokeTest do
+  use ExUnit.Case, async: true
+  import ExUnit.CaptureIO
+
+  setup do
+    # if setup doesn't need to return anything then
+    # the keyword list returned here is merged with the context in the tests
+    {:ok, [eoin: "hi", age: 37]}
+  end
+  test "tautology", context do
+    IO.inspect context
+    # %{async: true,
+    #   case: SmokeTest,
+    #   file: "/Users/eoinkelly/Desktop/exerprog1.exs",
+    #   line: 22,
+    #   test: :"test tautology"}
+    assert true
+  end
+end
+

@@ -1,7 +1,7 @@
 # Attributes
 # ##########
 
-# * are the equivalent of class constants in ruby
+# * have a similar usage to constants in ruby
 # * Their values can be changed
 #     * allows for @doc to be used to document methods
 # * are metadata

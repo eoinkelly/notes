@@ -1,4 +1,4 @@
-# These examples from chapte 7
+# These examples from chapter 7
 
 # [head | tail] can be used to construct a list
 # [head | tail] can be used to split a list

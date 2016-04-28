@@ -12,22 +12,52 @@ When a `.beam` file is loaded into the VM it is transformed:
 * some instructions are merged together into "super instructions" for efficiency
 * some instructions are replaced e.g. addition replaced with increment
 
-It is this "transformed representation" that is run. You can peak at the transformed representation by "disassembling" the loaded module.
+It is this "transformed representation" that is run. You can peek at the
+transformed representation by "disassembling" the loaded module.
 
 ```
+# Pipeline from elixir code to the binary data actually run by the erlang VM
+
+{1: elixir (.ex) file}
+    |
+    |
+[elixir compiler]
+    |
+    |
+{2: erlang assembly (.S) file}
+    |
+    |
+[erlang compiler (maybe?)]
+    |
+    |
+{3: erlang bytecode (.beam) file}
+    |
+    |
+[BEAM Optimizer]
+    |
+    |
+{4: transformed represntation (.dis) file}
+```
+
+The "erlang abstract format" is in there somewhere ???
+
+```
+# {1} edit simple.ex in editor
+
+# {1} -> {2} -> {3}
+# create Elixir.Simple.beam
 elixirc simple.ex
-# creates Elixir.Simple.beam
 
-# peek at the file
-objdump -C Elixix.Simple.beam
-
-ERL_COMPILER_OPTIONS="'S'" elixirc simple.ex
+# {1} -> {2}
 # creates simple.ex.S
+ERL_COMPILER_OPTIONS="'S'" elixirc simple.ex
 
+%% {1} -> {2} -> {3}
 %% compile an elixir file
 iex> c("simple.ex")
 
 %% disassemble it
+%% {3} -> {4}
 iex> :erts_debug.df(Simple)
 # creates Elixir.Simple.dis
 ```
@@ -55,12 +85,12 @@ Move instructions in disassembly seem to be of the form `move src dst`
 
 Things I noticed in the disassembly
 
-* module names and
-    * `defmodule Simple` becomes `Elixir.simple`
-    * are atoms even if they have `.` e.g. `'Elixir.Simple'`
+* module name
+    * becomes a single atom even if it has `.` e.g. `Elixir.Simple` becomes atom `'Elixir.Simple'`
+    * are prefixed with the `Elixir` namespace e.g. `defmodule Simple` becomes `Elixir.simple`
 * each module gets its own implementation of `module_info/1` that wraps around
   the built-in erlang `erlang:get_module_info/2`
-* function name are atoms
+* function names are atoms
 
 ## BEAM architecture
 
@@ -94,7 +124,7 @@ instruction from the previous.
 =========================================================================
 | R0 - R255      | general purpose             | x(n)
 | FR0 - FR15     | floating point operations   | fr(n)
-| tmpA, tmpB     | temporoary registers        | not visible in code
+| tmpA, tmpB     | temporary registers         | not visible in code
 | stack slots    | local variables             | y(n)
 
 The BEAM is strongly typed - it has a bunch of instructions for type checking:
@@ -106,22 +136,20 @@ The BEAM is strongly typed - it has a bunch of instructions for type checking:
 ## Elixir on the BEAM
 
 * Elixir compiles into BEAM byte code (via Erlang Abstract Format).
-All Elixir modules start with the Elixir. prefix followed by the regular Elixir name.
+* All Elixir modules start with the Elixir. prefix followed by the regular Elixir name.
 
 To invoke an elixir module from erlang
 
 ```erlang
-
 'Elixir.SomeModule':some_func(Arg1).
 ```
 
-* Elixir is structured similar to Erlang’s OTP.
+* Elixir itself is structured similar to Erlang’s OTP.
 * It is divided into applications that are placed inside the lib directory
-
 
 ## Erlang compliler
 
-* If you pass `debug_info` to the rlang compliler it will include that debug
+* If you pass `debug_info` to the erlang compliler it will include that debug
   info in the form of "abstract" code.
 * Erlang debugging tools like
     * Debugger
@@ -132,11 +160,17 @@ To invoke an elixir module from erlang
   debuggable builds to clients.
 
 You can pass
+
 * output of parser step via `'P'` option
 * output after *all* sources transfromations via `'E'` option
 * output assembler code via `'S'` option
 
+> Elixir also brings a new underlying AST to the table, instead of the Erlang
+> AST where everything form has its own representation, the Elixir AST has a
+> far more uniform representation, which makes meta-programming far easier.
 
-> Elixir also brings a new underlying AST to the table, instead of the Erlang AST where everything form has its own representation, the Elixir AST has a far more uniform representation, which makes meta-programming far easier.
+NB: The elixir AST is not the same as the erlang one!
 
-> variables can be re-bound in sequences. This is actually ok, the resulting forms can still be normalized into a static-single-assignment (SSA) form.
+> In elixir variables can be re-bound in sequences. This is actually ok, the
+> resulting forms can still be normalized into a static-single-assignment (SSA)
+> form.

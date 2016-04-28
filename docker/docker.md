@@ -59,7 +59,7 @@ docker-machine env default
 # notice no docker variables in the shell environment
 env | grep DOCKER
 
-eval "$(docker-machine env default)"
+eval $(docker-machine env default)
 
 # notice the new variables in the enviornment
 env | grep DOCKER
@@ -72,103 +72,31 @@ docker ps # show running containers
 docker ps -a # show running and exited containers
 ```
 
-# How docker works
-
-TODO - dig into the linux kernel features
-
-# docker tools
+# 8 Docker tools
 
 1. docker engine
     * runs on linux
-1. docker client
-    * runs on mac
+2. docker client
+    * runs on mac/windows/linux
     * in docker-toolbox
-    * under docker github org
-1. docker engine
+3. docker engine
     * in docker-toolbox
-    * under docker github org
-1. docker-machine
+4. docker-machine
     * in docker-toolbox
-    * under docker github org
-1. docker-swarm
+5. docker-swarm
     * in docker-toolbox
-    * under docker github org
-1. docker-compose (formerly fig)
+6. docker-compose (formerly fig)
     * in docker-toolbox
-    * under docker github org
-1. Kitematic
+7. Kitematic
     * in docker-toolbox
-    * Under kitematic org on github
-1. docker-registry
-    * under docker github org
+8. docker-registry
     * NOT in toolbox
 
-# Architecture
-
-* https://docs.docker.com/introduction/understanding-docker/
-
-* docker is a client-server architecture - docker client talks to
-  docker-daemon (server) on a linux box somewhere
-* client and serve communicate via RESTful API
-
-# docker image
-
-* a read-only template for building a containe
-* consists of a number of "layers"
-* uses a "union filesystem" to combine layers into a single image
-* when you build an image you are creating a collection of layers.
-  These then get pushed around to CI and production
-* When you edit the app and "re-build" you are just adding a new layer
-  and only that new layer has to be pushed to CI and production making
-  deployments fast
-* each instruction in Dockerfile creates a new layer in the image
-
-An app image is built on top of a "base image" which usually represents a particular technology stack e.g. ruby or python
-
-# docker container
-
-* A container consists of
-    1. an operating system,
-    2. user-added files
-    3. meta-data
-* NB: when docker runs a container it adds a "read/write layer" to the top of
-  the image!
-
-# kernel features
-
-Docker uses certain features of the linux kernel
-
-1. namespaces
-    * linux kernel provides separate namespaces for things like
-        * pids
-        * network interfaces
-        * mount points
-        * IPC
-2. control groups
-    * allows docker to share hardware resources between containers and
-      optionally setup limits on those
-3. union filesystem
-    * there are a no. of options:
-        * aufs
-        * btrfs
-        * vfs
-        * DeviceMapper
-
-Docker combines the features above into a wrapper called a "container format"
-
-There are multiple container formats
-
-* libcontainer (docker default)
-* BSD jail
-* LXC (traditional linux container)
-* Solaris zone
-
-# docker client
+# 2. docker client
 
 * runs on my mac
 * talks to a _docker daemon_ on a _docker host_ - commands are
   actually executed on the docker-host
-* QUESTION: presume it talks to the docker daemon on the docker-host??/
 
 ```
 # the docker command that starts docker on the boot2docker ISO
@@ -185,23 +113,32 @@ There are multiple container formats
 --tlskey=/var/lib/boot2docker/server-key.pem # path to TLS key file
 -s aufs
 ```
+s
+Task: SSH to the boot2docker VM:
 
-to SSH to the boot2docker VM use
+* Option: `docker-machine ssh default`
+* Option:
+    ```
+    env | grep DOCKER # to see IP of VM
+    ssh docker@<IP OF VM>
+    # password is: tcuser
+    ```
 
-```
-env | grep DOCKER # to see IP of VM
-ssh docker@<IP OF VM>
-# password is: tcuser
-```
+* The Mac OS X and Windows `docker` binaries are clients only. You cannot use
+them to run the docker daemon
 
-* The Mac OS X and Windows `docker` binaries are only clients. You cannot use it to run the docker daemon
-:
 # docker-machine
 
-* It automatically creates hosts, installs Docker on them, then configures the
-  docker client to talk to them.
-* A “machine” is the combination of a Docker host and a configured client
+* you can use docker-machine to automate creating VMs with docker pre-configured  on AWS, digital ocean etc.
+    * each cloud provider is a "driver" from `docker-machine` pov
+    * => i can use exactly the same workflow to setup a VM in the cloude and a virtualbox VM on my local box!
+* available drivers
+    * cloud: aws, azure, digitalocean
+    * local: virtualbox, hyper-v, vmware fusion
+* The `default` machine name is special - if you don't specify a machine name docker-machine will assume it should use the `default` machine
 
+* you can add a machien that is just a URL (not driver involved)
+    * you don't get the provisioning magic but you avoid having to type the full url when issuing commands
 
 When you run `docker ps -a` you see all the "containers" that have been defined
 on a particular "docker host" (in my case a small linux VM).
@@ -211,4 +148,38 @@ on a particular "docker host" (in my case a small linux VM).
   contain its logs etc.
 * containers also know which image they are created from
 
-Remove old containers via kitematic or `docker
+To remove old containers
+
+* Option 1: via kitematic
+* Option 2: `docker ???`
+
+Allows you to upgrade a machine
+
+```
+# docker-machine upgrade default
+# basically does:
+Copying /Users/eoinkelly/.docker/machine/cache/boot2docker.iso to /Users/eoinkelly/.docker/machine/machines/default/boot2docker.iso...
+```
+
+
+### base images
+
+* docker-machine supports a bunch of linux distro base images but its defaults are
+
+* boot2docker for local installs (virtualbox, hyper-v vmware fusino etc.)
+* the latest Ubuntu LTS that the provider supports (currently ubuntu 12.04+) for cloud installs (AWS, digitalocean etc.)
+
+
+### How is docker-machine vs chef
+
+* both allow me to provision a machine
+* docker-machine is much more simplistic - it lets me install a base image and setup docker
+    * ??? can you install other software on it via docker-machine ???
+* in theory if the vm just has a base image + docker server (i.e. all
+interesting software is in containers) then there shouldn't be much for chef to
+do
+
+* It automatically creates hosts, installs Docker on them, then configures the
+  docker client to talk to them.
+* A “machine” is the combination of a Docker host and a configured client
+

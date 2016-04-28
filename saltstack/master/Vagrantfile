@@ -1,0 +1,35 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+VAGRANTFILE_API_VERSION = "2"
+
+provisioning_script = "locale-gen en_NZ.UTF-8"
+# locale-gen en_NZ.UTF-8 && apt-get update && apt-get upgrade &&  apt-get autoremove
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  config.vm.box = "ubuntu/trusty64"
+  # config.vm.network "forwarded_port", guest: 3000, host: 3001
+
+  config.vm.provider "virtualbox" do |vb|
+    # vb.gui = true
+    vb.name = "Saltstack Master #{Time.now}"
+    vb.memory = 1024
+  end
+
+  # Speed up provisioning by turning on caching of:
+  #
+  #   * downloaded apt packages
+  #   * ruby gems used by chef
+  #   * chef DK deb
+  #
+  # Default cache location: ~/.vagrant.d/cache (on host)
+  #
+  config.cache.scope = :box if Vagrant.has_plugin?("vagrant-cachier")
+
+  # config.vm.provision "shell", path: "provisioner/wrapper.sh"
+  config.vm.provision "shell" do |s|
+    s.inline = provisioning_script
+  end
+
+  config.berkshelf.enabled = false
+end

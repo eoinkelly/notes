@@ -1,6 +1,9 @@
 # Keyword lists
 # #############
 
+# A keyword is a list of 2-element tuples where the first element of the tuple is
+# an atom and the second element can be any value.
+
 # A common pattern is a list of 2-tuple of {atom, something}
 
 name_values_1 = [{:name, "Eoin"}, {:age, 36}]
