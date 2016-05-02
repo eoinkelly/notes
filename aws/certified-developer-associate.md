@@ -959,8 +959,12 @@ Creating a distribution
 
 ## DynamoDB
 
+    Hint: DynamoDB is the most important topic on the exam
+
 * supports document and key-value stores
 * "single digit millisecond latency
+* is a fully managed database
+    * you can't ssh into the VM it runs on
 * stored on SSD
 * stored across 3 "geographically distinct" data centers
     * writes are written frist to one location and the replicated to the other two
@@ -982,13 +986,6 @@ Creating a distribution
         2. storage
             * first 25GB per month is free
             * storage is $0.25/GB/month after that
-
-
-Units
-
-* DynamoDB measures read and write capacity and usage in "units"
-    TODO: be clear on what these are
-
 
 Keys
 
@@ -1014,11 +1011,11 @@ Indexes
 Local secondary index
     * The index has the same partition key, different sort key
     * Can ONLY be created when creating a table - it cannot be removed or modified later
-	* Can only have up to 5 LSIs on each table
+    * Can only have up to 5 LSIs on each table
 Global secondary index
     * Can be created at table creation or added later
     * The index has a different partition key and a different sort key
-	* Can only have up to 5 GSIs on each table
+    * Can only have up to 5 GSIs on each table
 
 Streams
 
@@ -1034,20 +1031,19 @@ Used to capture any modification to the table
 * streams store data for a maximum of 24hrs
 * can configure a trigger that tirggers a lambda function which can do whatever with it
 
-Query vs Scan
-
 Query operation
 
 * finds items in the table using only the primary key attribute values
-	* you must provide a partition attribute name and a distinct value to search for
+    * you must provide a partition attribute name and a distinct value to search for
 * can optionally provide a sort key attribute name and value and use comparison operator to refine the search
 * by default, query returns ALL the data attributes for items with the specified primary keys
 * can use the _ProjectionExpression_ parameter so that the Query only returns the attributes you provide
 * query results are always sorted by the sort key
-	* sort order is numeric if sort key is a number
-	* sort order is ASCII character code
-	* default sort order is asending
-	* can provide `ScanIndexForward` paramter to `false` to get descending order
+    * sort order is numeric if sort key is a number
+    * sort order is ASCII character code
+    * default sort order is asending
+    * can provide `ScanIndexForward` paramter to `false` to get descending order
+        * note that despite the name, this parameter is only used on queries
 * by Default is eventually consistent
 
 Scan operation
@@ -1061,3 +1057,254 @@ Scan operation
 Table design tips
 
 * for quick response times design tables so you can use Query, Get, BatchGetItem APIs insteand of scan
+
+Calculting provisioned throughput (an exam topic)
+
+* DynamoDB measures read and write capacity and usage in "units"
+
+Things you need to know before you calculate
+
+1. How large is each item (aka "row")in the table in KB?
+2. How many items per second will you need to read?
+
+* Units of read provisioned throughput
+    * All item reads are rounded up in increments of 4KB e.g. 1KB item => 4KB, 5KB item => 8 KB
+    * Eventually consistent reads (default) consist of 2 reads per second
+    * Strongly consistent reads are 1 read per second
+    * a "unit" is a 4KB item read every 500 mS for eventually consistent reads
+    * a "unit" is a 4KB item read every 1 S for strongly consistent reads
+* Units of write provisioned throughput
+    * all writes are 1KB
+    * all writes consist of 1 write per second
+    * a write "unit" is a single 1KB write each second
+
+The read throughput formula
+
+```
+(read_size_rounded_to_nearest_4KB / 4KB) * num_of_items = read_throughput_in_units
+
+Then divide by 2 if eventually consistent
+```
+Remember: an "item" is a "row" in the table
+
+Write throughput formula
+
+```
+num_of_items * item_size_in_KB = write_throughput_in_units
+```
+
+If you exceed your read or write provisioned thorughput capacity for
+
+1. a table
+2. a global secondary index
+
+you will get a HTTP 400
+
+```
+HTTP 400 ProvisionedThroughputExceededException
+```
+
+Web identity providers with DynamoDB
+
+* you can authenticate a user using any provider that provides OpenID connect e.g. Amazon, Facebook, Google
+
+1. User authenticates with the identity provider e.g. Facebook
+1. User is given a token by their identity provider
+1. Your code calls the `AssumeRoleWithWebIdentity` API passing
+    * the identity provider token
+    * the ARN for the IAM role that should be assumed
+1. AWS STS (security token service) issues you with temporary security credentials
+    * response contains
+        1. (access key ID, secret access key, session token)
+        2. expiration (time limit)
+            * access is valid from 15mins to 1hr (defaults to 1hr)
+        3. AssumeRoleID
+        4. SubjectFromWebIdentityToken
+
+Conditional writes
+
+write new value to the DB if the old value is what I expect it to be
+* if two processes try to write at the same time then one will fail because the value will not have the expected "old value"
+* conditional writes are idempotent!
+    * it doesn't matter how many times you send the write req, DynamoDB will only update it once
+
+Atomic counters
+
+* supports atomic counters
+    * you use the `UpdateItem` API request to increment/decrement a value without interfering with other writes
+    * these are "increment the value no matter what its current value is"
+    * it's an update you want to do no matter what the current value is
+    * atomic counters updates are NOT idempotent
+* all write requests are applied in the order they are received
+
+Batch operations
+
+* can read multiple items in one request with `BatchGetItem` request
+    * note the API name is singular (this comes up in exam)
+* a single batch get can read up to 1MB of data and include up to 100 items
+* a single batch get can read items from multiple tables
+
+# SQS
+
+* was the first AWS service launched
+* a web service that provides a message queue that can store messages
+* allows for distributed applications where some service(s) create messages and others consume/process them
+* a queue is a temporory repository for messages awaiting processing
+* queues are "fail safe" ???
+* messages can be up to 256KB (this is an exam question)
+* queue acts a a buffer between producer and consumer
+* allows producer and consumer to be only intermittantly connected to the network
+* allows producer to create messages more quickly than the consumer can process them
+* sqs ensures delivery of the message at least once
+* supports multiple readers and writers working on the same queue
+* SQS does NOT garuantee first-in first-out delivery of messages
+    * if you need to enforce order you must include some sequencing info in the message and have your consumer re-order messages as it receives them
+* SQS queues never push messages - it is always pulled by the consumer e..g your EC2 instance must poll for messages
+
+
+1. producer service sends a message to the queue
+1. consumer service pulls the messsage from the queue
+1. the "visibility timeout clock" starts once the message has been pulled by a consumer
+
+1. consumer must finish its work and delete the message from the queue within the visibility timeout for the message to be considered "delivered"
+
+* SQS can do autoscaling based on queue length
+* you should design your system so that messages are idempotent i.e. it won't matter if they are processed more than once
+
+
+* pricing
+    * is charged in "requests" not in "messages"
+    * each request can have up to 10 messages or 256KB data
+    * first 1 million SQS requests each month are free
+    * $0.50 per 1 million SQS request per month after that
+
+* each 64KB "chunk" of payload is billed as 1 request e.g. a single API call with a 256KB payload is billed as 4 requests
+
+exam tips
+
+* SQS messages can be delivered multiple times and in any order
+* you can make priorities by having multiple queues that your app pulls from
+* SQS default visibility timeout is 30 sec by default (max is 12hrs)
+* while processing a message (as a consumer) you can give yourself more time by sending the `ChangeMessageVisibility` API call and SQS will restart the timer with the new value
+* Short polling returns immediately even if the queue is empty
+* Long polling will return immediately if there are messages but will wait up to its timeout for a message to turn up if the queue is empty
+    * Maximum long poll timeout is 20 sec
+    * Long polling lets you save money on request
+
+* Fanning out
+    1. Create an SNS topic
+    1. create and subscribe multiple SQS queues to the topic
+    1. then when a message is sent to the SNS topic it will be passed on to each subscribed SQS queue
+
+# SNS Simple Notification Service
+
+* allows you to deliver messages from the cloud to "subscribers" and other applications
+* instantaneous push based messages
+    * this is a key difference between SNS and SQS - SNS pushes messages, SQS is pull only
+* the data format of SNS is JSON
+* is a pub-sub service
+* pay as you go pricing
+* will push messages to the following endpoint types
+    1. Apple devices
+    2. Android devices
+    3. Amazon fire devices
+    4. Baidu devices in china
+    5. SQS (you can use SNS to inject messages into SQS)
+    6. Text messages
+    7. Email
+    8. Any HTTP endpoint
+* protocols (exam Q)
+    1. Email
+    2. Email-JSON
+    3. Application
+    4. Amazon SQS
+    5. HTTP
+    6. HTTPS
+* messages can be customised for each protocol (exam Q)
+* All messages are stored redundantly across many zones
+* topics
+    * allow you to group multiple recipients
+    * a message sent to a topic is delivered to all subscribers to the topic
+    * a topic can deliver to multiple endpoint types e.g. you can put all your iOS and Android users in the same topic
+
+* pricing
+    * $0.50 per 1 million Amazon SNS requests
+    * $0.06 per 100k deliveries over HTTP
+    * $0.75 per 100 deliveries over SMS (NOTE: 100, not 100k here!)
+    * $2.00 per 100k deliveries over Email
+
+# SWF Simple Workflow Service
+
+* lets you coordinate work across different application components
+* Amazon use SWF to fulfil orders from Amazon.com
+* task
+    * a task is the invocation of a processing step
+    * a task can be performed by
+        1. executable code
+        1. web service calls
+        1. humans
+        1. scripts
+* work is split into "workers" and "deciders"
+* worker
+    * a program that interacts with SWF to get tasks, processes the task and returns a result
+    * can run on AWS cloud or on machines behind firewalls
+* decider
+    * a program that controls the coordination of tasks i.e. their ordering, concurrency, sheduling according to the application logic
+    * can run on AWS cloud or on machines behind firewalls
+* SWF brokers the interactions between workers and deciders
+    * since SWF keeps track of applicaiton state durably the workers and deciders don't have to know about the application state so they can run independently and scale more easily
+* SWF ensures a task is assigned only once and never duplicated
+    * this is a key difference between SQS and SWF (also an exam Q)
+* Domain
+    * scopes your workflow, activity types and the workflow execution
+    * isolates a set of types, task-lists and executions from others in the same account
+    * can register a domain via the console or via the `RegisterDomain` API
+* maximum workflow is 1 year and is measured in seconds (exam Q)
+* SWF vs SQS
+    * SWF is task oriented, SQS is message oriented
+    * SWF assigns a task only once, SQS may deliver message multiple times
+    * SWF keeps track of all the tasks and events in an application, SQS you have to implement your own appliation tracking logic
+* exam tips
+    * if the question involves humans you need SWF not SQS
+    * if it might take longer than 12hrs to cmplete you need SWF not SQS
+
+# Cloud formation
+
+* lets you script creating infrastructure aka create "virtual data centers"
+* using cloudformation is free but you do pay for the resources that it creates (exam Q)
+* CF templates are JSON documents (exam q)
+* CF templates
+    * JSON format
+    * can include function calls e.g. `value: { "fn::GetAtt": ["BackupLoadBalancer", "DNSName"] }
+* you can define "outputs" in the script which let you expose data to the user e.g. the URL of an S3 bucket, the DNS name of a load balancer etc.
+    * the "Fn::GetAtt" function is used to read attributes of the services you are setting up with the script for display in outputs (exam Q)
+* by default it will rollback (delete all provisioned resources) if there is an error in your script
+
+# Elastic Beanstalk
+
+* command line tools
+    * `aws elasticbeanstalk`
+        * the general AWS-CLI tool has some commands for EB
+    * `eb help`
+        * there is a specific elastic beanstalk CLI tool (`brew install aws-elasticbeanstalk`)
+* very similar to Heroku
+* you pick a "platform" aka application type and
+    1. upload a zip file of your code
+    2. upload your code to S3
+* platforms (exam Q)
+    * Node
+    * Go
+    * Ruby
+    * Python
+    * PHP
+    * Tomcat
+    * IIS
+    * Java
+    * Docker
+    * Docker with multiple containers
+    * Docker + Go
+    * Docker + Glassfish (Oracle OSS J2EE appliation server)
+    * Docker + Python
+* you don't pay for EB but you do pay for the resources it creates (exam Q)
+
+# Virtual Private Cloud (VPC)
