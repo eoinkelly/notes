@@ -1,6 +1,5 @@
 # Rust
 
-
 ```rust
 fn main() {
     // run a macro
@@ -8,11 +7,6 @@ fn main() {
     // "hi there" string is statically allocated
 }
 ```
-
-Statically allocated: ???
-
-
-
 
 # How do I implement a "class" in rust?
 
@@ -121,7 +115,6 @@ QUESTION: what is the difference between them?
 * Can I override methods defined in a previous `impl` block?
     * No - compiler error.
 
-
 # How can I implement ruby block syntax in rust?
 
 ```ruby
@@ -173,7 +166,7 @@ TODO: finish this
     * defines a single module, the name of which is set from _outside_ the file.
     * the name can be set by
         1. the crate the file is in
-        2. an explicit `mod_item` (???) in a referencing source fil
+        2. an explicit `mod_item` (???) in a referencing source file
 * each crate contains a heirarchy of modules
 
     crate
@@ -224,6 +217,7 @@ mod alpha {
 * binds an extenal crate to the given identifier
 * remember that an external crate is a separate compiled unit - a library file
     * Q: are they statically/dynamically linked by default?
+
 ```rust
 extern crate foo as foo;
 extern crate foo; // shorthand for line above
@@ -231,7 +225,7 @@ extern crate foo; // shorthand for line above
 extern crate foo as bar; // can change name of binding
 ```
 
-#### `use`
+#### use
 
 * shortens paths so you have less typing to do
 * NB: does NOT declare linkage depenendency with other crates!!! (extern crate does this)
@@ -399,6 +393,7 @@ mutation = changes to objects that cause their memory to be freed e.g. adding el
     * aliasing is fine if everything is static
 
 ## 3 Patterns
+
 Rust has 3 patterns of memory management
 
 ### 1. Ownership
@@ -416,6 +411,12 @@ Rust has 3 patterns of memory management
 // I expect to get ownership of T to use and do with as I please
 fn foo(v: T) {
 }
+
+fn main() {
+    // ...
+    foo(thing); // whether an arg is passing ownership or reference, mutable or not is clear from call site too
+    // ...
+}
 ```
 
 ### 2. Shared borrow
@@ -431,18 +432,30 @@ fn foo(v: T) {
 // I expect to get a immutable copy of the refernce but I do not take ownership
 fn foo(v: &T) {
 }
+
+fn main() {
+    // ...
+    foo(&thing); // whether an arg is passing ownership or reference, mutable or not is clear from call site too
+    // ...
+}
 ```
 
 ### 3. Mutable borrow
 
 * Not giving away ownership, just giving away access to the memory for a little while
 * The memory can be changed by the thing I am giving the reference to
-* It can only be held by one person at a time - it is always passing like a token
+* It can only be held by one thing at a time - it is always passing like a token
 * eventually it will make its way back to the original owner
 * In this case we have mutation but not aliasing - only one thing at a time has the "magic token" that allows mutation
 
 ```rust
 fn foo(v: &mut T) {
+}
+
+fn main() {
+    // ...
+    foo(&mut thing); // whether an arg is passing ownership or reference, mutable or not is clear from call site too
+    // ...
 }
 ```
 

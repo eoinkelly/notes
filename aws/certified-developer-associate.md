@@ -1308,3 +1308,153 @@ exam tips
 * you don't pay for EB but you do pay for the resources it creates (exam Q)
 
 # Virtual Private Cloud (VPC)
+
+* most important thing in the exam
+* need to be able to build a VPC from memory
+* by default you get a VPC based on region when you log in
+
+* VPC is a logically isolated section of the AWS cloud
+* you can
+    * create your own subnets
+    * launch instances into a particular subnet
+    * configure route tables between subnets
+    * create internet gateways and attach them to subnets
+    * choose your own IP ranges
+    * create subnet network access control lists (ACLs)
+    * create "instance security groups"
+* can create public facing subnets for web servers
+* can create appliaction servers and DB servers in private subnets
+* can create a hardware VPN connection between your VPC and your existing corporate datacenter
+    * allows you to extend your data center with your VPC
+    * this is called "hybrid cloud"
+
+* default VPC
+    * user friendly
+    * allows you to immediately deploy instances
+    * all subnets have an internet gateway attached
+    * each EC2 instance has a public and private IP address
+    * WARNING: if you delete the default VPC the only way to get it back is to contact AWS
+        * you can just change region
+    * I seem to have a different default VPC configured in each AWS region
+* VPC peering
+    * can connect VPCs to each other via a direct network route using private IP addresses
+    * instances behave as if they are on the same private network
+    * You can peer VPCs with other AWS accounts
+    * You can peer VPCs with other VPCs in the same account
+    * peering is always done in a star configuraiton (with 4 points)
+    * NB: you cannot do transative peering
+
+* By default you can have up to 5 VPCs in each region (exam Q)
+    * I assume you can contact support for more ???
+
+Aside: CIDR = classless inter domain routing
+
+* Creating a VPC
+    * options
+        * name - add a name tag to the VPC
+        * CIDR block - the IP range to assign to this VPC e.g. 10.0.0.0/16, 192.168.0.0/16
+            * mask sizes must be between /16 (65536 hosts) and /28 (8 hosts)
+        * Tenancy
+            * Dedicated
+                * lets you specify that instances in this VM should always use
+                single tenant dedicated hardware no matter what their launch
+                options are configured as
+                * a lot more expensive
+            * Default
+                * Your VM instances use whatevery tenancy you choose when launching them
+    * creating a new VPC also creates
+        * creates a new route table called "main"
+            * this route table seems to only allow local traffic between instances in its CIDR block
+        * creates a new network ACL
+        * re-uses the existing DHCP options set
+    * Aside: you can create a "flow log" which will log IP traffic to cloudwatch from your various VPCs network interfaces
+* subnets
+    * subnets area ALWAYS in a single availability zone (exam Q)
+    * subnets can only be associated with one route table at a time
+    * when you create a subnet you can choose which AZ in the region you want it to be in
+        * but even if you don't, AWS will choose one for you
+* You can only have ONE internet gateway per VPC (important exam Q)
+* When you create an internet gateway it is not attached by default
+
+To make a subnet be publically accessible
+
+1. create a new route table and add a route that will allow all traffic from attached subnets to a chosen IGW
+    * target: the internet gateway of your choice
+    * source: 0.0.0.0/0
+2. Associate the subnet with the route table
+
+
+
+A "security group" can stretch across different AZs but a subnet cannot (exam Q)
+
+EC2 instances source/destination check (this is important exam Q)
+
+* by defaults EC2 instances have a "source/destination check" enabled
+* this checks that the instance is either the source or destination of IP packets that flow through it i.e. it prevents it from being a NAT
+* You need to disable this check via _Instance settings -> Networking_ if you are setting up a NAT instance
+* comes up in exam giving you a scenario where your nat should work but doesnt buecause of source/destination check
+
+He called the instance with the public IP that we ssh'd into to then ssh into the private instance a "bastian host"
+
+
+Network Access Control Lists
+
+* act a bit like a firewall
+* apply rules to a whole subnet
+* overrides rules from a security group
+* Security groups act like a firewall at the instance level whereas NACLs are an additional layer of security that act at the subnet level
+* an ACL is
+    * a numbered list of rules
+    * rules are evaluated in order starting with lowest numbered rule (exam Q)
+    * determines whether traffic is allowed in or out of any subnet associated with the ACL
+    * highest number is 32766
+    * suggest start with rules which are multiples of 100 to allow gaps for editing
+    * each VPC comes with a modifiable default ACL
+    * default ACL allows all inbound and outbound traffic
+    * custom ACL start as fully closed (permits no traffic) by default
+    * each subnet must have only one ACL
+        * if you deassociate a custom NACL with a subnet the subnet will automatically be put back in the default NACL
+    * each NACL can have 0-N subnets
+    * each NACL must live in a VPC (they cannot span VPCs)
+    * ACLs are stateless!
+        * e.g. they can't allow a response in based on some previous request out
+    * each subnet MUST be associated with a ACL
+        * i fyou don't explicitly associate an ACL the default one will be used
+
+QUESTION: how do ACL and security group interact
+
+
+## Shared responsibility model
+
+* Aside: amazon use Xen as their hypervisor
+* Aside: Amazon include RDS in their "container services"
+
+* Amazon is responsible for the lower levels and you (cstomer) are responsibile for higher level
+* Amazon defines three levels of shared responsibility
+    1. infrastructure services e.g EC2
+    2. container services e.g. RDS
+    3. abstracted services e.g. S3, lambda
+
+## Exam
+
+* 80 minutes
+* 55 questions
+* $150 USD
+* be 15 mins early
+* register online beforehand and give the accessor the code
+* need to provide two forms of ID (one must be govt issued)
+* exam rescheduling within 72hrs will incur a penalty (normally 50% of exam fee)
+* exam pass mark is not published but can change (is approx 65%)
+
+
+## misc exam q
+
+It is possible to transfer a reserved instance from one Availability Zone to another. = TRUE
+Amazon S3 buckets in all other regions (other than US Standard) provide read-after-write consistency for PUTS of new objects. = TRUE
+    TODO: is there something odd about us-standard region for S3???
+You can have multiple SSL certificates (for multiple domain names) on a single Elastic Load Balancer. = TRUE
+Default region for all SDKs is US-East-1 (not US-West-1
+If you make an AMI public, this AMI is immediately available across all regions, by default. = FALSE
+
+
+

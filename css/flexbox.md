@@ -1,6 +1,10 @@
 # Flexbox
 
-https://css-tricks.com/snippets/css/a-guide-to-flexbox/
+Sources
+
+* https://css-tricks.com/snippets/css/a-guide-to-flexbox/
+* https://egghead.io/series/flexbox-fundamentals
+
 
 * lets you decouple source order from layout order
 * 3 syntaxes
@@ -34,3 +38,13 @@ https://css-tricks.com/snippets/css/a-guide-to-flexbox/
 1. align-self
 1. flex
 1. visibility
+
+
+* Don't use flexbox for overall page layout
+    * https://jakearchibald.com/2014/dont-use-flexbox-for-page-layout/
+        * browser renders content as it gets it
+        * if user is on slow connection then using flexbox will cause content to jump around when new content arrives
+        * "content dictates layout" with flexbox whereas "container dictates layout" in the grid specification
+* overall
+    * Flexbox is mostly here now and is great so use it if you can but don't use it for overall page layout
+
