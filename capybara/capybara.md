@@ -4,6 +4,8 @@
 
 * Capybara docs
 * http://robots.thoughtbot.com/write-reliable-asynchronous-integration-tests-with-capybara
+* https://robots.thoughtbot.com/automatically-wait-for-ajax-with-capybara
+* https://robots.thoughtbot.com/speed-up-javascript-capybara-specs-by-blacklisting-urls
 
 ## About
 
@@ -330,26 +332,31 @@ expect(has_css?(".active")).to be_false
 expect(page).not_to have_css(".active")
 ```
 
-## Matchers that it adds to RSpec
+## RSpec Matchers
 
 * These all express expectations about the state of the `page` object (instance of Capybara::Session)
 * They are smart enough to wait up to `default_wait_time` if the don't succeed the first time they try.
 * The are all convenience constructors for `HaveSelector.new(...stuff...)`
 * They are handy in cases where a particular element is on the page but its contents are loaded aysnchronously
 
-- become_closed(options = {})
-- have_button(locator, options = {})
-- have_checked_field(locator, options = {})
-- have_css(css, options = {})
-- have_field(locator, options = {})
-- have_link(locator, options = {})
-- have_select(locator, options = {})
-- have_selector(*args)
-- have_table(locator, options = {})
-- have_text(*args) (also: #have_content)
-- have_title(title, options = {})
-- have_unchecked_field(locator, options = {})
-- have_xpath(xpath, options = {})
+1. become_closed(options = {})
+2. have_button(locator, options = {})
+3. have_checked_field(locator, options = {})
+4. have_css(css, options = {})
+5. have_field(locator, options = {})
+6. have_link(locator, options = {})
+7. have_select(locator, options = {})
+8. have_selector(*args)
+9. have_table(locator, options = {})
+10. have_text(*args) (also: #have_content)
+11. have_title(title, options = {})
+12. have_unchecked_field(locator, options = {})
+13. have_xpath(xpath, options = {})
+
+```ruby
+# examples of matcher usage
+expect(page).to have_css('.someclass', text: 'some content')
+```
 
 # random notes
 
@@ -371,3 +378,5 @@ etc. is that their locators are
 
 
 fill_in does use find() under the hood so it will magically wait
+
+#

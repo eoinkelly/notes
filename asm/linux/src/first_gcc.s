@@ -13,12 +13,12 @@
 	segment .text
 
 	;      tells assembler to make the "_start" symbol visible to the linker
-	global _start
+	global main
 
 	; _start is a label and by convention is the entry point to all linux
 	; executables
 
-_start:
+main:
 	; mov      rax, 1; 1 is syscall num for exit
 	; mov      rbx, 6; the return value
 	; int 0x80; execute the system call
