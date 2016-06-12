@@ -1,8 +1,6 @@
-
 # Experiment: get access to a protected resource on a doorkeeper rails app using just curl
 
-Following
-https://github.com/doorkeeper-gem/doorkeeper/wiki/authorization-flow
+Following <https://github.com/doorkeeper-gem/doorkeeper/wiki/authorization-flow>
 
 ## Step 1: register my "client" with the "authorization server" (doorkeeper)
 

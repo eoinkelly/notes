@@ -79,7 +79,7 @@ Pages in memory begin with addresses that the 3 right most bits are 0
 	* on linux the `_start` label is what the system will transfer control to when it loads the executable
 	* `_start` calls the C main function if you wrote you executable in C
 * making system calls
-	* 32bit asm had `int 0x80
+	* 32bit asm had `int 0x80`
 	* x64 added a dedicated (and faster) `syscall` instruction
 	* they do NOT use the same sys call numbers!
 	* numbers for int 0x80: <http://lxr.free-electrons.com/source/arch/x86/include/asm/unistd_32.h?v=3.0>
@@ -91,7 +91,7 @@ Pages in memory begin with addresses that the 3 right most bits are 0
 	1. CPU switches to kernel mode and the kernel does its thing
 	1. Gather return value in `rax`
 		* be careful to note that `rcx` and `r11` may have changed during the system call
-* So every system call is essentially loading 1-7 numbers into registers and giving up control to the kernel
+* So every system call is essentially loading 1-7 values  into registers and giving up control to the kernel
 * Parameters are passed in the order they appear in the function signature of the corresponding C wrapper function.
 * You may find syscall functions and their signatures in every Linux API documentation
 
@@ -178,27 +178,122 @@ Exercises
 
 ### How processor converts logical address to real physical address
 
-* x86-64 CPUs have "hardware mapping registers"
-* which can map different page sizes:
+```
+logical-address = page-number + offset-within-page # note page *number* not page *address*
+
+# the mapping (aided by harware registers)
+page-number -> physical offset in RAM # note offset-within-page is not mapped
+```
+
+* x86-64 CPUs have "hardware mapping registers" which can map different page sizes (depending on CPU):
     * 4 KB (used by linux kernel for most things)
+        * right-most 12 bits is offset within page
     * 2 MB (used by linux for kernel)
+        * right-most 21 bits is offset within page
     * 1 GB (only in recent CPUs)
+        * right-most 30 bits is offset within page
+* NOTE: only the _page number_ is mapped, not the offset within the page
+* The OS has special instructions for managing the hardware mapping registers
+* Take example of a 4 KB page at logical address `0x40_0000_2220`
+    1. interpret the logical address
+        * we need 4096 "offsets" so the right-most 12 bits is the offset `0x220`
+        * the rest of the bits are the logical "page number" `0x40_0000_2`
+    2. ask the hardware mapping registers to convert the logical page number into a physical page offset
 
-A process's POV of memory is 4GB of "logical addresses"
-Maximum length of a logical address is 48 bits not 64
 
-    logical-address = 36 bit page-number + 12 bit offset-within-page
+* On linux the logical address (including both page number and offset) is 48 bits long (see aside below for why)
 
-Take example of a 4 KB page at logical address `0x40_0000_2220`
+```
+0x0000 0040 0000 [code segment starts here(ish), is fixed size] # lowest address (TODO: why doesn't it start at 0x0)
 
-1. interpret the logical address
-    * we need 4096 "offsets" so the right-most 12 bits is the offset `0x220`
-    * the rest of the bits are the "page number" `0x40_0000_2`
+[data segment starts above code, is fixed size]
 
-2. ask the hardware mapping registers to convert page number into a physical
-   page offset
+[bss segment starts above data segment, is fixed size]
 
-The OS has special instructions for managing the hardware mapping registers
+[heap segment starts here, grows upwards]
+
+0x7FFF FFFF FFFF [stack starts here(ish), grows downwards] # highest address (47 bits all 1's), 131 TB
+```
+
+* Note: the heap is surprisingly not a heap data structure
+* Some linux systems use somewhat random stack, data, heap start addresses for security reasons
+    * i.e. the locations will change with each execution of a program
+* Files can be memory mapped into the heap so it may be that data and instructions are read from the heap in this case
+
+
+#### Aside: why does process begin at 0x400000 (exactly 4 MB)?
+
+* Good answer for why it does on windows: <https://blogs.msdn.microsoft.com/oldnewthing/20141003-00/?p=43923/>
+    * they do it to make context switching between windows 3.1 and win95 fast
+      and still do it for legacy reasons
+* but why does linux do it?
+* it seems the decision is made by the linker
+* it seems to be a convention rather than a rule - you can change it with a custom linker script
+* the explanation below makes sense but if page size is 4KB why is 4MB set aside?
+
+> most of the time, the various sections do not need to be placed in a specific
+> location, what matters more is the layout.
+>
+> 0x08048000 is the default address on which ld starts the first PT_LOAD
+> segment on Linux/x86. On Linux/amd64 the default is 0x400000 and you can change
+> the default by using a custom linker script.
+> To understand why .text is not mapped at address 0, keep in mind that the
+> NULL pointer is usually mapped to ((void *) 0) for convenience. It is useful,
+> then, that the zero page is mapped inaccessible to trap uses of NULL pointers.
+>
+> A lot of software has bugs in that it actually attempts to read or write
+> memory at address 0 without proper pointer validation. If you make the memory
+> area around address 0 inaccessible to the program, you can spot some of these
+> bugs (the program will crash or stop in the debugger). Also, since NULL is a
+> legal invalid pointer, there should be no data or code at that address (if
+> there is, you are unable to distinguish a pointer to it from NULL).
+>
+> On the x86 platform the memory around address 0 is typically made inaccessible
+> by means of virtual to physical address translation. The page tables get set up
+> in such a way that the entry for virtual address 0 is not backed up by a page
+> of physical memory, and a page is usually 4 KB in size and not just a handful
+> of bytes. That's why if you take out address 0, you take out addresses 1
+> through 4095 as well.
+>
+> http://stackoverflow.com/questions/14795164/why-do-linux-program-text-sections-start-at-0x0804800-and-stack-tops-start-at-0
+
+### Aside: Why are logical addresses only 48 bits not 64
+
+> From https://en.wikipedia.org/wiki/X86-64
+>
+> Although virtual addresses are 64 bits wide in 64-bit mode, current
+> implementations (and all chips known to be in the planning stages) do not allow
+> the entire virtual address space of 264 bytes (16 EB) to be used. This would be
+> approximately four billion times the size of virtual address space on 32-bit
+> machines. Most operating systems and applications will not need such a large
+> address space for the foreseeable future, so implementing such wide virtual
+> addresses would simply increase the complexity and cost of address translation
+> with no real benefit. AMD therefore decided that, in the first implementations
+> of the architecture, only the least significant 48 bits of a virtual address
+> would actually be used in address translation (page table lookup).[1](p120)
+>
+> In addition, the AMD specification requires that bits 48 through 63 of any
+> virtual address must be copies of bit 47 (in a manner akin to sign extension),
+> or the processor will raise an exception.[1](p131) Addresses complying with
+> this rule are referred to as "canonical form."[1](p130) Canonical form
+> addresses run from 0 through 00007FFF'FFFFFFFF, and from FFFF8000'00000000
+> through FFFFFFFF'FFFFFFFF, for a total of 256 TB of usable virtual address
+> space. This is still approximately 64,000 times the virtual address space on
+> 32-bit machines.
+>
+> This feature eases later scalability to true 64-bit addressing. Many operating
+> systems (including, but not limited to, the Windows NT family) take the
+> higher-addressed half of the address space (named kernel space) for themselves
+> and leave the lower-addressed half (user space) for application code, user mode
+> stacks, heaps, and other data regions.[20] The "canonical address" design
+> ensures that every AMD64 compliant implementation has, in effect, two memory
+> halves: the lower half starts at 00000000'00000000 and "grows upwards" as more
+> virtual address bits become available, while the higher half is "docked" to the
+> top of the address space and grows downwards. Also, enforcing the "canonical
+> form" of addresses by checking the unused address bits prevents their use by
+> the operating system in tagged pointers as flags, privilege markers, etc., as
+> such use could become problematic when the architecture is extended to
+> implement more virtual address bits.
 
 # Linux memory areas
 

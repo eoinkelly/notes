@@ -18,6 +18,10 @@
 * The structure in an archive file is the same as the directory structure for an application.
 * Archives are kept in `~/.mix/archives`
 * Currently my installation only contains `.ez` files for `phoenix_new` and `hex`
+* Mix will load all archives every time you run it so don't install too many
+    * elixir 1.3 will ass mix escripts so you can keep the no. of archives lower
+* Use `MIX_DEBUG=1` env var to make mix more verbose for debugging
+    * added in elixir 1.3
 
 IMPORANT: the syntax for getting help is `mix help COMMAND_NAME` not `mix COMMAND_NAME --help`
 

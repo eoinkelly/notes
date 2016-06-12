@@ -1,0 +1,180 @@
+# Mastering OAuth 2.0
+
+## Chapter 1
+
+* OAuth 2.0. is not backwards compatible with 1.0
+
+Authentication = validating whether a person or system is who they say the are
+
+Authorization = the _process_ of deciding what actions a particular user/system is allowed to perform.
+
+Use cases
+
+1. Delegate authority
+    * allow service A to access resources service B on behalf of a user
+    * protected resource: whatever resources service B is protecting for that user
+1. Federated identity
+    * Allow a user to login to service A with an account from service B
+    * protected resource: user account details on service A
+    * OAuth2 can't do this alone - it needs OpenID on top to provide authentication
+
+These are the same thing! A *client* is accessing a *protected resource* on behalf of a *user* in both cases
+
+**OAuth2 is an authorization protocol not an authentication protcol!**
+
+OpenID can provide an authentication layer on top of OAuth2
+
+OAuth2 solves the problem of
+
+* I want to give app A "limited" access to my data on service B
+    * limited = time limited and scope limited
+    * i don't want to give my service B creds to app A
+    * I definitely don't want app A to store my service B creds
+    * I want to be able to revoke access
+
+## Chapter 2
+
+* OAuth2 has 4 workflows overall but 2 main ones:
+    * each main workflow is designed for a particular kind of **client**
+
+1. Trusted client (confidential client)
+    *  can securely *store* secrets
+    * called a "confidential client" in spec
+    * example: a server
+2. Untrusted client (public client)
+    * cannot securely *store* secrets
+    * called a "public client" in spec
+    * example:
+        * JS app that runs in browser
+        * native mobile app
+            * even if it uses the native secure storage APIs of the device it probably shouldn't be trusted
+            * sometimes these are considered trusted (depends on use-case)
+
+In determining the difference between trusted and untrusted client, usually it
+comes down to the *storage* of secrets (SSL means secure transmission is
+easier)
+
+NOTE: OAuth2 depends on being over SSL
+
+Available Workflows
+
+1. Authorization code grant
+    * also known as "server side workflow" or "trusted client workflow"
+2. Implicit grant
+    * also known as "client side workflow" or "untrusted client workflow"
+3. Resource owner password credential grant
+    * not very common
+4. Client credentials grant
+    * not very common
+
+## Untrusted client using implicit grant workflow
+
+1. You ask GoodApp to show you a list of your contacts on Facebook
+1. GoodApp sends you to a Facebook.com URL. The URL contains metadata to let Facebook process it e.g.
+    * the client_id of GoodApp (so Facebook knows that it is GoodApp wants access to your stuff)
+    * scopes to tell Facebook *what* stuff you want from the user
+    * A "redirect URL" (tells Facebook which URL in GoodApp to send the result of the access request to)
+1. Facebook asks the user if they are ok with GoodApp having access to the requested stuff (we assume they say yes)
+1. Facebook sends a key (access token) to the GoodApp redirect URL
+1. GoodApp sends a request to Facebook for the contacts passing the key it received
+1. Facebook validates the key
+    * *how* this is done is not specified by OAuth2
+1. Facebook sends back the list of contacts
+
+
+Features of this flow
+
+* was explicitly designed for clients which can't store credentials securely
+* ++ backend server does not need to know how to do OAuth2.
+    * You still need a backend server to serve your app initially and also when
+      Facebook redirects to it but the backend server doesn't need to know about
+      OAuth.
+* -- less secure because client is considered untrusted
+* client cannot be trusted to store credentials or tokens so
+    * no refresh token available
+    * the access tokens (keys) have a short expiry
+
+Implementation tips
+
+* Try to limit access to read-only for untrusted clients
+
+## Aside: OAuth2 access tokens are bearer tokens
+
+* bearer token is a category of token that functions like a physical key
+* whoever has the token can access the resource - no questions asked
+
+## Chapter 3
+
+
+APPENDIX NOTES ARE COMPLETE
+
+# Comparing "resource owner password credentials" and "client credentials" grant types
+
+Both _resource owner password credentials_ grant and the _client credentials_
+grant work **very** similarly.
+
+The only difference between them is that _resource owner password credentials_
+grant sends a username and password as part of the request.
+
+## Appendix A: Resource owner password credentials grant
+
+* less secure because the user enters their password directly into the client app
+* useful for migrating existing clients who use HTTP basic/digest authentication
+* it is slightly more secure than those schemes because the password is only on the wire once and is exchanged for a token. Tokens are better because:
+    1. tokens expire
+    2. tokens can be scope limited
+
+Flow
+
+1. Client requests access token from the authorization server **token** endpoint (note: not authorization endpoint)
+    * The request includes parameters encoded in the `application/x-www-form-urlencoded` format
+        * `grant_type=password` (required)
+        * `scope` (optional)
+            * a space delmited, case sensitive set of strings that represent the requested access level
+    * The client authenticates itself to the server in this request by "some means" i.e. OAuth2 has nothing to say about how this happens. Common choices are
+        1. HTTP Basic auth
+        1. HTTP digest auth
+        1. Public/private key auth
+1. Authorization server responds with access token JSON
+    * response can also contain a refresh token, expires_in, scope similar to the token endpoint response during other grant types
+
+## Appendix B: Client credentials grant
+
+* this grant type focuses on getting an access token on behalf of an application not a user
+
+Flow
+
+1. Client requests access token from the authorization server **token** endpoint (note: not authorization endpoint)
+    * The request includes parameters encoded in the `application/x-www-form-urlencoded` format
+        * `grant_type=client_credentials` (required)
+        * `username` (required)
+        * `password` (required)
+        * `scope` (optional)
+            * a space delmited, case sensitive set of strings that represent the requested access level
+    * The client authenticates itself to the server in this request by "some means" i.e. OAuth2 has nothing to say about how this happens. Common choices are
+        1. HTTP Basic auth
+        1. HTTP digest auth
+        1. Public/private key auth
+1. Authorization server responds with access token JSON
+    * response can also contain a refresh token, expires_in, scope similar to the token endpoint response during other grant types
+
+This is basically an "oauth flavour" to standard keyed API access
+
+What are the advantages of this over using an API auth scheme that doesn't have the "oauth topping"
+
+* ++ this has the "OAuth" brand
+* ++ there is some documentation and shared understanding of
+    * endpoint to use
+    * request format
+    * success response format
+    * error response format
+    * if/how to refresh access
+* ++ this has support for scopes so an app can self-limit its own access
+* ++ there is a better chance that the client developer will have access to a lib in their chosen language that supports this flow
+
+Examples of APIs that use _Client credentials grant_
+
+* Vimeo
+    * uses this flow when you access publically available content
+* MS Azure
+    * allows you to use it to communicate between apps <https://msdn.microsoft.com/en-nz/library/azure/dn645543.aspx>
