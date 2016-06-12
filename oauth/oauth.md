@@ -785,15 +785,3 @@ See http://security.stackexchange.com/questions/44214/what-is-the-purpose-of-oau
     * Github is a good example of a popular OAuth 2.0 API
     * https://api.github.com/authorizations
 
-## OAuth in Ruby
-
-* In ruby there are `OAuth` an `OAuth2` gems but there are usually service
-  specific gems too.
-* Use `omniauth` gem if you just wnat to authenticate your users against some
-  other service.
-    * Use it to let your users auth against something else and then become users on your site.
-    * If you want to make use of that other site's API properly, use a gem specific to it
-    * Lots of community strategies available
-    * A strategy is a rack middleware so will work with anything that uses rack
-* Use `doorkeeper` if you need an OAuth2 authorization server implementation
-
