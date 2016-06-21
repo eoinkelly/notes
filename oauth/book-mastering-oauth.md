@@ -70,16 +70,16 @@ Available Workflows
 ## Untrusted client using implicit grant workflow
 
 1. You ask GoodApp to show you a list of your contacts on Facebook
-1. GoodApp sends you to a Facebook.com URL. The URL contains metadata to let Facebook process it e.g.
+2. GoodApp sends you to a Facebook.com URL. The URL contains metadata to let Facebook process it e.g.
     * the client_id of GoodApp (so Facebook knows that it is GoodApp wants access to your stuff)
     * scopes to tell Facebook *what* stuff you want from the user
-    * A "redirect URL" (tells Facebook which URL in GoodApp to send the result of the access request to)
-1. Facebook asks the user if they are ok with GoodApp having access to the requested stuff (we assume they say yes)
-1. Facebook sends a key (access token) to the GoodApp redirect URL
-1. GoodApp sends a request to Facebook for the contacts passing the key it received
-1. Facebook validates the key
+    * An **optional**  "redirect URI" (tells Facebook which URL in GoodApp to send the result of the access request to)
+3. Facebook asks the user if they are ok with GoodApp having access to the requested stuff (we assume they say yes)
+4. Facebook sends a key (access token) to the GoodApp redirect URL
+5. GoodApp sends a request to Facebook for the contacts passing the key it received
+6. Facebook validates the key
     * *how* this is done is not specified by OAuth2
-1. Facebook sends back the list of contacts
+7. Facebook sends back the list of contacts
 
 
 Features of this flow
@@ -97,6 +97,31 @@ Features of this flow
 Implementation tips
 
 * Try to limit access to read-only for untrusted clients
+
+### Trusted client using authorization grant workflow
+
+1. You ask GoodApp to show you a list of your contacts on Facebook
+2. GoodApp sends you to a Facebook.com URL. The URL contains metadata to let Facebook process it e.g.
+    * the client_id of GoodApp (so Facebook knows that it is GoodApp wants access to your stuff)
+    * scopes to tell Facebook *what* stuff you want from the user
+    * A "redirect URL" (tells Facebook which URL in GoodApp to send the result of the access request to)
+3. Facebook asks the user if they are ok with GoodApp having access to the requested stuff (we assume they say yes)
+4. Facebook sends a key (access token) to the GoodApp redirect URL (which is on the GoodApp server)
+5. GoodApp server sends a request to Facebook for the contacts passing the key it received
+6. Facebook validates the key
+    * *how* this is done is not specified by OAuth2
+7. Facebook sends back the list of contacts to the GoodApp server and it in turn presents you with some appropriate UI based on that
+
+Consequences
+
+* GoodApp server now has in its posession
+    1. A now-useless authorization grant code (they are single use and expire quickly when unused)
+    2. An access token which allows it to access exactly the set of data you permitted and has a set expiry
+    3. Potentially a refresh token that GoodApp server can use to renew its access token
+
+## Aside: OAuth2 authorization codes are "consumable"
+
+Authorization codes should be considered "consumable" i.e. they are single use and expire quickly if unused
 
 ## Aside: OAuth2 access tokens are bearer tokens
 

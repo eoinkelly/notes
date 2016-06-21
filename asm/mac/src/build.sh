@@ -10,5 +10,5 @@
 
 name=$1
 
-yasm -f elf64 -g dwarf2 -l "${name}/${name}.lst"  -o "tmp/${name}.o" "${name}/${name}.s"
+yasm -f macho64 -l "${name}/${name}.lst"  -o "tmp/${name}.o" "${name}/${name}.s"
 ld -o "bin/${name}" "tmp/${name}.o"

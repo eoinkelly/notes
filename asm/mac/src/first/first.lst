@@ -1,0 +1,21 @@
+     1                                 %line 1+1 first/first.s
+     2                                 
+     3                                 
+     4                                 [global start]
+     5                                 
+     6                                 
+     7                                 
+     8                                 
+     9                                 [section .data]
+    10 00000000 00                      bullshit db 0
+    11                                 
+    12                                 
+    13                                 
+    14                                 [section .text]
+    15                                 
+    16                                 
+    17                                 
+    18                                 start:
+    19 00000000 48C7C001000002          mov rax, 0x2000001
+    20 00000007 48C7C703000000          mov rdi, 3
+    21 0000000E 0F05                    syscall

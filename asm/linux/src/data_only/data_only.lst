@@ -1,0 +1,37 @@
+     1                                 %line 1+1 data_only.s
+     2                                 [segment .data]
+     3                                 
+     4                                 
+     5 00000000 00000000               zero dd 0
+     6 00000004 01000000               one dd 1
+     7                                 
+     8                                 
+     9 00000008 FFFFFFFF               negone dd -1
+    10                                 
+    11                                 
+    12 0000000C 0000E03F               floaty dd 1.75
+    13                                 
+    14                                 
+    15                                 
+    16 00000010 F4                     single db 0xF4
+    17 00000011 F400                   wordy dw 0xF4
+    18 00000013 F4000000               doubly dd 0xF4
+    19 00000017 F400000000000000       quaddy dq 0xF4
+    20                                 
+    21                                 
+    22 0000001F 68656C6C6F00           array_1 db 0x68, 0x65, 0x6C, 0x6C, 0x6F, 0
+    23                                 
+    24                                 
+    25 00000025 68656C6C6F00           string_1 db "hello", 0
+    26                                 
+    27                                 [segment .bss]
+    28                                 
+    29 00000000 <gap>                  empty_single resb 1
+    30 00000001 <gap>                  empty_wordy resw 1
+    31 00000003 <gap>                  empty_doubly resd 1
+    32 00000007 <gap>                  empty_quaddy resq 1
+    33                                 
+    34                                 [segment .text]
+    35                                 
+    36                                 [global _start]
+    37                                 _start:

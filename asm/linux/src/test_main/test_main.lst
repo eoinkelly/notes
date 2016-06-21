@@ -1,0 +1,13 @@
+     1                                 %line 1+1 test_main/test_main.s
+     2                                 
+     3                                 
+     4                                 [segment .text]
+     5                                 [global main]
+     6                                 
+     7                                 
+     8                                 
+     9                                 
+    10                                 main:
+    11 00000000 B801000000              mov eax, 1
+    12 00000005 BB06000000              mov ebx, 6
+    13 0000000A CD80                    int 0x80
