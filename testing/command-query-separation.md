@@ -1,14 +1,21 @@
 # Command query separation and testing
 
-Command & query separation is another way of saying you should be aware of which methods have side-effects and which do not!
+Command & query separation is another way of saying you should be aware of
+which methods have side-effects and which do not!
 
 * ruby has implicit returns so it is natural to make command methods also
   return the result of their computation
 * there is a value in being aware of the difference between the two types of
   message but it is not always possible or desirable to have only methods that
   only do commands or queries
-    * QUESTION: is this true? would a more disiplined approach lead to better code?
 
+Understanding the difference between command and query messages is important
+BUT what value does writing code in a style that keeps them separate bring?
+
+* possible answers:
+    * tests are shorter - they only have to test
+    * ++ encourages you to keep your side-effecting code separate
+    * ++ you end up with more pure functions which are easy to understand/test
 
 ### command query separating in functional style
 
@@ -21,24 +28,18 @@ In a strict functional style
     => testing is simple - just test incoming public functions and assert on
        their return values
 
-
 An outgoing command message is kind of "change the state of the wider system in XYZ way"
 
 The sending of the outgoing command is a "state change" in the system - it may
 not be the full story of that state change but it is the bit that is releveant
 to the object under test
 
-If the outgoing command is "change the database" they may be many objects between your test subject and the end side-effect. We don't want to test all of those - we only want to test the bit of this "state change" that is part of our test subject i.e. the outgoing command message
+If the outgoing command is "change the database" they may be many objects
+between your test subject and the end side-effect. We don't want to test all of
+those - we only want to test the bit of this "state change" that is part of our
+test subject i.e. the outgoing command message
 
-Tests taht test distant side-effects are integration tests not a unit test!
-
-
-outgoing message
-    assert collaboration
-
-incoming message
-    assert the state of the system
-
+Tests that test distant side-effects are integration tests not a unit test!
 
 # Query messages
 
@@ -49,10 +50,13 @@ incoming message
 * you can send an outgoing query message `0->N` times and the state of the app
   will be unchanged so in a way outgoing query messages are "invisible"
 
-incoming query => assert return value is expected
+Testing incoming messages
+
+* incoming query => assert return value is expected
 * incoming command
     * assert direct, public, local side effects only
-    * i.e. in the test you call the method and check some other bit of the subject's public interface to see if the correct things changed
+    * i.e. in the test you call the method and check some other bit of the
+      subject's public interface to see if the correct things changed
 
 # Command messages
 

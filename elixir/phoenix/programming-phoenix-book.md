@@ -1,5 +1,12 @@
 # Programming Phoenix book
 
+Possible future side topics to research
+
+* how live reloading works
+* erlang archives
+
+
+
 * `connection` is a struct (map with known fields) that represents the HTTP request
 * phoenix can be visualised as a pipeline that takes the `connection` in at one
   end and pumps out a `connection` that contains the HTTP response as well as

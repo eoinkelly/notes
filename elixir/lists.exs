@@ -14,7 +14,7 @@ defmodule EoinList do
   # accumulator
   def sum(list) do
     # _sum(list, 0) # option 1: has accumulator
-    do_sum(list) # option 2: no accumulator
+    do_sum(list) # option 2: no accumulator, result is accumulated in return value
   end
 
   # defp _sum([], total), do: total

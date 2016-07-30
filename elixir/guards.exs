@@ -1,7 +1,7 @@
 defmodule Guard do
   # * guard clauses are intended to choose a function head based on some
-  #   inspection of the types and values of the args
-  # * not all expressions can be used in guard clauses
+  #   inspection of 1) the types and 2) values of the args
+  # * IMPORTANT: not all expressions can be used in guard clauses
   def type?(x) when is_number(x), do: "Number"
   def type?(x) when is_list(x), do: "List"
   def type?(x) when is_atom(x), do: "Atom"
@@ -16,8 +16,8 @@ defmodule OverlyFunky do
     IO.inspect %{ a: a, b: b, c: c, d: d }
   end
 
-  # function with multiple heads
-  # notice how the default param is set in a head with no body
+  # for a function with multiple heads we put the default params in a function
+  # head with no body (not just an empty body)
   def blah(a, b \\ 12)
 
   def blah(a, 33) do

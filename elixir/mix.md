@@ -19,21 +19,11 @@
 * Archives are kept in `~/.mix/archives`
 * Currently my installation only contains `.ez` files for `phoenix_new` and `hex`
 * Mix will load all archives every time you run it so don't install too many
-    * elixir 1.3 will ass mix escripts so you can keep the no. of archives lower
+    * elixir 1.3 will add mix escripts so you can keep the no. of archives lower
 * Use `MIX_DEBUG=1` env var to make mix more verbose for debugging
     * added in elixir 1.3
 
 IMPORANT: the syntax for getting help is `mix help COMMAND_NAME` not `mix COMMAND_NAME --help`
-
-To upgrade a phoenix project:
-
-```
-mix hex.outdated # see what needs updating
-# edit mix.exs to reflect the constraints you want
-mix deps.unlock --all
-mix deps.update
-mix deps.compile
-```
 
 # Standard mix tasks
 

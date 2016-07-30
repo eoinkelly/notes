@@ -1,11 +1,14 @@
 # Escript
 
-http://www.erlang.org/doc/man/escript.html
-http://elixir-lang.org/docs/v1.0/mix/Mix.Tasks.Escript.Build.html
+Sources
+
+* http://www.erlang.org/doc/man/escript.html
+* http://elixir-lang.org/docs/v1.0/mix/Mix.Tasks.Escript.Build.html
+
+Escript is ...
 
 * escript provides support for running short Erlang programs without having to
   compile them first and an easy way to retrieve the command line arguments.
-
 * An escript can run on any machine that has Erlang installed
 * by default does not require Elixir to be installed, as Elixir is embedded as part of the escript.
 * `mix escript.build` task guarantees the project and its dependencies are
@@ -16,7 +19,7 @@ http://elixir-lang.org/docs/v1.0/mix/Mix.Tasks.Escript.Build.html
     * `.app` files are text and contain what seems like a text representation
       of an elixir map that shows the metadata and dependencies of the app.
 
-```
+```plain
 $ head ./some_escript_built_with_mix
 #! /usr/bin/env escript
 %%
@@ -24,7 +27,7 @@ $ head ./some_escript_built_with_mix
 <PKZIPPED DATA>
 ```
 
-```
+```plain
 $ unzip my_app
 $ cat my_app.app
 

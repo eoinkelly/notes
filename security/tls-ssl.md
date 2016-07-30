@@ -1,5 +1,16 @@
 # TLS and SSL
 
+## Aside fixing SSL verification
+
+```
+# changing the cert file from the default openssl one
+# (/usr/local/etc/openssl/cert.pem) to the one that comes with curl seems to work
+
+export SSL_CERT_FILE="/usr/local/Cellar/curl-ca-bundle/1.87/share/ca-bundle.crt"
+```
+
+## Sources
+
 * TLS 1.2
     * https://tools.ietf.org/html/rfc5246
 * https://en.wikipedia.org/wiki/Transport_Layer_Security

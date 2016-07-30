@@ -1,10 +1,11 @@
 # Protocols
 
-# * lets us send multiple types to a method and have elixir automatically pick
-#   the implementation to use based on the type without having
+# * allows us to send multiple types to a method and have elixir automatically pick
+#   the implementation to use based on the type.
 # * For built-in types we could replicate this with a function that has one head
 #   per type (checked in a guard clause) but this wouldn't work for structs.
 # * Passing a data type that does not implement the protocol raises an error
+# * by setting `@fallback_to_any` to true we tell elixir to use the implementation from the `Any` type if it can't find an implementation for the specific type passed. This means the protocol will be available on all types (unless they have their own implementation that throws an error)
 
 defprotocol Blank do
   @doc "Returns true if data considered blank/empty"
@@ -45,6 +46,9 @@ end
 # iex(25)> Blank.blank? uu
 # true
 
+# @fallback_to_any (a magical way of falling back to the Any implemnetation)
+# #######################################
+#
 # Blank2 sets @fallback_to_any
 # * this means that when elixir can't find an explicit implemenation of Blank2
 #   for a particular type it will fallback to an implemenation of the protocol for
@@ -63,6 +67,11 @@ defimpl Blank2, for: Any do
   def blank?(_), do: false
 end
 
+# @derive (the less magical way to fallback to the Any implementation of a protocol)
+# ######################################
+
+# * ++ each type has to opt-in to getting the Any implemnetation so is not so magical
+
 # Given a protocol and an implementation for Any ...
 
 defprotocol Blank3 do
@@ -77,14 +86,15 @@ end
 # ... when we create a new struct we can tell it to "derive" the Blank3
 #     protocol i.e. opt-in to using the Any implementation of that protocol.
 #
-# * ++ this is more explicit
+# * ++ this is more explicit and less automagical than `@fallback_to_any
 
 defmodule User2 do
   @derive Blank3
   defstruct name: "Eoin", age: 36
 end
 
-# # Built-in protocols
+# Built-in protocols
+# ##################
 
 # * Enumerable
 
@@ -107,8 +117,9 @@ end
 
 
 # Protocol consolidation
+# ######################
 
-# * a protocol can dispatch to any data type, the protocol must check on every
+# * since a protocol can dispatch to any data type, the protocol must check on every
 #   call if an implementation for the given type exists. This may be expensive
 # * after our project is compiled using a tool like Mix, we know all modules that
 #   have been defined, including protocols and their implementations. This way, the

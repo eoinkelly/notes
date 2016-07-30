@@ -12,21 +12,18 @@
 
 # alias
 #
-# * make a short name for an existing, in scope module (does not work on
-#   functions)
-# * works at module or function level
+# * make a short name for an existing, in scope module (does not
+#   work on functions)
+# * works within a module or within a function
 
 # require
 # * pulls in macros only!
-# * memonic:
+# * memonic: ??
 
 # use
 # * does a require then calls the __using__/1 function in the required module
 # * a convenience for pulling in macros
 # * Note: it does NOT pull in functions!
-
-# alias
-# #####
 
 defmodule Hewey do
   def quack do
@@ -38,7 +35,7 @@ defmodule Dewey do
   alias Hewey, as: Hew # alias works at module level
 
   def squawk do
-    alias Hewey, as: Hew # alias works at function level
+    alias Hewey, as: Hew # alias works within a function
     IO.puts Hewey.quack # works
     IO.puts Hew.quack # works
   end
