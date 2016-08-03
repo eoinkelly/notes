@@ -1,7 +1,5 @@
 # How to use a custom primary key with Rails
 
-* In this case we are using the `channels.name` column as the primary key
-
 Consider an example where we have Channels and Products
 
 * A Channel
