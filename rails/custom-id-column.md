@@ -1,4 +1,4 @@
-# How to use a custom primary key with Rails
+# How to use a custom primary key with Rails and Postgres
 
 Consider an example where we have Channels and Products
 
@@ -19,20 +19,21 @@ so we add those constraints manually to create our custom primary key.
 class AddChannelsAndProducts < ActiveRecord::Migration
   def change
     create_table :channels, id: false, primary_key: :name do |t|
-      t.string :name, null: false # create column with a "not null" constraint
+      t.string :name, primary_key: true
       # other columns go here ...
       t.timestamps
     end
-
-    add_index :channels, :name, unique: true # add a uniqueness constraint
 
     # products uses a standard integer id
     # It is demonstrating here how to have a relationship to a table with a
     # custom primary key
     create_table :products do |t|
       # other columns go here ...
-      t.string :channel_id
+      t.references :channel, type: :string, index: true
     end
+
+    add_foreign_key :products, :channels, primary_key: :name
+
   end
 end
 ```
