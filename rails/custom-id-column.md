@@ -19,8 +19,8 @@ so we add those constraints manually to create our custom primary key.
 class AddChannelsAndProducts < ActiveRecord::Migration
   def change
     create_table :channels, id: false, primary_key: :name do |t|
-      t.string :name, null: false # null: create column with a "not null" constraint
-      # other fields go here ...
+      t.string :name, null: false # create column with a "not null" constraint
+      # other columns go here ...
       t.timestamps
     end
 
@@ -37,7 +37,7 @@ class AddChannelsAndProducts < ActiveRecord::Migration
 end
 ```
 
-```
+```ruby
 # app/models/channel.rb
 class Channel < ActiveRecord::Base
   self.primary_key = :name
@@ -57,7 +57,7 @@ class Product < ActiveRecord::Base
 end
 ```
 
-```
+```ruby
 # in rails console
 Channel.first.products      # works
 Channel.first.product_ids   # works
