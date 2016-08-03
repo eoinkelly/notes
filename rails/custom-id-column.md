@@ -8,13 +8,6 @@ Consider an example where we have Channels and Products
 * A Product
     * has one Channel
 
-The postgres docs say
-
-> a primary key constraint is simply a combination of a unique constraint and a
-> not-null constraint
-
-so we add those constraints manually to create our custom primary key.
-
 ```ruby
 class AddChannelsAndProducts < ActiveRecord::Migration
   def change
@@ -24,14 +17,14 @@ class AddChannelsAndProducts < ActiveRecord::Migration
       t.timestamps
     end
 
-    # products uses a standard integer id
-    # It is demonstrating here how to have a relationship to a table with a
-    # custom primary key
+    # `products` is demonstrating here how to have a relationship to a table
+    # with a custom primary key.
     create_table :products do |t|
       # other columns go here ...
-      t.references :channel, type: :string, index: true
+      t.references :channel, type: :string, index: true # sadly `foreign_key: true` does not work (see below for alternative)
     end
 
+    # add optional foreign key constraint
     add_foreign_key :products, :channels, primary_key: :name
 
   end
