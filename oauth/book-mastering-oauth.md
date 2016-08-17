@@ -4,11 +4,12 @@
 
 * OAuth 2.0. is not backwards compatible with 1.0
 
-Authentication = validating whether a person or system is who they say the are
+* Definitions
+    * Authentication = validating whether a person or system is who they say the are
+    * Authorization = the _process_ of deciding what actions a particular
+      user/system is allowed to perform.
 
-Authorization = the _process_ of deciding what actions a particular user/system is allowed to perform.
-
-Use cases
+Use cases for OAuth2
 
 1. Delegate authority
     * allow service A to access resources service B on behalf of a user
@@ -18,9 +19,15 @@ Use cases
     * protected resource: user account details on service A
     * OAuth2 can't do this alone - it needs OpenID on top to provide authentication
 
-These are the same thing! A *client* is accessing a *protected resource* on behalf of a *user* in both cases
+These are the same thing! A *client* is accessing a *protected resource* on
+behalf of a *user* in both cases.
 
-**OAuth2 is an authorization protocol not an authentication protcol!**
+* **OAuth2 is an authorization protocol not an authentication protcol!**
+    * the OAuth2 spec never says **how** a user proves their identity to the auth server
+* From the spec
+    > The way in which the authorization server authenticates the resource owner
+    > (e.g., username and password login, session cookies) is beyond the scope of
+    > this specification.
 
 OpenID can provide an authentication layer on top of OAuth2
 
@@ -41,20 +48,29 @@ OAuth2 solves the problem of
     *  can securely *store* secrets
     * called a "confidential client" in spec
     * example: a server
+    * The "authorization code" grant is designed for this client
 2. Untrusted client (public client)
     * cannot securely *store* secrets
     * called a "public client" in spec
     * example:
         * JS app that runs in browser
         * native mobile app
-            * even if it uses the native secure storage APIs of the device it probably shouldn't be trusted
+            * even if it uses the native secure storage APIs of the device it
+              probably shouldn't be trusted.
             * sometimes these are considered trusted (depends on use-case)
+    * The "implicit" grant is designed for this client
 
 In determining the difference between trusted and untrusted client, usually it
 comes down to the *storage* of secrets (SSL means secure transmission is
-easier)
+easy for all clients to do)
 
-NOTE: OAuth2 depends on being over SSL
+NOTE: The security of OAuth2 completely depends on being over SSL
+
+Terminology: "grant"
+
+* grant can mean
+    * A workflow
+    * A JSON response
 
 Available Workflows
 
@@ -63,9 +79,26 @@ Available Workflows
 2. Implicit grant
     * also known as "client side workflow" or "untrusted client workflow"
 3. Resource owner password credential grant
-    * not very common
+    * less common
+    * is available to migrate users using HTTP basic auth
+        * => it works very much like HTTP basic auth and provides similar security trade-offs
+    * has the following benefits over HTTP basic auth:
+        * the client can (hopefully) not store the resource owner's username
+          and password once it has the token (and optional refresh token)
+        * the client still has to store these tokens but this is still a bit
+          better than directly storing the username and password of the
+          resource owner.
 4. Client credentials grant
-    * not very common
+    * less common
+    * the client app is getting access to the resource on **its own** behalf
+      not on behalf of a user.
+        * Only works with trusted clients
+    * is similar in flow to HTTP Basic Auth
+    * example uses
+        * app to app communication
+        * a client-app wants to get some info about itself from the auth server e.g. `/client-info`
+            * this info is treated as a resource protected by the auth server
+              but accessed on behalf of the client itself.
 
 ## Untrusted client using implicit grant workflow
 
@@ -145,7 +178,8 @@ grant sends a username and password as part of the request.
 
 * less secure because the user enters their password directly into the client app
 * useful for migrating existing clients who use HTTP basic/digest authentication
-* it is slightly more secure than those schemes because the password is only on the wire once and is exchanged for a token. Tokens are better because:
+* it is slightly more secure than those schemes because the password is only on
+  the wire once and is exchanged for a token. Tokens are better because:
     1. tokens expire
     2. tokens can be scope limited
 

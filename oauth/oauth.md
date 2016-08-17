@@ -7,6 +7,15 @@
 * OAuth is really for delegation not authorization - maybe should have been called "ODelegate"
     * delegates authorization to a authorization provider
 
+## Aside: OAuth spec requires application/x-www-form-urlencoded for POST requests
+
+* The OAuth spec does say that POST requests must use the "application/x-www-form-urlencoded" mime type.
+* That mime-type does not support non-ascii characters so the steps are
+    1. encode your text with UTF-8
+    1. encode the UTF-8 stream as `application/x-www-form-urlencoded` (which will add various escape sequences etc.)
+* this has implications for parsing this data too (you have to follow those steps in reverse)
+
+
 ## Sources
 
 * http://oauth.net/
@@ -296,17 +305,21 @@ The flow
 
 1. client-app shows UI to allow user to enter their credentials
     * oauth spec does not specify how this happens
-1. client-app sends user credentials and its own client credentials
-    (to authenticate itself) to auth-server which sends back access
-    token (and optional refresh token)
-    * params must be sent as `application/x-www-form-encoded` body
-        of the GET request (the headers are reserved for the client
-        app to authenicate itself)
-    * params are
-        * grant_type=password (required)
-        * username (required)
-        * password (required)
-        * scope (optional
+1. client-app sends user credentials **and** its own client credentials
+    (to authenticate itself) to auth-server's _token endpoint_  which sends
+    back access token (and optional refresh token)
+    * params must be sent as `application/x-www-form-encoded` body of the GET
+      request
+        * the headers are reserved for the client app to authenicate itself
+        * Aside: the implementations I have seen allow client to authenticate
+          itself with params or header
+    * request params:
+        * required
+            * grant_type=password
+            * username
+            * password
+        * optional
+            * scope
 1. authorization server sends back a response with the new token(s) e.g.
     ```
     HTTP/1.1 200 OK
@@ -315,38 +328,40 @@ The flow
     Pragma: no-cache
 
     {
-    "access_token":"2YotnFZFEjr1zCsicMWpAA",
-    "token_type":"example",
-    "expires_in":3600,
-    "refresh_token":"tGzv3JOkF0XG5Qx2TlKWIA",
-    "example_parameter":"example_value"
+        "access_token":"2YotnFZFEjr1zCsicMWpAA",
+        "token_type":"example",
+        "expires_in":3600,
+        "refresh_token":"tGzv3JOkF0XG5Qx2TlKWIA",
+        "example_parameter":"example_value"
     }
     ```
 
-1. client (ideally) discards user credentials and uses access token
-from then on
+1. client (ideally) discards user credentials and uses access token from then on
     * client-app may also get a "refresh token" to allow it to get new access tokens
-        * the win here is that the refresh token is safer
-            to store in client-app than the users creds
+        * the win here is that the refresh token is safer to store in
+          client-app than the users creds. The refresh token is only good for
+          getting tokens from this auth server but the resource owner's
+          username and password could unlock much more on the network.
 
-Use cases
+Use cases for _resource owner password credentials_ grant:
 
 * used to migrate existing clients using HTTP basic auth to OAuth
 * useful when the resource owner has sufficient trust in the client to enter their credentials directly
 
-Pros/cons
+Pros/cons of this grant type:
 
 * -- only useful is there is a high level of trust between client-app and auth-server
 * -- the client-app can see and store the users credentials
-* ++ client-app only needs the users credentials to get the access token so it doesn't have to store them or put them on the wire for each request
+* ++ client-app only needs the users credentials to get the access token so it doesn't have to store them or put them on the wire for each request. This makes it an improvement over HTTP basic auth.
 
 ### 4. client credentials grant
-
-* some form of client-app authentication (e.g. username+password or secret key) is used as the authorization grant
 
 The flow
 
 1. client sends it authentication to the authorization server
+    * spec says `application/x-www-form-urlencoded` is required mime type
+    * doorkeeper allows client so send authization in the HTTP header or via `client_id` and `client_secret` params
+    * example:
     ```
     POST /token HTTP/1.1
     Host: server.example.com
@@ -374,6 +389,10 @@ The flow
     "example_parameter":"example_value"
     }
     ```
+Notes
+
+* server CANNOT send back a `refresh_token` in its response
+* the client MUST authenticate itself
 
 Use cases
 
@@ -381,9 +400,8 @@ Use cases
 * used when the client-app is also the resource-owner i.e. it is acting on its own behalf
 * when the resource owner has done "something" to tell the authorization server that it should allow this client to access these protected resources and that "something" is out of scope of the OAuth spec
 
-Pros/cons
+* some form of client-app authentication (e.g. username+password or secret key) is used as the authorization grant
 
-* ???
 
 ### Custom grant types e.g. SAML
 

@@ -996,7 +996,8 @@ variable.
     * dup typically uses the class to create a new instance
 * `#clone`
     * makes a shallow copy of the object
-    * copies frozen and tainted state of an object (DIFFERENCE)
+    * copies tainted state
+    * copies frozen state of an object (DIFFERENCE)
     * copies the singleton class (DIFFERENCE)
     * duplicates an object including its internal state
 
@@ -1016,7 +1017,22 @@ Important difference in ActiveRecord objects
 
 * rails offers #deep_dup on Array, Hash, Object
 
+* rails offers `#duplicable?` which tests whether the object can be duped
+    * nil, false, true, symbol, number cannot be duped
+
 # freeze
 
-* freeze makes object immutable
+* freeze causes object to throw a `RuntimeError` if you try to mutate it
+* mutates the object you call it on (it doesn't return a frozen version)
 * if you freeze and array it does NOT freeze each object in the array
+
+# frozen?
+
+* tests whether the object is frozen or not
+
+```ruby
+thing = Object.new
+aa = ["hello", 44, :foo]
+aa.freeze
+aa.frozen? # => true
+```

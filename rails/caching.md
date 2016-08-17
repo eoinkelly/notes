@@ -1,5 +1,17 @@
 # Rails caching
 
+Base API
+
+```ruby
+Rails.cache.fetch("somekey") # getter
+Rails.cache.fetch("somekey") do # setter
+    # result of block is written to the given key
+    { some: :value }
+end
+```
+
+* cache keys can be arrays or hashes (or anything that responds to `to_param`, `cache_key`)
+
 ## tips
 
 * to see the state of caching in a project:
