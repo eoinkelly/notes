@@ -141,12 +141,12 @@ UTF-8 encoding
 Storage is allocated in one of three ways in high-level languages
 
 1. Statically
-    * stored in the `.data` and `.bss` sections of the binary
+    * stored in the `.data` (initialized data) and `.bss` (uninitialized data) sections of the binary
     * The C compiler decides whether to put static variables in `.data` or `.bss`
         * the BSS segment typically includes all uninitialized objects (both
-        variables and constants) declared at file scope (i.e., outside any
-        function) as well as uninitialized static local variables (local
-        variables declared with the static keyword)
+          variables and constants) declared at file scope (i.e., outside any
+          function) as well as uninitialized static local variables (local
+          variables declared with the static keyword)
 1. Dynamically
     * allocated on the heap with `malloc`, `new` etc.
 1. Automatically
@@ -156,9 +156,16 @@ In C
 
 * statically-allocated objects without an explicit initializer are initialized
   to zero (for arithmetic types) or a null pointer (for pointer types).
-* Implementations of C typically represent zero values and null pointer values using a bit pattern consisting solely of zero-valued bits (though this is not required by the C standard).
-* Hence, the BSS segment typically includes all uninitialized objects (both variables and constants) declared at file scope (i.e., outside any function) as well as uninitialized static local variables (local variables declared with the static keyword);
-* static local constants must be initialized at declaration, however, as they do not have a separate declaration, and thus are typically not in the BSS section, though they may be implicitly or explicitly initialized to zero.
+* Implementations of C **typically** represent zero values and null pointer values
+  using a bit pattern consisting solely of zero-valued bits (though this is not
+  required by the C standard).
+* Hence, the BSS segment typically includes all uninitialized objects (both
+  variables and constants) declared at file scope (i.e., outside any function)
+  as well as uninitialized static local variables (local variables declared
+  with the static keyword);
+* static local constants must be initialized at declaration, however, as they
+  do not have a separate declaration, and thus are typically not in the BSS
+    section, though they may be implicitly or explicitly initialized to zero.
 
 ### Chapter 1 exercises
 
@@ -177,26 +184,25 @@ An assembly program contains four things
 1. labels
     * always end with `:` e.g. `main:`
     * get converted into the value of the address counter of the currently open section by the assembler
-1. comments
+2. comments
     * `/* multi line like C */`
     * `@ single line like this`
     * `// single line also like this iff file ends in .S`
-1. assembly instructions
+3. assembly instructions
     * _most_ cause the CPU to perform one operation
     * 3 categories of instruction
         1. move data
-        1. perform some computation e.g. addition, subtraction
-        1. perform comparisons and control which part of the assembly to execute next
-1. assembler directives
+        2. perform some computation e.g. addition, subtraction
+        3. perform comparisons and control which part of the assembly to execute next
+4. assembler directives
     * always begin with `.` e.g. `.globl`
 
 each line of code is organised into four columns
 
 1. label (optional)
-1. assembler directive or assembly instruction
-1. operands to the directive or assembly instruction
-1. comment (optional)
-
+2. assembler directive or assembly instruction
+3. operands to the directive or assembly instruction (optional)
+4. comment (optional)
 
 ### Directives
 

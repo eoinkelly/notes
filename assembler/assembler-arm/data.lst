@@ -1,0 +1,49 @@
+ARM GAS  data.s 			page 1
+
+
+ GNU assembler version 2.25 (arm-linux-gnueabihf)
+	 using BFD version (GNU Binutils for Raspbian) 2.25.
+ options passed	: -aghmls=data.lst 
+ input file    	: data.s
+ output file   	: a.out
+ target        	: arm-unknown-linux-gnueabihf
+ time stamp    	: 2016-08-19T09:59:05.000+1200
+
+ARM GAS  data.s 			page 2
+
+
+   1              	@@ vim: ft=armasm
+   2              	.data
+   3 0000 414200E6 	byties:     .byte   'A', 'B', 0, 230
+   4 0004 4D01     	num_1:      .hword  333
+   5 0006 B3150000 	num_2:      .word   5555
+   6 000a 68656C6C 	greeting:   .asciz  "hello there"
+   6      6F207468 
+   6      65726500 
+   7 0016 68656C6C 	long_greet: .ascii  "hello there\n"
+   7      6F207468 
+   7      6572650A 
+   8 0022 6D79206E 	            .ascii  "my name is eoin\n"
+   8      616D6520 
+   8      69732065 
+   8      6F696E0A 
+   9 0032 616E6420 	            .asciz  "and this is some code\n"
+   9      74686973 
+   9      20697320 
+   9      736F6D65 
+   9      20636F64 
+  10 0049 26E4839E 	pi:         .double 3.1459
+  10      CD2A0940 
+  11              	
+ARM GAS  data.s 			page 3
+
+
+DEFINED SYMBOLS
+              data.s:3      .data:00000000 byties
+              data.s:4      .data:00000004 num_1
+              data.s:5      .data:00000006 num_2
+              data.s:6      .data:0000000a greeting
+              data.s:7      .data:00000016 long_greet
+              data.s:10     .data:00000049 pi
+
+NO UNDEFINED SYMBOLS
