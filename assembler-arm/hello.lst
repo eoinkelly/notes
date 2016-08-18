@@ -1,0 +1,53 @@
+ARM GAS  hello_world_2.S 			page 1
+
+
+ GNU assembler version 2.25 (arm-linux-gnueabihf)
+	 using BFD version (GNU Binutils for Raspbian) 2.25.
+ options passed	: -aghmls=hello.lst 
+ input file    	: hello_world_2.S
+ output file   	: hello.o
+ target        	: arm-unknown-linux-gnueabihf
+ time stamp    	: 2016-06-27T18:02:14.000+1200
+
+ARM GAS  hello_world_2.S 			page 2
+
+
+   1              	/*
+   2              	This version does not need the C stdlib
+   3              	* it provides its own _start function rather than using the one in stdlib
+   4              	
+   5              	To assemble:
+   6              		$ as -o hello2.o hello_world_2.S
+   7              		$ ld -o hello2 hello2.o
+   8              	*/
+   9              		.data
+  10 0000 48656C6C 	msg:	.ascii 	"Hello world\n"
+  10      6F20776F 
+  10      726C640A 
+  11              	len	= . - msg
+  12              	
+  13              		.text
+  14              		.globl _start
+  15              	
+  16              	_start: 
+  17 0000 0100A0E3 		mov r0, #1 	@@ fd = stdout
+  18 0004 14109FE5 		ldr r1, =msg	@@ r1 -> message
+  19 0008 0C20A0E3 		ldr r2, =len	@@ r2 -> message length
+  20 000c 0470A0E3 		mov r7, #4	@@ write syscall is 4
+  21 0010 000000EF 		swi #0		@@ invoke syscall
+  22              	
+  23 0014 0000A0E3 		mov r0, #0 	@@ r0 = the exit code
+  24 0018 0170A0E3 		mov r7, #1 	@@ exit is syscall 1
+  25 001c 000000EF 		swi 	#0	@@ invoke syscall	
+  25      00000000 
+ARM GAS  hello_world_2.S 			page 3
+
+
+DEFINED SYMBOLS
+     hello_world_2.S:10     .data:00000000 msg
+     hello_world_2.S:11     *ABS*:0000000c len
+     hello_world_2.S:16     .text:00000000 _start
+     hello_world_2.S:17     .text:00000000 $a
+     hello_world_2.S:25     .text:00000020 $d
+
+NO UNDEFINED SYMBOLS
