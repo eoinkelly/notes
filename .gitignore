@@ -2,6 +2,8 @@
 *.class
 .vagrant/
 *.beam
+*.swp
+*.swo
 
 /dist/
 # haskell compile artefacts
