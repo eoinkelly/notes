@@ -269,45 +269,45 @@ pi:         .double 3.1459
 ```
 
 ```plain
-ARM GAS  data.S 			page 1
+ARM GAS  data.S       page 1
 
 
  GNU assembler version 2.25 (arm-linux-gnueabihf)
-	 using BFD version (GNU Binutils for Raspbian) 2.25.
- options passed	: -aghmls=data.lst
- input file    	: data.S
- output file   	: a.out
- target        	: arm-unknown-linux-gnueabihf
- time stamp    	: 2016-06-28T21:31:20.000+1200
+   using BFD version (GNU Binutils for Raspbian) 2.25.
+ options passed  : -aghmls=data.lst
+ input file      : data.S
+ output file     : a.out
+ target          : arm-unknown-linux-gnueabihf
+ time stamp      : 2016-06-28T21:31:20.000+1200
 
 
-ARM GAS  data.S 			page 2
+ARM GAS  data.S       page 2
 
 
-   1              	.data
-   2 0000 414200E6 	byties:     .byte   'A', 'B', 0, 230
-   3 0004 4D01     	num_1:      .hword  333
-   4 0006 B3150000 	num_2:      .word   5555
-   5 000a 68656C6C 	greeting:   .asciz  "hello there"
+   1                .data
+   2 0000 414200E6   byties:     .byte   'A', 'B', 0, 230
+   3 0004 4D01       num_1:      .hword  333
+   4 0006 B3150000   num_2:      .word   5555
+   5 000a 68656C6C   greeting:   .asciz  "hello there"
    5      6F207468
    5      65726500
-   6 0016 68656C6C 	long_greet: .ascii  "hello there\n"
+   6 0016 68656C6C   long_greet: .ascii  "hello there\n"
    6      6F207468
    6      6572650A
-   7 0022 6D79206E 	            .ascii  "my name is eoin\n"
+   7 0022 6D79206E               .ascii  "my name is eoin\n"
    7      616D6520
    7      69732065
    7      6F696E0A
-   8 0032 616E6420 	            .asciz  "and this is some code\n"
+   8 0032 616E6420               .asciz  "and this is some code\n"
    8      74686973
    8      20697320
    8      736F6D65
    8      20636F64
-   9 0049 26E4839E 	pi:         .double 3.1459
+   9 0049 26E4839E   pi:         .double 3.1459
    9      CD2A0940
   10
 
-ARM GAS  data.S 			page 3
+ARM GAS  data.S       page 3
 
 
 DEFINED SYMBOLS
@@ -468,3 +468,160 @@ The four main elements of assembly language are
 ```
 
 END CHAP 2
+
+## Chapter 3
+
+* the constraints in CPU hardware are directly visible in the assembly language
+* the available instructions and permissible options in an assembly language is
+  shaped by the hardware that implements it.
+    * e.g. if your ALU has two inputs and only one of them has a bit-shifter
+      inlined then only one of the inputs can be bitshifted in a single
+      instruction
+    * you could achieve the same thing with multiple instructions but to take
+      proper advantage of it you need to know the hardware layout.
+
+* ARM chips can only do computation of data that is already in a register
+    * => you must first load the data you want to work with into registers and then work on it
+
+* ARM has two data buses: A, B
+    * A goes directly into ALU
+    * B goes through a shifter before going to ALU
+        * => the B (second) operand of instruction can be shifted an arbitrary amount before hitting the ALU
+
+### Registers
+
+ARM provides
+
+* 11 "general purpose" (i.e. have no special hardware reading/writing them) registers
+    * r0 -> r10
+        * have no other roles
+* 3 general purpose registers which have special uses by convention (but not by hardware)
+    * r11 (fp)
+        * frame pointer
+        * holds a pointer to somewhere in the stack
+        * used by compilers to track the current stack frame - helps with debugging
+        * you can turn this off in gcc - see `-fomit-frame-pointer`
+        * you should use frame pointers if you want your assemler to be debuggable the same way higher level lang code is
+    * r12 (ip)
+        * inter procedure scratch register
+        * used by the C library when calling functions in dynamically linked libs
+        * _its contents may change, seemingly at random when functions like
+          printf are called_ so don't use it as a general purpose register
+    * r13 (sp)
+        * stack pointer
+        * by programming convention only (no hardware relies on the stack - you could choose not to use it)
+        * no special instructions involve the `sp` from hardware pov it is a plain ol' register
+        * holds the address of the word of data at the top of the stack
+        * it does **not** hold the address of the next empty location above the stack
+* 3 special registers (i.e. their contents will be changed out from under you
+  if you try to use them as general purpose registers)
+    * r14 (lr)
+        * link register
+        * can be modified directly by your code
+        * is also modified as a side-effect of other instructions e.g. `bl`
+        * holds a pointer to somewhere in the instruction stream
+    * r15 (pc)
+        * program counter
+        * holds a pointer to somewhere in the instruction stream
+        * automatically incremented by 4 after each instruction is fetched from memory
+            1. fetch a 4byte instruction from memory location given by PC
+            2. add 4 to the PC
+            3. run the instruction we fetched
+                * this instruction may modify the value of PC (or not)
+            4. goto step 1.
+        * by the time your instruction is running the pc contains the
+          **address** of the **next** instruction to be executed (because the CPU
+          has already incremented it)
+        * can be modified directly by your code
+        * is also modified as a side-effect of other instructions e.g. `b`, `bl`
+    * CPSR (current program status register)
+        * includes four condition flag bits which can be used to do conditional execution of instructions
+            * C (carry flag bit)
+                * set to 1 if
+                    1. an add operation results in a carry out of the most significant bit
+                        * ???
+                    2. if a subtract operation results in a borrow
+                        * ???
+                    3. for shift operations if the last bit shifted out was a 1
+            * Z (zero flag bit)
+                * set to 1 if the result of an operation was 0
+                * otherwise it alway set to 0
+            * N (negative flag bit)
+                * set to 1 if the **signed** result of an operation is negative
+                * i.e. if the result is 2s compliment and the high-order bit is set then this flag will also be set
+            * V (Overflow flag bit)
+                * set to 1 if
+                    * for addition or subtraction a **signed** overflow occurs
+        * all other bits are used for operation of bare-metal programs
+        * **the meaning of the flag depends on the instruction that set the flag**
+
+UP TO SECTION 3.3
+
+There are four kinds of ARM instruction
+
+1. ?
+1. ?
+1. ?
+1. ?
+
+### Condition modifiers
+
+* Most ARM instructions can have a _condition modifier_ attached.
+* adding `s` to the instruction tells it to set flags in the CPSR register
+
+There are 15 condition modifiers which can be added to an instruction to read/use the flags in the CPSR register:
+
+1. al
+    * always
+    * is default condition
+2. eq
+    * Zset
+3. ne
+    * Zclear
+4. cs (or `hs`)
+    * Cset
+5. cc (or `lo`)
+    * Cclear
+6. mi
+    * Nset
+7. pl
+    * Nclear
+8. vs
+    * Vset
+9. vc
+    * Vclear
+10. hi
+    * Cset && Zclear
+11. ls
+    * Cclear || Zset
+12. ge
+    * (Nset && Vset) || (Nclear && Vclear)
+13. lt
+    * (Nset && Vclear) || (Nclear && Vset)
+14. gt
+    * Zclear && ((Nset && Vset) || (Nclear && Vset))
+15. le
+    * Zset || (Nset && Vclear) || (Nclear && Vset)
+
+**setting** and **using** a condition modifier are orthogonal operations i.e.
+in a single instruction you can use a modifier **and** set one for the next
+instrution
+
+* `addeqs`
+    * add instruction
+    * `s` means it will mutate the CPSR register as part of its result
+    * uses the `eq` modifier so it will only run the instruction if the Z flag is set
+* QUESTION: does `addseq` work?
+
+UP TO 3.3.2
+
+### Immediate data
+
+* data that is either
+    1. encoded direclty in the instruction stream
+    2. put in a "literal table" at the end of the text section
+        * an instruction references a piece of data in the literal table by
+        adding an offset (calculated by the assembler) to the value of `pc` for
+        that instruction
+        * This allows for immediate data that is too large to fit in a single instruction
+

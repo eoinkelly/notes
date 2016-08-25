@@ -1,5 +1,11 @@
 # Rails caching
 
+<http://guides.rubyonrails.org/caching_with_rails.html>
+
+* `ActiveSupport::Cache::Store` is the abstract class that provides APi for interacting with cache
+* rails defaults to using `ActiveSupport::Cache::FileStore` and storing the files in `tmp/cache/`
+    * cache will grow until disk space is exhausted
+
 Base API
 
 ```ruby
