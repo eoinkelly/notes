@@ -101,3 +101,18 @@ greeter.("Early riser")
 
 Task.await(task1)
 Task.await(task2)
+
+# Agent
+# #####
+#
+# * You want to avoid expensive operations in the function you pass to the agent
+#   as it will block the agent until the request is fulfilled
+# * uses same name registration rules as GenServer
+
+# Create an agent that holds a single Map value
+@agent_name :some_atom # must be atom, often __MODULE__
+Agent.start_link(fn -> Map.new end, name: @agent_name)
+Agent.update(@agent_name, fn (state) -> state.put(state, :value, thing) end)
+Agent.get(@agent_name, fn (state) -> Map.get(state, :value) end)
+Agent.stop @agent_name
+

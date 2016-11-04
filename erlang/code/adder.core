@@ -1,0 +1,36 @@
+module 'adder' ['add'/2,
+		'greet_and_add_magic'/1,
+		'hello'/0,
+		'module_info'/0,
+		'module_info'/1]
+    attributes []
+'add'/2 =
+    %% Line 6
+    fun (_cor1,_cor0) ->
+	%% Line 7
+	call 'erlang':'+'
+	    (_cor1, _cor0)
+'hello'/0 =
+    %% Line 9
+    fun () ->
+	%% Line 10
+	call 'io':'format'
+	    ([104|[101|[108|[108|[111|[32|[116|[104|[101|[114|[101|[126|[110]]]]]]]]]]]]])
+'greet_and_add_magic'/1 =
+    %% Line 12
+    fun (_cor0) ->
+	do  %% Line 13
+	    apply 'hello'/0
+		()
+	    %% Line 14
+	    apply 'add'/2
+		(_cor0, 2)
+'module_info'/0 =
+    fun () ->
+	call 'erlang':'get_module_info'
+	    ('adder')
+'module_info'/1 =
+    fun (_cor0) ->
+	call 'erlang':'get_module_info'
+	    ('adder', _cor0)
+end

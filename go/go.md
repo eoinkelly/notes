@@ -1,11 +1,11 @@
 # Go Programming Language Book
 
-# Questions/To figure out 
+# Questions/To figure out
 
 
 ```
 # WARNING: this deletes the 'go' binary too!!!
-go clean -i all 
+go clean -i all
 # the go team are sitting on a change which would create a 'gopath' target that
 # does what I wanted here - see https://go-review.googlesource.com/#/c/9780/3
 
@@ -16,20 +16,22 @@ go clean -i  ./...
 
 ## Overview
 
+* `go env` shows you relevant env variables (including `GOPATH`)
 * go has no repl (there is a website that fakes one)
-* `go get` uses GOPATH as the base location for the files it downloads and builds 
+* `go get` uses GOPATH as the base location for the files it downloads and builds
+
 * a package maps to a single directory
     * each .go file in the dir declares the package it is part of at the top
     * QUESTION: do package declaration and dir name have to match?
 * program will not compile if you have unused imports
 * no semicolons required unless you put multiple statements on same line
-* if a variable is not explicitly initialized it is automatically initialized to the "zero" for its type    
+* if a variable is not explicitly initialized it is automatically initialized to the "zero" for its type
     * this makes it safe to use without explicit initialization
     * examples
         * 0 for integer
         * "" for string
 * go is garbarge collected
-* entry point is function `main` in package `main`
+* entry point is function `main` in package `main` (by convention this is `main.go` file)
     ```go
     package main
     func main() {}
@@ -71,8 +73,8 @@ go clean -i  ./...
     * go uses ordinary C pointers
     * moves pointers from stack to heap as required to prevent dangling pointers
     * indexing is bounds checked
-    * no pointer arithmetic
-    * => go is memory safer but not 100% safe
+    * no pointer arithmetic allowed
+        * => go is memory safer but not 100% safe
 * public and private
     * things that begin with Uppercase are public from the package
     * things that begin with lowercase are private to the package
@@ -102,9 +104,8 @@ j--
 ```
 
 * go has postfix incrementing
-* IMPORTANT: these are statements not expressions (they do not return a value so cannot be used in a larger expression)
+* IMPORTANT: these are statements not expressions (they do not return a value so cannot be used in a larger expression) - nice!
 * they are postfix only. There are no prefix versions - nice!
-* seems like go improves on C quite a bit here
 
 ### for loops
 
@@ -120,14 +121,15 @@ for { // infinite loop
 }
 ```
 
+* go for loops do the work of while loops too
 * never parens around the conditions
 * always have braces
 * there are three main parts
-    * initialization 
-    * condition 
+    * initialization
+    * condition
         * executed at the start of each loop
         * loop finishes unless it evaluates true
-    * post 
+    * post
 * better than C
     * initialization is optional
     * post is optional
@@ -213,7 +215,7 @@ for _, value := range someArrayOrSlice {
     * run some heuristics on code that look for errors that the compiler might
       not find
 
-### Package management tools 
+### Package management tools
 
 Many package management tools available:
 
@@ -266,3 +268,16 @@ boo := "this is an interpolated string \nand must be on a single line"
 A rune literal represents a rune constant, an integer value identifying a Unicode code point
 
 * delimited by single quotes
+
+## Variable declaration
+
+```go
+// var <NAME> <TYPE>
+// * notice no extra stynax just `var` keyword, variable name, variable type
+//   separated by whitespace
+var x int // int
+var y [3]int // array of three int
+var r io.Reader
+```
+
+Go is lexically scoped using blocks”. Basically this means that the variable exists within the nearest curly braces { } (a block) including any nested curly braces (blocks), but not outside of them.

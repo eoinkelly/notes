@@ -1,5 +1,13 @@
 # Pry
 
+cheatsheet
+
+```
+show-models # show detailed info about rails models
+show-model User # show info about the User model
+recognize-path "/come/path" # show how the path will be broken up by rails
+find-route SomeController # show all routes for a controller
+```
 
 * in pry as in ruby you are always in a scope
     * class, module, ??? are the only keywords which change scope in ruby

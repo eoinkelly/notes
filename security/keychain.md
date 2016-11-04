@@ -1,3 +1,7 @@
+I didn't know it when I first started using this but you don't need this
+Keychain on macOS because macOS automatically runs `ssh-agent` for you and
+integrates with OSXKeychain - see my notes on ssh for more details.
+
 ## Keychain (funtoo one, not macos)
 
 * came out of funtoo linux project

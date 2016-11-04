@@ -37,6 +37,36 @@ transformed representation by "disassembling" the loaded module.
     |
     |
 {4: transformed represntation (.dis) file}
+
+
+# Pipeline from elixir code to the binary data actually run by the erlang VM
+(I *think* this is correct)
+
+{1: erlang (.erl) file}
+    |
+    |
+[erlang compiler]
+    |
+    |
+{2: core erlang}
+    |
+    |
+[erlang compiler]
+    |
+    |
+{3: erlang assembly (.S) file}
+    |
+    |
+[erlang compiler]
+    |
+    |
+{4: erlang bytecode (.beam) file}
+    |
+    |
+[BEAM Optimizer]
+    |
+    |
+{4: transformed represntation (.dis) file}
 ```
 
 The "erlang abstract format" is in there somewhere ???
@@ -67,6 +97,10 @@ iex> :erts_debug.df(Simple)
 * created by `:erts_debug.df`
 * disassembled BEAM code
 * represents the code that is actually run (after BEAM optimizer has run)
+* notice that to get at what really runs on the VM you have to disassemble a .beam
+    * I don't know how to get from a `.S` to the `.dis` directly
+
+### erlang disassembly file format
 
 The format of each line is:
 
@@ -87,7 +121,7 @@ Things I noticed in the disassembly
 
 * module name
     * becomes a single atom even if it has `.` e.g. `Elixir.Simple` becomes atom `'Elixir.Simple'`
-    * are prefixed with the `Elixir` namespace e.g. `defmodule Simple` becomes `Elixir.simple`
+    * are prefixed with the `Elixir` namespace e.g. `defmodule Simple` becomes `Elixir.Simple`
 * each module gets its own implementation of `module_info/1` that wraps around
   the built-in erlang `erlang:get_module_info/2`
 * function names are atoms
@@ -120,12 +154,14 @@ instruction from the previous.
 
 ## BEAM registers
 
+```plain
 | Register       | Purpose                     | Appears in .dis code as
-=========================================================================
+|================|=============================|========================
 | R0 - R255      | general purpose             | x(n)
 | FR0 - FR15     | floating point operations   | fr(n)
 | tmpA, tmpB     | temporary registers         | not visible in code
 | stack slots    | local variables             | y(n)
+```
 
 The BEAM is strongly typed - it has a bunch of instructions for type checking:
 
@@ -157,7 +193,7 @@ To invoke an elixir module from erlang
     * Cover
     require this info to be present.
 * Debugging info can also be encrypted (presumably for distribution of
-  debuggable builds to clients.
+  debuggable builds to clients).
 
 You can pass
 

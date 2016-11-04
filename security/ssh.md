@@ -66,13 +66,19 @@ The default conversion format is `RFC4716`.
 
 ```
 # Make a new SSH key (-C is the comment)
+# 2048 bits is default, using 4096 for extra protection against brute forcing the key
 ssh-keygen -t rsa -b 4096 -C 'Firstname Lastname me@my_email_address.com'
+# (you will be prompted for new private key password)
 
 # Check password of existing key
 openssl rsa -text -noout -in id_rsa
 
 # Change password of existing SSH key
 ssh-keygen -p -f keyfile
+
+# Add a private key to the agent (and store creds in OSX Keychain)
+ssh-add -K ./path/to/privatekey
+# (you will be prompted for private key password)
 
 # Show which keys are loaded into agent
 ssh-add -l
@@ -81,3 +87,41 @@ ssh-add -l
 ssh deploy@servers.com 'hostname; uptime'
 ```
 
+## On a mac
+
+* On any platform `ssh-agent` needs to be started when a user logs in
+* macOS does this for you - launchd will start it and re-start it if it is killed
+    * => you can't easily kill `ssh-agent` on macOS
+* launchd will load any keys mentioned in your keychain
+    * in keychain the password appears as an "application password" with the
+      "account" field set to the path of to the private key and the title
+      prefixed by "SSH:"
+* Apple has patched `ssh-agent` and `ssh-add` to support OSX Keychain
+    * ++ you don't have to explicitly call `ssh-add` at the start of a session to add your keys
+    * -- the ssh-agent will keep the keys there for a long as you are logged in
+* Launchd creates a unix domain socket and stores path to it in SSH_AUTH_SOCK
+    * other process owned by the current user (TODO: check this) can communicate with the agent via this
+    * TO CHECK: osx creates the unix socket but only starts ssh-agent the first time somebody accesses it
+
+* TODO: figure out how to remove keys from it after a timeout
+
+```
+http://www-uxsup.csx.cam.ac.uk/~aia21/osx/leopard-ssh.html
+
+Mac OS X Leopard modifies SSH agent so that it is started via the Mac OS X
+launchd service on demand (i.e. it will be launched on first use).
+
+Going even further, Mac OS X Leopard modifies the SSH tools to support storing
+the pass phrases in the user's Keychain. This means that if the user chooses to
+store their pass phrase(s) in the Keychain they never need to enter their pass
+phrase again once they have added it to their Keychain.
+
+To store the passphrase for your default key in the Keychain open a Terminal
+and run:
+
+ssh-add -K
+
+And to store the passphrase for a different key run:
+
+ssh-add -K /path/to/private/key/file
+```

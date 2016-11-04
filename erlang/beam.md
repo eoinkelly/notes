@@ -1,6 +1,7 @@
 # The BEAM
 
-* BEAM has its own scheduler. Erlang code see that, not the OS scheduler
+* BEAM
+    * has its own scheduler. Erlang code is scheduled by that, not the OS scheduler
     * does preemptive scheduling
     * has "reductions" - does not allow a process to hog the scheduler
     * Run work queues
@@ -11,7 +12,6 @@
 
 * GUI: Erlang `observer` module
 * Command line: Erlang `c` module
-
 
 ### :observer.start
 
@@ -53,17 +53,6 @@ A GUI that shows
         * shows type information
         * adds type annotations to source code
 
-# Testing
-
-* Property testing
-    * two solutions
-        * QuickCheck for Erlang
-            * not free
-        * PropEr
-            * research version, free
-* Concurrency testing
-    * Concuerror
-
 ## Behaviours
 
 * Generic implementation of common tasks
@@ -74,11 +63,10 @@ A GUI that shows
     * gen_fsm
     * supervisor
 * The "gen" stands for "generic"
-* are kinda sorta "abstract classes"
 * You can create your own behaviours
 
 Proctor reckons you don't need to know the whole erlang language. He recommends
-knowing enough to know what Erlang cna provide and can use the thigns that
+knowing enough to know what Erlang can provide and can use the things that
 Elixir does not wrap yet.
 
 ## Languages that run on the Beam
@@ -106,3 +94,21 @@ Elixir does not wrap yet.
     * run erlang but not on the Beam
     * run erlang without an OS
 * Erlang on "mega core" architecture (aka 1000 cores)
+
+
+# How erlang code compiles
+
+the code you write goes through three major representations, and you can look at each of them.
+
+1. human erlang
+    * you write this
+1. core erlang
+    * kept in `.core` files
+1. beam vm format
+1. native code
+
+human_erlang -> core_erlang -> beam_vm_format -> native_code
+
+
+
+

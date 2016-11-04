@@ -1,0 +1,43 @@
+# Built-in config:
+# https://github.com/bbatsov/rubocop/blob/master/config/default.yml
+
+# We do not typically use/need class documentation
+Documentation:
+    Enabled: false
+
+Metrics/LineLength:
+    Max: 120
+
+Metrics/MethodLength:
+  Max: 15
+
+Metrics/ModuleLength:
+  Exclude:
+    - 'spec/**/*_spec.rb'
+
+Style/RaiseArgs:
+  Enabled: false
+
+Metrics/ParameterLists:
+  Max: 6
+
+Style/SignalException:
+  EnforcedStyle: semantic
+
+Style/MultilineArrayBraceLayout:
+  Enabled: false
+
+Style/MultilineHashBraceLayout:
+  Enabled: false
+
+Style/MultilineMethodCallBraceLayout:
+  Enabled: false
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+Style/StringLiteralsInInterpolation:
+  EnforcedStyle: double_quotes
+
+AllCops:
+  TargetRubyVersion: 2.3

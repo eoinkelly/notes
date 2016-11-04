@@ -227,3 +227,17 @@ transparent.
 
 * Burp functions as an HTTP proxy server
 * runs on 127.0.0.1:8080 by default
+
+## Steps to setup charles to MITM a mobile device for dev
+
+https://www.charlesproxy.com/documentation/faqs/using-charles-from-an-iphone/
+
+1. Open charles (it just has to be open, it does not have to be proxying maxOS traffic)
+1. Get IP address of computer running Charles `ifconfig en0`
+1. Go to the Settings app, tap Wi-Fi, find the network you are connected to and
+   then tap the blue disclosure arrow to configure the network. Scroll down to
+   the HTTP Proxy setting, tap Manual. Enter the IP address of your computer
+   running Charles in the Server field, and the port Charles is running on in
+   the Port field (usually 8888). Leave Authentication set to Off.
+1. Accept the pop-up from charles telling you that your phone has just tried to use it.
+
