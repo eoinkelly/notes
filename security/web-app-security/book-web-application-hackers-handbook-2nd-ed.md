@@ -199,3 +199,21 @@ Each mechanism listed above may have flaws so is included in the attack surface
 
 END CHAP 2
 
+# Chap 3
+
+* HTTP is stateless
+* `Host` header is mandatory in HTTP 1.1
+* Cookies
+    * Appear as `Set-Cookie` header in server response
+    * Appear as `Cookie` header in client request
+
+HTTP verbs
+
+GET
+POST
+PUT
+PATCH
+HEAD
+OPTIONS
+    * asks HTTP server to report which methods are available for a particular resource
+TRACE
