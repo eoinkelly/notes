@@ -7,6 +7,6 @@
 How to base64 encode
 
 1. Split input into 3 byte chunks (pad with `=` chars if last chunk is not fully 3 bytes)
-1. Split each 3-byte chunk into 4 x 6-bit fields
-    * 6-bit field => 2^6 values => 64 possible values
-1. Map each field onto a character from the allowed character set and emit it
+2. Split each2-byte chunk into 4 x 6-bit fields
+    *6-bit field => 2^6 values => 64 possible values
+3. Map each field onto a character from the allowed character set and emit it

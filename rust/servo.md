@@ -18,10 +18,10 @@
   power towards it
 
 Aside:
-currently iframes run on the main thread - in servo it will be possible for
-them to not be
+
+    currently iframes run on the main thread - in servo it will be possible for
+    them to not be
 
 Aside:
-in layout widths are computed top down, heights are computed bottom up
 
-
+    during layout widths are computed top down, heights are computed bottom up

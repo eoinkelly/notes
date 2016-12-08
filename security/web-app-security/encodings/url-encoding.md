@@ -16,13 +16,15 @@ Overview
 
     URI = URL + URN
 
-> The sets of reserved and unreserved characters and the circumstances under which certain reserved characters have special meaning have changed slightly with each revision of specifications that govern URIs and URI schemes.
+> The sets of reserved and unreserved characters and the circumstances under
+> which certain reserved characters have special meaning have changed slightly
+> with each revision of specifications that govern URIs and URI schemes.
 
 Usages
 
 1. encode data in URI of HTTP requests
 2. encode data for the `application/x-www-form-urlencoded` media type i.e. HTTP
-   POST form uploads. (some modifications are made to this encoding for that
+   POST form uploads. (Some modifications are made to this encoding for that
    media type)
 
 Characters are divided into three groups
@@ -57,3 +59,5 @@ How percent encoding works
 > Because the percent character ( % ) serves as the indicator for
 > percent-encoded octets, it must be percent-encoded as %25 for that octet to
 > be used as data within a URI.
+
+QUESTION: will it work to have all characters percent encoded, even those that don't need it?

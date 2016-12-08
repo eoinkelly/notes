@@ -65,13 +65,18 @@ Sources
 * HTTP [RFC 2616]()
 * [RFC 3143]()
 
+Note HTTP proxy is _very_ different from how TLS proxy works
+
 Example flow
 
-1. The proxy receives a "proxy GET" from the client.
+1. The proxy receives a "proxy GET" from the client. This is similar to a
+   normal HTTP GET except the protocol and hostname are given as well as the
+   path (normal HTTP GET is path only)
     ```
     GET http://example.com/index.html HTTP/1.1
     ```
-1. proxy optionally adds headers to the outbound request e.g.
+
+1. The proxy optionally adds headers to the outbound request e.g.
     * `X-Forwarded-For`
 1. proxy parses the GET and makes a connection to the server
 1. proxy passes data from server back to client
@@ -85,7 +90,7 @@ From server POV the proxy is the "client"
 * An explicit HTTP proxy operates at the HTTP layer can only proxy HTTP
   requests (not HTTPS or any other protocol)
 
-```
+```plain
 # Send HTTP request to a local explicit http proxy
 
 GET http://evertpot.com/http-11-updated/ HTTP/1.1
@@ -103,15 +108,18 @@ If-Modified-Since: Tue, 11 Aug 2015 14:26:44 GMT
 
 ## Explicit HTTPS
 
-* very different to explicit HTTP
+TCP proxy functions very differently to explicit HTTP proxy
 
 1. client makes TCP connection to proxy
-1. Instead of a "proxy GET" the client sends
+1. Instead of a "proxy GET" the client sends a `CONNECT` request - note that
+   this request contains destination host and port but _not_ the path i.e. the
+   proxy does not know which path you are accessing on the server.
     ```
     CONNECT example.com:443 HTTP/1.1
     ```
+
 1. proxy makes a TCP connection to the url specified
-1. it blindly passes traffic back and forth. That traffic includes the SSL
+1. it blindly passes TCP packets back and forth. That traffic includes the SSL
    negotiation (connection upgrades from HTTP to HTTPS) but the proxy cannot
    see any of it.
 
