@@ -234,3 +234,32 @@ plot sqrt(x), x=-10 to 10
 # Cube and quad root functions
 
 Need to think more about these
+
+## Discrete vs Continuous data
+
+https://mathbitsnotebook.com/Algebra1/FunctionGraphs/FNGContinuousDiscrete.html
+
+Continuous function
+
+* A _continuous function_ $f(x)$ is one where $x$ can take on * + []*any** value in the chosen interval including fractions, decimals and irrationals.
+* continuous functions are graphed with points connected by a _continuous line_ (because every value is a possible value)
+* continuous data usually requires an instrument to measure (it is often some real world quantity)
+
+Discrete function
+u
+* A _discrete function_ $f(x)$ is one where $x$ can take on only certain points in the interval, usually only integers or whole numbers.
+* Discrete functions are graphed by drawing only the points which make sense for the data
+* Discrete data is often measured by _counting_.
+* It is often preceeded by the words _The number of ..._
+
+# Difference between full derivative and partial derivative
+
+If you have a function which depends on two input variables e.g. x and y you can get the "partial derivative" of x by assuming that y is constant as x changes i.e. y doesn't change in response to changes in x
+
+> The key difference is that when you take a partial derivative, you operate under a sort of assumption that you hold one variable fixed while the other changes. When computing a total derivative, you allow changes in one variable to affect the other.
+
+Example:
+
+$$f(x) = 3x + 2y$$
+
+TODO: re-learn the mechanics how to take derivatives
