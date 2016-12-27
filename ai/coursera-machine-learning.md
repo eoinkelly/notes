@@ -2,6 +2,8 @@
 
 _Aside: As of 2016-12-23 Github does not render Math correctly so you will need to use a multi-markdown capable renderer_
 
+## Week 1
+
 * ML grew out of AI
 * ML touches many areas
     * database mining: click-stream data, medical data, computational biology, all fields of engineering
@@ -39,9 +41,8 @@ There are two broad categories of ML
 ## Supervised learning
 
 * most common type of ML problem
-* the algorithm is given the right answer for each data point in the data set
+* the algorithm is given the correct answer for each data point in the training data set
 * we have a pre-concieved idea that there is a relationship between the data and we train the algorithm on those past results hoping it will be able to predict new outputs given new inputs
-* give the algorithm a data set where the "right answers" are also given.
 * the task of the algorithm is to produce new answers based on new points which were not in the training data.
 
 > In supervised learning, we are given a data set and already know what our
@@ -77,7 +78,7 @@ There are two broad categories of ML
 Supervised learning  problems are categorized into "classification problem" or "regression problem"
 
 1. classification problem
-    * output is a discrete function of input i.e. it maps the inputs onto a s discrete set of values
+    * output is a discrete function of input i.e. it maps the inputs onto a discrete set of values
     * we want an algorithm which will predict discrete valued output
     * example: predicting whether tumor is malignant or benign (two possible output values which are not continuous)
 1. regression problem
@@ -87,11 +88,7 @@ Supervised learning  problems are categorized into "classification problem" or "
 
 Given a real world problem you can usually ask questions about it which fall into either category.
 
-A good learning algorithm is one which can use up to an infinite no. of features of the problem to make predictions
-
-    The "support vector machine" (SP?)
-    * uses a mathematical trick which allows it to use an
-      infinite no. of features of the problem
+A good learning algorithm is one which can use up to an infinite no. of features of the problem to make predictions. There are algorithms which can use many features to make predictions e.g. support vector machine - see https://en.wikipedia.org/wiki/Support_vector_machine. SVMs use a thing called the "kernel trick" to use many features in a computationally efficient way.
 
 ## Unsupervised learning
 
@@ -99,29 +96,16 @@ We give the algorithm a data set and ask it to find some structure in it
 
 Examples of unsupervised algorithms
 
-1. clustering algorithm
+1. clustering algorithms
+    * categorizing the data into groups based on some criteria
+    * Examples of clustering
+        * http://news.google.com is an example of a clustering algorithm
+        * Trying to figure out which machines send traffic to each other in large data centers so you can optimize your network
+        * Social network analysis - can you identify groups of friends based on their contact with each other
+        * Market segmentation - have an algorithm create market segments for you based on your customers
+        * Astronomical data analysis
 1. cocktail party algorithm
-
-Examples of clustering
-
-* http://news.google.com is an example of a clustering algorithm
-* Trying to figure out which machines send traffic to each other in large data centers so you can optimize your network
-* Social network analysis - can you identify groups of friends based on their contact with each other
-* Market segmentation - have an algorithm create market segments for you based on your customers
-* Astronomical data analysis
-
-### Gnu Octave
-
-* Free implementation of Matlab (mostly compatible with Matlab scripts)
-* This course uses the "Octave" programming environment to implement algorithms
-* A common pattern is to prototype the algorithm in Octave and then implement in C++/Java later on
-
-Their reasoning for not using R is:
-
-> R is a bit too high level. This course shows how to actually implement the
-> algorithms of machine learning, while R already has them implemented
-
-Aside: => R might be practical for me using these in industry setting
+    > The cocktail party effect is the ability to focus on a specific human voice while filtering out other voices or background noise. The ease with which humans perform this trick belies the challenge that scientists and engineers have faced in reproducing it synthetically.
 
 > Unsupervised Learning
 >
@@ -145,25 +129,18 @@ Aside: => R might be practical for me using these in industry setting
 > in a chaotic environment. (i.e. identifying individual voices and music from
 > a mesh of sounds at a cocktail party).
 
-## Model and Cost function
+### Gnu Octave
 
-Model representation
+* Free implementation of Matlab (mostly compatible with Matlab scripts)
+* This course uses the "Octave" programming environment to implement algorithms
+* A common pattern is to prototype the algorithm in Octave and then implement in C++/Java later on
 
-X = the space of input variable (or feature)
+Their reasoning for not using R is:
 
-Y = the space of output values or "target feature"
+> R is a bit too high level. This course shows how to actually implement the
+> algorithms of machine learning, while R already has them implemented
 
-$X = Y = \mathbb{R}$ in this case
-
-$x^{(i)}$ is input example ($i$ indicates the $i^{th}$ example from $x$ not exponentiation)
-
-$y^{(i)}$ is the corresponding actual (and correct) output value (not an estimate)
-
-So $(x^{(i)}, y^{(i)})$ is a training example
-
-and $(x^{(i)}, y^{(i)});i = 1...m$ is the training set (a set of examples). There are $m$ training examples in the set.
-
-We are trying to learn a function $h(X) -> Y$ so that $h(x)$ is a _good predictor_ of y i.e. $h(x)$ is a the "predicted value of y"
+Aside: => R might be practical for me using these outside of this course.  
 
 ## Our first (supervised) learning algorithm : Linear regression with one variable
 
@@ -176,7 +153,13 @@ This is an example of
 * supervised learning problem
 * regression (continuous valued output) problem
 
-### 1. Create a strategy
+> When the target variable that we’re trying to predict is continuous, such as
+> in our housing example, we call the learning problem a regression problem.
+> When y can take on only a small number of discrete values (such as if, given
+> the living area, we wanted to predict if a dwelling is a house or an
+> apartment, say), we call it a classification problem.
+
+### 2. Human choose a model & machine find the best parameters for it
 
 Given a set of data points which historical data, we need to choose an equation shape (model) which we think will fit the data well enough to provide good predictions for the future.
 
@@ -189,7 +172,7 @@ In other words:
 1. Human: Choose an algorithm which will minimize the cost function
 1. Machine: Run the minimization function and find the best parameters.
 
-The course mentions nothing about **how** you choose this equation (model)
+The week's material does not mention anything about **how** you choose this equation (model).
 
 The learning algorithm's output is a *function* called $h$ or the _hypothesis_ - the _hypothesis_ is our chosen model (equation) with the best possible parameters filled in by the learning algorithm.
 
@@ -199,12 +182,24 @@ learning_algorithm :: training_data_set -> h
 h :: x -> predicted_y
 ```
 
-### 1. Choose a model for the data
+### 3. Choose a model for the data
+
+* $X$ = the space of the input variable or "input feature"
+* $Y$ = the space of output values or "target feature"
+* $X = Y = \mathbb{R}$ in this case
+* $x^{(i)}$ is the $i^{th}$ input example (superscript $i$ is not exponentiation here)
+* $y^{(i)}$ is the corresponding actual output value (not an estimate) from the training set.
+* So $(x^{(i)}, y^{(i)})$ is a "training example" and $(x^{(i)}, y^{(i)});i = 1...m$ is the training set (a set of examples).
+* There are $m$ training examples in the set.
+
+We are trying to learn a function $h(X) \rightarrow Y$ so that $h(x)$ is a **good predictor** of $y$
+
+$h(x)$ is a the "predicted value of y"
 
 
 How we build a model
 
-A model is a guess at what the relationship between the data is - it may not actually _be_ the relationship between the data!
+A model is our guess at what the relationship between the data is - it may not actually _be_ the relationship between the data!
 
 To begin we (humans) are going to create a simple model and assume that $h$ will be a _linear function_ i.e.
 
@@ -218,25 +213,17 @@ We created this model but we want the machine to fill in the values of $\theta_0
 
 $h$ is linear because if you were to plot $a + bx$ you would get a straight line
 
-This model is called
+This model is called **linear regression with one variable** or **univariate linear regression**
 
-* linear regression with one variable
-* univariate linear regression
-    * linear = the model is always a line
-    * regression = the model has continuous valued output
-    * univariate = the model depends on one variable only ($x$)
-        * Note that $\theta_0$ and $\theta_1$ are **constants** in the model
+* linear = the model is always a line
+* regression = the model has continuous valued output
+* univariate = the model depends on one variable only ($x$)
+    * Note that $\theta_0$ and $\theta_1$ are **constants** in the model
 
 Given a training dataset of m examples we want to build a function which will
 take an input value (from $X$) and and return a predicted $Y$ value.
 
-> When the target variable that we’re trying to predict is continuous, such as
-> in our housing example, we call the learning problem a regression problem.
-> When y can take on only a small number of discrete values (such as if, given
-> the living area, we wanted to predict if a dwelling is a house or an
-> apartment, say), we call it a classification problem.
-
-### 1. Define a cost function
+### 4. Define a cost function
 
 Now that we have decided on a model we need to create some way of finding $\theta_0$ and $\theta_1$. We need two things for this
 
@@ -247,10 +234,11 @@ Now that we have decided on a model we need to create some way of finding $\thet
 
 We start by defining a function which will express how much error there is between the predicted output and the actual output for a particular example from the training set.
 
-We want a function whose value
+We want a function whose output
 
-* goes up as the error goes up
 * has a value of 0 if there is no error
+* goes up as the error goes up
+* returns proportionally larger values as error goes up (big errors are penalized more)
 * does not care whether the predicted output was too low or too high
 
 Our Cost function
@@ -294,7 +282,7 @@ The output of our cost function goes up with the square of the diff between actu
 >
 > The mean is halved ($\frac{1}{2}$) as a convenience for the computation of the gradient descent, as the derivative term of the square function will cancel out the $\frac{1}{2}$ term.
 
-### 1. Choose algorithm to minimize cost function
+### 5. Choose algorithm to minimize cost function
 
 #### Gradient Descent algorithm
 
@@ -378,7 +366,7 @@ There is a another methods of minimizing $J$ called the "normal equations" metho
 
 Q: scale in what way? computationally?
 
-### 1. Evaluate our results
+### 6. Evaluate our results
 
 * Hopefully our gradient descent algorithm has converged
 * So now we have values for $\theta_0$ and $\theta_1$ which provide the best possible fit for our (human) chosen model to the data.
@@ -391,19 +379,19 @@ Q: How do we know its a global minimum not a local minimum?
 
 Terminology
 
-* $\mathbb{R}^{4 x 2}$ is the set of all 4x2 matrices
-* $\mathbb{R}^{3 x 2}$ is the set of all 3 x 2 matrices
-* $A_{ij}$ - element from row i, column j of the matrix A
+* $\mathbb{R}^{4 \times 2}$ is the set of all 4x2 matrices
+* $\mathbb{R}^{3 \times 2}$ is the set of all 3x2 matrices
+* $A_{ij}$ - element from row $i$, column $j$ of the matrix $A$
 * Matrix names are usually capital letters
 
-A **vector** is a matrix with only one column:
+A vector is a matrix with only one **column**:
 
 $$y = \begin{bmatrix}1 \\ 33 \\ 4 \\ 6\end{bmatrix}$$
 
 * Vectors are often represented by an array in code _but_ we should remember that a vector, unlike how an array is presented in code, is a single *column* not a single *row*.
-* Math usually uses 1-indexed vectors (not 0-indexed as arrays are in most programming languages)
+* Math usually begins vector and matrix indexing at 1 not 0
 
-Addition
+#### Matrix Addition
 
 $$
 \begin{bmatrix}a & b\\c & d\end{bmatrix} + \begin{bmatrix}e & f\\g & h\end{bmatrix} = \begin{bmatrix}a+e & b+f\\c+g & d+h\end{bmatrix}
@@ -411,7 +399,17 @@ $$
 
 * you can only add matrices with the same dimensions
 
-Multiplying (by a scalar)
+#### Matrix Subtraction
+
+$$
+\begin{bmatrix}a & b\\c & d\end{bmatrix} -
+\begin{bmatrix}e & f\\g & h\end{bmatrix} =
+\begin{bmatrix}a-e & b-f\\c-g & d-h\end{bmatrix}
+$$
+
+* you can only subtract matrices with the same dimensions
+
+#### Multiplying (by a scalar)
 
 $$
 3 *
@@ -420,8 +418,7 @@ $$
 \begin{bmatrix}3a & 3b\\3c & 3d\end{bmatrix}
 $$
 
-
-Division (by a scalar)
+#### Division (by a scalar)
 
 $$
 4 \div
@@ -435,7 +432,7 @@ $$
 
 * scalar division is really scalar multiplication by the inverse of the scalar
 
-Vector by Matrix multiplication
+#### Vector by Matrix multiplication
 
 $$
 \begin{bmatrix}a & b\\c & d\\e & f\end{bmatrix}
@@ -499,6 +496,7 @@ $$
 # doing the calculation in ruby
 
 # ruby matrices are immutable
+require "matrix"
 
 v = Matrix.column_vector([-40, 0.25])
 # or
@@ -509,15 +507,23 @@ m * v
 # => Matrix[[486.0], [314.0], [343.5], [173.0]]
 ```
 
-Matrix Matrix multiplication
+#### Matrix Matrix multiplication
 
-The inner dimentions have to match:
+The inner dimensions have to match:
 
 $$ 2x3 \times 3x2 = 2x2$$
 
 Then split the second matrix into vector columns and multiply the first matrix by each column to create a column in the answer matrix
 
-Considering first vector column:
+Given
+
+$$
+\begin{bmatrix}a & b & c\\d & e & f\end{bmatrix}
+\times
+\begin{bmatrix}u & v\\w & x\\y & z\end{bmatrix}
+$$
+
+First we take the first vector column and multiply it out
 
 $$
 \begin{bmatrix}a & b & c\\d & e & f\end{bmatrix}
@@ -530,7 +536,7 @@ du + ew + fy \\
 \end{bmatrix}
 $$
 
-Considering second vector column:
+Then take the second vector column
 
 $$
 \begin{bmatrix}a & b & c\\d & e & f\end{bmatrix}
@@ -543,7 +549,7 @@ dv + ex + fz\\
 \end{bmatrix}
 $$
 
-and putting it together:
+and putting it all together:
 
 $$
 \begin{bmatrix}a & b & c\\d & e & f\end{bmatrix}
@@ -558,14 +564,20 @@ $$
 
 In general
 
-* you can only mutltiply matrices if their dimensions match
+* you can only multiply matrices if their dimensions are compatible e.g. $m x n \times n x o$
 * when multiplying matrices $A \times B = C$, the $i_{th}$ column of matrix $C$ is obtained by multiplying matrix $A$ by the $i_{th}$ column of matrix $B$
 
 
-Matrix multiplication properties
+#### Matrix multiplication is not commutative
 
-* scalar mutiplication is commutative, matrix multiplication is not. $A \times B \neq B \times A$
-* scalar multiplication is associative and so is matrix multiplication.
+Scalar mutiplication is commutative, matrix multiplication is not. $A \times B \neq B \times A$
+
+Remember you can only multiply matrices if their dimensions are compatible i.e. $m x n \times n x o$ works but $n x o \times m x n$ does not.
+
+#### Matrix multiplication is associative
+
+Scalar multiplication is associative and so is matrix multiplication (it doesn't matter how you group the terms in a multiplication)
+
 $$
 A \times B \times C
 $$
@@ -573,11 +585,12 @@ $$
 (A \times B) \times C = A \times (B \times C)
 $$
 
-* identity matrix.
-    * In scalar multiplication $1$ is the identity operation
-    * in matrix multiplication the identity matrix is denoted $I_{n \times n}$ (there is a different identity matrix for each size of matrix)
-        * identity matrix is _always_ square
-        * it has 1's on the left to right diagonal and 0's everywhere else
+#### Identity matrix
+
+* In scalar multiplication $1$ is the identity operation
+* in matrix multiplication the identity matrix is denoted $I_{n \times n}$ (there is a different identity matrix for each size of matrix)
+    * identity matrix is _always_ square
+    * it has 1's on the left to right diagonal and 0's everywhere else
 
 $$
 \begin{bmatrix}1\end{bmatrix}
@@ -621,3 +634,15 @@ $$
 $$
 
 #### Matrix transpose
+
+To get transpose of A, take each row of A and turn it to a column of $A^T$
+
+If $A_{m \times n}$ then $A^T_{n \times m}$
+$$
+A = \begin{bmatrix}a & b & c\\d & e & f\end{bmatrix}
+$$
+$$
+A^T = \begin{bmatrix}a & d\\b & e\\c & f\end{bmatrix}
+$$
+
+## Week 2
