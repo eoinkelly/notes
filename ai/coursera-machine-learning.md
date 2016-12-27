@@ -646,3 +646,120 @@ A^T = \begin{bmatrix}a & d\\b & e\\c & f\end{bmatrix}
 $$
 
 ## Week 2
+
+### Linear regression with multiple variables
+
+Consider trying to predict house prices again. This time we have  four features we will use to make the prediciton
+
+1. size (in feet) $x_1$
+1. age of home (in years) $x_2$
+1. number of floors $x_3$
+1. number of bedrooms $x_4$
+
+New terminology
+
+* $n$ = number of features (in this case $n = 4$)
+* $x^{(i)}$ = a vector of **all** the features of the $i^{th}$ training example
+* $x^{(i)}_j$ = the value of feature $j$ in the $i^{th}$ training example (same syntax for getting the value of any other vector)
+
+We also need a new hypothesis
+
+$$
+h_\theta(x)
+=
+\theta_0 +
+\theta_1x_1 +
+\theta_2x_2 +
+\theta_3x_3 +
+\theta_4x_4
+$$
+
+Note: all the $x$ values in the equation above are from a single training example.
+
+More generally (for $n$ features)
+
+$$
+h_\theta(x)
+=
+\theta_0 +
+\theta_1x_1 +
+\theta_2x_2 +
+\ldots +
+\theta_nx_n
+$$
+
+
+For convenience of notation we add a new term $x_0 = 1$ to the equation above - it does not change the equation at all but makes notation more consistent for our next steps.
+
+$$
+h_\theta(x)
+=
+\theta_0x_0 +
+\theta_1x_1 +
+\theta_2x_2 +
+\ldots +
+\theta_nx_n
+$$
+
+so now we can represent this as Vectors
+
+$$
+x = \begin{bmatrix}x_0 \\ x_1 \\ x_2 \\ \vdots \\ x_n \end{bmatrix}
+\in
+\mathbb{R}^{n+1}
+$$
+
+$$
+\theta = \begin{bmatrix}\theta_0 \\ \theta_1 \\ \theta_2 \\ \vdots \\ \theta_n \end{bmatrix}
+\in
+\mathbb{R}^{n+1}
+$$
+
+and we can easily get the transverse of $\theta$
+
+$$
+\theta^T = \begin{bmatrix}\theta_0 & \theta_1 & \theta_2 & \ldots & \theta_n \end{bmatrix}
+\in
+\mathbb{R}^{n+1}
+$$
+
+so we can represent $h_\theta(x)$ as
+
+$$
+h_\theta(x)
+=
+\begin{bmatrix}\theta_0 & \theta_1 & \theta_2 & \ldots & \theta_n \end{bmatrix}
+\times
+\begin{bmatrix}x_0 \\ x_1 \\ x_2 \\ \vdots \\ x_n \end{bmatrix}
+$$
+
+$$
+h_\theta(x)
+=
+\theta^Tx
+$$
+
+Note that in the real world a single training example is usually stored as a row in a database not a column as shown in the equations above.
+
+For example if $i = 33$ (the $33^{rd}$ training example, and the $33^{rd}$ row in the database table)
+
+$$
+x =
+\begin{bmatrix}
+x_0^{(33)} &
+x_1^{(33)} &
+x_2^{(33)} &
+\ldots &
+x_n^{(33)}
+\end{bmatrix}
+,
+\theta = \begin{bmatrix}\theta_0 \\ \theta_1 \\ \theta_2 \\ \vdots \\ \theta_n \end{bmatrix}
+$$
+
+In this case
+
+$$
+h_\theta(X) = X\theta
+$$
+
+The above defines _multivariate linear regression_.
