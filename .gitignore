@@ -5,6 +5,9 @@
 *.swp
 *.swo
 
+# python compile artefacts
+*.pyc
+
 /dist/
 # haskell compile artefacts
 *.o
