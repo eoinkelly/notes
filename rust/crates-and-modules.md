@@ -1,5 +1,31 @@
 # Crates & Modules
 
+* crates contain modules
+* the name of the craete is the name of the "root module" in the crate
+    * => every crate contains at least one module of the same name
+* when we define modules inline in a single file we declare them with `mod NAME {}`
+* there is ALWAYS a module declaration
+* when we place module code in other files we STILL NEED TO DECLARE THEM with `mod NAME;`
+    * rust uses a name convention to map from that module declaration to the file on disk
+        * `lib/NAME.rs`
+        * `lib/NAME/mod.rs`
+    * we don't need to re-declare the module in the other files
+* the module that contains the submodule needs to declare it
+* declaraing a module in a module also import the name of the module as a symbol to use
+
+```
+mod foo;
+
+// does an implicit 'use foo;' e.g.
+
+mod foo;
+use foo;
+
+```
+
+
+There are two ways to make multiple module crates
+
 * Crates are a _compilation unit_ in rust. They are what is
     * compiled
     * linked against
