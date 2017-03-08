@@ -3,21 +3,8 @@
 when merging a feature branch into master always use --no-ff as we definitely want a merge commit
 
 
-A "deletion" is the removal of stuff from a file
-    * can be removal of a whole line or just part of one
-An "insertion" is the addtion of content to a file
-    * can be part of a line or a whole line
-
 
 ```sh
-# format:
-# path/to/file.ext | {number insertions + num deletions} {whether there were insertions, deletions or both}L*L*
-
-git log --stat # see stats on num insertions/deletions for each file
-git log -20 # see 20 log entries
-git log -p # see a patch (the diff) of each commit
-
-
 git commit --amend
 # * use the current contents of the staging area for the commit
 # * replaces the previous commit
@@ -48,13 +35,6 @@ git checkout abcdef123 -- path/to/foo # checkout from a particular commit
 git checkout ek/some-work -- path/to/foo # checkout from a particular branch
 ```
 
-a `<tree-ish>` is a commit, tag, tree
-
-The difference between ~ and ^
-
-master~3 follow the "first parent" relationships 3 levels back
-master^3 follow the "second parent" relationships 3 levels back
-
 git remote show origin # see full details of the 'origin' remote
 
 git pull <remote>
@@ -73,12 +53,22 @@ git log --oneline master..origin/master
 git merge origin/master
 
 
-The golden rule of git rebase is to never use it on public branches.
+```
 
-Things rebase is good for
+git commit --amend --no-edit
+# note git does not delete old commit - it just reates new one and points HEAD at it
+# does it make the old commit unreachable?
 
-* making sure each commit on your private branch is meaningful
+git log -p # show commits and patches - very useful
 
-git merge-base my-feature master # find the original base of my-feature branch
+git help <ALIAS_NAME> # shows info on alias
 
-> Rebases are how changes should pass from the top of hierarchy downwards and merges are how they flow back upwards.
+
+# uncommit: undo last commit - keep its changes in the working dir
+git reset --soft HEAD^
+
+
+:cquit in vim exits with non-zero which causes git to notice the failure and not create the commit
+```
+
+
