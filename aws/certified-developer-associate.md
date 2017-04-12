@@ -4,48 +4,87 @@
 * https://www.udemy.com/aws-certified-developer-associate/learn/v4/overview
 
 
+Amazon offers 3 partner levels
+
+1. standard
+    * needs 2 associate level staff
+    * needs 0 associate level staff
+2. advanced
+    * needs 4 associate level staff
+    * needs 2 associate level staff
+3. premiere
+    * needs 20 associate level staff
+    * needs 8 associate level staff
+
 Certifications in mostly order of difficulty
 
-* Associate tier
-    * Certified developer associate
-    * Certified solutions architect Associate
-    * Sysops administator associate
-* Professional tier (more advanced)
-    * Devops professional
-    * Solutions architect professional
+The difficulty of each exam relative to other exams is indicated 1 = easiest, 8 = hardest
 
+* Associate tier
+    * Certified developer associate (1)
+    * Certified solutions architect Associate (2)
+    * Certified Sysops administator associate (3)
+* Professional tier (more advanced)
+    * Devops professional (6)
+        * have to have passed either sysops associate or developer associate
+    * Certified Solutions architect professional (8)
+        * have to have passed the solutions architect associate level
+
+Specialty
+    * Security (4)
+        * need to ahve passed one associate exam
+    * Advanced Networking (7)
+        * need to have passed one associate exam
+    * Big Data (5)
+        * need to have passed one associate exam
 
 https://aws.amazon.com/certification/certified-developer-associate/
 
-Aim to get 70% to pass (pass mark is moveable)
+History
 
-AWS (SQS only) announced first in 2004
+* AWS (SQS only) announced first in 2004
+* 2012 Re-invent is the main AWS conference
+* first certifications offered in 2013
 
-Re-invent is the main AWS conference
-2013 - first certifications
+Goals
 
-Only need to know a few of the AWS services in depth for the exam
+* Aim to get 70% to ensure a pass (pass mark is moveable day by day)
+* Pass mark moves on a bell curve
+* Only need to know a few of the AWS services in depth for the exam
+
+```
+AWS fundamentals            10%
+Designing and developming   40%
+Deployment and security     30%
+Debugging                   20%
+```
 
 
 ### Layer 0: Global infrastructure
 
 * https://aws.amazon.com/about-aws/global-infrastructure/
 
+This "global infrastructure" underlies all other AWS services
+
 Important:
 
-* A region is a geographical area
-* An availability zone (AZ) is a data center
-    * Amazon docs actually call them "EC2 availability zones"
-        * so does that imply that not all services are "zoned"???
-* Each region has 2 or more availability zones
-* Edge locations are CDN endpoints for cloudfront
-    * there are many more edge locations than AZs (currently over 50 edge locations)
-    * edge locations are where users access AWS content
-
-* Unoffical content:
+* A region is a *geographical area*
+* An availability zone (AZ) is a "logical" data center (it is often one physical data center but can be more)
+    * each AZ is isolated (separate power and network) so in theory if one AZ goes down then the region is still OK
     * each AZ can be only meters apart provided it has separate power, network
     * each AZ in a region is connected with a direct fibre link
         * capacity 25Tbps, latency 1-2ms
+* Each region ALWAYS has 2 or more availability zones
+* Edge locations are CDN endpoints for cloudfront
+    * there are many more edge locations than AZs (currently over 66 edge locations)
+    * edge locations are where users access AWS content
+
+* As of Dec 2016:
+    * 14 regions,
+    * 38 availability zones
+    * 66+ edge locations
+* 2017: adding 4 regsions, add 11 AZs
+* The number of regions and AZs does NOT come up in the exam so it is only _nice to know_
 
 
 Relevant for NZ
@@ -59,29 +98,33 @@ Relevant for NZ
 
 * sits on top of the global infrastructure
 
-* Virtual private cloud (VPC)
+* Virtual private cloud (VPC) [VERY IMPORTANT IN EXAM]
     * Virtual data center
+    * can have multiple VPCs per region
     * can have multiple VPCs in your account
     * can get them to peer with each other
     * a "data center" which exists in your account
     * each VPC has a logcially isolated set of resources
-    * each VPC in your accoun can be in different regions
-
+    * each VPC in your account can be in different regions
 * Direct connect
-    * connect to the AWS without using using a internet connection
+    * connect to the AWS without using using a public internet connection
     * uses dark fibre
-    * connects directly into AWS
-
-* Route 53
+    * connects your own data center directly into AWS
+* Route 53 [IMPORTANT IN EXAM]
     * is their DNS service
     * called route 53 because DNS is on port 53
+* Cloudfront
+    * CDN service
+    * Integrates with other products e.g. S3
+    * edge location is a place with caches your files
+    * is a fairly big part of the exam
 
 ### Compute
 
-* EC2
+* EC2 (Elastic Compute Cloud)
     * EC2 instance is a virtual server
     * can provision and log on
-* EC2 container service
+* EC2 container service [NOT ON EXAM]
     * amazon's ECS
     * lets you run and manage docker containers on a cluster of EC2 instances
     * uses EC2 instances
@@ -91,12 +134,14 @@ Relevant for NZ
     * service for deploying and scaling apps
     * for devs to upload their code then aws inspects and provisions it
     * "AWS for beginners"
-    * covered in the this exam at a very high level
+    * covered in this exam at a very high level
 * Lambda
     * lets you run code without provisioning or managing servers
     * Acloud.guru runs entirely on it
     * you only pay for compute time you actually use - you are only charged when your code is actually running
     * doesn't feature heavily in the exam at the moment
+* Lightsail
+    * "out of the box" cloud - does not feature in the exam
 
 # Storage
 
@@ -106,11 +151,6 @@ Relevant for NZ
     * place to store files in the cloud
     * secure, durable, highly-scalable
     * you only pay for the storage you actually use
-* Cloudfront
-    * CDN service
-    * Integrates with other products e.g. S3
-    * edge location is a place with caches your files
-    * is a fairly big part of the exam
 * Glacier
     * for data archiving and long term back
     * can take up to 4hrs to access data
@@ -408,8 +448,63 @@ This is an OpenID flow
 
 # EC2
 
-You start with nothing but one security group which is the default security group in the default VPC
+Aside: the three defined local networks in RFC 1918:
 
+```
+10.0.0.0    - 10.255.255.255        10.0.0.0/8
+192.168.0.0 - 192.168.255.255       192.168.0.0/16
+172.16.0.0  - 172.31.255.255        172.16.0.0/12
+```
+
+4 types of EC2 pricing
+
+1. On demand
+    * You pay a fixed rate by the hour with no commitment
+    * use for workloads which are long-term, spiky unpredictable usage, cannot tolerate interruption
+1. Reserve
+    * you commit to 1yr or 3yr contract for a certain set of resources and Amazon gives you a decent discount
+    * can pay up-front for more discount
+    * useful if you know what capacity you will need
+    * applications with steady state or predicatable usage
+    * can supplerment reserved instances with on-demand instances for peak load times
+1. Spot
+    * you set a "bid price" for a particular region and AZ
+    * you bid on the "spot price". when the spot price drops below your bid,
+      your instance will start. when the spot price rises back up over your bid
+      your instance will terminate
+    * handy if you can be flexible about when you start/stop compute
+    * handy for apps which are only feasible at very low compute prices
+1. dedicated hosts
+    * physical EC2 host for your use, you can pay by the hour
+    * handy if you have software licences which are
+    * useful if regulatory requirements prohibit multi-tenancy
+    * you can reserve dedicated hosts or have them on-demand
+
+EXAM QUESTION: If an instance is terminated by **amazon** because the spot-price
+went above your bid-price you will NOT be charged for that partial hour of
+usage. If **you** terminate the instance then you WILL BE CHARGED
+
+EC2 instance types
+
+* Each instance type has a single letter family name and a version e.g. `D1`, `D2` etc.
+* D = density, dense storage (file servers, data warehousing, hadoop)
+* R = memory (RAM)
+* C = compute optimized
+* M = main, general purpose
+* G = graphics intensive
+* I = iops, high speed storage
+* T = general purpose, low cost
+* F = FPGA (hardware acceleration, ML)
+* P = Graphic/general purpose GPU (ML, bitcoin mining)
+* X = memory optimized (extreme memory optimized)
+
+Use "Dr Mc GiftPX" as a shitty memnonic to remember the families
+
+EXAM QUESTION: you will be given a scenario and asked to choose the best instance type for it (the options will include some types which don't exist)
+
+M and T are the families we care about most
+
+You start with nothing but one security group which is the default security group in the default VPC
 
 An Amazon Machine Image (AMI) is a _template_ that provides
     * operating system
@@ -423,10 +518,10 @@ An Amazon Machine Image (AMI) is a _template_ that provides
     * download community made ones
     * make your own
 
-Free tier = you can run certain micro instaces for 1 year for free
+Free tier = you can run certain micro instances for 1 year for free
 
 * Amazon have their own linux AMI which includes many common server packages
-    * it is based on red hat (uses yum at any rate)
+    * it is based on red hat (it uses yum at any rate)
 * the data in an instance store is not permenant - it persists only for the lifetime of the instance
 
 ```
@@ -435,60 +530,59 @@ t2.micro (Variable ECUs, 1 vCPUs, 2.5 GHz, Intel Xeon Family, 1 GiB memory, EBS 
 ```
 
 Choosing region and data center for your instance
+
 * choose region before you create the instance
 * choose AZ (data center) by choosing the subnet the instance is in during instance setup
-
+    * AWS creates a default VPC for you in each region with one subnet in each of the AZs of that region
 * Shutdown behaviour
     * stop = just stop the instance
     * terminate = stop & delete the instance
 * "User data" field
     * a textarea where you can paste a shell script that will be run as root when the instance is launched
-        * it is only run automatically when the instance is _launched_
-        * if you stop instance, change user-data, start instance you will have to run it manually
-        ```
-        curl http://169.254.169.254/latest/user-data | sh
-        ```
-    * max 16k
+        * it is only run automatically when the instance is _launched_ - it does NOT run automatically when the instance starts/stops
+    * max 16kB length
     * you can submit user data via the API but you must base64 encode it first
     * to modify user data for a running instance
-        1. stop th einstance
-        2. modify the user data section vai the AWS web console
-        3. start the instance - the new userdata will be picked up
-    * if you modify user data it will be
+        1. stop the instance
+        2. modify the user data section via the AWS web console
+        3. start the instance - the new userdata will be available
+        4. `curl http://169.254.169.254/latest/user-data | sh`
     * you can get user data back from a running instance by either
         * `curl http://169.254.169.254/latest/user-data` from the instance
         * Use the web console
 * Security group
     * basically configured the firewall that your instance will sit behind
-* EC2 instanace has two network interfaces
-    1. private: lets you access other AWS resources in the
+* EC2 instance has two network interfaces
+    1. private: lets you access other AWS resources in the subnet
         * this is the only one visible when ssh'd into the box
         * hostname is built from this IP address
     2. public: lets you ssh in
         * not visible when you `ifconfig -a` within the instance
 
-To figure out what the default username for an image is
+To SSH to an EC2 instance:
 
 ```
-# try to ssh in as root and it will fail but prompt us with correct username
-$ ssh 52.63.84.255  -l root -i EoinAwsLearningTest1.pem
-Please login as the user "ec2-user" rather than the user "root".
+# 1. get IP address from the instance description in AWS console
+# 1. Locate the .pem file which is the private key you created/used when creating the instance
+# 1. chmod 0600 my-key.pem file (ssh will refuse to use an identity file that is world writable)
+chmod 0600 my-key.pem
 
-Connection to 52.63.84.255 closed.
+# 1. ssh into the box
+#     username:
+#         * you will be prompted to retry if you get it wrong so no biggie
+#         * ec2-user is the default username for Amazon AMI images
+#         * ubuntu is the default username for Ubuntu images
+#     -l sets login name (username)
+#     -i sets identity file (private key)
+ssh 52.63.84.255 -l ubuntu -i my-key.pem
 ```
 
-To SSH to an EC2 instance
-
 ```
-# get IP address from the instance description in AWS console
-# EoinAwsLearningTest1.pem is the private key you created when creating the instance
-# ssh will refuse to use an identity file that is world writable
-# ec2-user is the default username for Amazon AMI images
-# ubuntu is the default username for Ubuntu images
-# -l sets login name
-# -i sets identity file
-chmod 0600 EoinAwsLearningTest1.pem
-ssh 52.63.84.255 -l ec2-user -i EoinAwsLearningTest1.pem
+#/usr/bin/env bash
+# example script to use when creating ubuntu instances
+# all commands run as root
+apt-get update
+apt-get upgrade
 ```
 
 AMI attributes
@@ -497,11 +591,152 @@ AMI attributes
             * of 38k community AMIs, 30k are this
         * Instance store
             * of 38k community AMIs, 8k are this
-    * virtualization type
+    * virtualization types
         * HVM
             * TODO: find out more
         * paravirtual
             * TODO: find out more
+
+EBS
+
+* allows you to create storage volumes and attach them to EC2 instances
+* once attached you can create a filesystem on the volume or do anything else you would do with a block device
+* EBS volumes live in one AZ
+* EBS volumes are automatically replicated across physical devices within an AZ
+* different EBS volume types
+
+1. General purpose SSD (GP2)
+    * balance price and perf
+    * 3 IOPS per GB with up to 10k IOPS and the ability to burst up to 3k IOPS for extended periods of time for volumes under 1GB
+2. Provisioned IOPS SSD (IO1)
+    * use for IO intensive apps e.g. databases
+    * use if you need more than 10k IOPS
+    * can go up to 20k IOPS per volume
+3. Throughput optimized HDD (ST1)
+    * big data, log processing, data warehousing
+    * useful for large amounts of data which will be written in sequence e.g. a log
+    * GOTCHA: cannot be a boot volume
+4. Cold HDD (SC1)
+    * A file server you don't need to access very often
+    * GOTCHA: cannot be a boot volume
+    * basically this is an unbootable version of "Magnetic standard" (they use the same disks)
+5. Magnetic (standard)
+    * can be a boot drive
+    * lowest storage cost of all **bootable** EBS volume types
+    * useful if data is accessed infrequently or cost is a limiting factor
+
+EXAM TIPS
+* know different EC2 pricing models
+* know that you pay for the partial hour only if you (not amazon) terminate the instance
+* know your EBS types and when to use them
+* Remember "Dr Mc GIFT PX" (the scottish doctor who gives away photos)
+
+
+EXAM QUESTION: YOu cannot mount an EBS volume to multiple EC2 instances! If you need something like this use EFS
+
+When creating an EC2 instance
+    * default monitoring is every 5 mins
+    * "Cloudwatch Detailed monitoring" is every 1 min
+
+EXAM QUESTION: What happens to the EBS volume attached to an EC2 instance when you terminate the instance?
+    A: it depends on whether the box was ticked to delete the volume at termination when you were setting up storage for the EC2 instance
+
+EXAM QUESTION: You do need to know the default things which cloudwatch will monitor on your instance
+
+EXAM QUESTION: By default you cannot encrypt root device volume of an EC2 instance
+    * you can get around it by
+        1. create volume unencrypted
+        1. option:
+            1. take an AMI snapshot of it and encrypt that snapshot
+            1. use that snapshot to create a new EC2 instance
+        1. option:
+            1. encrypt the volume with other software e.g. bitlocker on windows
+
+Security groups
+
+* a security group is a set of virtual firewall rules - it is NOT "a firewall" - it is "a set of rules for a firewall"
+* any change you apply to a security group applies **immediately** - this is an EXAM QUESTION
+* security groups are **stateful** - if you have an inbound HTTP rule and no outbound rules then outbound HTTP is still allowed!!!
+    * any inbound requests you allow will be allowed to answer
+* in security groups, everything is blocked by default and you create rules to allow things
+    * an implication of this is that if an instance is part of multiple security groups, the rules from those groups are strictly additive - there is no such thing as a "DENY" rule in security groups
+* an instance can be behind multiple security groups
+* all inbound traffic is blocked by default
+* all outbound traffice is allowed by default
+* security-group has a many-to-many with ec2-instances
+* you cannot block specific IP addresses using security groups - you **can** allow traffic from only one IP (or IP range) but you cannot block
+
+
+EBS volume can only be attached to EC2 instances in the **same** AZ!
+
+You can attach volumes at
+
+    /dev/sdf
+    /dev/sdg
+    .
+    .
+    .
+    /dev/sdp
+
+> Note: Newer Linux kernels may rename your devices to /dev/xvdf through
+> /dev/xvdp internally, even when the device name entered here (and shown in
+> the details) is /dev/sdf through /dev/sdp.
+
+```
+ubuntu@ip-172-31-12-146:~$ lsblk
+NAME    MAJ:MIN RM SIZE RO TYPE MOUNTPOINT
+xvda    202:0    0   8G  0 disk
+└─xvda1 202:1    0   8G  0 part /
+xvdf    202:80   0  10G  0 disk
+ubuntu@ip-172-31-12-146:~$ sudo su
+root@ip-172-31-12-146:/home/ubuntu# mkdir /file-server
+root@ip-172-31-12-146:/home/ubuntu# file -f /dev/xvdf
+^C
+root@ip-172-31-12-146:/home/ubuntu# file -s /dev/xvdf
+/dev/xvdf: data
+root@ip-172-31-12-146:/home/ubuntu# mkfs -t ext4 /dev/xvdf
+mke2fs 1.42.13 (17-May-2015)
+Creating filesystem with 2621440 4k blocks and 655360 inodes
+Filesystem UUID: cdc73415-9e20-4567-9031-f65751806543
+Superblock backups stored on blocks:
+ 32768, 98304, 163840, 229376, 294912, 819200, 884736, 1605632
+
+Allocating group tables: done
+Writing inode tables: done
+Creating journal (32768 blocks): done
+Writing superblocks and filesystem accounting information: done
+
+root@ip-172-31-12-146:/home/ubuntu# mount /dev/xvdf /file-server/
+root@ip-172-31-12-146:/home/ubuntu# cd /file-server/
+root@ip-172-31-12-146:/file-server# ls -al
+total 24
+drwxr-xr-x  3 root root  4096 Apr 11 08:33 .
+drwxr-xr-x 24 root root  4096 Apr 11 08:32 ..
+drwx------  2 root root 16384 Apr 11 08:33 lost+found
+root@ip-172-31-12-146:/file-server# touch foo.html
+root@ip-172-31-12-146:/file-server# touch foo.txt
+root@ip-172-31-12-146:/file-server# ls -al
+total 24
+drwxr-xr-x  3 root root  4096 Apr 11 08:34 .
+drwxr-xr-x 24 root root  4096 Apr 11 08:32 ..
+-rw-r--r--  1 root root     0 Apr 11 08:34 foo.html
+-rw-r--r--  1 root root     0 Apr 11 08:34 foo.txt
+drwx------  2 root root 16384 Apr 11 08:33 lost+found
+root@ip-172-31-12-146:/file-server# lsblk
+NAME    MAJ:MIN RM SIZE RO TYPE MOUNTPOINT
+xvda    202:0    0   8G  0 disk
+└─xvda1 202:1    0   8G  0 part /
+xvdf    202:80   0  10G  0 disk /file-server
+root@ip-172-31-12-146:/file-server# cd /
+root@ip-172-31-12-146:/# umount /file-server/
+```
+
+Snapshots
+
+* are stored on S3
+* are point in time copies of a volume
+* are incremental
+    * they only store the delta between current snapshot and previous one
 
 Aside: Opsworks
 
@@ -526,8 +761,16 @@ Creating a role:
 * Exam Q: you cannot assign new roles to an existing EC2 instance - roles can only be assigned at creation
 
 Each EC2 instance can only have one role which must be assigned at creation
-    * that role can have many policies attached
-    * can the policies be edited afterwards?
+    * that role can have policies attached/detached
+    * you can delete the role itself and then the instance will have no role attached and one cannot be attached
+
+
+CLI commands for the developer associate exam
+
+1. aws ec2 describe-instances (describe your instances)
+1. aws ec2 describe-images (list all available instances)
+1. aws ec2 run-instances (creates an instance, 'start-instances' starts an existing instance but does not create one)
+1. aws ec2 terminate-instances
 
 
 Aside: `~/.aws/credentials` overides any credentials in `~/.aws/config`
@@ -577,6 +820,34 @@ security-groups
 
 curl http://169.254.169.254/latest/meta-data/hostname # see hostname
 curl http://169.254.169.254/latest/meta-data/public-ipv4 # see public IPv4 IP address NB
+
+curl http://169.254.169.254/ # to start searching
+
+curl http://169.254.169.254/latest/dynamic/instance-identity/document # see instance details
+
+# /latest/meta-data contains lots of config info about the machine ('/' suffix
+# indicates its a namespace with more values underneath)
+curl http://169.254.169.254/latest/meta-data/
+ami-id
+ami-launch-index
+ami-manifest-path
+block-device-mapping/
+hostname
+instance-action
+instance-id
+instance-type
+local-hostname
+local-ipv4
+mac
+metrics/
+network/
+placement/
+profile
+public-hostname
+public-ipv4
+public-keys/
+reservation-id
+security-groups
 ```
 
 Note: `ifconfig` will show you only the private interface of your instance - you must use the metadata to get the public interface IP
@@ -619,7 +890,23 @@ Random things you need to know for the exam
     * Python
 * default region for some SDKs is `us-east-1` (e.g. Java)
     * others force you to set a region before you can use them e.g. Node.js
-    * Ruby
+
+# Lambda
+
+* came out Reinvent 2015
+* ways of using
+    1. an event driven" compute source
+        * event can be changes to an S3 bucket, a dynamoDB table etc.
+    2.  a compute service in response to HTTP requests using "Amazon API Gateway" OR APi calls made using the AWS SDKs
+* languages available
+    1. nodejs
+    1. java
+    1. python 2.7
+    1. c#
+* pricing
+    * first million requests are free, $0.20 per million requests after
+    * you are also charged by "duration" = the time your code spends executing rounded up to the nearest 100mS
+    * you are also charged based on the amount of memory you allocate
 
 # S3
 
@@ -757,6 +1044,7 @@ Each CORS rule must contain
 1. the set of origins/domains and HTTP methods you want to allow for those origins.
 2. Optionally, you can also specify the headers users can set in requests or access in responses and the duration the preflight responses should be cached.
 
+
 Versioning
 
 * Stores all versions of an object including deletes
@@ -798,38 +1086,71 @@ Logging
 
 * S3 can log all access to a bucket
 
-Encryption
+Security and encryption
 
-Two types
+* by default all buckets are private
+* options for setting access controls
+    1. bucket policies
+        * permissions applied to the entire bucket - EXAM Q
+    1. access control lists
+        * can apply to individual objects - EXAM Q
+* buckets can generate access logs to
+    1. another bucket
+    1. another aws account
 
-1. Transit
+
+Two types of encryption in S3
+
+1. In transit
     * SSL/TLS
-2. At Rest
-    * Server side encryption
-        * SSE-S3 S3 managed keys
+2. Data at rest
+    1. Server side encryption
+        a. SSE-S3 S3 managed keys
             * AES-256
-        * SSE-KMS AWS Key management service
+            * Amazon manage all the keys for you
+        b. SSE-KMS (Server side encryption with Key management service)
             * provides an audit trail
-        * SSE-C Server side encryption with customer provided key
-    * Client side encryption
+            * allows you to use an envelope key
+        c. SSE-C Server side encryption with customer provided key
+    2. Client side encryption
         * you encrypt the data on client and upload it to S3
 
-Storage gateway appliances (are on exam)
+Storage gateway appliances (is popular topic on exam)
 
-* Gateway stored volumes
-    * entire data set is stored onsite and is asynchronously duplicated to S3
-* Gateway cached volumes
-    * entire data set is stored in S3 and only the most recent stuff is stored on-site
-* Gateway tape virtual library
-    * replacement for tape based backup
-    * used for backup
-    * uses popular backup appliations like Net Backup, Backup Exec, Veam etc.
+* connects on-premises software appliance and the AWS cloud
+    * you put a virtual appliance (not a real box) in your data center which acts as the gateway
+    * the appliance is avaiable for download as a VMware or Microsoft HyperV
+    * can use the public internet to connect OR use "direct connect"
+    * Storage gateway use S3 for all storage
+* Types of storage gateway
+    1. File gateway (NFS)
+        * flat files
+        * stored on S3
+        * files are accessed through an NFS mount point
+        * ownership, permissions, timestamps are stored in S3 metadata
+        * can use all the S3 features on the files e.g. versioning, lifecycle management, cross-region replication
+        * QUESTION: could I make a home dropbox clone with this?
+    2. Volume gateways (iSCSI)
+        * presents your apps with disk volumens using iSCSI block protocol - a "virtual hard disk"
+            * your local machines think they are writing to another local machine via iSCSI but the storage gateway appliance is actually sending it to S3
+        * types of volume gateway
+            1. Stored volumes
+                * all data is stored locally, backups are made to AWS
+            2. Cached volumes
+                * only most recent vesion of data is on premises, all other versions are in cloud
+    3. Tape gateway (VTL)
+        * replacement for physical tape based backup
+        * the "virtual tapes" are stored on S3
+        * used for backup
+        * uses popular backup appliations like Net Backup, Backup Exec, Veam etc.
 
-Import/export
+EXAM: know the three kinds of gateway and when to use them
 
-* Import/export disk
+Snowball & Import/export
+
+* Import/export disk (precursor to snowball)
     * lets you send amazon hard disks to import to AWS
-    * can import _to_ 3 places
+    * can import _to_ one of three places
         1. Import to EBS
         2. Import to S3
         3. Import to Glacier
@@ -837,6 +1158,28 @@ Import/export
         1. export from S3
 * Import/export snowball
     * Can only import/export to S3
+    * 3 types
+        1. Snowball
+            * 80TB snowballs available in all regions, physically secure, 256 bit encryption
+            * 50TB snowballs availabe in US
+        2. Snowball edge
+            * 100TB storage,
+            * has compute capability too - can run lambda functions
+        3. Snowmobile
+            * is a shipping container on a truck
+            * is an exabyte scale transfer service
+            * for massive data
+
+Cross region replication
+
+* builds on versioning of buckets
+* you cannot replicate across buckets in the same region
+* uses roles to allow the buckets to talk to each other
+* you must enable versioning on source and target butcket to do corss region replication
+* if you setup replication from a source to destination bucket only NEW changes will be seen - existing data in the source bucket will not be automatically replicated
+    * but once a file is has a change then all versions of it from the source-bucket will be replicated
+* you can only replicate to one bucket from a bucket
+* when you "undelete" a file (by removing the delete-marker version) that will not be replicated across
 
 # Cloudfront
 
@@ -1314,6 +1657,8 @@ exam tips
 * by default you get a VPC based on region when you log in
 
 * VPC is a logically isolated section of the AWS cloud
+* VPC can span availability zones
+* VPC CANNOT span regions
 * you can
     * create your own subnets
     * launch instances into a particular subnet
@@ -1326,13 +1671,15 @@ exam tips
 * can create appliaction servers and DB servers in private subnets
 * can create a hardware VPN connection between your VPC and your existing corporate datacenter
     * allows you to extend your data center with your VPC
+    * an amazon "Virtual private gateway" is the thing you setup in AWS to talk to your existing datacenter - it interfaces your data center to your VPC
     * this is called "hybrid cloud"
 
 * default VPC
     * user friendly
     * allows you to immediately deploy instances
     * all subnets have an internet gateway attached
-    * each EC2 instance has a public and private IP address
+    * all subnets are public subnets
+    * each EC2 instance has a public AND private IP address by default
     * WARNING: if you delete the default VPC the only way to get it back is to contact AWS
         * you can just change region
     * I seem to have a different default VPC configured in each AWS region
@@ -1340,9 +1687,24 @@ exam tips
     * can connect VPCs to each other via a direct network route using private IP addresses
     * instances behave as if they are on the same private network
     * You can peer VPCs with other AWS accounts
+        * TODO: dig into what this means (this is not part of exam)
     * You can peer VPCs with other VPCs in the same account
     * peering is always done in a star configuraiton (with 4 points)
-    * NB: you cannot do transative peering
+        * one central VPC peers with others
+        * consider 5 VPCs peered in a star:
+            ```
+                   C
+                   |
+            B <--> A <--> E
+                   C
+                   |
+                   D
+            ```
+            where A is peered with B and also C. You cannot do transititve
+            peering so if you want B and C to peer you have to set it up
+            separately
+
+    * NB: you cannot do transative peering!!! (this is examp Q)
 
 * By default you can have up to 5 VPCs in each region (exam Q)
     * I assume you can contact support for more ???
@@ -1354,19 +1716,22 @@ Aside: CIDR = classless inter domain routing
         * name - add a name tag to the VPC
         * CIDR block - the IP range to assign to this VPC e.g. 10.0.0.0/16, 192.168.0.0/16
             * mask sizes must be between /16 (65536 hosts) and /28 (8 hosts)
+            * maximum VPC network size is /16 on AWS
         * Tenancy
             * Dedicated
                 * lets you specify that instances in this VM should always use
-                single tenant dedicated hardware no matter what their launch
-                options are configured as
-                * a lot more expensive
+                  single tenant dedicated hardware no matter what their launch
+                  options are configured as
+                * WARNING: a lot more expensive!
             * Default
                 * Your VM instances use whatevery tenancy you choose when launching them
     * creating a new VPC also creates
-        * creates a new route table called "main"
+        1. new route table called "main"
             * this route table seems to only allow local traffic between instances in its CIDR block
-        * creates a new network ACL
-        * re-uses the existing DHCP options set
+        2. a network ACL
+        3. a security group for the VPC
+        * it does not create any subnets so we can't deploy anything into it yet
+
     * Aside: you can create a "flow log" which will log IP traffic to cloudwatch from your various VPCs network interfaces
 * subnets
     * subnets area ALWAYS in a single availability zone (exam Q)
@@ -1375,6 +1740,52 @@ Aside: CIDR = classless inter domain routing
         * but even if you don't, AWS will choose one for you
 * You can only have ONE internet gateway per VPC (important exam Q)
 * When you create an internet gateway it is not attached by default
+
+
+1. Create the VPC
+    * creates a "main" route table for you
+    * creates a Network ACL for you
+    * creates a security group for you
+1. Create some subnets
+1. Add an internet gateway to the VPC
+1. Create a new route table which allows access out to the Internet
+    * Don't add that route to your main route table because you don't want all subnets to default to having outside access
+1. If subnet is public, change the "auto assign public IP" setting
+1. If you forget to assign a public IP address you can do it alter by adding an "Elastic IP address" to the instance
+
+
+How to allow instances on private subnets to pull in updates from the Intenet?
+
+1. option: nat instance (old way)
+    * create a new EC2 instance which amazon have configured to do NAT for you
+    * put it in the public subnet
+    * the private instances have access to it so can use it to bounce traffic out to the internet
+    * you must disable the "source/destination check" for the instance because the NAT needs to route traffic which isn't to/from itself
+    * you can get redundancy by putting your nat instance in an autoscaling group
+    * if you are bottlenecking you can increase instance size
+2. option: nat gateway (new way)
+    * deploy it into the public subnet
+    * you odn't have to manage the instance e.g. no security patches etc.
+    * you don't have to worry about redundency - nat gateways do it for you
+    * they scale u to 10Gbps
+    * once you create a nat gateway you still have to change the route table for your private instances to route traffic to it
+
+A "route table" is a collection of routing rules
+    is associated with **subnet** not instances
+A subnet has exactly one route table
+route tables have
+    * destination (the source IP addresses of instances
+    * target (where the packets should go)
+
+Tip: put a "bastion host" or "jump box" in your public subnet so you can access your private instances via SSH
+
+bastion hosts are used to securely admin private instances - they are often hardened
+
+IMPORTANT = a subnet cannot span across AZs
+    * security groups, route tables, network ACLs can span multiple AZs
+
+IMPORTANT = you can only have ONE internet gateway for each VPC
+    * they may ask question implying you should add another Ingernet Gateway to VPC for perf or security
 
 To make a subnet be publically accessible
 
@@ -1386,6 +1797,9 @@ To make a subnet be publically accessible
 
 
 A "security group" can stretch across different AZs but a subnet cannot (exam Q)
+Security groups
+    * are stateful - if you allow HTTP in then HTTP is also allowed out
+    * are just a virtual firewall
 
 EC2 instances source/destination check (this is important exam Q)
 
@@ -1397,15 +1811,19 @@ EC2 instances source/destination check (this is important exam Q)
 He called the instance with the public IP that we ssh'd into to then ssh into the private instance a "bastian host"
 
 
-Network Access Control Lists
+Network Access Control Lists (or "Subnet access control lists")
 
-* act a bit like a firewall
+* security groups and NACLs provide a two layer protection
+* act a bit like a network firewall
 * apply rules to a whole subnet
-* overrides rules from a security group
+* are "stateless" - e.g. if you want to let HTTP in and out you have to create two separate rules
+* NACL overrides rules from a security group
+* NACLs support both ALLOW and DENY rules (unlike security groups which only support only ALLOW rules)
 * Security groups act like a firewall at the instance level whereas NACLs are an additional layer of security that act at the subnet level
 * an ACL is
     * a numbered list of rules
-    * rules are evaluated in order starting with lowest numbered rule (exam Q)
+    * rules are evaluated in order *starting* with lowest numbered rule and the first rule which matches stops evaluation (exam Q)
+    * the '*' rule is the last rule evaluated
     * determines whether traffic is allowed in or out of any subnet associated with the ACL
     * highest number is 32766
     * suggest start with rules which are multiples of 100 to allow gaps for editing
@@ -1418,10 +1836,11 @@ Network Access Control Lists
     * each NACL must live in a VPC (they cannot span VPCs)
     * ACLs are stateless!
         * e.g. they can't allow a response in based on some previous request out
-    * each subnet MUST be associated with a ACL
-        * i fyou don't explicitly associate an ACL the default one will be used
-
-QUESTION: how do ACL and security group interact
+    * each subnet MUST be associated with one NACL
+        * if you don't explicitly associate an NACL the default one will be used
+    * a subnet can only be one NACL at any time
+* default NACL allows all traffic inboutnd and outbound
+* when you create a custom NACL all traffic inbound/outbound is blocked by default
 
 
 ## Shared responsibility model
@@ -1457,4 +1876,112 @@ Default region for all SDKs is US-East-1 (not US-West-1
 If you make an AMI public, this AMI is immediately available across all regions, by default. = FALSE
 
 
+## Route 53 and DNS
 
+* IPv4
+    * 4 billion addresses
+* IPv6
+    * 340 undecillion addresses
+    * route 53 supports IPv6
+    * VPCs are IPv6 compatible since dec 2016 ish
+        * => YOU CAN USE IPv6 fully in AWS now
+
+SOA Record contains
+    * name of name server which supplied data for this zone
+    * admin of the zone
+    * current version of the data file
+    * timeouts for how often secondary servers should refresh records
+    * default no. of seconds for TTL for all records
+
+Route 53 and ELB
+
+* You cannot get the IP address for Elastic load balancers - it has one but it
+  can change at any time and is hidden from your so we must use alias records
+  with them
+
+Record types
+
+* A record ("Address" record)
+    * maps domain name to IP address
+* TTL Record
+    * measured in seconds, says how long the record will be cached
+* CName
+    * moves one domain name to another
+* Alias
+    * a type of record amazon created
+    * used to map resource record sents in your hosted zone to
+        * Elastic Load Balancers
+        * Cloudfront distributions
+        * S3 buckets which are configured as websites
+    * works like a CNAME in that it maps one DNS name to another DNS name
+    * CNAME cannot be used for naked domain names (zone apex) - you cannot have a CNAME which map http://yoursite.com to elb1234.elb.amazonaws.com but you can have an ALIAS record which does
+
+
+* To migrate DNS
+    1. drop TTL for records to 300 secs (5 mins)
+    2. wait up to 2 days for that change to propagate (old TTL can be multiple days)
+    3. make your DNS chagne
+    4. wait up to 24hrs for that to propagate
+    5. Increase TTL again
+
+Exam tips
+
+* ELBs do not have a pre-defined IPv4 address - you resolve them using DNS name
+    * Amazon uses ALIAS records for this
+* Understand diff between Alias and CNAME
+* Given the choice, always choose an Alias Record over a CNAME
+
+
+ELB Load balancers
+
+Two types
+
+1. Classic load balancer
+    * works at TCP layer or HTTP/HTTPS layer
+2. Application load balancer
+    * makes decisions at the HTTP/HTTPS layer
+
+If you want your service to be highly available you should have a public subnet in more than one AZ - creating an ELB will complain if you don't
+
+You can choose to hide your contact info by enabling "Privacy protection" in route53 while buying
+
+You choose your routing policy when you create a record set for your domain
+
+Route53 routing policies
+
+1. Simple (default)
+    * is the default policy
+    * used when you have a single resource which performs a function for you
+    * if you have multiple instances behind an ELB they will be hit in round-robin
+2. Weighted
+    * lets you split your traffic by % rather than round-robin
+        * handy if you are A/B testing your service
+    * the % split is over one day so a 60/40 % split won't result in 6 results to one and 4 results to another
+        * also your ISP might be caching
+        * so this split is hard to test precisely
+    * you specify it by assigning a dimensionless weight number to your policy - the weights are evaluated relative to each other so if you only have one record set then it will get all the traffic
+3. Latency
+    * allows you to route traffic based on the lowest network latency for your end user
+    * route53 will automatically select the resource record set which is best for each request which comes in
+4. Failover
+    * you specify both a "primary" and a "secondary" site
+    * you have to setup a "health check" to check the primary site
+    * allows you to create an active/passive setup
+    * route53 will monitor the health of a site via a health check and it will send all traffic to the active site until the health check fails and then it will start sending traffic to the failover site
+5. Geolocation
+    * lets your route traffic based on the geographical location of the users e.g. if you want to send asian customers to a set of servers which have asian languages installed
+    * you should create one A/ALIAS record which has the "Default" region which will catch-all customers who aren't in your chosen region
+
+
+You add a "record set" to your domain in route53
+    it lets you link your domain to some ELBs
+
+Tip: Elastic load balancers do cost money so don't forget to delete them
+
+DNS Exam tips
+
+* ELBs has no public/visible IPv4 address - you can only see the domain name of it
+    * sometimes asked as giving you possible answers which imply that you can see the IPv4 of an ELB
+* Know the difference between A record and ALAIS
+    * If given a choice, always choose an ALIAS record as they are more commonly useful e.g. ELBs only have an apex domain name
+* Know about the 5 routing policy options
