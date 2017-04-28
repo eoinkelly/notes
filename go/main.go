@@ -9,12 +9,13 @@ import (
 // Person Struct
 // *************
 
-// note: uppercase type name and member names
-// * indicate this struct should be exposed to packages that import us
+// note: uppercase type name and member names indicate this struct should be
+//       exposed to packages that import us
 type Person struct {
-	Name string
+	Name string // note no trailing commas in struct declarations
 	Age  int
 }
+
 
 // associates a function with a struct using special syntax
 // func <receiver> <name>(<args>) <return value> {
@@ -49,6 +50,7 @@ func (s *Superhero) fly() {
 func main() {
 	sep()
 
+	// full variable declaration syntax:
 	// var <var-name> <type> = <initial value>
 	var message string = "hi from message"
 	println(message)
@@ -59,18 +61,19 @@ func main() {
 	println(power_2)
 	sep()
 
-	// declare and initialize iwth shorthand and type inference
+	// declare and initialize with shorthand and type inference
 	power_1 := 9000
 	println(power_1)
 	sep()
 
+	// declare multiple variables using the shorthand syntax
 	f1, f2, f3 := "hi", 33, "blah"
 	println(f1)
 	println(f2)
 	println(f3)
 	sep()
 
-	fmt.Println("Welcome to go")
+	fmt.Println("Welcome to go") // prints to stdout (println prints to stderr)
 	sep()
 
 	r1, r2, _ := multi_return(4, 55)
@@ -83,7 +86,7 @@ func main() {
 	eoin_1 := Person{}
 	eoin_2 := Person{
 		Name: "Eoin Kelly",
-		Age:  36, // note trailing , required!
+		Age:  36, // note trailing comma is **required**
 	}
 	eoin_3 := Person{"Eoin K", 33} // initialized fields based on order
 
@@ -103,8 +106,6 @@ func main() {
 	println(eoin_2.Age)
 	sep()
 
-	// note that that create the embedded struct you have to do it explicitly
-	// even though batgirl.Name will work
 	batgirl := &Superhero{
 		Person: &Person{
 			Name: "Bat girl",

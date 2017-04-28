@@ -6,7 +6,7 @@
     * What are counter examples to this?
 * Assembly `MOV` is actually a copy operation
 * ARM originally stood for _Acorn Risc Machine_ but was rebranded _Advanced Risc Machine_
-* more ARM processors are produced annually than any other processor design combined
+* More ARM processors are produced annually than any other processor design combined
 * CPUs have a "default word size" - usually 32bit or 64 bit on modern CPUs
 * Building circuits with two states is much easier than building circuits with more so computers use base 2
 * When manual conversion between bases it is easiest to convert into base-10 as an intermediate step e.g. `base-N --> base-10 --> base-M`
@@ -37,6 +37,8 @@ There are three main ways of representing signed integers
     * the first digit is used to represent whether the number is positive or negative
         * this is subtly different to how it works in _sign magnitude_
         * number is negative if `first_digit > radix / 2`
+        * Aside: two's complement is not a more efficeint way to store numbers
+          (it is more efficient for doing computations with them)
     * the other digits represent the magnitude
         * the magnitude of a number can be found by taking its "radix complement"
             * formula is `radix_complement = base^num_digits_in_original_number - original_number`
@@ -50,6 +52,7 @@ There are three main ways of representing signed integers
         1. add 1 (to get to the radix complement)
     * ++ hardware is simplified because you don't have to build a specialized subtractor circuit
     * ++ is the most common way to represent signed numbers in computers
+    * -- harder for humans to do in their head
     * complement notation is most useful in base 2 (binary) numbers
 
 ```plain
@@ -74,8 +77,8 @@ to get from complement result to the original result
 
 # Task: calculate x - y
 
-* assume that x and y are both positive and y <= x
-    * not sure why we can make this assumption?
+* assume that x and y are both positive and y <= x i.e. we are saying that y is
+  the smaller of the two numbers if they are not equal
 
 x = 66
 y = 23

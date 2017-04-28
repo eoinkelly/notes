@@ -2,8 +2,7 @@
 
 # Questions/To figure out
 
-
-```
+```bash
 # WARNING: this deletes the 'go' binary too!!!
 go clean -i all
 # the go team are sitting on a change which would create a 'gopath' target that
@@ -36,7 +35,7 @@ go clean -i  ./...
     package main
     func main() {}
     ```
-* functions can return multiple values
+* functions can return multiple values (separated by comma) e.g. `return a, b, c`
     * ignore a value by assigning to `_`
     * note that `_` is not a variable name - it actually tells the go compiler
       not to assign the variable
@@ -62,7 +61,7 @@ go clean -i  ./...
     * stacks are small, "segmented", sized on demand
         * segmented??
     * goroutines are muxed by demand onto real threads
-    * the ideas is that "one thread per connection" in servers does not scale
+    * the idea is that "one thread per connection" in servers does not scale
       well as the kernel can only support so many threads
     * goroutines use channels to communicate
     * channel
@@ -103,13 +102,12 @@ i++
 j--
 ```
 
-* go has postfix incrementing
+* go has postfix incrementing only. There are no prefix versions - nice!
 * IMPORTANT: these are statements not expressions (they do not return a value so cannot be used in a larger expression) - nice!
-* they are postfix only. There are no prefix versions - nice!
 
 ### for loops
 
-```
+```go
 // general form
 // for <initialization>; <condition>; <post> {
 // }
@@ -122,7 +120,7 @@ for { // infinite loop
 ```
 
 * go for loops do the work of while loops too
-* never parens around the conditions
+* never put parens around the conditions
 * always have braces
 * there are three main parts
     * initialization
@@ -139,12 +137,12 @@ for { // infinite loop
 
 * iterates over data structures
 * works on array, slice, map, string etc.
-* returns the `index, value` form arrays and slices
+* returns the `index, value` from arrays and slices
 * returns `key, value` from maps
 * returns `index, unicode_code_point` (aka `index, rune`) on strings
 * designed to be used with a for loop
 
-```
+```go
 // for loops can be used with the `range` keyword
 // this whole range call and assignment is in the "condition" position of the for loop
 for index, value := range someArrayOrSlice {
@@ -153,8 +151,6 @@ for index, value := range someArrayOrSlice {
 // use _ if you want to ignore one of the values range returns
 for _, value := range someArrayOrSlice {
 }
-
-
 ```
 
 ### :=
@@ -255,6 +251,8 @@ Go has two forms of string literal
     * special chars denoted by `\` are interpolated
     * cannot be multiline
 
+Aside: single quotes are used to delimit runes (see below)
+
 ```go
 foo := `this
 is a multiline
@@ -279,5 +277,51 @@ var x int // int
 var y [3]int // array of three int
 var r io.Reader
 ```
+## Misc
 
-Go is lexically scoped using blocks”. Basically this means that the variable exists within the nearest curly braces { } (a block) including any nested curly braces (blocks), but not outside of them.
+* `println`
+    * prints to stderr not stdout
+    * is "not guaranteed to stay in the language"
+    * is similar but not the same as `fmt.Println` which writes to stdout
+    * does not return a value (`fmt.Println` is different here and does return a value)
+
+* Returning from functions
+    * you can return multiple values
+    * do all funcs return a value?
+    * go functions declare their return value in their signature
+    * go functions do not have to return a value (empty return type in signature)
+
+
+* structs
+     are passed around by value (unless you explicitly use a pointer)
+
+```go
+package main
+
+type Thing struct {
+	Name string
+	Age  int
+}
+
+func main() {
+	var eoin = Thing{Name: "Eoin Kelly", Age: 38}
+	tryToMutateThing(eoin)
+	displayThing(eoin)
+
+	actuallyMutateThing(&eoin)
+	displayThing(eoin)
+}
+
+func displayThing(t Thing) {
+	println(t.Name)
+}
+
+// this does not work because structs are passed by value
+func tryToMutateThing(t Thing) {
+	t.Name = "Mutante!!!"
+}
+
+func actuallyMutateThing(t *Thing) {
+	t.Name = "Mutante!!!"
+}
+```

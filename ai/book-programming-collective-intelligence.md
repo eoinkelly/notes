@@ -23,6 +23,8 @@ Transparent vs Opaque ML algorithms
     * Some ML algorithms are **transparent** i.e an observer can totally understand how the computer came to its conclusion e.g. _decision tree_ algorithms.
 * Opaque/black box
     * Others are **black box** i.e. it is very difficult/impossible to reproduce the reasoning behind the answer
+      * Should I think of this kind of learning a bit like I think about "gut instinct" in humans - with a lot of experience it _can_ be good
+      * Are opaque ML techniques to be trusted less?
 
 Simple correlation analysis and regression are both basic forms of ML.
 
@@ -45,14 +47,23 @@ Collaborative filtering
     * Problem #2: Combine the things they like to create a ranked list of suggestions
 
 
-No matter how preferences are stored we need a way to map them onto numerical values
+_No matter how preferences are stored we need a way to map them onto numerical values_
+
+* Do we? Why numerical?
+  * ++ processing performance
+      * ++ if you are going to use some values to represent real world things in a computer then numbers are about as efficient as it gets for storage
+  * ++ computers are faster at grouping and processing numbers than text in most cases
+  * -- storing as numbers may encourage you to do things to the data which wouldn't make sense i.e. the numbers are "efficient flags" rather than representing a quantity or cardinality
+      * if you ask humans to rate something 1-5 you can't assume they will unbiased so you cannot infer that the difference in the measured value between "1" and "2" and the difference between "2" and "3" is equal even though the numerical representation encourages you to think it is. If we rated films as "hate", "dislike", "meh", "like", "love" then we aren't as tempted to have that sloppy thinking.
+    * Idea: it may be best to think of and discuss the ratings as english words with the other humans involved and keep the numerical representation (aka "efficient digital flags") as a hidden implementation detail so the team doesn't get distracted by the numbers.
+  * ++ it lets us plot the values on graphs and manipulate them with math functions
+      * WARNING: while the math can be correct, we need to remember that our numbers have assumptions built into them.
 
 Ideas for storing preferences as numerical values:
 
 * rating 1 to 5
 * 0 = did not purchase, 1 = purchased
 * -1 = disliked, 0 = did not vote, 1 = liked
-
 
 ## Metrics (distance functions)
 
@@ -78,12 +89,21 @@ Calculating metrics in code:
     * https://github.com/agarie/measurable
 * python
     * scipy has functions for all these (or so it seems to me)
+    * https://docs.scipy.org/doc/numpy/reference/generated/numpy.linalg.norm.html
+* R
+    * dist()
 
 
-Inject metric function as a dependency
+Tip: Inject metric functions as a dependency
 
-There is value in having the functions which implement these various metrics take the same args (probably two vectors) and return results which compare in the same way e.g. results are between 0-1 and closer to 1 means more similar. It allows you to inject the metric function as a dependency to your recommendation engine and try out different metrics.
+Making the functions which implement these various metrics have the same signature is handy because it lets you try out different metrics with your data set(s). You might have to do some massaging of the output number to make them all comparable.
 
+```
+// @returns a float between 0 <-> 1 or -1 <-> 1 where we interpret 1 to mean a perfect match
+fn some_metric(a: Vector, b: Vector) -> Float {
+    // ...
+}
+```
 
 ### Metric: Euclidean distance
 

@@ -583,6 +583,7 @@ ssh 52.63.84.255 -l ubuntu -i my-key.pem
 # all commands run as root
 apt-get update
 apt-get upgrade
+apt-get install tree
 ```
 
 AMI attributes
