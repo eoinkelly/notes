@@ -80,18 +80,12 @@ Available extensions:
 libc ABIs: UNIQUE IFUNC
 For bug reporting instructions, please see:
 ```
+## Aside: see current kernel details
 
-## Preface
-
-Standards
-
-* circa 2001
-    * POSIX.1-2001 (Portable Operating System Interface)
-    * SUSv3 (Single UNIX Specification version 3)
-* circa 2008
-    * SUSv4 (Single UNIX Specification version 4)
-    * POSIX.1-2008
-
+```
+$ uname -a
+Linux ubuntu-xenial 4.4.0-78-generic #99-Ubuntu SMP Thu Apr 27 15:29:09 UTC 2017 x86_64 x86_64 x86_64 GNU/Linux
+```
 ## Aside: man pages
 
 Man page sections
@@ -126,7 +120,21 @@ Number of man pages on MacOS Yosemite organised by section (Calcuated by:
 8. 406
 9. 5
 
+## Preface
+
+Standards
+
+* circa 2001
+    * POSIX.1-2001 (Portable Operating System Interface)
+    * SUSv3 (Single UNIX Specification version 3)
+* circa 2008
+    * SUSv4 (Single UNIX Specification version 4)
+    * POSIX.1-2008
+
 ## Chapter 1
+
+* UNIX and C grew together
+    * both were "designed by professional programmers for their own use"
 
 * UNIX
     * predates C by a few years (unix 1971, unix in C: 1973)
@@ -175,10 +183,10 @@ Family trees:
     * C89 is still refered to as "ANSI C" even though technially ANSI C is the
       latest ratified version of the language.
     * C99
-        * TODO: find out which version of C is most widely used
     * C2011
 * POSIX
-    * designed to provide cross-unix compatibility at the _source code level_
+    * designed to provide cross-unix compatibility at the _source code level_ -
+      POSIX does not specify binary compatibility
     * POSIX.1 - 1988
         * documents an API that should be made available by a "conforming" OS
           to a program
@@ -202,13 +210,21 @@ Family trees:
 
 The typical name for the kernel on disk is `/boot/vmlinuz`
 
-* In olden unix the kernel was `/boot/unix`
-* With the advent of VM it became `/boot/vmunix`
-* Replaced the `x` with `z` to indicate that it is compressed
+* In olden unix the kernel was `/boot/unix` so linux became `/boot/linux`
+* With the advent of virtual memory it became `/boot/vmlinux`
+* Then replaced the `x` with `z` to indicate that it is a compressed executable
 
 * Linux does _preemptive multitasking_
     * processes get put on the CPU for a timeslice then taken off according to
       the kernel's schedule
+* Modern CPUs allow operation in multipel modes
+    * they have special asm instructions for switching between modes
+    * common modes
+        1. user mode
+            * the **CPU** prevents access to kernel mode memory
+            * the **CPU** prevents access to certain asm instructions e.g. halting system
+        2. supervisor (or kernel) mode
+
 
 A process
 
@@ -223,14 +239,16 @@ A process
     * to send receive/bytes from the filesystem
     * to send receive/bytes from the network
     * to duplicate itself `fork()`
-* is the result of the kernel taking the bytes of a program from disk, putting them in memory and giving over some resources
-* cwd
-    * has a `cwd` pointer which holds the path to the "current
-      working directory"
+* is the result of the kernel taking the bytes of a program from disk, putting
+  them in memory and giving over some resources
+* has a `cwd` pointer which holds the path to the "current
+    working directory"
     * the login process sets its `cwd` from whatever `/etc/passwd` has as the
-      home directory for that user
+        home directory for that user
     * other processes inherits their cwd from their parent process but can
-      change it
+        change it
+    * the shell is unusual in that it lets you (the user) explicitly change the
+        cwd of the process via the `cd` builtin.
 
 * CPU modes
     * CPU architectures have the idea of "modes" that the CPU can operate in.
@@ -251,6 +269,10 @@ A process
     * virtual memory that can be seen from user mode = user space
     * virtual memory that can be seen from kernel mode = kernel space
 
+* Exit code versus termination code:
+    * if you exit explicitly via `exit()` then techically the integer returned is an exit code
+    * if the process ends due to a signal or via any means other than `exit()` it is a termination code
+
 Attempt to access virtual memory outside the allocated space raise a "hardware
 exception". The typical configuration is
 
@@ -266,7 +288,8 @@ Consider how the world looks from a process POV and from the kernel POV
         * does not know when signals will appear
         * does not know when IPC events will occur
     * does not know whether it lives in RAM or in swap (or both)
-    * does not know where in RAM it lives
+    * does not know where in RAM it really lives
+    * does not know how to talk to other processes - it can only talk to the kernel who will do that communication on its behalf
 * Kernel POV
     * knows which process will be on CPU next
     * knows how long that process will get the CPU for
@@ -296,8 +319,9 @@ Shell
 
 Login shell
 
-* the process that is created to _run a shell_
-* ??? is it not a shell itself?
+> the process that is created to _run a shell_ when the user first logs in
+
+??? is it not a shell itself ???
 
 Users and groups
 
@@ -314,26 +338,57 @@ Filesystem
 * On unix is a _single heirarchy_ (unlike windows where there is one heirarchy
   per disk)
 * Filetypes
-    * plain files
-    * directories
-    * sockets
-    * pipes
-    * devices
-    * symbolic links
-
+    1. plain files
+    2. directories
+    3. sockets
+    4. pipes
+    5. devices
+    6. symbolic links
 * Directories are files
     * can visualise as a simple spreadsheet with the following cols
         * filename
-        * pointer to its inode
+        * pointer to its inode (hard link)
         * filetype
-        * ??? others
-    * each row in the spreadsheet is a hard link to a file
-    * the same file can appear in multiple directory "tables" so can have
-      multiple links
+        * ??? others? TODO: dig into the contents of a dir structure in a few filesystems
+    * the same file can appear in multiple directory "tables" so can have multiple links
 * when I `cd` in a shell I am changing which directory file inode the `cwd` for
   the shell process points to
 * `..` in `/` points back to `/`
-* The 65 "safe" characters are `\_a-zA-Z0-9.`
+    * this means that you can "overuse" `../` to get up out of the current dir
+      to the root dir i.e. you don't have to use the exact right number of
+      `../`
+* The 65 "safe" characters for filenames are `\_a-zA-Z0-9.` aka the "portable character set"
+* how symbolic links are handled
+    * normally the kernel automatically dereferences them, replacing each symlink in a path with the real filename to which it points
+    * if a symlink points to a file which does not exist it is said to be "dangling"
+
+QUESTION: how do I recognise when file has multiple hardlinks to it?
+
+Recognising files which have multiple hardlinks
+
+```
+# I have three hardlinks to the same file in the current dir
+# notice that the number of hardlinks is listed between the access bits and the
+# owner name
+$ ls -l *.jpg
+-rw-r--r-- 3 eoinkelly staff 180331 May 25 10:53 cows.jpg
+-rw-r--r-- 3 eoinkelly staff 180331 May 25 10:53 other_cows.jpg
+-rw-r--r-- 3 eoinkelly staff 180331 May 25 10:53 yet_more_cows.jpg
+# regular files have one hardlink by default
+
+# gnu find can show you all the hardlinks to a particular file
+$ find . -samefile /path/to/file
+
+# if you rm a file with multiple hardlinks then the file is only actually
+# deleted when you remove the last hardlink
+$ rm other_cows.jpg
+$ ls -l *.jpg
+-rw-r--r-- 3 eoinkelly staff 180331 May 25 10:53 cows.jpg
+-rw-r--r-- 3 eoinkelly staff 180331 May 25 10:53 yet_more_cows.jpg
+
+# QUESTION: directories have more than one hardlinks by default - why ???
+    also how to predict how many hardlinks a dir will have ???
+```
 
 Environment
 

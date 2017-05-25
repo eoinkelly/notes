@@ -1,15 +1,19 @@
 package main
 
 import (
-	"fmt"
+	"io"
+	"net/http"
 	"os"
 )
 
-var aa string
-var bb string = "hi"
+func RootServer(w http.ResponseWriter, req *http.Request) {
+	io.WriteString(w, "hi there\n")
+}
 
 func main() {
-	for i, arg := range os.Args {
-		fmt.Println(i, arg)
-	}
+	http.HandleFunc("/", RootServer)
+	err := http.ListenAndServe(":3001", nil)
+	print("Exiting ...")
+	print(err)
+	os.Exit(1)
 }

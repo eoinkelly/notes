@@ -1,10 +1,10 @@
 # The Go Programming language
 
-* the omission of garbarge collection from the `alef` language in Plan9 made "concurrency too painful" - I presume this is why go has a GC
+* the omission of garbage collection from the _alef_ language in Plan9 made "concurrency too painful" - I presume this is why go has a GC
 * go has no default parameter values
 * go structs and arrays hold their elements "directly" which requires less storage and fewer allocations and pointer indirections than languages which use indirect fields
     * I presume this means that a go struct stores all its data in a contigious block and only has pointers if you explicitly have them in your code
-* Chapter 1-5 are the basics
+* Chapters 1-5 are the basics
 * go has an `unsafe` package to allow you to step around the type system if you really need to
 * go apparently has good reflection support via `reflect` package
 
@@ -14,16 +14,17 @@ END INTRODUCTION
 
 * a go package is 1 or more .go files
 * go standard library is of the "batteries included" world view
-    * Aside: it kind of has to be given that go interop with C is ropey
+* interop with C
+    * go can call C without too much fuss - see the `C` pseudo-package
+    * calling go from C is bit painful IMHO
 * package `main` is a special package name which go considers to define a standalone executable
     * within package `main` the function `main` is considered to be the entry point of that executable
     * the `main` function
         1. has an empty parameter list
         2. has an empty return list
-
 * `os` package provides functions and values for dealing with the operating system in a platform independent way
     * error handling is "go like" i.e. failing calls return error values not error codes
-    * `os.Args` holds the program command line args starting with the program name
+    * `os.Args` is a string slice which holds the program command line args starting with the program name
 * `syscall` package contains any OS specific stuff
 * slices
     * a **dynamically sized** sequence of array elements
@@ -41,8 +42,22 @@ END INTRODUCTION
 * go does not permit unused local variables
 * `:=` short variable definition
     * can only be used within functions - you can not use it at package level
-
-END SECTION 1.2
+* maps
+    * create a map by `make(map[string]int)`
+    * make() returns "the map" which is a refrence to the data structure => when you pass a map to a function, the reference is copied but it refers to the same map data structure
+    * the order of iterating across a map is deliberately random so you don't start relying on a particular order
+* `bufio` package
+    * helps with IO
+* built-in functions
+    * `make(type, size)`
+        * allocates memory for a
+            1. slice
+            2. map
+            3. channel
+        * takes a type as first argument
+        * takes some integer args which mean different things to each type
+        * returns the actual value allocated, not a pointer to it (`new` returns a pointer)
+END SECTION 1.3
 
 ## 2. Program Structure
 
@@ -81,6 +96,8 @@ func main() {
 * go has ~36 "predeclared names" for
     1. built-in constants e.g. `true`
     2. built-in types e.g. `int`
+    * they are part of the pseudo-package `builtin` (the package exists so godoc has something to use)
+        * `builtin` is not a thing you can actually import (it is an error to try)
     * predeclared names are NOT reserved because ???
         * book says there are a "handful of cases" where redeclaring one of these makes sense. example ???
     ```go
