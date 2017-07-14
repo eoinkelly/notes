@@ -1,15 +1,55 @@
 
-The _signing identity_ consists of a public-private key pair _that Apple issues_.
+Sources
 
-Any `.cer` downloaded from Apple dev site contains only _public key_ and
-_identity info about me as a member of Apple developer program_ . It does not
-include a private key so I presume:
+* https://medium.com/ios-os-x-development/ios-code-signing-provisioning-in-a-nutshell-d5b247760bef
+
+## The Intermediate certificate
+
+* The "Worldwide Developer Relations Certificate Authority" cert is installed
+  in Keychain when you install Xcode and is trusted by your computer.
+* You can re-download it from the certs/profiles area of developer.apple.com
+* The keypair associated with this cert is what Apple uses to sign my _signing
+  identity_ cert after I (or XCode) uploads it.
+
+All Apple code stuff is signed by the _Worldwide Developer Relations Cert_
+(https://developer.Apple.com/certificationauthority/AppleWWDRCA.cer) - this
+must be installed in my keychain for any of this to work. This in turn is
+signed by the _Apple Root CA_ cert which comes installed on all Apple devices.
+
+
+## The "Signing identity"
+
+* is a public & private keypair. The public key has been uploaded to apple (in
+  a CSR) and signed by their "Worldwide developer relations certificate
+  authority" key.
+
+### How do I create a "signing identity"?
+
+1. Create a "Certificate Signing Request" (CSR) in Keychain
+    * This will create a private key and a CSR
+1. Upload your CSR to apple via the "member center"
+1. Apple approves the request and issues you a certificate
+    * the certificate contains the public key that corresponds to your private key from first step
+    * Any `.cer` downloaded from Apple dev site contains only _public key_ and
+      _identity info about me as a member of Apple developer program_ . It does
+      not include a private key.
+
+Xcode will do this for you automatically when you install it.
+
+### Where is my "signing identity" stored?
+
+* The private key is locally on your machine only (in Keychain)
+* The public key (wrapped in a certificate) is stored locally in Keychain and in the _Apple Member Center_
+
+
+### How does XCode automate this whole process?
+
+I presume:
 
 1. Xcode makes a new public+private key pair
 2. Xcode creates a CSR and sends to Apple
 3. Apple sends back signed cert which xcode puts in keychain
 
-    QUESTION: what exactly is in a CSR?
 
 Certs that come from Apple have X509v3 extensions that indicate to Apple
 software what the intended usage of this certificate is e.g.
@@ -18,11 +58,6 @@ software what the intended usage of this certificate is e.g.
         Digital Signature
     X509v3 Extended Key Usage: critical
         Code Signing
-
-All Apple code stuff is signed by the _Worldwide Developer Relations Cert_
-(https://developer.Apple.com/certificationauthority/AppleWWDRCA.cer) - this
-must be installed in my keychain for any of this to work. This in turn is
-signed by the _Apple Root CA_ cert which comes installed on all Apple devices.
 
 
 ## Provisioning profiles

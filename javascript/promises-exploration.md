@@ -1,5 +1,20 @@
 # Q docs
 
+then(successFunc, errorFunc)
+* *always* returns a promise
+* the promise ALWAYS fulfills or rejects with the VALUE of the input function
+* if that VALUE is not a promise, it is turned into one
+* only one of the "input function" (successFunc, errorFunc) is ever called
+
+input function (either successFunc or errorFunc)
+
+if the input function ...
+
+  * throws an error => then() creates a new rejected promise from that error
+  * returns a value => then returns a promise which fulfills to that value
+  * returns a promise => then returns that exact promise
+
+
 > A promise is an object that represents the return value or the thrown exception that the function may eventually provide
 
 Callbacks are an "inversion of control"

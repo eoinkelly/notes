@@ -8,6 +8,29 @@ https://forums.developer.apple.com/message/9176#9176
 >  compact version of the stub libraries for use in the SDK, and help to
 >  significantly reduce its download size.
 
+* they seem to be a YAMLish format
+* they reference a dylib file
+
+Example of a `.tbd` file
+
+```
+--- !tapi-tbd-v2
+archs:           [ armv7, armv7s, arm64 ]
+uuids:           [ 'armv7: C2DC3FAB-8AE4-3C0C-AC50-D9C9A3F5D042', 'armv7s: 741AA09D-2104-30D0-8998-D6390FC52D94',
+                   'arm64: F1A568E3-93D5-31F6-AF5E-1EDB816CDAB2' ]
+platform:        ios
+install-name:    /usr/lib/libsqlite3.dylib
+current-version: 254.6
+compatibility-version: 9
+objc-constraint: none
+exports:
+  - archs:           [ arm64 ]
+    symbols:         [ _sqlite3one ]
+  - archs:           [ armv7, armv7s, arm64 ]
+    symbols:         [ __sqlite3_lockstate, __sqlite3_purgeEligiblePagerCacheMemory,
+...
+```
+
 ## `.dylib` binary file
 
 * The framework binary is a `.dylib` file (similar to `.dll` on windows)
@@ -37,7 +60,7 @@ https://forums.developer.apple.com/message/9176#9176
       Headers/
       Resources/
           Info.plist
-          (sometimes other stuff too)
+          (sometimes other stuff too e.g. image assets)
       DeprecatedHeaders/
       FrameworkName (a binary file)
 ```
@@ -126,9 +149,8 @@ More info
 
 ## What is the diff between including a framework and just including a dylib?
 
-* A framework _is_ a shared library (dylib) (plus any related resources).
-  Including a framework *is* including a dylib.
-
+* A framework _is_ a shared library (dylib) plus any related resources.
+   * Including a framework *is* including a dylib.
 
 ## How do I replace a framework in an Xcode project?
 
