@@ -1,0 +1,28 @@
+# Kubernetes
+
+
+Helm - package management
+
+
+Etcd - secrets management
+    etcd operator
+
+> The Master is responsible for managing the cluster. The master coordinates all activities in your cluster, such as scheduling applications, maintaining applications' desired state, scaling applications, and rolling out new updates.
+
+> A node is a VM or a physical computer that serves as a worker machine in a Kubernetes cluster. Each node has a Kubelet, which is an agent for managing the node and communicating with the Kubernetes master. The node should also have tools for handling container operations, such as Docker or rkt. A Kubernetes cluster that handles production traffic should have a minimum of three nodes.
+
+> he nodes communicate with the master using the Kubernetes API, which the master exposes. End users can also use the Kubernetes API directly to interact with the cluster.
+
+kubectl
+    controls the Kubernetes cluster manager.
+    seems to wnat to connect to localhost:8080 by default
+
+```
+kubectl version
+kubectl get nodes
+kubectl cluster-info
+```
+
+
+How do I setup a centos box to be a k8 master?
+https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/
