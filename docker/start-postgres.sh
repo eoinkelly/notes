@@ -6,7 +6,7 @@ docker run -d \
            --log-opt max-size=100m \
            --log-opt max-file=1 \
            --restart always \
-           -p 5433:5432 \
+           -p 5432:5432 \
            -e POSTGRES_PASSWORD=mysecretpassword \
            --name postgres_9_6_0 \
            postgres:9.6.0
