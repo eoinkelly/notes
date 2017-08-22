@@ -40,6 +40,8 @@ docker run --name postgres_9_4_9 -d postgres:9.4.9 -p 5432:5432
 # example: postgres with ??? volume setup
 docker run -v ~/DockerVolumes/postgres:/var/lib/postgresql/data -p 5432:5432 --name postgres_new2 postgres
 
+docker run --name postgres -d -p 5432:5432 --restart=always postgres:latest
+=======
 
 TODO: an example showing postgres volume in diff container
 
@@ -60,4 +62,3 @@ docker build -t eoin-ruby-test-1 .
 
 docker history eoin-ruby-test-1       # show layers history
 docker inspect eoin-ruby-test-1 |jq . # JSON dump of image metadata
-```
