@@ -416,8 +416,14 @@ Resource limits
         * priveleged processes can change hard limit however they want
     * limits can be set to an "infinity" value
 * when a process copies itself with `fork()` the new "child" copy inherits these limits
-    * QUESTION: I assume this means a parent can set hard-limit and then
-        spawn workers who must obey it?
+    * QUESTION: I assume this means a parent can set hard-limit and then spawn workers who must obey it?
+    * the child process is created by
+        1. duplicate the parent process (same data, stack, heap which is
+           modified (CoW I think))
+        2. child process either continues to use the same text segment (code)
+           as parent and just execute different functions OR it uses `execve()`
+           which destorys the existing stack, data, heap, text segments and
+           loads them with new data from the new binary
 * resources which can be limited
     * max size of process virtual memory in bytes
     * max core size

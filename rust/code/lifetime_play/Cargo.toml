@@ -1,0 +1,6 @@
+[package]
+name = "lifetime_play"
+version = "0.1.0"
+authors = ["Eoin Kelly <eoin@rabidtech.co.nz>"]
+
+[dependencies]

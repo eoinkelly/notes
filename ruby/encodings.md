@@ -152,28 +152,77 @@ Set the encoding for a source file via magic comment
 # encoding: UTF-8
 ```
 
-* Ruby 1.9 source files have default encoding of USASCII
+* In ruby 1.9.x
+    * source files have default encoding of US-ASCII
+    * If you use escape characters to build strings in 1.9.x ruby will silently change the source encoding from US-ASCII to ASCII-8BIT
+    * Unicode escape `\u####` will set the String to UTF-8 regardless of current source encoding.
+
+
+### Escapes
+
+There are ? ways of entering arbitrary bytes in a source file
+
+* hex escapes `\##`
+* Octal escapes (\###)
+* control escapes (\cx or \C-x)
+* meta escapes (\M-x),
+* meta-control escapes (\M-\C-x)
+
+### Best practices for IO objects in ruby
+
+Rule of thumb: normalize a group of String objects to the same Encoding before working with them together. That goes for comparisons and other shared operations as well.
+
+??? declare the encoding when you create it?
+I assume it defaults to UTF-8 so maybe only declare when you wnat to change that
+
+What does it look like to do ruby and be 100% explicit about the encodings you want? e.g.
+```
+# how to explitly tell ruby waht encoding to use for a string literal
+# how to explitly tell ruby waht encoding to use for a string from user input
+# how to explitly tell ruby waht encoding to use for a string from a file
+# others?
+TODO
+```
+
+### Ruby 2.0+
+
 * Ruby 2.0+ source files have default encoding of UTF-8
+
+### IO Objects: Intenal vs External encodings
 
 When reading strings from an IO object you can set an external and internal encodings
 
 * external encoding
     * matches the encoding used by the IO source (string, file, network etc)
 * internal encoding
-    * ruby will transcode the source to this if you set it
+    * ruby will transcode the source to this if you set it (it defaults to `nil`)
 
-You can set the defaults yourself via
+Ruby 2 defaults to
 
-    Encoding.default_internal
-    Encoding.default_external
+```ruby
+# default internal encoding is nil
+Encoding.default_internal # => nil
 
-so ruby has three defautl encodings
+# default external encoding is UTF-8
+Encoding.default_external # => #<Encoding:UTF-8>
+
+# You can change the defaults. Encodings are available as constants under the
+# `Encoding` namespace.
+
+Encoding.default_internal = Encoding::UTF_8
+Encoding.default_external = Encoding::ISO_8859_1
+```
+
+so ruby has three default encodings
 
 1. default encoding for source files
 2. default external encoding for IO objects
 3. default internal encoding for IO objects
 
-got to http://graysoftinc.com/character-encodings/miscellaneous-m17n-details
+got to
+http://graysoftinc.com/character-encodings/miscellaneous-m17n-details
+
+### Inspect & change encodings in Ruby
 
 ```ruby
 abc = "hello"
@@ -187,12 +236,62 @@ puts apc.valid_encoding? # true if the bytes in ABC are valid for its encoding
 # transcode the data
 abc.encode("other-encoding-name")
 abc.encode!()
+```
+
+### Encoding as toolbox
+
+* `Encoding` has a bunch of tools for helping you manage string encodings
+
+```
+Encoding.list # return array of all known encodings
+Encoding.list.count # => 101 in Ruby 2.4.1
+Encoding.find("utf-8") # find an encoding
+
+# encodings can have aliases
+Encoding.find("ASCII") == Encoding.find("US-ASCII") # => true
+
+# show aliases for an encoding
+Encoding.aliases # => hash of all alias mappings
+Encoding.aliases["ASCII"]
 
 # returns the name of the encoding that can be used for both, false if incompatible
 Encoding.compatible?(str1, str2)
 ```
 
-Rule of thumb: normalize a group of String objects to the same Encoding before working with them together. That goes for comparisons and other shared operations as well.
+### Dummy encodings
+
+From the ruby docs:
+
+> A dummy encoding is an encoding for which character handling is not properly
+> implemented. It is used for stateful encodings.
+
+You can inspect which encodings are "dummy":
+
+```
+Encoding.list.select(&:dummy?).map(&:name)
+# => ["UTF-16",
+#  "UTF-32",
+#  "IBM037",
+#  "ISO-2022-JP",
+#  "ISO-2022-JP-2",
+#  "CP50220",
+#  "CP50221",
+#  "UTF-7",
+#  "ISO-2022-JP-KDDI"]
+```
+
+QUESTION: why are UTF-16 and UTF-32 considered "dummy"
+    QUESTION: are they stateful in some way I don't know about?
+
+> Some encodings are stateful; they have bytes or byte sequences that switch the meanings of the following bytes.
+
+> Code sets can be classified into two categories: stateful encodings and stateless encodings.
+
+> Stateful encoding uses sequences of control codes, such as shift-in/shift-out, to change character sets associated with specific code values.
+
+> For instance, under compound text, the control sequence "ESC$(B" can be used to indicate the start of Japanese 16-bit data in a data stream of characters, and "ESC(B" can be used to indicate the end of this double-byte character data and the start of 8-bit ASCII data. Under this stateful encoding, the bit value 0x43 could not be interpreted without knowing the shift state. The EBCDIC Asian code sets use shift-in/shift-out controls to swap between double- and single-byte encodings, respectively.
+TODO: wtf?
+
 ### iconv
 
 ```
