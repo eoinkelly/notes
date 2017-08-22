@@ -39,4 +39,4 @@ first.o: ELF 64-bit LSB  relocatable, x86-64, version 1 (SYSV), not stripped
 
 from inspection of an ELF object file:
 
-* instruction stream seems to begin after 64 bytes of {some header stuff}
+* instruction stream seems to begin after 64 bytes of some header stuff

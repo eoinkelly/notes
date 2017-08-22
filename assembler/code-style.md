@@ -5,7 +5,7 @@
 
 Overview
 
-* set tab width to
+* set tab width something consistent
 * instruction memonics and operand names in lowercase
 * lots of comments
 * clear columns for
