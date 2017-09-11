@@ -74,7 +74,7 @@ void learningAboutConst(void)
     char c = 'a';
 
 
-    const char *cp; // c is immutable through cp but the pointer itself can be changed
+    const char *cp = &c;  // c is immutable through cp but the pointer itself can be changed
     char *const cp2 = &c; // the pointer is constant, not the thing it points to
 
     //*cp = 'x'; // compiler error because the character cannot be re-assigned through the pointer

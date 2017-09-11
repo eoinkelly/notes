@@ -322,3 +322,28 @@ ruby --dump parsetree -e "puts 2 + 2"
 #     +- nd_compile_option:
 #         +- coverage_enabled: false
 ```
+
+http://graysoftinc.com/the-ruby-vm-interview/the-ruby-vm-episode-v
+
+> YARV has two type instructions. First is primitive instruction. It's as
+> written, primitive. Ruby code can be represented in these primitive
+> instruction. Second is instructions for optimization. It's not needed to
+> represent Ruby scripts, but they are added for optimization. Primitive
+> instructions doesn't include _ in their name (like putobject), and optimize
+> instructions do (like opt_plus). This policy helps you if you want to see VM
+> instructions. Initially, you need to read primitive instructions.
+
+> YARV eases to implement such instructions with VM generator. You shouldn't
+> write bothersome code such as stack manipulation. If you write VM instruction
+> such as opt_plus in simple VM DSL, VM generator will translate it to C code.
+
+> On YARV, bytecode and other information are represented as the
+> VM::InstructionSequence class. I often use the name "ISeq" to point that
+> class. ISeq object contains a bytecode sequence, a catch table (to retrieve
+> exception and other global escape such as break), a local variable name table
+> and others.
+
+> ISeq object can be dumped in Ruby's primitive objects such as Array, Hash,
+> Fixnum and so on. In the same way, ISeq can be built with such data with
+> primitive objects. This means that you can built YARV bytecode without YARV
+> compiler.

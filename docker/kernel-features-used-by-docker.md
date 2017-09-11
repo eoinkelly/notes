@@ -7,10 +7,12 @@ Docker uses certain features of the linux kernel
         * pids
         * network interfaces
         * mount points
+        * users
         * IPC
 2. control groups
     * allows docker to share hardware resources between containers and
       optionally setup limits on those
+4. chroot
 3. union filesystem
     * there are a no. of options:
         * aufs
@@ -29,7 +31,9 @@ There are multiple container formats
 
 ## Namespaces
 
-> Linux namespaces, originally developed by IBM, wrap a set of system resources and present them to a process to make it look like they are dedicated to that process.
+> Linux namespaces, originally developed by IBM, wrap a set of system resources
+> and present them to a process to make it look like they are dedicated to that
+> process.
 
 ## Cgroups
 
