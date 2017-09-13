@@ -109,8 +109,12 @@ short (alias for `short int`)   | _see above_       | _see above_
 float                           | %f                | ?
 double                          | %lf               | ?
 
+char *                          | %s                | ?
+
 * all variables must be declared before they are used
-* in C the `char` type is basically the "single byte" type, it can hold any byte value, not just printable ASCII
+* in C the `char` type is basically the "single byte" type, it can hold any
+  byte value, not just printable ASCII
+
     * use `unsigned char` if you are dealing with binary data (see below)
 * character constants in C e.g. 'A' (note single quotes for character constant,
   double quotes for string constant) are just another way of writing a small

@@ -591,10 +591,17 @@ CHAP 8 NOT COMPLETE
 
 # Chapter 10: Joins revisited
 
+There are N types of SQL Join
+
+1. INNER JOIN
+1. LEFT JOIN aka LEFT OUTER JOIN
+1. RIGHT JOIN aka RIGHT OUTER JOIN
+1. FULL JOIN aka FULL OUTER JOIN
+
 * An outer join includes _all_ the rows from one table and includes data from
   the second table only if matching rows are found.
 * A join includes _all_ the rows from one table and adds data to reach row from the second table only if the join condition is satisified.
-* OUTER JOIN reads as "give me all the rows from table t1 and decorate them with some data from t2 if the join condition is true"
+* OUTER JOIN reads as "give me all the rows from table t1 and decorate them with some data from t2 if the join condition is true for that row"
 * INNER JOIN is "give me _only_ the rows from t1 and t2 where the join condition is true"
 
 LEFT OUTER JOIN
@@ -627,7 +634,7 @@ A NATURAL JOIN B
 
 * In a natural join the DB infers the join condition by inspecting the columns
   in the two tables involved in the JOIN.
-* For a natural join to work there must be identically named columsn in both tables
+* For a natural join to work there must be identically named columns in both tables
 * Author recommends avoiding this join type as it is confusing
 
 FULL OUTER JOIN

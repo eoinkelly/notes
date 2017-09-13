@@ -27,6 +27,8 @@ Alternatives
 * plan 9 uses union mounts a lot
 * gnu hurd has a unionfs implementation
 
+TODO: I have seen zfs and device-mapper mentioned in the same breath as overlayfs and aufs - investigate why?
+
 ## aufs
 
 * aufs (short for advanced multi layered unification filesystem) implements a union mount for Linux file systems.

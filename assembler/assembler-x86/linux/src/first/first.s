@@ -12,7 +12,7 @@
 	;       section of the executable.
 	segment .text
 
-	;      tells assembler to make the "_start" symbol visible to the linker
+	; tells assembler to make the "_start" symbol visible to the linker (btw _start is a linux convention, the entry symbol is "start" on macOS
 	global _start
 
 	; _start is a label and by convention is the entry point to all linux

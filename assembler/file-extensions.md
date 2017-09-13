@@ -1,5 +1,4 @@
-
-GCC file extensions
+`gcc` file extensions
 
 * `.s` = assembly file
 * `.S` = assembly file that must be preprocessed with the C pre-processor (CPP)
@@ -7,6 +6,4 @@ GCC file extensions
 
 The C preprocessor does things like #define #ifdef etc.
 
-But arm assembly provides `.eq` and `.ifdef` so we probably don't need the C preprocessor
-    is this true ???
-
+ARM assembler provides `.eq` and `.ifdef` macros

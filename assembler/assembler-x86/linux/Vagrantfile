@@ -4,9 +4,8 @@
 VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  # TODO: could be a lan location at optimal office
-  config.vm.box = "ubuntu/trusty64"
-  # config.vm.network "forwarded_port", guest: 3000, host: 3001 
+  config.vm.box = "ubuntu/xenial64"
+  # config.vm.network "forwarded_port", guest: 3000, host: 3001
 
   config.vm.provider "virtualbox" do |vb|
     vb.name = "Assembly Language Play"

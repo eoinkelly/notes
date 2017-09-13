@@ -10,7 +10,7 @@ Tutorials
 A C type declaration has
 
 1. Exactly one basic type
-2. 0-many derived types
+2. 0 to many derived types
 
 C has three kinds of Derived types
 
@@ -46,3 +46,7 @@ You sometimes see type declarations without a variable name in
 
 In this case you have to start by mentally finding where the variable name
 would go, adding it and then proceed as before
+
+==========
+
+I _think_ you can read `const` as "constant"
