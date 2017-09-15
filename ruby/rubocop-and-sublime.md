@@ -9,7 +9,7 @@ live linter for ruby files in Sublime do:
    `rbenv global` should be whichever ruby version you want to run rubocop in.
    If there is no global ruby set yet you must set it now.
 1. Install rubocop gem in your chosen rbenv managed ruby via `gem install rubocop`
-1. Ensure that your MacOS X PATH variable is setup so that Sublime Text will find
+1. Ensure that your macOS PATH variable is setup so that Sublime Text will find
    your rbenv ruby *before* it finds the system ruby. To do this
     1. Find where your rbenv ruby is via `which ruby`
         ```
