@@ -1,0 +1,25 @@
+     1                                 %line 1+1 hello_world/hello_world.s
+     2                                 
+     3                                 [section .data]
+     4                                 
+     5 00000000 48656C6C6F2C20776F-    msg db 'Hello, world!',0x0A
+     6 00000000 726C64210A         
+     7                                 
+     8                                 len equ 14
+     9                                 
+    10                                 [section .text]
+    11                                 [global _start]
+    12                                 
+    13                                 _start:
+    14                                 
+    15                                 
+    16 00000000 48C7C20E000000          mov rdx, len
+    17 00000007 48C7C6[00000000]        mov rsi, msg
+    18 0000000E 48C7C701000000          mov rdi, 1
+    19 00000015 48C7C001000000          mov rax, 1
+    20 0000001C 0F05                    syscall
+    21                                 
+    22                                 
+    23 0000001E 48C7C03C000000          mov rax, 60
+    24 00000025 48C7C700000000          mov rdi, 0
+    25 0000002C 0F05                    syscall

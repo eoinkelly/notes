@@ -10,9 +10,9 @@ that newline is the same as space and tab as far as the compiler is concerned.
 ## Indentation rules
 
 1. Code which is part of some _expression_ should be indented further in than
-   the
-   beginning of that _expression_  (even if the expression is not the leftmost
-   element of the line)
+   the beginning of that _expression_  (even if the expression is not the
+   leftmost element of the line)
+    * note this rule is independent of the layout keyword rules below
 2. All grouped expressions must be *exactly* aligned
 
 Things which are expressions in Haskell
@@ -22,8 +22,8 @@ Things which are expressions in Haskell
 * do blocks
 * where blocks
 * of blocks
-* if-else ???
-* ???
+* if-else
+* others ???
 
 There are 4 layout keywords: `let`, `where`, `do`, `of`
 
@@ -77,8 +77,8 @@ do  { thing
 
 -- because `if` is not a layout keyword.
 
--- This only happes in do blocks but to avoid issues you should always indent
--- the then and else part of an if expression a bit more than the `if` part.
+-- This only happens in do blocks but to avoid issues you should always indent
+-- the 'then' and 'else' part of an if expression a bit more than the `if` part.
 ```
 
 # Functions and if-then-else are "One line" in Haskell
@@ -88,6 +88,8 @@ Things which are considered "one line" in haskell (in the sense of no `{` or
 
 * function definitions
     ```
+    -- this is fine because newline is just another kind of whitespace to the haskell compiler
+    -- aside: it does not work in ghci
     doubler
         x
         =

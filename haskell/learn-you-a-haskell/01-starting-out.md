@@ -1,6 +1,6 @@
 # Chapter 1
 
-## Representing egative numbers
+## Representing negative numbers
 
 Represent negative numbers in computations by wrapping them in `()` so that the
 parser does not get confused:
@@ -8,25 +8,12 @@ parser does not get confused:
 ```haskell
 ghci> 3 + (-4)
 
--- haskell thinks you have put two infix operators beside eadch other here
+-- haskell thinks you have put two infix operators beside each other here
 ghci> 3 + -4
 ```
 
-* Comparison operators work as in other languages except in Haskell they are
-* typed (so you can only compare things of the same type).
-
-Coparison in
-
-* Ruby
-    * == ???
-    * equal? ???
-    * eql? ???
-* JS
-    * in general I think it is untyped
-    * == untyped
-    * === typed
-
-TODO: answer the above for Ruby, JS, C
+* Comparison operators work as in other languages except they are
+  strictly typed (so you can only compare things of the same type).
 
 The Haskell comparison operators:
 
@@ -36,6 +23,25 @@ The Haskell comparison operators:
 not
 ==
 /=
+```
+
+Haskell seems to cheat a bit when combining numberic types (or maybe I don't
+understand the type system properly yet)
+
+```
+ghci> :t 4
+4 :: Num t => t
+ghci> :t 4.5
+4.5 :: Fractional t => t
+ghci> 4 + 4.5
+8.5
+
+ghci> :t 4.5
+4.5 :: Fractional t => t
+ghci> :k Fractional
+Fractional :: * -> Constraint
+ghci> :t (+)
+(+) :: Num a => a -> a -> a
 ```
 
 ### Calling functions (applying functions)
@@ -64,7 +70,7 @@ ghci> 4 `eoindo` 5
 
 * function application is kind of invisible when viewing haskell code - it is
   everywhere in the whitespace
-* it has the highest precedence of any operation in haskell (precedence 10 CHECK THIS)
+* it has the highest precedence of any operation in haskell (precedence 10 (CHECK THIS))
 * it groups to the left (left associative) so
     ```haskell
     succ succ succ 8
@@ -80,19 +86,18 @@ ghci> 4 `eoindo` 5
 
 * creating functions and creating named data are the same thing in haskell
 * a pure function that needs some args to compute its value is just a fancy
-* piece of data
+  piece of data
 
 a named piece of data is just a function that returns the same thing every time
 you can think of it as a "data source" - a function that can pump data into the
 data transformation pipelines we setup
 
-* functions in haskell don't have to be defined before you use them.
-    * does this also apply to data (since that is the same thing?)
+* functions (which are also data) in haskell don't have to be defined in your source files before you use them.
 
 We can _name_ data in Haskell
+
 The haskell toolbox does *not* contain named slots in memory that we can change
 during the lifetime of the program
-
 
 ### if else
 
@@ -163,7 +168,7 @@ How do we explicitly make things strict?
 * The top level module is Main. By default it only exports one function (`main`)
 
 QUESTION: what about scope within a module?
-    things taht seem to ahve their own scope:
+    things that seem to ahve their own scope:
         functions
         let expressions
         if-else
@@ -187,6 +192,3 @@ main :: IO ()
 main = ...
 ```
 
-## Whitespace in Haskell
-
-QUESTION: what is legal syntax in haskell re. whitespace

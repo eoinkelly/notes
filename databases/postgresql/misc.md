@@ -1,5 +1,7 @@
 # Postgresql
 
+Postgres on mac installs man pages for each of its keywords - it uses underscore to join them together if required e.g. `man ALTER_TABLE`
+
 # Upgrading major versions
 
 * https://gist.github.com/eoinkelly/fd80465942c8ca4bd5c0

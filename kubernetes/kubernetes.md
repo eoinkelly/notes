@@ -1,8 +1,17 @@
 # Kubernetes
 
+Getting started in a cloud provider seems best.
+
+AWS
+* there are a few options which are ContainerLinux only
+* Other options are
+    * kops
+    * conjure-up
+* Ubuntu seems to be marketing their "first class citizen" status in k8s world
+
+## Misc notes
 
 Helm - package management
-
 
 Etcd - secrets management
     etcd operator

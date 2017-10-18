@@ -170,32 +170,30 @@ Comparing GIN to GiST
 
 There are 3 ways to create a unique index
 
-1. mark column as `PRIMARY KEY` in the table create statement
+1. mark column as `PRIMARY KEY` in the table create statement (this is the preferred form)
     ```sql
     CREATE TABLE t(k serial PRIMARY KEY, v integer);
     ```
-    * this is the preferred form
-2. alter table to add an index
+
+2. alter table to add an index (does exactly the same as 1.)
     ```sql
     -- exactly same as PRIMARY KEY example above
     CREATE TABLE t(k serial PRIMARY KEY, v integer);
     ALTER TABLE t ADD CONSTRAINT k_key UNIQUE (k)`
     ```
-    * does exactly the same as 1.
+
 3. Explicitly create a unique index
     ```sql
     CREATE UNIQUE INDEX k_key
     ```
-    * considered bad form as it effectively creates a constraint but donesn't
-      label it as such in the table constraints
+    This is considered bad form as it effectively creates a constraint but doesn't label it as such in the table constraints
 
 TODO: Which does rails do? (Tue 31 Mar 06:13:26 2015)
 
-Important note about NULL:
+## Important note about NULL:
 
-NULL values are not considered equal to one another! You should prevent any
+`NULL` values are not considered equal to one another! You should prevent any
 columns that will have unique indexes on them from having NULL value.
-
 
 ## Clustering an index
 
@@ -320,6 +318,7 @@ In psql:
 # show indexes on system tables
 
     \diS+
+```
 
 System tables that contain info about indexes:
 
@@ -391,30 +390,30 @@ Time: 780.934 ms
 
 Breaking down the output:
 
-`Seq Scan on blah`
+* `Seq Scan on blah`
     * the action this node represents
-`(cost=0.00..18334.00`
+* `(cost=0.00..18334.00`
     * first cost is the "startup cost" of the node
         * how much "work" is estimated before this node produces its first row of output
     * second cost is estimates much work it takes to finish running the node
-        * the esitmate might be wrong e.g. with a LIMIT the node will finish sooner
-`rows=1000000`
+        * the estimate might be wrong e.g. with a LIMIT the node will finish sooner
+* `rows=1000000`
     * the no. of rows this node expects to _output_ if it runs to completion
-`width=37)`
+* `width=37)`
     * the estimated average no. of bytes each row output _by this node_ will use in memory
         * it is not the width of the table unless you are doing something like `SELECT *`
-`(actual time=3.022..702.642`
+* `(actual time=3.022..702.642`
     * first time is how long (in seconds) this node took to produce its first row of output
     * second time is how long this node took to finish executing this node (produce its final row of output)
     * note that the estimates are costs but the acutals are time
-`rows=1000000`
+* `rows=1000000`
     * the no. of rows this node actually output
     * NB difference between expected rows and actual rows is one of the most common sources of mistakes by the query optimizer
-`loops=1)`
+* `loops=1)`
     * some nodes e.g. joins execute more than once so will have a higher `loops` value
     * note that the times reported are _per loop_ so you have to multiply them by the no. of loops to get the true total cost
 
-How the query optimizer works
+### How the query optimizer works
 
 The job of the query optimizer is to generate as many query plans as possible for the given query and then pick the one with the lowest cost to execute
 
@@ -422,12 +421,11 @@ The job of the query optimizer is to generate as many query plans as possible fo
 * the optimizer just needs to be able to compare query "ideas" not figure out an absolute cost!!!
 
 
-`seq_page_cost`
+* `seq_page_cost`
     * how long it takes to read a single database page from disk when the expectation is that you'll be reading many next to each other
     * the other cost parameters are "essentially relative" to this value
     * defaults to 1.0
-
-`random_page_cost`
+* `random_page_cost`
     * Read cost when rows involved are expected to scattered across the disk at random
     * defaults to 4.0 (4X slower than the reference cost)
     * apparently should be changed to 1.4 for SSDs
@@ -436,15 +434,15 @@ The job of the query optimizer is to generate as many query plans as possible fo
     * Josh berkus recommends a RPC of  1.5 to 2.5 for SSDs and 1.1 - 2.0 for Amazon EBS and Heroku
         * See http://www.databasesoup.com/2012/05/random-page-cost-revisited.html
     * You should also drop RPC if you have a lot of RAM and know you DB is likely to fit in it
-`cpu_tuple_cost`
+* `cpu_tuple_cost`
     * how much it costs to process a single row of data
     * I THINK it is relative to the cost of reading a sequential page in memory
     * default to 0.01 (100X slower than reference cost)
-`cpu_index_tuple_cost`
+* `cpu_index_tuple_cost`
     * cost to process a single index entry during an index scan
     * default to 0.005 (200X slower than reference)
     * It is a lot less than the cost to process a single row because rows have more header info than index rows do
-`cpu_operator_cost`
+* `cpu_operator_cost`
     * expected cost to process a _simple_ operator or function
     * e.g. if the query needs to add two numbers then that is an operator cost
     * defaults to 0.0025 (400X slower than reference)
