@@ -1,13 +1,38 @@
+# CSRF
+
+    https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)
 
 
-Cross-Site Request Forgery (CSRF) is an attack that forces an end user to execute unwanted actions on a web application in which they're currently authenticated.
+* It is where an authenticated user is tricked into taking action on your site/API
+* The user is already authenticated with you!
+* As server devs we are just trying to help the browser prevent this trickery
+* A CSRF attack can be carried out with **any** HTTP method
+    * GET
+        * `GET http://app.com/users/1/delete`
+    * POST
+        * create a form which submits to http://app.com/users/1/delete.
+        * make the form look like some other form or make it submit automatically `<body onload="document.forms[0].submit()">`
+    * PUT/PATCH/DELETE etc.
+        ```
+        <script>
+        function put() {
+            var x = new XMLHttpRequest()
+            x.open("PUT", "http://app.com/users/1/delete");
+            x.setRequestHeader("Content-Type", "application/json");
+            x.send(JSON.stringify({}));
+            console.log("Ouch");
+        }
+        </script>
+        <body onload="put()">
+        ...
+        ```
+        * Note the browser will block this JS based version because of its same origin policy
+            * YOu can break this protection by setting `Access-Control-Allow-Origin: *` HTTP header on your server. Don't do this!
 
-CSRF attacks specifically target state-changing requests, not theft of data, since the attacker has no way to see the response to the forged request.
-
-With a little help of social engineering (such as sending a link via email or chat), an attacker may trick the users of a web application into executing actions of the attacker's choosing.
-
-If the victim is a normal user, a successful CSRF attack can force the user to perform state changing requests like transferring funds, changing their email address, and so forth.
-
-If the victim is an administrative account, CSRF can compromise the entire web application.
+Rails CSRF mitigation puts a secret in a META header of the site and expects that secret back as a HTTP header when you submit a non GET request.
 
 
+TOOD: Revise how cookies work
+TODO: Revise same-origin policy
+QUESTION: Why not care about GET requests
+QUESTION: why can the attacker not see data?
