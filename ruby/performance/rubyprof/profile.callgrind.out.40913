@@ -1,0 +1,54 @@
+events: wall_time
+
+fl=/Users/eoinkelly/Dropbox/Eoin/Notes/on-github/ruby/performance/rubyprof/ruby_runtime
+fn=IO#write
+0 33
+
+fl=/Users/eoinkelly/Dropbox/Eoin/Notes/on-github/ruby/performance/rubyprof/ruby_runtime
+fn=IO#puts
+0 2
+cfl=/Users/eoinkelly/Dropbox/Eoin/Notes/on-github/ruby/performance/rubyprof/ruby_runtime
+cfn=IO#write
+calls=2 9
+9 33
+
+fl=/Users/eoinkelly/Dropbox/Eoin/Notes/on-github/ruby/performance/rubyprof/ruby_runtime
+fn=Kernel#puts
+0 10
+cfl=/Users/eoinkelly/Dropbox/Eoin/Notes/on-github/ruby/performance/rubyprof/ruby_runtime
+cfn=IO#puts
+calls=1 9
+9 35
+
+fl=/Users/eoinkelly/Dropbox/Eoin/Notes/on-github/ruby/performance/rubyprof/example_spec.rb
+fn=Thing#do_thing
+8 3
+cfl=/Users/eoinkelly/Dropbox/Eoin/Notes/on-github/ruby/performance/rubyprof/ruby_runtime
+cfn=Kernel#puts
+calls=1 9
+9 45
+
+fl=/Users/eoinkelly/Dropbox/Eoin/Notes/on-github/ruby/performance/rubyprof/example_spec.rb
+fn=Thing#initialize
+4 3
+
+fl=/Users/eoinkelly/Dropbox/Eoin/Notes/on-github/ruby/performance/rubyprof/ruby_runtime
+fn=Class#new
+0 3
+cfl=/Users/eoinkelly/Dropbox/Eoin/Notes/on-github/ruby/performance/rubyprof/example_spec.rb
+cfn=Thing#initialize
+calls=1 17
+17 3
+
+fl=/Users/eoinkelly/Dropbox/Eoin/Notes/on-github/ruby/performance/rubyprof/example_spec.rb
+fn=Global#[No method]
+17 41
+cfl=/Users/eoinkelly/Dropbox/Eoin/Notes/on-github/ruby/performance/rubyprof/ruby_runtime
+cfn=Class#new
+calls=1 17
+17 6
+cfl=/Users/eoinkelly/Dropbox/Eoin/Notes/on-github/ruby/performance/rubyprof/example_spec.rb
+cfn=Thing#do_thing
+calls=1 18
+18 48
+

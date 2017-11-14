@@ -1720,7 +1720,7 @@ Aside: CIDR = classless inter domain routing
             * maximum VPC network size is /16 on AWS
         * Tenancy
             * Dedicated
-                * lets you specify that instances in this VM should always use
+                * lets you specify that instances in this VPC should always use
                   single tenant dedicated hardware no matter what their launch
                   options are configured as
                 * WARNING: a lot more expensive!

@@ -9,7 +9,8 @@ http://graysoftinc.com/character-encodings/understanding-m17n-multilingualizatio
     * NOTE: this is the code point number not any particular encoding of it
     ```ruby
     # ruby can show you Unicode code-points
-    "aé…".unpack("U*")'
+    "aé…".unpack("U*")
+    "aé…".codepoints # same as above
     ```
 * character encoding: a mapping of code-points to bytes on a computer
     * the encoded code-points are what actually gets recorded in a byte stream
@@ -305,7 +306,7 @@ iconv -l # show available encoding names
 * available encodings is system dependent
 * a command line wrapper around libC `iconv_open` (man 3)
 
-TODO: I think this can be used to test the encoding of a file by tring to convert and see what blows up???
+TODO: I think this can be used to test the encoding of a file by trying to convert and see what blows up???
 
 # Details of UTF-8 encoding
 

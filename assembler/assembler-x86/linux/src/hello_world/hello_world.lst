@@ -2,24 +2,25 @@
      2                                 
      3                                 [section .data]
      4                                 
-     5 00000000 48656C6C6F2C20776F-    msg db 'Hello, world!',0x0A
-     6 00000000 726C64210A         
-     7                                 
-     8                                 len equ 14
+     5                                 
+     6 00000000 48656C6C6F2C20776F-    msg db 'Hello, world!',0x0A,0x00
+     7 00000000 726C64210A00       
+     8                                 len equ $ - msg
      9                                 
-    10                                 [section .text]
-    11                                 [global _start]
-    12                                 
-    13                                 _start:
-    14                                 
+    10                                 
+    11                                 [section .text]
+    12                                 [global _start]
+    13                                 
+    14                                 _start:
     15                                 
-    16 00000000 48C7C20E000000          mov rdx, len
-    17 00000007 48C7C6[00000000]        mov rsi, msg
-    18 0000000E 48C7C701000000          mov rdi, 1
-    19 00000015 48C7C001000000          mov rax, 1
-    20 0000001C 0F05                    syscall
-    21                                 
+    16 00000000 48BA0F000000000000-     mov rdx, len
+    17 00000000 00                 
+    18 0000000A 48C7C6[00000000]        mov rsi, msg
+    19 00000011 48C7C701000000          mov rdi, 1
+    20 00000018 48C7C001000000          mov rax, 1
+    21 0000001F 0F05                    syscall
     22                                 
-    23 0000001E 48C7C03C000000          mov rax, 60
-    24 00000025 48C7C700000000          mov rdi, 0
-    25 0000002C 0F05                    syscall
+    23                                 
+    24 00000021 48C7C03C000000          mov rax, 60
+    25 00000028 48C7C700000000          mov rdi, 0
+    26 0000002F 0F05                    syscall
