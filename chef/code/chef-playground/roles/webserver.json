@@ -1,0 +1,11 @@
+{
+  "name": "webserver",
+  "description": "Web Server",
+  "json_class": "Chef::Role",
+  "chef_type": "role",
+  "run_list": [
+    "recipe[motd]",
+    "recipe[users]",
+    "recipe[apache]"
+  ]
+}

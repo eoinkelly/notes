@@ -1,0 +1,9 @@
+{
+  "name": "dev",
+  "description": "blah",
+  "chef_type": "environment",
+  "json_class": "Chef::Environment",
+  "override_attributes": {
+    "sentinel": "hi there"
+  }
+}
