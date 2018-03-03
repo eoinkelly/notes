@@ -140,21 +140,10 @@ route -n get default
 # How do I flush DNS cache?
 
 ```
-# pre yosemite:
-$ sudo killall -HUP mDNSResponder
+sudo killall -HUP mDNSResponder
 
-# 10.10 Yosemite
-
-# suggestions
-sudo discoveryutil mdnsflushcache
-sudo discoveryutil udnsflushcaches
+sudo discoveryutil mdnsflushcache # Yosemite v10.10 - v10.10.3 only
 ```
-
-THere is "unicast" DNS discovery and "multicast" DNS discover (the u and m
-prefixes in commands to discoveryutil).
-
-    TODO: dig deeper into what discoveryutil works against
-    TODO: figure out how to inspect DNS cache on a mac
 
 # Steps to diagnose a network issue
 

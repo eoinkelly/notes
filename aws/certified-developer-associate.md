@@ -1823,8 +1823,8 @@ Network Access Control Lists (or "Subnet access control lists")
 * Security groups act like a firewall at the instance level whereas NACLs are an additional layer of security that act at the subnet level
 * an ACL is
     * a numbered list of rules
-    * rules are evaluated in order *starting* with lowest numbered rule and the first rule which matches stops evaluation (exam Q)
-    * the '*' rule is the last rule evaluated
+    * rules are evaluated in order **starting** with lowest numbered rule and the first rule which matches stops evaluation (exam Q)
+    * the `*` rule is the last rule evaluated
     * determines whether traffic is allowed in or out of any subnet associated with the ACL
     * highest number is 32766
     * suggest start with rules which are multiples of 100 to allow gaps for editing

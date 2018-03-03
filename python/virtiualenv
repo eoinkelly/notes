@@ -1,0 +1,12 @@
+# Virtualenv
+
+
+```
+$ pip3 install virtualenv
+$ virtualenv path/to/some/dir
+$ path/to/some/dir/bin/activate
+
+# do work
+
+$ deactivate # put in shell by virtualenv
+```

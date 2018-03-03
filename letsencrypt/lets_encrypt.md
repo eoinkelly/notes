@@ -14,13 +14,13 @@ Goal: get a certificate file from a CA
 
 Prerequisite: you have to demonstrate you own the domain
 
-How: you need to use the "ACME" protocol to prove you own the domain. Certbot is an ACME client 
+How: you need to use the "ACME" protocol to prove you own the domain. Certbot is an ACME client
 
 * If you have shell access
     * option: use certbot
 * If no shell access
     * option: use a hosting provider which provides support via their control panel
-        * examples: 
+        * examples:
             * wordpress.com enable it by default and automatically redirect
     * option: use certbot in "manual mode" to get the cert on your local machine first and the upload it to hosting provider (provided they support uploading certs)
 
