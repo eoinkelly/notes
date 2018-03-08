@@ -4,6 +4,7 @@
 *.beam
 *.swp
 *.swo
+dump.rdb
 
 # python compile artefacts
 *.pyc

@@ -13,12 +13,15 @@ https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies
 4. Path
     * browser will only send the cookie to a URL which contains this path
 5. Expires
-6. Size
-7. HTTP flag
-8. SameSite
+    * used to set cookie expiry
+6. Max-Age
+    * used to set cookie expiry
+7. Size
+8. HTTP flag
+9. SameSite
     * not supported by all browsers
     * mitigated CSRF somewhat
-9. Secure
+10. Secure
     * the cookie should only be sent with HTTPS requests
     * if this flag is set then the cookie cannot be accessed by JS
 
