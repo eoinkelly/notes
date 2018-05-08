@@ -507,6 +507,25 @@ NoMethodError: undefined method `constants' for main:Object
     require "foo"
     ```
 
+```
+# This is how variables are shared between files using 'require'
+# ./a.rb
+a_local = "a local"
+$a_blobal  = "a global"
+class AClassName; end
+A_CONSTANT = "a constant"
+def a_local_method; "a local method"; end
+
+
+# ./b.rb
+require "./a"
+# puts a_local # does not work
+puts $a_blobal # works
+puts AClassName # works
+puts A_CONSTANT # works
+puts a_local_method # works
+```
+
 * require works with "features" as opposed to files to allow it to work with
   dynamic libraries - the idea si that the if I am using a gem I shouldn't know
   whether it is implemented as a ruby file or as a C dylib

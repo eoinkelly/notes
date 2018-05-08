@@ -21,7 +21,6 @@
 21   TTIN (e.g. Sidekiq uses this)
 ```
 
-* the `SIGRT*` signals are real-time (if your OS supports them, linux does since 2.2)
 * every signal has a default action associated
 * Default actions:
     1. terminate the process (`Term` in man page)
@@ -33,11 +32,13 @@
 * a process (whether script or binary) can trap signals and do something custom with them
 * A PID of `-1` indicates all processes except the `kill` process and init
 * Keyboard bound signals
-    * 'CTRL-c' sends SIGINT
-    * 'CTRL-d' sends SIGQUIT
+    * `CTRL-c` sends INT
+    * `CTRL-d` sends EOF which is not actually a signal
+    * `CTRL-\` sends QUIT
 * the kill command
     * `kill` can be either a shell built-in (`zsh` does this) or a binary in `/bin/kill`
-    * the default signal sent is `TERM`
+    * the default signal sent by `kill` is `TERM`
+* the `SIGRT*` signals are real-time (if your OS supports them, linux does since 2.2)
 
 ## Ways of sending signals
 
