@@ -63,7 +63,7 @@ User eoin may run the following commands on someserver:
 * config file for sudo
 * edit with `visudo` as this does some format checking - breaking sudo would be bad
 * if there are conflicting values the last value applied in the file wins
-* comments prefix by `#`
+* comments prefix by `#` EXCEPT `#include` is a directive to include a file and is not a comment! W.T.F.
 * contains
     1. aliases
         * basically variable definitions

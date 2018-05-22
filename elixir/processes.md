@@ -10,3 +10,14 @@
 
 
 QUESTION: does phoenix run each request in a separate process?
+
+
+
+In the erlang gui debugger
+
+
+each process has
+    a "group leader" pid
+    list of pids it monitors
+    list of pids it is monitored by
+    list of linked pids
