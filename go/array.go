@@ -3,11 +3,11 @@ package main
 import "fmt"
 
 func main() {
-	array_examples()
+	arrayExamples()
 }
 
-func array_examples() {
-	// There are ? ways to create an array (seclarations always include an initialization in go)
+func arrayExamples() {
+	// There are ? ways to create an array (declarations always include an initialization in go)
 
 	// var things = [3]string{"hello", "there", "blah"}
 	things := [3]string{"hello", "there", "blah"}

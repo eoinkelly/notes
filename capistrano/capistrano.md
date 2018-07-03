@@ -1,36 +1,96 @@
 # Capistrano
 
-* extends rake with commands for running on servers
-* only works with git
-* auto loads rake tasks from `lib/capistrano/tasks`
-* can symlink secret config files from your app dir to a secrets dir - this keeps the secrets out of your git repo.
+### Overview
 
-You define servers and roles in `config/deploy/<environment>.rb`
+* extends the **rake DSL** with methods for running commands on remote servers (over SSH)
+* In general it does
+    1. connect to the given server over SSH
+    1. run the command (or sequence of commands) you give it
+* it auto loads any custom rake tasks you have defined in `lib/capistrano/tasks`
+* it can symlink secret config files from your app dir to a secrets dir - this keeps the secrets out of your git repo.
+* use cases
+    * deploy apps
+    * run audits on multiple machines
+    * setup machines by driving things like `chef-solo`
+* it supports rails really well
+* it can only do deploys with git (or similar source control)
+
+### How it organises servers
 
 * roles
-    * groups tasks into "roles"
-    * you match 1+ "servers" to each role
-    * typical rails apps have 3 roles: web, app, db
+    * groups servers into "roles"
+* server
+    * if you only have one server you can define it directly without using a role
 
-* servers
-    * the defn of servers seems to be optional
-    * ? can get enough info from role???
 
-`config/deploy.rb`
-    * put config common to all environments here
+### Where the config lives
 
-## how to let cap get at the git repo
+In your rails app
+```
+Capfile
+# execution of the 'cap stage cmd' begins here
 
-option 1: ssh agent forwarding i.e. use our own ssh key to auth ourselves _from_ the server _to_ the git repo
+lib/capistrano/tasks/*.rake
+# source by Capfile
+
+config/deploy.rb
+# * config common to all environments here
+# * config starts here and is specialized by config/deploy/envname.rb
+
+config/deploy/envname.rb # envname specific config here
+```
+
+
+### Configuring a rails app
+
+The following roles are part of how capistrano works by default
+
+1. `:all`
+    * you cannot change this, it is automatically added as a role to all servers
+    * e.g. `capistrano-bundler` runs for servers with the `:all` role by default
+    * e.g. `capistrano-rbenv` runs for servers with the `:all` role by default
+        * you can tweak this by changing `:rbenv_roles` attribute
+1. `:app`
+    * intended for _rails_ servers
+1. `:db`
+    * intended for hosts that run your databases (on the assumption they may not be the same as those running your rails servers)
+    * the primary server in this role (which is either the first one, or the one with the `:primary` attribute set) is the only server that migrations are run on by default
+1. `:web`
+    * intended for your _web_ servers e.g. nginx, apache etc.
+    * all servers with this role get asset precompilation
+
+capistrano-rails has some custom settings which depend on capistrano built-in name convention roles
+
+* `assets_roles`
+    * servers in any roles in this array get asset precompiliation
+    * is plural, there can be many roles which need asset precompilation
+    * defaults to `[:web]`
+* `migration_role`
+    * defaults to `:db`
+    * is singular - there is only one "migration role"
+* `migration_servers`
+    * Defaults to the primary server in the `migration_role` (The primary server in each group is considered to be the first unless any hosts have the primary property set)
+    * can be one-many servers
+
+
+### how to let cap get at the git repo
+
+####  option 1: ssh agent forwarding
+
+i.e. use our own ssh key to auth ourselves _from_ the server _to_ the git repo
 
 ```
-#
 ssh -A deploy@one-of-my-servers.com 'git ls-remote git@github.com:rabid/repo.git'
 ```
-The above is the check that cap does internally to make sure this will work. You might have to add the git host to the lsit of known hosts on the server
+
+The above is the check that cap does internally to make sure this will work. You might have to add the git host to the list of known hosts on the server
 
 
-option 2: HTTP auth + HTTPS can be prompted for a username and password or use Oauth token
+    TODO: this is very vague, improve.
+
+#### option 2: HTTP auth + HTTPS
+
+* can be prompted for a username and password or use Oauth token
 
 ## how to let cap ssh onto our servers
 
@@ -41,17 +101,22 @@ Note: none of the default cap recipes expect sudo to be available
 
 You also need to make sure that the user you ssh in as has sufficient permissions to setup the app.
 
-## cap command line
+## Running capistrano on the command line
 
 ```
 cap -T # show most recipe names and descriptions (like rake does)
+
+# General form of commands:
 cap <environment> <recipe> # to invoke a recipe
-cap production git:check # super handy, not mentioned in cap -T ???
+
+cap production git:check # super handy, not mentioned in 'cap -T' for some reason
 ```
 
-In a rails project you get a heap of built-in recipes (not sure whether they are raw cap or part of cap-rails)
+In a rails project you get a heap of built-in recipes (some come from
+`capistrano` itself, some from `capistrano-rails` and other capistrano plugin
+gems e.g. `capistrano-rbenv`, `capistrano-rake` etc.)
 
-```
+```plain
 cap deploy                         # Deploy a new release
 cap deploy:check                   # Check required files and directories exist
 cap deploy:check:directories       # Check shared and release directories exist
@@ -90,13 +155,13 @@ cap install                        # Install Capistrano, cap install STAGES=stag
 1. asset pipeline
 2. migrations
 
+Usage
 
 1. install capistrano
 1. `cap install` from project root dir
-1. move secrets out of git repo and add the files to the gitignore
+1. move secrets out of the git repo and add the files to the gitignore (???)
 
-
-# Where do dsl methods come from
+# Where do DSL methods come from
 
 * Rake
     * desc
@@ -108,20 +173,14 @@ cap install                        # Install Capistrano, cap install STAGES=stag
     * info
     * error
 
-## Aside: secrets in a rails app
-
-database.yml
-
-is our deploy user "locked" via `passwd -l deploy`? should it be? waht does "locked" mean?
-
-
 # Flows
 
-cap v3 provides 2 flows
+Capistrano v3 provides 2 flows:
 
 1. deploy flow
 2. rollback flow
 
+```plain
 cap production deploy
 
 deploy:starting    - start a deployment, make sure everything is ready
@@ -143,6 +202,6 @@ deploy:publishing
 deploy:published
 deploy:finishing_rollback  - finish the rollback, clean up everything
 deploy:finished
-
+```
 
 notice that both flows are book-ended by the same tasks

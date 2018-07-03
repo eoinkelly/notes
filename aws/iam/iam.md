@@ -29,7 +29,7 @@
 * A policy object can have many users/groups/roles attached and a
   user/group/role can have many policy objects attached
 * A "managed policy" is one what is kept in the IAM policy repository
-    * A managed policy can references up to 2 entities e.g. user/group/role.
+    * A managed policy can references up to 10 entities e.g. user/group/role.
     * Managed policies are automatically updated by Amazon when new features become available
 * An "inline policy" can be pasted inline into a particular user/group/role
 * Policies are written in _IAM Policy Language_ (A dialect of JSON)
@@ -40,7 +40,7 @@ You can attach a policy to any of
 2. Roles
 3. Groups
 
-There are ? kinds of policies
+There are 3 kinds of policies
 
 1. Trust policy
     * Defines who is allowed to assume a role
@@ -51,8 +51,8 @@ There are ? kinds of policies
         * defines what actions and resources the role can access
     * Written in IAM policy language
     * JSON format
-
-QUESTION: is resour based policy a different type?
+1. Resource based policy
+	* embedded direclty into a resource
 
 ### Resource based policies
 
@@ -193,6 +193,130 @@ To setup a delegation
        that contains the role and the role name. The user then goes to the
        Switch Role page and adds the details manually.
 
-NB: You cannot switch roles if you sign in as the root account
+NB: You cannot switch roles if you sign in as the root account.
 
 
+customer managed policies are immutable - when you make changes IAM just makes a new version of the policy
+
+TODO: policy variables https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_variables.html
+# Policy JSON
+
+Policy documents are Json and are made up of the following 12 elements
+
+1. Version
+    * optional but include it or it defaults to the old version
+    * defines the version of the policy _language_ not the version of the policy
+    * two possible values
+        1. `2012-10-17`
+            * use this version of the policy language
+            * includes features not included in the old version e.g policy variales like `${aws:username}`
+        2. `2008-10-17`
+            * old, deprecated version of the policy language
+2. Id
+    * optional
+    * used differently in different services
+    * A UUID is recommended to ensure uniqueness
+3. Statement - array of objects containing:
+    * required
+    * is the main element in a policy
+    * is an `Array<Object>` in JSON terms
+    * contains an array of individual statements
+    * contains:
+        1. Sid
+            * optional
+            * unique identifer for the statement
+            * must be unique within the policy
+        2. Effect
+            * valid values are `Allow` or `Deny`
+            * says whether this policy is an "allower" or a "denier"
+        3. Principal
+            * https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_principal.html
+            * says what thing is being allowed or denied access to resources where "thing" is one of
+                * IAM User (AWS user, federated user, assumed role user)
+                * AWS User
+                * AWS service
+            * value is the ARN of the AWS account, IAM user, IAM role, federated user, or assumed-role user
+            * IAM groups cannot be used as the principal
+			* used in
+				* trust policies
+					* in a role this specifies which things can assume the role
+				* resource based policies (i.e. policies embedded directly into a resource). Policies can be embedded into resources like S3 buckets, SNS topics, SQS queues
+			* not used in permissions policies because the "principal" is implicit in those policies - it is one of
+                * the user the policy is attached to
+                * the user in the group the policy is attached to
+                * the user which has assumed the role
+                ```
+                // examples
+
+                "Principal": {
+                    "AWS": [
+                        "arn:aws:iam::123456789012:root", // root account
+                        "123456789012", // root account (exactly same as above)
+                        ""arn:aws:iam::AWS-account-ID:user/user-name-1",  // an IAM user
+                        "999999999999"
+                    ]
+                }
+
+                "Principal": { "Federated": "accounts.google.com" }
+
+
+                "Principal": { "AWS": "arn:aws:sts::AWS-account-ID:assumed-role/role-name/role-session-name" }
+
+                "Principal": {
+                    "Service": [
+                        "elasticmapreduce.amazonaws.com",
+                        "datapipeline.amazonaws.com"
+                    ]
+                }
+
+                "Principal" : { "AWS" : "*" }
+                "Principal": "*" // same as above
+                ```
+
+        4. NotPrincipal
+            * same syntax as `Principal`
+            * lets you define exceptions to the policy defined in `Principal`
+            * lets you do whitelisting
+        5. Action
+            * matches the explicitly listed actions
+        6. NotAction
+            * matches all actions except the explicitly listed actions
+        7. Resource
+            * statements much include either a Resource or NotResource statement
+        8. NotResource
+            * statements much include either a Resource or NotResource statement
+        9. Condition
+
+
+Examples:
+
+```
+{
+    "Version": "2012-10-17",
+    "Statement": {
+        "Effect": "Allow",
+        "Action": "sts:AssumeRole",
+        "Resource": "arn:aws:iam::12345678:role/OrganizationAccountAccessRole"
+    }
+}
+
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "AllowEC2ToSendToCloudWatch",
+            "Effect": "Allow",
+            "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents",
+                "logs:DescribeLogStreams"
+            ],
+            "Resource": [
+                "arn:aws:logs:*:*:*"
+            ]
+        }
+    ]
+}
+
+```

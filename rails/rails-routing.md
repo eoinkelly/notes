@@ -473,3 +473,14 @@ what does resource (singluar) do?
 figure out namespaces, collection
 
 
+# Neat trick
+
+You can visualise the FSM that Journey creates.
+
+```
+# I think you need the `dot` executable installed
+$ brew install graphviz
+
+# in rails console:
+rails-console> File.write("routes.html", Rails.application.routes.router.visualizer)
+```
