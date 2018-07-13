@@ -109,10 +109,10 @@ Shortcuts
 # command
 
 # see how many bytes used for storage
-$ echo "stats" | nc -w 1 localhost 11211 | awk '$2 == "bytes" { print $2" "$3 }'
+echo "stats" | nc -w 1 localhost 11211 | awk '$2 == "bytes" { print $2" "$3 }'
 
 # see how many items are currently in the cache
-$ echo "stats" | nc -w 1 localhost 11211 | awk '$2 == "curr_items" { print $2" "$3 }'
+echo "stats" | nc -w 1 localhost 11211 | awk '$2 == "curr_items" { print $2" "$3 }'
 ```
 
 Any arguments to the 'stats' command are considered private API to memcached and could change at any time. They are not documented in the memcached protocol. `stats cachedump` is for debugging, not intended for production use.
