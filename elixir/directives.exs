@@ -23,23 +23,28 @@
 # use
 # * does a require then calls the __using__/1 function in the required module
 # * a convenience for pulling in macros
-# * Note: it does NOT pull in functions!
+# * Note: it does NOT pull in functions directly! (but the macros may create functions)
 
 defmodule Hewey do
   def quack do
-    IO.puts "Hewey quack"
+    IO.puts("Hewey quack")
   end
 end
 
 defmodule Dewey do
-  alias Hewey, as: Hew # alias works at module level
+  # alias works at module level
+  alias Hewey, as: Hew
 
   def squawk do
-    alias Hewey, as: Hew # alias works within a function
-    IO.puts Hewey.quack # works
-    IO.puts Hew.quack # works
+    # alias works within a function
+    alias Hewey, as: Hew
+    # works
+    IO.puts(Hewey.quack())
+    # works
+    IO.puts(Hew.quack())
   end
 end
+
 # Dewey.squawk
 
 # import
@@ -56,11 +61,12 @@ defmodule Brain do
   import Pinky, except: [pub2: 0]
 
   def show do
-    IO.puts pub
+    IO.puts(pub)
     # IO.puts pub2 # does not work because it was not imported
     # IO.puts priv # private methods cannot be imported
   end
 end
+
 # Brain.show
 
 # require
@@ -73,19 +79,20 @@ end
 
 # define a module
 defmodule Jerry do
-  def __using__([version: version]) do
-    IO.puts "hi from jerry __using__/1 got #{version} arg"
+  def __using__(version: version) do
+    IO.puts("hi from jerry __using__/1 got #{version} arg")
   end
 end
 
-defmodule Tom  do
+defmodule Tom do
   use Jerry, version: "0.3.4"
   # is equivalent to
   # require Jerry
   # Jerry.__using__([version: "0.3.4"])
 
   def some_func do
-    IO.puts "hi from tom"
+    IO.puts("hi from tom")
   end
 end
-Tom.some_func
+
+Tom.some_func()

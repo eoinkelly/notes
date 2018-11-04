@@ -6,8 +6,8 @@ Options
     * stars: 972
     * born (ish): Jun 2015
     * provides
-        * authentication: NO
-        * authorization: YES
+        * authentication: YES
+        * authorization: NO
         * user can edit their details: NO
         * invitable users: NO
         * confirmable users: NO
@@ -34,7 +34,6 @@ Options
         * invitable users: ???
         * confirmable users: ???
     * uses comeonin for password hashing
-
 * https://github.com/britton-jb/sentinel
     * is attempting to be devise
     * -- is immature

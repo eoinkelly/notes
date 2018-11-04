@@ -100,6 +100,33 @@ header.("Regex")
 IO.inspect Regex.split ~r{[aeiou]}, "caterpillar"
 # => ["c", "t", "rp", "ll", "r"]
 
+# Regular expressions are just structs
+re = ~r{[abc+]}
+
+IO.inspect(re)
+# => ~r/[abc+]/
+
+IO.inspect(re, structs: false)
+# %{
+#   __struct__: Regex,
+#   opts: "",
+#   re_pattern: {:re_pattern, 0, 0, 0,
+#    <<69, 82, 67, 80, 104, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 255, 255, 255, 255,
+#      255, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 64, 0, 0, 0, 0, 0, 0, 0,
+#      ...>>},
+#   re_version: {"8.41 2017-07-05", :little},
+#   source: "[abc+]"
+# }
+
+# Ranges
+# ######
+header.("Ranges")
+
+ran = 23..56
+IO.inspect(ran)
+# range is just a struct
+IO.inspect(ran, structs: false)
+
 # Tuples
 # ######
 header.("Tuples")
