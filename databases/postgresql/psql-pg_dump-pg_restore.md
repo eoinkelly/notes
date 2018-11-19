@@ -1,3 +1,5 @@
+# PG tools (psql, pg_dump, pg_restore)
+
 # psql
 
 ## defaults
@@ -67,12 +69,12 @@ $ psql mydb
 
 ### connection info (conninfo) strings
 
+* https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-PARAMKEYWORDS
+
 ```
 postgres://
-postgresql://
+postgresql://[user[:password]@][netloc][:port][,...][/dbname][?param1=value1&...]
 ```
-
-TODO: find out more here
 
 ## archive formats
 
@@ -84,14 +86,13 @@ Both `pg_dump` and `pg_restore` support a number of archive formats
     * most flexible format
         * allows manual selection and reording of items during restore
     * compressed by default
-        * how???
 * directory
-    * make
+    * makes
         * a directory for db,
         * one file for each table and blob being dumped
         * pg_restore readable table of contents file
     * compressed by default
-    * supports parallel dumps - ???
+    * supports parallel dumping
 * tar
     * use a tar file
     * if untarred is the same as a the `directory` format

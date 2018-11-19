@@ -1,0 +1,7 @@
+### Functions
+
+```sql
+cast()
+coalesce()
+```
+

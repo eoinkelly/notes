@@ -52,9 +52,8 @@ data/pgx_log
     * nulls seem
     * PG has functions that read the "value" bytes from a tuple and interpret them as a particular type
 
-
 PG uses a process model NOT a thread model! PG is a child of unix!
-They reckon threads do'nt make a lot of sense for databases
+They reckon threads don't make a lot of sense for databases
 
 PG starts the `postmaster` process first
     it sits on a socket waiting for a connection
@@ -68,7 +67,7 @@ each process has
     Stack area
 Interestingly the heap and stack grow towards each other in opposite directions - I presume this makes it less likely for mistakes to scribble on other process memory
 
-After postmaster forks ("clones") itself the new clone will have a new stack and data area _but_ the shared memory are will be in common with the original postmastero
+After postmaster forks ("clones") itself the new clone will have a new stack and data area _but_ the shared memory are will be in common with the original postmaster
 
 Each fork() of postmaster represents a "session" in postgres
 each session has a private stack and data area but can read/write the shared area too
@@ -101,9 +100,9 @@ ALL reads and writes (IO) in PG goes through these shared buffers
 
 PG team is concerned that using threads for parallelism would make PG less stable
 
-
 PG uses the CPUs notion of what a 64bit int and a float is directly e.g. timestamps are just 64bit ints formatted in whatever way the CPU likes them.
-    Does this imply that a DB created by one CPU could not be moved to another?
+
+    Q: Does this imply that a DB created by one CPU could not be moved to another?
 
 * Shared buffers means that if two sessions are writing to the same page at the same time their writes can be synchronised so they don't just overwrite clumisly
     * how does PG do locking?

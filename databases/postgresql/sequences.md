@@ -1,6 +1,6 @@
 # Postgres sequence generators
 
-* [9.4 CREATE SEQUENCE docs](http://www.postgresql.org/docs/9.4/static/sql-createsequence.html)
+* [CREATE SEQUENCE docs](http://www.postgresql.org/docs/current/static/sql-createsequence.html)
 * sequence number generators are very flexible ways to generate sequences of
   numbers that can be queried like SQL tables.
 * You can control
@@ -15,7 +15,7 @@
 * They appear as a special single-row table
 * they use `bigint` (8 byte integer) for counting
 
-Caching complications
+## Caching complications
 
 * e.g. you have a cache of 10 numbers and multiple clients accessing the
   database then each connection will get a cache of 10 numbers so it might end
@@ -24,6 +24,8 @@ Caching complications
   noticed by other connections until they run out of cached values
 
 Tl:DR probably best to leave cache at 1
+
+## Functions
 
 A sequence number generator has 3 functions
 
@@ -44,11 +46,17 @@ Sequence generator "tables" have the form:
 * is_cycled
 * is_called
 
+List sequences
+
+```
+-- in psql
+\ds
+```
 
 Query a sequence
 
 ```sql
-SELECT * from my_seq;
+SELECT * from my_seq; -- show the single row "table" for this sequence
 SELECT nextval('my_seq');
 SELECT currval('my_seq');
 ```
@@ -70,8 +78,7 @@ CREATE SEQUENCE my_seq;
 CREATE SEQUENCE my_seq
   INCREMENT 1
   MINVALUE 1
-  -- maximum value of bigint I presume ???
-  MAXVALUE 9223372036854775807
+  MAXVALUE 9223372036854775807 -- maximum value of bigint
   START 1
   CACHE 1;
 ```
@@ -83,25 +90,22 @@ column is:
 CREATE SEQUENCE my_seq OWNED BY some_table.some_col;
 ```
 
-Drop sequence just like a table
+Drop a sequence just like a table
 
 ```sql
 DROP SEQUENCE some_seq;
 
 -- becomes
-
 DROP SEQUENCE some_seq RESTRICT;
 ```
 
 alternative ways to drop are
 
-```
+```sql
 -- VERY DANGEROUS: drops sequence and automatically drops any objects that
 -- depend on it. CASCADE is the opposite of RESTRICT
 DROP SEQUENCE some_seq CASCADE;
 
-
 -- don't throw error if sequence does not exist
 DROP SEQUENCE IF EXISTS some_seq RESTRICT;
 ```
-

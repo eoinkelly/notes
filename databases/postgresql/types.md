@@ -1,5 +1,6 @@
 # Postgres data types
 
+* Postgres types are lowercase (only SQL keywords are uppercase)
 * Each data type has an internal representation and has one or more external representations.
 * Each external representation is decided by which input and output function you use.
 * Some input and output functions for a type are not "invertible" i.e. you might lose precision if you put data in and out of Postgres via these functions
@@ -28,18 +29,21 @@ General points about numeric types
 
 Numeric type
 
-* the `numberic` type can store very large values precisely
+* the `numeric` type can store very large values precisely
     * recommended for storing large amounts of money
     * ++ calculations are precise
     * -- calculations are slow
 
 QUESTION: how do i use the numeric type?
 
-serial types
+### serial types
 
-* serial types are just syntax sugar for sequence + a "not null" constraint
+* `serial` is not a real type!
+* serial types are just syntax sugar for
+    1. create a column of type `integer NOT NULL nextval('sertest_id_seq'::regclass)`
+    2. create a sequence named `{tablename}_{columnname}_seq` with the owner set to the column (so the sequence is dropped if the colum is dropped)
 * note: serial type does not add PRIMARY KEY or any uniqueness constraint
-* when you use a serial "type" PG actually creates a sequence and makes the column its owner (so seq is dropped if col is dropped)
+* when you use a serial "type" PG creates a sequence and makes the column its owner (so seq is dropped if col is dropped)
 
 #### Bit string types
 
@@ -68,12 +72,14 @@ The input format is different from `bytea`, but the provided functions and opera
 #### Boolean type
 
 ```plain
+    Name       Alias           Description
 13. boolean    bool            logical Boolean (true/false)
 ```
 
 #### Character types
 
 ```plain
+    Name                     Alias           Description
 14. text                                     variable-length character string
 15. character[(n)]           char[(n)]       fixed-length character string
 16. character varying[(n)]   varchar[(n)]    variable-length character string
@@ -96,6 +102,7 @@ There are also two internal textual types
 #### Network address types
 
 ```plain
+    Name          Alias           Description
 17. cidr                          IPv4 or IPv6 network address
 18. inet                          IPv4 or IPv6 host address
 19. macaddr       MAC             (Media Access Control) address
@@ -104,10 +111,11 @@ There are also two internal textual types
 #### Geometric types
 
 ```plain
-20. circle                                              circle on a plane
+    Name          Alias           Description
+20. circle                        circle on a plane
 21. line          infinite        line on a plane
 22. lseg          line            segment on a plane
-23. box                                  rectangular     box on a plane
+23. box                           rectangular box on a plane
 24. path          geometric       path on a plane
 25. point         geometric       point on a plane
 26. polygon       closed          geometric path on a plane
@@ -116,6 +124,7 @@ There are also two internal textual types
 #### Date and time types
 
 ```plain
+    Name                                            Alias       Description
 27. date                                                        calendar date (year, month, day)
 28. time[(precision)] [without time zone]                       time of day (no time zone)
 29. time[(precision)] with time zone                timetz      time of day, including time zone
@@ -127,8 +136,9 @@ There are also two internal textual types
 #### Search types
 
 ```plain
-    33. tsquery       text            search query
-    34. tsvector      text            search document
+    Name          Description
+33. tsquery       text search query
+34. tsvector      text search document
 ```
 
 #### Misc types
@@ -149,8 +159,8 @@ There are also two internal textual types
 ```
 
 * the money type depends on the `lc_monetary` DB setting (`SHOW lc_monetary`)
-    * if you dump a DB and restore it to a DB with a different lc_monetary setting can cause problems
-    * The only numeric type you should cast `money` to is `numeric` (not `float` etc.) to ensure you keep precision!
+* if you dump a DB and restore it to a DB with a different lc_monetary setting can cause problems
+* The only numeric type you should cast `money` to is `numeric` (not `float` etc.) to ensure you keep precision!
 
 ### Casting
 
@@ -159,7 +169,7 @@ There are also two internal textual types
 x::type1::type2::type3
 ```
 
-#### Portable types
+#### Types which are portable across database systems
 
 SQL specifies that the following 19 types should exist (with this spelling)
 
@@ -191,9 +201,3 @@ QUESTION: how do I use a "type input function"
 QUESTION: how do i do explicit casts?
 QUESTION: when to use the serial types and when to use a sequence?
 QUESTION: what types does rails map to (make a table for rails4 and 5)
-
-### Commonly used functions
-
-* cast()
-* coalesce()
-
