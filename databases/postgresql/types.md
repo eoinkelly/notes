@@ -80,11 +80,13 @@ The input format is different from `bytea`, but the provided functions and opera
 
 ```plain
     Name                     Alias           Description
-14. text                                     variable-length character string
+14. text                                     variable-length character string (not in SQL standard)
 15. character[(n)]           char[(n)]       fixed-length character string
 16. character varying[(n)]   varchar[(n)]    variable-length character string
 ```
 
+* `text` and `varchar` and `character varying` (note the lack of limits on the varchar) are exactly the same
+    * they are all implemented as a `varlea` http://www.varlena.com/varlena.php
 * The database character set determines the character set used to store textual values
 * character types measure length in characters not bytes
 * values of type `character` are padded with spaces to the specified width

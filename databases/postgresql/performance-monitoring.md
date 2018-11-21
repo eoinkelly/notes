@@ -65,6 +65,19 @@ postgres  2573  0.0  0.0 103572  1812 ?        Ss   Mar20   0:14 postgres: stats
 postgres  2777  0.0  0.2 143548 12092 ?        Ss   Mar20   0:02 postgres: deploy nznavigator_production [local] idle
 postgres  2889  0.0  0.2 143624 11808 ?        Ss   Mar20   0:01 postgres: deploy nznavigator_production [local] idle
 postgres  3846  0.0  0.2 143488 11676 ?        Ss   Mar20   0:01 postgres: deploy nznavigator_production [local] idle
+
+
+# docker container
+root@a8a932f4071a:/# pstree -c
+postgres─┬─postgres
+         ├─postgres
+         ├─postgres
+         ├─postgres
+         ├─postgres
+         ├─postgres
+         ├─postgres
+         ├─postgres
+         └─postgres
 ```
 
 # View settings
@@ -99,16 +112,19 @@ select * from pg_stat_activity where pid <> pg_backend_pid()  and usename = curr
 
 # Seeing the exact command being executed by each server process in the cluster right now
 
-it can be done, how ???
+It can be done. See 000-debugging-run-sheet.md
 
 # Statistics collector
 
-* a sub-system that
+A sub-system that
+
 1. collects
 2. reports
-information about server activity
+
+information about server activity.
 
 counts
+
 * access to tables in disk block terms
 * access to tables in row terms
 * access to indexes in disk block terms
@@ -127,7 +143,7 @@ There are a no. of views available to view stats on the cluster
         * they will not update if you are within a transaction block so you don't
         have to worry about the numbers changing under you
 
-TODO: WHich of those tables is most useful (Sat 28 Mar 08:37:38 2015)
+TODO: Which of those tables is most useful (Sat 28 Mar 08:37:38 2015)
 
 ```sql
 -- show the usage of all indexes in the current database
@@ -136,8 +152,7 @@ select * from pg_stat_all_indexes;
 
 # pg_locks table
 
-The `pg_locks` table will show you details of what locks are outstanding in the system
-You can
+The `pg_locks` table will show you details of what locks are outstanding in the system. You can
 
 * filter them by database or table or session
 * figure out which database has the most ungranted locks - this might indicate that this DB is a source of contention among clients

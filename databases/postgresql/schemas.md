@@ -7,7 +7,7 @@ Postgres uses the terminology of the SQL standard:
     * a collection of unrelated databases all using the same server engine
     * a cluster _is_ a database server
     * > Exactly one cluster is associated with an SQL-session
-    * > A cluster is an implementation-defined collection of catalogs.
+    * A cluster is an implementation-defined collection of catalogs.
     * Users and groups are shared across the whole cluster
         * => cannot have same username in multiple databases for different users
 * catalog/database
@@ -61,10 +61,19 @@ CREATE TABLE public.foo ( ... );
 
 ### Search path
 
-PG maintains a search path `SHOW search_path;` of schema names to search which
-you can exploit to not hard-wire schema names into your SQL. By default its
-value is `"$user",public` which will search for schemas with the name of the
-current user and then `public` in that order
+* PG maintains a search path `SHOW search_path;` of schema names to search which
+  you can exploit to not hard-wire schema names into your SQL.
+* By default its value is `"$user",public` which will search for schemas with
+  the name of the current user and then `public` in that order
+* The `pg_catalog` schema is implicitly at the **start** of the `search_path`
+
+```sql
+-- Dont' forget that pg_catalog is implicitly at the start of the search path
+SHOW search_path;
+   search_path
+-----------------
+ "$user", public
+```
 
 ### pg_catalog
 

@@ -27,6 +27,7 @@ DROP SEQUENCE parts_id_seq;
 -- --------------------------------------
 
 CREATE TABLE parts (
+
   -- This is how Rails 5.1+  creates id columns (older Rails used 'integer' not 'bigint')
   -- 1. Create the 'id' column
   id bigint NOT NULL DEFAULT nextval('parts_id_seq'::regclass),
@@ -34,14 +35,14 @@ CREATE TABLE parts (
   CONSTRAINT parts_pkey PRIMARY KEY (id),
 
 
-  some_nullable_varchar character varying
-  (510) DEFAULT NULL::character varying,
-
   -- this is how Rails creates strings
+  -- text, character varying, varchar are all equivalent
   email character varying NOT NULL DEFAULT ''::character varying,
-  user_name character varying,
 
-  some_text text,
+  -- these are all identical
+  user_name character varying,
+  user_name varchar,
+  user_name text, -- text is not in SQL standard but many DBs implement it
 
   -- integers
   some_int integer,

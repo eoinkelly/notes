@@ -1,3 +1,161 @@
+#  Query Optimisation
+
+Source: Chap 10 of High-perf Postgres book
+
+* Query plans will change over time because they depend on how much data is in
+  the table.
+* `\timing` in pqsql turns on the display of how long each query took to plan
+  and execute
+* EXPLAIN will not run a query, EXPLAIN ANALYSE will run a query!
+    * the only way PG can know for sure how long it will take is to do it
+* Note that running EXPLAIN (ANALYSE) on a query will slow it down so you
+  should not read the times it reports as being the same as you will see in
+  production. Use the `\timing` option in `psql` to see the time the query
+  takes without EXPLAIN
+
+### The cache
+
+There are 2 caches
+
+1. postgres buffer cache
+2. OS disk cache
+
+that combine to make data reads faster
+
+The result of a query can come from a "cold cache" state or a "hot cache state"
+- you have to account for this when trying different plans - the difference in
+speed may just come from the cache being hot, not the difference in your plan!
+
+Use a pattern of running each query 3 times and see if the timing settles
+around a time - this allows you to see the "hot cache" state of the query.
+
+In a hot cache staet you get reliable "processing times" but not disk access time
+
+
+## EXPLAIN output
+
+* is a set of "plan nodes" at various levels
+* lower level nodes scan tables and lookup indexes
+* higher level nodes take the output of lower level nodes and operate on it
+
+```
+eoin_play=# explain select * from blah;
+                          QUERY PLAN
+---------------------------------------------------------------
+ Seq Scan on blah  (cost=0.00..18334.00 rows=1000000 width=37)
+(1 row)
+Time: 30.762 ms
+
+eoin_play=# explain (analyse) select * from blah;
+                                                   QUERY PLAN
+-----------------------------------------------------------------------------------------------------------------
+ Seq Scan on blah  (cost=0.00..18334.00 rows=1000000 width=37) (actual time=3.022..702.642 rows=1000000 loops=1)
+ Planning time: 0.041 ms
+ Execution time: 780.472 ms
+(3 rows)
+
+Time: 780.934 ms
+```
+
+* notice that `EXPLAIN (ANALYSE) ...` really runs the query
+* the difference between EXPLAIN and `EXPLAIN ANALYSE` is the "actual" section
+* the first set of costs show are estimated only. `EXPLAIN ANALYSE` also shows actual costs by running the query
+
+Breaking down the output:
+
+* `Seq Scan on blah`
+    * the action this node represents
+* `(cost=0.00..18334.00`
+    * first cost is the "startup cost" of the node
+        * how much "work" is estimated before this node produces its first row of output
+    * second cost is estimates much work it takes to finish running the node
+        * the estimate might be wrong e.g. with a LIMIT the node will finish sooner
+* `rows=1000000`
+    * the no. of rows this node expects to _output_ if it runs to completion
+* `width=37)`
+    * the estimated average no. of bytes each row output _by this node_ will use in memory
+        * it is not the width of the table unless you are doing something like `SELECT *`
+* `(actual time=3.022..702.642`
+    * first time is how long (in seconds) this node took to produce its first row of output
+    * second time is how long this node took to finish executing this node (produce its final row of output)
+    * note that the estimates are costs but the acutals are time
+* `rows=1000000`
+    * the no. of rows this node actually output
+    * NB difference between expected rows and actual rows is one of the most common sources of mistakes by the query optimizer
+* `loops=1)`
+    * some nodes e.g. joins execute more than once so will have a higher `loops` value
+    * note that the times reported are _per loop_ so you have to multiply them by the no. of loops to get the true total cost
+
+### How the query optimizer works
+
+The job of the query optimizer is to generate as many query plans as possible for the given query and then pick the one with the lowest cost to execute
+
+* cost computurations are done using arbitrary units that are only loosely associated with real world execution cost
+* the optimizer just needs to be able to compare query "ideas" not figure out an absolute cost!!!
+
+
+* `seq_page_cost`
+    * how long it takes to read a single database page from disk when the expectation is that you'll be reading many next to each other
+    * the other cost parameters are "essentially relative" to this value
+    * defaults to 1.0
+* `random_page_cost`
+    * Read cost when rows involved are expected to scattered across the disk at random
+    * defaults to 4.0 (4X slower than the reference cost)
+    * apparently should be changed to 1.4 for SSDs
+    * a multiplier that expresses how much more costly a random read is vs. a sequential read
+    * Th real-world ratio of a random access vs. sequential access on a hard disk is approx 50:1 but we don't use a 50X multiplier here becasue we need to account for PG buffer cache and the OS disk cache. 4X accounts for these caches
+    * Josh berkus recommends a RPC of  1.5 to 2.5 for SSDs and 1.1 - 2.0 for Amazon EBS and Heroku
+        * See http://www.databasesoup.com/2012/05/random-page-cost-revisited.html
+    * You should also drop RPC if you have a lot of RAM and know you DB is likely to fit in it
+* `cpu_tuple_cost`
+    * how much it costs to process a single row of data
+    * I THINK it is relative to the cost of reading a sequential page in memory
+    * default to 0.01 (100X slower than reference cost)
+* `cpu_index_tuple_cost`
+    * cost to process a single index entry during an index scan
+    * default to 0.005 (200X slower than reference)
+    * It is a lot less than the cost to process a single row because rows have more header info than index rows do
+* `cpu_operator_cost`
+    * expected cost to process a _simple_ operator or function
+    * e.g. if the query needs to add two numbers then that is an operator cost
+    * defaults to 0.0025 (400X slower than reference)
+
+Notice that the optimizer does not know (or care) which pages are in cache when it is considering which plan to use
+
+Every plan breaks down into 5 operatoins
+
+1. sequential read
+2. random read
+3. process a row
+4. process an index entry
+5. process an operator
+
+these 5 basic operations are used to build more complicated structures
+
+### Plan analysis tools
+
+1. Yaml output can be easier to read that the default output sometimes
+    ```sql
+    EXPLAIN (FORMAT YAML) ...
+    ```
+2. [http://explain.depesz.com/](http://explain.depesz.com/) is a good tool for visualising complex query
+3. pgAdmin has the visual explain stuff
+    * it will use the thickness of the line to show the % time each node took
+
+# The importance of VERBOSE for ORM problems
+
+```
+EXPLAIN (VERBOSE) ...
+```
+
+The `VERBOSE` option will show what columns are actually being passed around by
+each node - this is really useful for finding ways to cut down the amount of
+data you are moving around in the query e.g. queries written by ActiveRecord
+that might be pulling too much data
+
+up to p 245
+
+
 # EXPLAIN
 
 Options:
