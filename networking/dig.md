@@ -1,7 +1,7 @@
 # dig
 
-* uses nameservers in `/etc/resolv.conf` by default
 * WARNING: does not use the macOS system DNS stuff so you might get different answers from dig and that
+* uses nameservers in `/etc/resolv.conf` by default
 * `type` option
     * can be any valid query type supported by BIND9
     * `type` defaults to A record
@@ -41,3 +41,9 @@ This automatically:
 * converts the ip address from `A.B.C.D` to `D.C.B.A.in-addr.arpa`
 * sets query type to PTR
 * sets class to IN
+
+```
+dig -t ANY interesting.com @some_name_server
+dig -t ANY interesting.com @8.8.8.8
+```
+
