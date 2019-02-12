@@ -135,15 +135,15 @@ Task.await(task2)
 # * uses same name registration rules as GenServer
 
 # Create an agent that holds a single Map value
-# must be atom, often __MODULE__
+# The name must be an atom, is often __MODULE__
 @agent_name :some_atom
-Agent.start_link(fn -> Map.new() end, name: @agent_name)
+{:ok, pid} = Agent.start_link(fn -> Map.new() end, name: @agent_name)
 Agent.update(@agent_name, fn state -> state.put(state, :value, thing) end)
-Agent.get(@agent_name, fn state -> Map.get(state, :value) end)
+value = Agent.get(@agent_name, fn state -> Map.get(state, :value) end)
 Agent.stop(@agent_name)
 
-# * uses a process to store a single value and let other processes acces it
-#     * that value can be arbitrarily complex but it still a single value
+# * uses a process to store a single value and let other processes access it
+#     * that value can be arbitrarily complex but it is still a **single** value
 # * agents provide two apis
 #     1. anonymous functions
 #         * requires both the client and agent have the same version of the

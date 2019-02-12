@@ -8,7 +8,6 @@ defmodule BadError do
   """
 end
 
-
 def some_func do
   raise BadError
 end
