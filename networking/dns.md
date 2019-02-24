@@ -32,13 +32,13 @@ DNS organised like a unix filesystem
 * `/` is both the separator and the root node in filesystem.
     * Conceptually there is a "null label" or empty label e.g. `{null-label}/users/eoin` so the separator is just the separator
     * DNS has a similar design
-    * the DNS null label is sometimes represented as `.` in text
+    * the DNS null label is sometimes represented as `.` because (I guess) its a representation of `.{null-label}` e.g. `bar.foo.com.{null-label}` is actually written as `bar.foo.com.`
 * directory in filesystem => domain in DNS
 * a directory can have subdirectories => a domain can have subdomains
 * `/` is the separator in filesystem => `.` is the serparator in DNS
 * NFS in filesystems is a bit like the distributed nature of DNS - the admin of an NFS mounted node gets to decide the heirarchy
-* Domain names are used as indexes into the DNS database
-    * you can think of all DNS data as "attached" to a hostname
+* Domain names are used as indexes (or, more loosely, "search keys") into the DNS database
+* you can think of all DNS data as "attached" to a hostname
 * DNS can have 127 levels of domain label
 * Each label can be up to 63 chars long
 * The null (zero length) lable is reserved for the root
@@ -52,6 +52,49 @@ DNS organised like a unix filesystem
     * all the resources in a university are represnted by a domain name
     * an "interior" domain name e.g. `bar.com.` in `foo.bar.com.` can represent both a host and a domain
 * the name domain and subdomain are basically interchangable
+* From RFC 1034:
+    > By administrative fiat, we require every zone to be available on at least two servers
+
+Anatomy
+
+* domain name space
+    * a tree structure
+    * each node and leaf has a _set of resource records_ which may be empty
+    * there is no distinction between interior nodes and leaf nodes
+    * deliberately designed so the name space did not have to be organised on the same lines as the network space
+* node
+    * a node on the tree
+    * has a resource set
+* label
+    * 0-63 chars in length (0 length label is reserved for the root node)
+    * case insenstive
+    * can contain `a-zA-Z0-9-` only
+    * must start with a letter `a-zA-Z`
+    * must end with letter or digit
+* domain name
+    * the list of labels on the path from the node to the root of the tree
+    * separated by `.` when represented as a string
+    * domain names which end in `.` are taken to be absolute, otherwise the domain name is taken to be relative
+    * max length 255 bytes
+    * must be ASCII
+* domain
+    * identified by a _domain name_
+    * is the part of the _domain name space_ which is at **or** below the domain name which specifies the domain
+
+Anatomy of a query
+
+RR = resource record
+
+A query has 4 sections - they are:
+
+1. Question
+    * Carries the query name and other query parameters.
+1. Answer
+    * Carries RRs which directly answer the query.
+1. Authority
+    * Carries RRs which describe other authoritative servers.  May optionally carry the SOA RR for the authoritative data in the answer section.
+1. Additional
+    * Carries RRs which may be helpful in using the RRs in the other sections.
 
 ## Zone file
 
@@ -110,8 +153,8 @@ DNS organised like a unix filesystem
 https://en.wikipedia.org/wiki/Zone_file
 
 ```
-$ORIGIN example.com.     ; designates the start of this zone file in the namespace
-$TTL 1h                  ; default expiration time of all resource records without their own TTL value
+$ORIGIN example.com.                          ; designates the start of this zone file in the namespace
+$TTL 1h                                       ; default expiration time of all resource records without their own TTL value
 example.com.  IN  SOA   ns.example.com. username.example.com. ( 2007120710 1d 2h 4w 1h )
 example.com.  IN  NS    ns                    ; ns.example.com is a nameserver for example.com
 example.com.  IN  NS    ns.somewhere.example. ; ns.somewhere.example is a backup nameserver for example.com
@@ -129,6 +172,48 @@ mail2         IN  A     192.0.2.4             ; IPv4 address for mail2.example.c
 mail3         IN  A     192.0.2.5             ; IPv4 address for mail3.example.com
 ```
 
+After "name expansion" (my phrase, not an official one) the first column expands to be a list of FQDNs
+
+* `@` replaced with `example.com.`
+* empty lines replaced with the value from the line above
+* all other strings assumed to be relative to `example.com.`
+becomes
+
+```
+$ORIGIN example.com.
+$TTL 1h
+example.com.         IN  SOA   ns.example.com. username.example.com. ( 2007120710 1d 2h 4w 1h )
+example.com.         IN  NS    ns.example.com.
+example.com.         IN  NS    ns.somewhere.example.
+example.com.         IN  MX    10 mail.example.com.
+example.com.         IN  MX    20 mail2.example.com.
+example.com.         IN  MX    50 mail3.example.com.
+example.com.         IN  A     192.0.2.1
+example.com.         IN  AAAA  2001:db8:10::1
+ns.example.com.      IN  A     192.0.2.2
+ns.example.com.      IN  AAAA  2001:db8:10::2
+www.example.com.     IN  CNAME example.com.
+wwwtest.example.com. IN  CNAME www.example.com.
+mail.example.com.    IN  A     192.0.2.3
+mail2.example.com.   IN  A     192.0.2.4
+mail3.example.com.   IN  A     192.0.2.5
+```
+
+Note
+
+* A client can send queries based on the first 3 columns (name, class, type)
+* The 4th column (record data) is treated like an opaque string value (you cannot search on it)
+* A server will augment the (name, class, type, data) tuples from its zone files with things it learns and caches from other servers
+
+querying is not "heirarchical" in any way - you are just querying for a matching 'name' string - there is no "send me all records under example.com.", instead you are saying "send me all records with 'example.com.' in the name field
+
+If a server thinks it is authoritive for example.com. then
+
+* it expects to have all the records that exist with name `example.com.`
+* it expects to hae **all** records for subdomains **directly** under `example.com.`
+* it expects to have NS records for any delegated subdomains **directly** under `example.com.`
+* it expects to have NS records for any servers which have a delegates subdomain directly under `example.com.`
+
 ## How delegation works
 
 Imagine we have `foo.com.` and `bar.foo.com.` is delegated to another server
@@ -144,6 +229,8 @@ Two kinds of server "role"
 1. Recursive server role
     * name servers can do "resolution" because many resolvers are not smart i.e. name servers can help you search through the domain name space
 1. Authoritive server role
+    * An authoritive nameserver has **complete** information for its **zone** (not the same as domain)
+        * Authorative information is organised into zones not domains
     * primary name server for a zone reads value from the zone file on disk
     * secondary name servers do a zone transfer from the primary when the start up
     * both primaries and secondaries are authoritive for the zone
@@ -211,6 +298,7 @@ http://en.wikipedia.org/wiki/List_of_DNS_record_types
         * Record name field: `{the-alias}`
         * Record data field: `{fqdn-we-are-pointing-to}`
     * Purpose: alias one hostname to another
+    * If a node has a CNAME then it shouldn't have any other kind of record
     * if the "hostname" matches then retry the lookup with the string in "value" as a query
 * TXT
     * Fields
@@ -428,3 +516,13 @@ Aside: TTL and Route53
 
 * longer TTL values in a service like Route53 mean you pay less for it because the root name servers get queried less often
 * AWS recommends a TTL of 60 sec if your record depends on a health check so that it will respond quickly
+
+
+    A given name server will typically support one or more zones, but this
+    gives it authoritative information about only a small section of the
+    domain tree.  It may also have some cached non-authoritative data about
+    other parts of the tree.  The name server marks its responses to queries
+    so that the requester can tell whether the response comes from
+    authoritative data or not.
+
+    How is this visible in dig?

@@ -1,5 +1,19 @@
 ## IAM policies
 
+Tips
+
+* Use the policy generator where possible (it creates JSON for you)
+
+
+Wildcards
+
+IAM policies support two wildcards
+
+* `*` multi character wildcard
+* `?` single character wildcard
+
+    TODO: match 1+ or 0+ chars?
+
 Informal anatomy
 
 ```
@@ -11,6 +25,8 @@ Informal anatomy
 
 "Statement {optional ID} says to {Allow|Deny} {Principal} to perform {Actions} on {Resources} provided {Conditions} match"
 ```
+
+Create policies to follow EPARC ordering (Effect, Principal, Action, Resource, Condition)
 
 Overview
 
@@ -26,7 +42,13 @@ Overview
 * A "managed policy" is one what is kept in the IAM policy repository
     * A managed policy can references up to 10 entities e.g. user/group/role.
     * Managed policies are automatically updated by Amazon when new features become available
+    * Max size of customer managed policy is 5K and up to 5 versions
+    * Can attach a max of 10 managed policy to a user/group/role
+    * Resource policies are still inline-only
 * An "in-line policy" can be pasted in-line into a particular user/group/role
+    * Managed policies are better than inline policies in most situations:
+        * Inline does not have versions
+        * Inline has different size limits depending on what you attach it to
 * Policies are written in _IAM Policy Language_ (A dialect of JSON)
 
 You can attach a policy to any of
@@ -101,9 +123,10 @@ Example of resource based policy on an S3 bucket
 
 ### Principal
 
-* A principal is the thing which makes the _request_ that policies authorize
+* A principal is the thing which makes the _request_ that policies authorize i.e. the "actor"
 * Principles can be users, federated users, roles or applications
 * Every policy has a **Principal** (sometimes it is implicit and not explicitly stated in the JSON)
+    * the principal is only in the JSON in resource based policies
 * The Principal is the entity which is being allowed to perform actions or access resources
 * Only 3 things which can be principals in a policy
     1. AWS root account
@@ -111,6 +134,26 @@ Example of resource based policy on an S3 bucket
     1. Role
 * In permissions policies the "Principal" is inferred by what users or roles the policy is attached to
 * For services which support _resource based policies_ you identify the Principal in the JSON
+* Principal is specified by its ARN
+
+Examples
+
+```
+"Principal": {"Aws": "*.*"}
+
+// these are the same (they both refer to the root user and any IAM user in the named account)
+"Principal": {"AWS": "0123456789"}
+"Principal": {"AWS": "arn:aws:iam::0123456789:root"}
+
+// The IAM user bob is the Principal
+"Principal": {"AWS": "arn:aws:iam::0123456789:user/bob"}
+
+// Federates ARNs
+"Principal": {"Federated": "graph.facebook.com"}
+
+// Service ARNs
+"Principal": {"Service": "ec2.amazonaws.com"}
+```
 
 ## Role
 
@@ -202,6 +245,7 @@ Customer managed policies are immutable - when you make changes IAM just makes a
 https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_variables.html
 
 * Only available in 2012-10-17 and later format policy files
+* They allow you to create smaller policies
 * A feature that lets you specify placeholders in a policy.
 * When the policy is evaluated, the policy variables are replaced with values that come from the context of the **request** itself.
 * Variable syntax is `${variablename}`
@@ -316,15 +360,16 @@ Policy documents are JSON and are made up of the following 12 elements
                 "Principal" : { "AWS" : "*" }
                 "Principal": "*" // same as above
                 ```
-
         4. NotPrincipal
             * same syntax as `Principal`
             * lets you define exceptions to the policy defined in `Principal`
             * lets you do whitelisting (presumably you `NotPrincipal: *` and then `Principal` as required.
         5. Action
             * matches the explicitly listed actions
+            * There is mostly a 1:1 between actions and AWS API endpoints (there are some exceptions)
         6. NotAction
             * matches all actions except the explicitly listed actions
+            * A `NotAction` is not the same as a `Deny`. If you use `"NotAction": "iam:*` to give a user access to everything **except** IAM, a separate policy could still give them access to IAM. If you use a `Deny` effect instead (i.e. explicitly deny IAM rather than implicitly) then the `Deny` will win if another policy accidentaly gives them access to IAM
         7. Resource
             * statements much include either a Resource or NotResource statement
         8. NotResource
@@ -339,4 +384,9 @@ https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_con
 * Optional
 * In the Condition element, you build expressions in which you use condition operators (equal, less than, etc.) to match the condition in the policy against values in the **request**.
 
+Condition evaluation logic
+
+* Multiple **values** in a the same key are evaluated using logical OR
+* Multiple keys in the same condition are evaluated using logical AND
+* Multiple conditions in the same `Condition` statement are evaluated using logical AND
 

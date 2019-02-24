@@ -1,8 +1,8 @@
-# Update firmware
+# Find the pi on the network
 
 ```
-$ sudo apt-get install rpi-update
-$ sudo rpi-update
+sudo nmap -sn 192.168.1.* # run as root to get network interface maker string
+ssh pi@192.168.1.74
 ```
 
 # Setup ethernet interface to run its own network

@@ -1,6 +1,10 @@
 #  Query Optimisation
 
-Source: Chap 10 of High-perf Postgres book
+Sources
+
+*Chap 10 of High-perf Postgres book
+
+Overview
 
 * Query plans will change over time because they depend on how much data is in
   the table.
@@ -15,22 +19,21 @@ Source: Chap 10 of High-perf Postgres book
 
 ### The cache
 
-There are 2 caches
+There are two levels of cache
 
 1. postgres buffer cache
 2. OS disk cache
 
-that combine to make data reads faster
+They combine to make data reads faster.
 
-The result of a query can come from a "cold cache" state or a "hot cache state"
+The result of a query can come from a "cold cache" state or a "hot cache" state
 - you have to account for this when trying different plans - the difference in
 speed may just come from the cache being hot, not the difference in your plan!
 
-Use a pattern of running each query 3 times and see if the timing settles
-around a time - this allows you to see the "hot cache" state of the query.
+Tip: Run each query 3 times and see if the timing settles around a time - this
+allows you to see the "hot cache" state of the query.
 
-In a hot cache staet you get reliable "processing times" but not disk access time
-
+In a hot cache state you get reliable "processing times" but not disk access time.
 
 ## EXPLAIN output
 
@@ -38,15 +41,19 @@ In a hot cache staet you get reliable "processing times" but not disk access tim
 * lower level nodes scan tables and lookup indexes
 * higher level nodes take the output of lower level nodes and operate on it
 
+QUESTION: do the nodes make a chain or a tree?
+
 ```
-eoin_play=# explain select * from blah;
+-- note I should have used EXPLAIN VERBOSE
+eoin_play=# EXPLAIN SELECT * FROM blah;
                           QUERY PLAN
 ---------------------------------------------------------------
  Seq Scan on blah  (cost=0.00..18334.00 rows=1000000 width=37)
 (1 row)
 Time: 30.762 ms
 
-eoin_play=# explain (analyse) select * from blah;
+-- note I should have used EXPLAIN (VERBOSE, ANALYSE)
+eoin_play=# EXPLAIN (ANALYSE) SELECT * FROM blah;
                                                    QUERY PLAN
 -----------------------------------------------------------------------------------------------------------------
  Seq Scan on blah  (cost=0.00..18334.00 rows=1000000 width=37) (actual time=3.022..702.642 rows=1000000 loops=1)
@@ -57,9 +64,9 @@ eoin_play=# explain (analyse) select * from blah;
 Time: 780.934 ms
 ```
 
-* notice that `EXPLAIN (ANALYSE) ...` really runs the query
+* notice that `EXPLAIN (ANALYSE) ...` really runs the query!
 * the difference between EXPLAIN and `EXPLAIN ANALYSE` is the "actual" section
-* the first set of costs show are estimated only. `EXPLAIN ANALYSE` also shows actual costs by running the query
+* the first set of costs show are estimated only. `EXPLAIN ANALYSE` also shows actual times by running the query
 
 Breaking down the output:
 
@@ -68,31 +75,31 @@ Breaking down the output:
 * `(cost=0.00..18334.00`
     * first cost is the "startup cost" of the node
         * how much "work" is estimated before this node produces its first row of output
-    * second cost is estimates much work it takes to finish running the node
+    * the second cost is estimates much work it takes to finish running the node
         * the estimate might be wrong e.g. with a LIMIT the node will finish sooner
 * `rows=1000000`
     * the no. of rows this node expects to _output_ if it runs to completion
 * `width=37)`
-    * the estimated average no. of bytes each row output _by this node_ will use in memory
+    * the estimated **average** no. of bytes each row output _by this node_ will use in memory
         * it is not the width of the table unless you are doing something like `SELECT *`
 * `(actual time=3.022..702.642`
-    * first time is how long (in seconds) this node took to produce its first row of output
-    * second time is how long this node took to finish executing this node (produce its final row of output)
+    * the first time is how long (in ms) this node took to produce its **first** row of output
+    * the second time is how long this node took to produce its **final** row of output
     * note that the estimates are costs but the acutals are time
 * `rows=1000000`
     * the no. of rows this node actually output
-    * NB difference between expected rows and actual rows is one of the most common sources of mistakes by the query optimizer
+    * NB: the difference between expected rows and actual rows is one of the most common sources of mistakes by the query optimizer
 * `loops=1)`
     * some nodes e.g. joins execute more than once so will have a higher `loops` value
     * note that the times reported are _per loop_ so you have to multiply them by the no. of loops to get the true total cost
 
 ### How the query optimizer works
 
-The job of the query optimizer is to generate as many query plans as possible for the given query and then pick the one with the lowest cost to execute
-
+* The job of the query optimizer is to generate as many query plans as possible for the given query and then pick the one with the lowest cost to execute
 * cost computurations are done using arbitrary units that are only loosely associated with real world execution cost
 * the optimizer just needs to be able to compare query "ideas" not figure out an absolute cost!!!
 
+Cost examples
 
 * `seq_page_cost`
     * how long it takes to read a single database page from disk when the expectation is that you'll be reading many next to each other
@@ -113,16 +120,16 @@ The job of the query optimizer is to generate as many query plans as possible fo
     * default to 0.01 (100X slower than reference cost)
 * `cpu_index_tuple_cost`
     * cost to process a single index entry during an index scan
-    * default to 0.005 (200X slower than reference)
+    * default to 0.005 (200X smaller than reference seq_page_cost)
     * It is a lot less than the cost to process a single row because rows have more header info than index rows do
 * `cpu_operator_cost`
     * expected cost to process a _simple_ operator or function
     * e.g. if the query needs to add two numbers then that is an operator cost
-    * defaults to 0.0025 (400X slower than reference)
+    * defaults to 0.0025 (400X smaller than reference seq_page_cost)
 
-Notice that the optimizer does not know (or care) which pages are in cache when it is considering which plan to use
+Plans do not take caching into account! The optimizer does not know (or care) which pages are in cache when it is considering which plan to use
 
-Every plan breaks down into 5 operatoins
+Every plan breaks down a combination of 5 basic operations
 
 1. sequential read
 2. random read
@@ -130,19 +137,26 @@ Every plan breaks down into 5 operatoins
 4. process an index entry
 5. process an operator
 
-these 5 basic operations are used to build more complicated structures
+```
+# commands I have seen in EXPLAIN output
+Seq Scan on {sometable}
+Nested Loop
+GroupAggregate
+Sort
+Hash Right Join
+Index Scan using {someidx} on {sometable}
+```
+
+These 5 basic operations are used to build more complicated structures
 
 ### Plan analysis tools
 
-1. Yaml output can be easier to read that the default output sometimes
-    ```sql
-    EXPLAIN (FORMAT YAML) ...
-    ```
-2. [http://explain.depesz.com/](http://explain.depesz.com/) is a good tool for visualising complex query
+1. Yaml output can be easier to read that the default output sometimes `EXPLAIN (FORMAT YAML) ...`
+2. http://explain.depesz.com is an ok tool for visualising complex query
 3. pgAdmin has the visual explain stuff
     * it will use the thickness of the line to show the % time each node took
 
-# The importance of VERBOSE for ORM problems
+# Basically always use EXPLAIN VERBOSE for ORM problems
 
 ```
 EXPLAIN (VERBOSE) ...
@@ -158,29 +172,21 @@ up to p 245
 
 # EXPLAIN
 
-Options:
-
-
-
-
-
-
 ```sql
 -- Setup database
 CREATE TABLE blah (c1 INTEGER, c2 TEXT);
 INSERT INTO blah SELECT i, md5(random()::text) FROM generate_series(1, 1000000) AS i;
 
-
+-- note I should have used EXPLAIN VERBOSE
 eoin_play=# EXPLAIN SELECT * FROM blah;
                           QUERY PLAN
 ---------------------------------------------------------------
  Seq Scan on blah  (cost=0.00..18334.00 rows=1000000 width=37)
 (1 row)
 
-
-
 eoin_play=# ANALYZE blah;
 ANALYZE
+
 eoin_play=# EXPLAIN SELECT * FROM blah;
                           QUERY PLAN
 ---------------------------------------------------------------
@@ -196,6 +202,8 @@ eoin_play=# EXPLAIN (ANALYZE) SELECT * FROM blah;
 (3 rows)
 ```
 
+### Costs
+
 Interpreting the output
 
     Seq Scan on {table-name}
@@ -203,71 +211,11 @@ Interpreting the output
     (actual time = {time to initialize step in ms}..{time to complete whole step} rows={???} loops={???})
 
 * times are reported in XXX..YYY format where
-XXX = time/cost to initialize the step
-YYY = total time/cost for the step
-
+    * XXX = cost (for estimates) or time (for actuals) to return the first row the step
+    * YYY = cost (for estimates) or time (for actuals) to return the final row of the step
 * The costs are in postgres "page cost" units
-* WARNING: Be careful doing `EXPLAIN (ANALYZE)` on INSERT, UPDATE, DELETE as PG will really do the query - make sure to wrap it in a transaction
-* the sequential page cost is 1.0 by default
-    * ???
+* WARNING: Be careful doing `EXPLAIN (ANALYZE)` on INSERT, UPDATE, DELETE as PG will really do the query - make sure to wrap it in a transaction!
 * width is the average width of a row in bytes
-
-That is the output of EXPLAIN but how is it calculated? PG begins with `ANALYZE`
-
-Significant tables
-
-1. `pg_class` "system catalog"
-2. `pg_statistics`
-
-### ANALYZE
-
-* updates the stats of the given table (or all tables if none given)
-* reads (300 * `default_statistics_target`) random rows from the database (or
-  table if given)
-    * `default_statistics_target` defaults to 100 so reads 30k rows by default
-* computes stats values of that 30K rows
-    * % of NULL values
-    * average width of row
-    * no. of distinct values
-    * most common values and frequencies
-* stores its computed stats in the `pg_statistics` catalog
-    * The `pg_stats` view is a nicer view of that catalog
-
-TODO: how to view those stats well
-
-The "planner" is the part of PG that decides how to execute the query based on
-these stats.
-
-### How do I see the average width of a table in postgres
-
-    ANALYZE blah;
-    SELECT sum(avg_width) AS width FROM pg_stats WHERE tablename='blah';
-
-### How do I see an estimate of the no of rows in the table
-
-    ANALYZE blah;
-    SELECT reltuples FROM pg_class where relname='blah';
-
-`pg_class` contains stats about the cluster
-
-Aside: terminilogy
-
-relation == table
-page == block ??
-a "block" seems to be 8 kB on my machine
-block contains rows
-catalog == table ??
-
-* reltuples
-    * estimated no. of rows
-* relpages
-    * estimated no. of file pages
-    * the estimated no. of "pages" in the "relation"
-* relallvisible
-    * estimated no. of pages containing only visible rows for all current
-      transactions
-
-Cost
 
 When PG does a "sequential scan" it
 
@@ -291,6 +239,44 @@ There are 2 config variables used
 1. `seq_page_cost`
 2. `cpu_tuple_cost`
 
+
+### ANALYZE
+
+* updates the stats of the given table (or all tables if none given)
+* reads (300 * `default_statistics_target`) random rows from the database (or
+  table if given)
+    * `default_statistics_target` defaults to 100 so reads 30k rows by default
+* computes stats values of that 30K rows
+    * % of NULL values
+    * average width of row
+    * no. of distinct values
+    * most common values and frequencies
+* stores its computed stats in the `pg_statistics` catalog
+    * The `pg_stats` view is a nicer view of that catalog
+
+The "planner" is the part of PG that decides how to execute the query based on these stats.
+
+### How do I see the average width of a table in postgres
+
+    ANALYZE blah;
+    SELECT sum(avg_width) AS width FROM pg_stats WHERE tablename='blah';
+
+### How do I see an estimate of the no of rows in the table
+
+    ANALYZE blah;
+    SELECT reltuples FROM pg_class where relname='blah';
+
+`pg_class` contains stats about the cluster
+
+* reltuples
+    * estimated no. of rows
+* relpages
+    * estimated no. of file pages
+    * the estimated no. of "pages" in the "relation"
+* relallvisible
+    * estimated no. of pages containing only visible rows for all current
+      transactions
+
 ## BUFFERS option
 
 ```
@@ -306,10 +292,7 @@ eoin_play=# EXPLAIN (ANALYZE,BUFFERS) SELECT * FROM blah;
 
    Buffers: shared hit={num-blocks-read-from-cache} read={num-blocks-not-from-cache}
 
-The BUFFERS option shows you how many blocks?? were read from Postgres' cache vs. had to be read off disk
-* Postgres' cache
-* is a ring buffer so is shared between all sessions
-
+The BUFFERS option shows you how many blocks (8kB) were read from Postgres' cache vs. had to be read off disk. Postgres' cache is a ring buffer so is shared between all sessions
 
 # Scan nodes
 
@@ -328,17 +311,15 @@ There are 4 major kinds of "scan nodes" you will see in EXPLAIN output
       index - a so called "covering index"
 
 Other, less important types of scan node:
+
 * function scan
 * values scan
 
 In the output of EXPLAIN the nodes to the right are the first to be executed and the ones on the left are the last to be executed
 
-
-
-# making ORDER BY faster (sorting faster)
+# making ORDER BY faster
 
 ```
-
 eoin_play=# EXPLAIN (ANALYZE,BUFFERS) SELECT * FROM blah ORDER BY c1;
                                                       QUERY PLAN
 -----------------------------------------------------------------------------------------------------------------------
@@ -358,8 +339,7 @@ eoin_play=# EXPLAIN (ANALYZE,BUFFERS) SELECT * FROM blah ORDER BY c1;
 * The sort
     * couldn't be done in memory so PG did it on disk
     * we see the 'temp' buffers read and wrote 5744 blocks (5744 * 8kB = 45952kB)
-        * so this sort definitlely happened on disk
-
+        * so this sort definitely happened on disk
 
 Now we increase the working memory PG has (1MB by default)
 
@@ -383,9 +363,9 @@ eoin_play=# EXPLAIN (ANALYZE,BUFFERS) SELECT * FROM blah ORDER BY c1;
 
 * Now we see that PG did the sort in memory and used approx 100MB for it
 
-But if we add an index to c1 it will be sorted too
+But if we add an index to c1 then that index will be sorted too
 
-Aside: are indexes always sorted by default?
+QUESTION: are indexes always sorted by default?
 
 ```
 eoin_play=# CREATE INDEX ON blah(c1);
@@ -404,7 +384,6 @@ Notice that
 
 * even with heaps of working memory PG prefered to read the index and it was faster! (278 ms vs 349 ms)
 * we got back a single 'Index Scan' node in the output
-
 
 # The effect of LIMIT
 
@@ -432,3 +411,52 @@ eoin_play=# EXPLAIN (ANALYZE,BUFFERS) select * from blah WHERE c2 LIKE 'ab%' LIM
 
 * PG had to read 3428 rows in a sequential scan before it had enough to satisfy
   the limit condition (the output mentions it threw away 3418 + the 10 it kept)
+
+# Explaining the Postgres Query Optimizer - Bruce Momjian
+
+* Video: https://www.youtube.com/watch?v=svqQzYFBPIo
+* Slides: http://momjian.us/main/writings/pgsql/optimizer.pdf
+    * These slides have good pseudocode descriptions of how the different join types work.
+* SQL: http://momjian.us/main/writings/pgsql/optimizer.sql
+
+What decisions does the optimizer have to make?
+
+1. Choose a scan method. The choices are:
+    1. Sequential scan
+        * When you have a very common value it is faster to do a sequential scan rather than reading the index and accessing the table randomly to pull rows out of it.
+        * A sequential scan is faster if the value you are searching for is in over 8% (ish) of the rows i.e. if the value in your JOIN or WHERE clause appears in more than 8% of rows then Postgres will do a sequential scan - index based scans are reserved for quite uncommon values (1% - 7%).
+    1. Bitmap index scan (also called _Bitmap heap scan_)
+        * Used when the optimizer stats indicate that this value is in more than 8% (ish of the rows)
+        * Create a bitmap based on the index where 1 => the value was found in the index and 0 => missing
+        * Multiple bitmap scans (from multiple indexes) can be ANDed together to quickly eliminate rows which don't match all criteria
+    1. Index scan
+        * Used when the optimizer stats indicate that this value is quite rare (rarer than a Bitmap index scan)
+1. Choose a join method. The choices are
+    1. Nested loop with inner sequential scan
+        * unlike other join methods, nested loop requires no setup work so can be fast in some cases
+        * conceptually like two nexted for loops
+    1. Nested loop with inner index scan
+    1. Hash join
+    1. Merge join
+        * typically used for a join with no where clause
+1. Choose a join order
+    * the order you list tables in a join doesn't matter - the optimizer will pick the order it thinks is best based on the available statistics.
+
+Aside: Autovacuum cannot vacuum temporary tables because they are only visible to the session that created them. Temporary tables don't use the shared buffer cache (they use a separate _temp buffer cache_ (surprise!)
+
+You can turn off scan methods!
+
+```sql
+-- examples
+SET enable_seqscan = false;
+SET enable_bitmapscan = false;
+```
+
+Analyze
+
+* Runs whenever 10% of your table has changed
+* Samples N values from the table
+* Creates a histogram of the 100 most common values (a 100 bucket histogram) to know how "spread out" your data is
+* These optimization stats are critical to help the optimizer to make better decisions
+
+

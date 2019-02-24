@@ -26,13 +26,15 @@ Ecto is split into 6 modules
 2. Query
     * can build layered queries (bit like rails scopes, LINQ queries)
 3. Schema
+    * syntax sugar for creating a struct
+    * lets you define transformations to get between table and struct
     * you are not locked into a 1:1 relationship between tables and struts
         * => a table can have many associated struts
         * => can a strut have more than one table
 4. Changeset
     * The schema is sugar for creating a struct. You can set any value you want
       to things within a struct but they will be rejected when you try to save
-      the record to the DB. FOr this reason you should always make changes to
+      the record to the DB. For this reason you should always make changes to
       your schema structs using a `changeset` method, which knows about the
       validations and casts required to satisfy both the DB and the data model.
     * holds all chagnes you want to perform on a DB
@@ -42,8 +44,9 @@ Ecto is split into 6 modules
         * validating
         * writing to DB
 5. Multi
-    * allows you to create multiple changes to a DB
+    * allows you to create multiple changes to a DB (opens a transaction)
 6. Migration
+    * syntax sugar for changing the structure of the DB
 
 ```elixir
 # Repo.aggregate("table_name", :aggregate_func_name, :column_name)

@@ -1,5 +1,31 @@
 # Elm
 
+> uses the convention that the data structure is always the last argument across the ecosystem
+
+There is not boolean in Elm, just the union type
+
+```elm
+type Bool = True | False
+```
+
+### Question: how to define a type which can be a String or an Int
+
+```elm
+type MyType = String | Int
+-- creates `String` constructor which takes no args and returns a `MyType`
+-- creates `Int` constructor which takes no args and returns a `MyType`
+-- i.e. doesn't work
+
+-- I want to have a type which can be a String or an Int
+```
+Install
+
+```
+npm i -g elm elm-format elm-test elm-oracle
+
+https://github.com/ElmCast/elm-vim
+```
+
 Core concepts
 
 1. values

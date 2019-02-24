@@ -1,5 +1,7 @@
-
+# ag (silver searcher) - faster replacement for grep
 PATTERN = PCRE regular expression (same as ack)
+
+-F = fixed string (interpret pattern as a plain string not a regex)
 
 ```sh
 ag "some-regexp"
