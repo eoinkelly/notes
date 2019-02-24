@@ -4,8 +4,8 @@
 VAGRANTFILE_API_VERSION = '2'
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  config.vm.box = 'ubuntu/vivid64'
-  # config.vm.network 'forwarded_port', guest: 3000, host: 3001 
+  config.vm.box = 'ubuntu/bionic64'
+  # config.vm.network 'forwarded_port', guest: 3000, host: 3001
 
   # config.vm.provider 'virtualbox' do |vb|
   #   # Increase memory to a more sensible default for running asset
@@ -21,10 +21,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   #
   # Default cache location: ~/.vagrant.d/cache (on host)
   #
-  if Vagrant.has_plugin?('vagrant-cachier')
-    config.cache.scope = :box
-  end
-
-  config.berkshelf.enabled = false
+  # if Vagrant.has_plugin?('vagrant-cachier')
+  #   config.cache.scope = :box
+  # end
+  #
+  # config.berkshelf.enabled = false
   config.vm.provision 'shell', path: 'provision.sh'
 end
