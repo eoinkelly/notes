@@ -23,6 +23,78 @@ https://www.iana.org/time-zones
     * docs, helper scripts, helper C code
 * Programming environments reformat that DB for their own usage and import it
 
+## How operating systems manage TZ data
+
+### Ubuntu
+
+* Ubuntu keeps the TZ data in `/usr/share/zoneinfo/`
+* The data is a bunch of binary files in `NZ: timezone data, version 2, 7 gmt time flags, 7 std time flags, no leap seconds, 156 transition times, 7 abbreviation chars` format.
+* `tzdata` package. `apt update && apt upgrade tzdata` to get latest version
+
+```
+# example on ubuntu when there is a tzdata upgrade available
+
+vagrant@ubuntu-bionic:~$ apt show tzdata -a
+Package: tzdata
+Version: 2018i-0ubuntu0.18.04
+Priority: important
+Section: libs
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: GNU Libc Maintainers <debian-glibc@lists.debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 3104 kB
+Provides: tzdata-buster
+Depends: debconf (>= 0.5) | debconf-2.0
+Replaces: libc0.1, libc0.3, libc6, libc6.1
+Homepage: https://www.iana.org/time-zones
+Task: minimal
+Supported: 5y
+Download-Size: 189 kB
+APT-Manual-Installed: yes
+APT-Sources: http://archive.ubuntu.com/ubuntu bionic-updates/main amd64 Packages
+Description: time zone and daylight-saving time data
+ This package contains data required for the implementation of
+ standard local time for many representative locations around the
+ globe. It is updated periodically to reflect changes made by
+ political bodies to time zone boundaries, UTC offsets, and
+ daylight-saving rules.
+
+Package: tzdata
+Version: 2018d-1
+Priority: important
+Section: libs
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: GNU Libc Maintainers <debian-glibc@lists.debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 3088 kB
+Provides: tzdata-buster
+Depends: debconf (>= 0.5) | debconf-2.0
+Replaces: libc0.1, libc0.3, libc6, libc6.1
+Homepage: https://www.iana.org/time-zones
+Task: minimal
+Supported: 5y
+Download-Size: 188 kB
+APT-Sources: http://archive.ubuntu.com/ubuntu bionic/main amd64 Packages
+Description: time zone and daylight-saving time data
+ This package contains data required for the implementation of
+ standard local time for many representative locations around the
+ globe. It is updated periodically to reflect changes made by
+ political bodies to time zone boundaries, UTC offsets, and
+ daylight-saving rules.
+```
+
+### macOS
+
+* Apple will push updated info to your device periodically - see https://support.apple.com/en-us/HT206986
+* macOS requires a restart to accept it
+* macOS keeps the TZ data in `/usr/share/zoneinfo/`
+
+### Windows
+
+* Presumably Windows does something similar to macOS
+
 ## How Elixir manages TZ data
 
 * https://github.com/lau/tzdata
@@ -71,12 +143,8 @@ raised when TZInfo is used.
 
 ## How JS manages TZ data
 
-TODO
+* There seem to be a few options for TZ aware date calculations in Node
+* Example NPM packages for node:
+    * https://www.npmjs.com/package/timezonecomplete (a library which uses the data)
+    * https://www.npmjs.com/package/tzdata (the actualy tz data)
 
-## How Python manages TZ data
-
-TODO
-
-## How PHP manages TZ data
-
-TODO
