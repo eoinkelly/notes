@@ -1,7 +1,73 @@
 # Certified Solutions Architect - Associate
 
-TODO: print the exam blueprint
+The exam
 
+* 130 minutes
+* 60 questions
+* results between 100-1000, passing score 720 (approx 70%)
+* The CSA-A exam is a superset of the _Cloud Practitioner_ exam
+* 2 kinds of question
+    1. 4 options, one is correct
+    2. 5 options, two are correct
+* The professional exam is all about time management
+
+* _US-East North Virginia_ is the oldest region (not required for exam)
+* As of 2019-03-06
+    * 20 regions (4 planned for 2019)
+    * 61 AZs (21 planned in 2019)
+    * 166 "Points of Presence" (155 Edge Locations and 11 Regional Edge Caches)
+* the numbers above imply there is usually 3 AZs in a region
+
+#### Points of presense (edge locations & regional edge caches)
+
+* Edge locations & regional edge caches are collectively known as "points of presense"
+* https://aws.amazon.com/cloudfront/features/
+* There is both an edge location and a regional edge cache in Sydney
+* Services which use these points of presense:
+    * Cloudfront
+    * Route53
+    * AWS WAF
+    * AWS Shield
+
+#### Regional edge cache
+
+* an extra layer of caching sitting between origin server and edge location
+* nothing to configure, happens automatically
+* have larger caches than the edge location so can keep objects after the edge location has evicted them
+* reduces traffic back to your origin server
+
+#### Local regions
+
+* think of them as "region lite"
+* a region with just one AZ i.e. one datacenter
+* examples: Osaka
+* you have to go through a sales rep to use it
+* "Local regions" are intended to be used with a nearby normal region e.g. Osaka is intended to be used with Tokyo
+
+
+AWS support plans
+
+https://aws.amazon.com/premiumsupport/plans/
+
+Sometimes these come up on exam
+
+1. Basic Plan
+    * Free
+1. Developer Plan
+    * Starts at $29/month (inceases based on usage)
+1. Business Plan
+    * Starts at $100/month (inceases based on usage)
+1. Enterprise Plan
+    * Starts at $15k/month (inceases based on usage)
+    * contact account manager for pricing
+
+* Access to all AWS services except the management of groups and users within IAM.
+How does IAM integrate with ActiveDirectory (if at all)
+
+REWATCH UP TO END CHAP 3
+
+
+Power user access level:
 ## Cloudfront
 
 ### Edge locations

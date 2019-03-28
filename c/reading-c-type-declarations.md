@@ -14,15 +14,25 @@ A C type declaration has
 
 C has three kinds of Derived types
 
-```
-// three kinds of derived types
-*   pointer to
-[]  array of
-    [n]  array of n
-()  function returning
+| Symbol | reads as ...                       |
+|--------|------------------------------------|
+| *      | ... is a pointer to ...            |
+| []     | ... is an array of ...             |
+| [n]    | ... is an array of n ...           |
+| ()     | ... is a function returning ...    |
+| *const | ... is an immutable pointer to ... |
 
-// note the "to", "of", "returning" suffixes are really important in how you read types
+
+If the basic type is prefixed by `const` then read it as _an immutable TYPE_.
+
+```c
+const int x1; // x1 is an immutable int
+
+int *const a1; // a1 is an immutable pointer to a (mutable) int
+int *const a2 // a2 is an immutable pointer to an immutable int
 ```
+
+Note the "to", "of", "returning" suffixes are really important in how you read types
 
 * derived types are "modifiers" - they modify something which **follows** not the thing which came before them as you read it
 
@@ -45,8 +55,4 @@ You sometimes see type declarations without a variable name in
 2. casts
 
 In this case you have to start by mentally finding where the variable name
-would go, adding it and then proceed as before
-
-==========
-
-I _think_ you can read `const` as "constant"
+would go, adding it and then proceed as before.

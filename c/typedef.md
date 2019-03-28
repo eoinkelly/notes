@@ -4,6 +4,7 @@
     * does NOT _create_ new types in any way!
     * there are no new semantics
     * it is a bit like a fancy `#define`
+* lets you make a synonym for an _existing_ type.
 * uses
     * make program easier to read especially with complicated structures
     * parameterise the program against portability problems
@@ -29,13 +30,7 @@ funky pf;
 //
 // * size_t
 // * ptrdiff_t
-```
 
-# typedef
-
-* lets you make a synonym for an _existing_ type.
-
-```c
 typedef char * STRING;
 
 // These do the same thing

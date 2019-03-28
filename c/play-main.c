@@ -79,7 +79,7 @@ void learningAboutConst(void)
 
     //*cp = 'x'; // compiler error because the character cannot be re-assigned through the pointer
     c = 'b'; // works because the character can be re-assigned through its name
-    *cp2 = 'c'; // works because cp2 is a pointer that cannot be modified but what it is pointing at ca.n.
+    *cp2 = 'c'; // works because cp2 is a pointer that cannot be modified but what it is pointing at can.
 
     char d = 'Y';
     //cp2 = &d; // comiler error because the pointer cannot be re-assigned
