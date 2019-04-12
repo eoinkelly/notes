@@ -2,4 +2,4 @@ CFLAGS=-Wall -g
 
 
 clean:
-	rm -rf strings strings.dSYM
+	rm -rf strings *.o *.dSYM

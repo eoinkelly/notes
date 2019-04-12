@@ -5,41 +5,57 @@
 * by convention 0 indicates success, non-zero indicates a problem
     * if the process exits to a shell you can inspect the termination status with `$?`
 
-```
-// man(2)_exit
-_exit(int status)
-// aliased to ...
-_Exit(int status)
-// these functions do not call any handlers registered by `atexit` and `at_exit`
-// open stdio streams are not flushed
-// it will close open file descriptors
+#### Exit handlers
 
-// man (3) exit
-// this is a higher level API and is preferred
-exit(int status)
-```
+There are 3 ways to exit a C program:
 
-* `exit`
-    * terminates the process immediately
-    * does not return anything
-    * any open file descriptors are closed
+1. `void exit(int status)`
+    * runs handlers registered with `at_exit(fn)` (in the order registered)
+    * does cleanup tasks
+        * flushes and closes output streams
+        * unlink all files created with `tmpfile`
+    * never returns
+    * There are some pre-defined exit status constants defined in `stdlib.h`
+        ```
+        EXIT_SUCCESS // 0
+        EXIT_FAILURE // 1
+        // examples of usage
+        exit(EXIT_SUCCESS);
+        exit(EXIT_FAILURE);
+        ```
+    * `#include <stdlib.h>`
+    * `man 3 exit`
     * the value `status` is returned to the parent process and can be collected by a `wait()` call (`man wait`)
+1. `void _Exit(int status)` or `void _exit(int status)`
+    * lower level API
+    * I _think_ that `_Exit` is the macro version of the function
+    * runs no handlers, exits as quickly as possible
+    * it will close open file descriptors but not flush open streams
+    * never returns
+    * `#include <unistd.h>`
+    * `man 3 _exit`
+1. `quick_exit()` (requires C11)
+    * `#include <stdlib.h>`
+    * runs handlers registered with `at_quick_exit(fn_name)` (in the order registered) and then calls `Exit()`
 
-* exit handler functions
-    * they run functions registered to run at process exit
-    * handlers
-        * `on_exit`
-        * `atexit`
+### Handler functions
 
-### Exit status
+Handler functions have signature `void handler_func_name(void)` i.e. all params need to come from global variables
 
-There are some pre-defined exit status constants defined in `stdlib.h`
+Handler function lists:
+
+* `atexit`, `on_exit` register handler functions on the same list
+    * `man on_exit`
+    * `man atexit`
+    * defined in `stdlib.h`
+* `at_quick_exit` registers handler functions on a different list (requires C11)
+    * no man page for this function ?
+    * https://en.cppreference.com/w/c/program/quick_exit
+
+### macOS (BSD) specific stuff
 
 ```
-EXIT_SUCCESS // 0
-EXIT_FAILURE // 1
-
-// examples of usage
-exit(EXIT_SUCCESS);
-exit(EXIT_FAILURE);
+# macOS, not linux
+man sysexits
+man style
 ```

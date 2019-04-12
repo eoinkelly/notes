@@ -14,18 +14,13 @@
 // so we often perfer to create an anonymous struct and typedef it on the same
 // line because that only creates one name.
 //
-// QUESTION: which naming convention to use for the types I create?
-//
-// * User
-// * user_t
-//
 typedef struct {
- char first_name[50];
- char last_name[50];
- int age;
- char occupation[100];
+  char first_name[50];
+  char last_name[50];
+  int age;
+  char occupation[100];
 } user_t;
 
-char * user_get_full_name(user_t *);
+char* user_get_full_name(user_t*);
 
 #endif // PLAY_APP_1_USER_H
