@@ -1,10 +1,27 @@
 # Timezones
 
-Great article:
-https://codeblog.jonskeet.uk/2019/03/27/storing-utc-is-not-a-silver-bullet/
+Good articles:
 
-Good info on storing future date-times in a way to manage TZ changes:
-https://tools.ietf.org/html/rfc5545#section-3.3.5
+* https://codeblog.jonskeet.uk/2019/03/27/storing-utc-is-not-a-silver-bullet/
+* https://tools.ietf.org/html/rfc5545#section-3.3.5
+
+## Recommendation
+
+The iCalendar spec (RFC 5545 above) recommends using
+
+    TZID=America/New_York:19980119T020000
+
+as a fairly robust way of storing a future date which should allow for changes
+in tz data. This matches option 3 in the Jon Skeet article linked above.
+
+In DB terms this would be
+
+    human_time String
+    timezone_id String
+
+Q: what postgres type is best to use for both these fields?
+Question: what does rails do out of the box?
+
 
 ## The canonical Timezone database
 

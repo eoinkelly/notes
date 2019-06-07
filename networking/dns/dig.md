@@ -1,5 +1,6 @@
 # dig
 
+* Apparently stands for _Domain information groper_
 * WARNING: does not use the macOS system DNS stuff so you might get different answers from dig and that
 * uses nameservers in `/etc/resolv.conf` by default
 * `type` option
@@ -20,6 +21,8 @@
         * CH Chaosnet record
 * You can request zone transfer by setting type to AXFR
 * You can request incremental zone transfer by setting type to IXFR
+
+Aside: `dig +trace` uses your local resolver to ask it the address of the root servers - `dig` doesn't seem to have root servers hard-coded in
 
 Examples
 

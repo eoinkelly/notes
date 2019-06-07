@@ -5,7 +5,7 @@ https://tools.ietf.org/html/rfc7519
 * a digitally signed JSON object
 * are URL safe
 * JWTs can be signed and encrypted if you need it
-
+* Often transmitted in the `Authorization: Bearer <token>`
 
 Structure
 
@@ -17,7 +17,6 @@ Structure
 * Signature options
     1. HMAC algorithm + secret
     2. RSA public + private keypair
-
 
 Use case: Authorization
 
@@ -31,3 +30,26 @@ Use case: Authorization
     * the server did not have to look up a session in a DB or other shared storage
     * JWT contains all the info the sever needs for the session
     * I guess the JWT contains the entire session?
+
+```ruby
+# easy version
+require "jwt"
+
+JWT.decode(raw_token, nil, false)
+
+# more basic version
+require "json"
+require "base64"
+
+def decode_token(raw_token)
+    raw_header, raw_body, raw_sig = raw_token.split(".")
+
+    header = JSON.parse(Base64.decode64(raw_header))
+    body = JSON.parse(Base64.decode64(raw_body))
+    sig = Base64.decode64(raw_sig)
+    # TODO: check the sig
+
+    [header, body]
+end
+```
+

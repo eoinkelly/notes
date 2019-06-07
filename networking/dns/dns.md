@@ -1,7 +1,5 @@
 # DNS records
 
-Aside: `ac` as in `.ac.uk` or `.ac.nz` stands for _academic community_
-
 ## /etc/hosts (HOSTS.TXT) - the original DNS
 
 * Througout the 70's HOSTS.TXT contained the `Name <-> IP` mapping of every domain on the Internet
@@ -33,6 +31,7 @@ DNS organised like a unix filesystem
     * Conceptually there is a "null label" or empty label e.g. `{null-label}/users/eoin` so the separator is just the separator
     * DNS has a similar design
     * the DNS null label is sometimes represented as `.` because (I guess) its a representation of `.{null-label}` e.g. `bar.foo.com.{null-label}` is actually written as `bar.foo.com.`
+    * A domain name is a series of labels. This `{null-label}` design allows you to store te domain name as `{length_1}{label_1_chars}{length_2}{label_2_chars}...{zero byte}` (the length of the last label is 0) which happens to nicely correspond to how strings are represented in C.
 * directory in filesystem => domain in DNS
 * a directory can have subdirectories => a domain can have subdomains
 * `/` is the separator in filesystem => `.` is the serparator in DNS
@@ -51,9 +50,12 @@ DNS organised like a unix filesystem
     * an individual server is represented as a domain name
     * all the resources in a university are represnted by a domain name
     * an "interior" domain name e.g. `bar.com.` in `foo.bar.com.` can represent both a host and a domain
-* the name domain and subdomain are basically interchangable
+* the words _domain_ and _subdomain_ are basically interchangable
 * From RFC 1034:
     > By administrative fiat, we require every zone to be available on at least two servers
+    * i.e. how many name servers your domain is replicated on is a convention not a technical requirement
+* history
+    * RFC 1034 talks about using DNS to store email addresses (replace the `@` with `.` and they look like a domain) but that never really took off
 
 Anatomy
 
@@ -61,12 +63,13 @@ Anatomy
     * a tree structure
     * each node and leaf has a _set of resource records_ which may be empty
     * there is no distinction between interior nodes and leaf nodes
-    * deliberately designed so the name space did not have to be organised on the same lines as the network space
+    * They deliberately designed so the name space did not have to be organised on the same lines as the network space
 * node
     * a node on the tree
-    * has a resource set
+    * has a _resource set_ aka a set of resource records
 * label
     * 0-63 chars in length (0 length label is reserved for the root node)
+    * names can be stored in either upper or lowercase but all comparisons are case insensitive
     * case insenstive
     * can contain `a-zA-Z0-9-` only
     * must start with a letter `a-zA-Z`
@@ -80,6 +83,8 @@ Anatomy
 * domain
     * identified by a _domain name_
     * is the part of the _domain name space_ which is at **or** below the domain name which specifies the domain
+    * You can visualise a _domain_ as an area encompassing all domains and subdomains under a given domain label
+* Aside: `ac` as in `.ac.uk` or `.ac.nz` stands for _academic community_
 
 Anatomy of a query
 
@@ -147,8 +152,8 @@ A query has 4 sections - they are:
 * Format was originally used by BIND but other servers adopted it (some just use it as seed data from their internal DB)
 * can either be authorative for a domain or just a listing of the cached DNS data
 * `@` symbol
-  * RFC 1035 defines @ as a shortcut for the "current origin"
-  * it is a shortcut for the root of your domain e.g. `@` is a shortcut for `foo.com.` if you are configuring DNS records for `foo.com.`
+    * RFC 1035 defines @ as a shortcut for the "current origin"
+    * it is a shortcut for the root of your domain e.g. `@` is a shortcut for `foo.com.` if you are configuring DNS records for `foo.com.`
 
 https://en.wikipedia.org/wiki/Zone_file
 
@@ -282,7 +287,51 @@ sudo apt install bind9 bind9-doc bind9utils
     * seems like it was a DHCP and DNS server and it is basically dead now
 * Runs on all major unixen and Windows
 
+## TTL
+
+> Recursive DNS servers, whether open recursives or local resolvers, typically do not acknowledge a TTL of less than 30 seconds.
+
+http://www.zytrax.com/books/dns/info/minimum-ttl.html
+> The author of this note considers low - sub one minute - TTLs to be inherently evil for 3 reasons
+
+* Minimum TTL cloudflare allows is 2 mins
+* Cloudflare "Automatic" TTL is approx 5 mins (300 sec) https://support.cloudflare.com/hc/en-us/articles/360017421192-Cloudflare-DNS-FAQ#whatdoestheautomaticttlvaluemean - I don't know why they say "approximately" - maybe the tweak it based on some condition?
+
+> the lowest TTL in DNS Made Easy is 30 seconds. That’s because resolving name servers will usually only pay attention to TTL’s that are 30 seconds or highers
+
+Longer TTLs
+    * reduce cost if you are paying by the lookup to your authoritive name server
+    * improve performance for users because they get their answer quicker
+
+Layers of caching
+
+1. In the browser itself
+    * `getaddrinfo()` does not include a TTL so the browser never knows how long the TTL was on a record so it cannot honor it. It will cache DNS results for some period of time it chooses
+    * Old browsers cached for much longer - apparently old IE cached for 30 mins but newer browsers cache for 3 mins (this info may be out of date)
+1. In the resolver on the host the browser is running on
+1. DNS resolvers which answer queries for the host
+1. The authoritive name server
+
+## CNAME flattening
+
+* Cloudflare does this
+
+When a query comes in for the root domain and you have configured a CNAME for that root domain then cloudflare's authoritive name server will act as a resolver and follow the CNAME change until it gets and IP address - it will return that IP as an A record in the query answer.
+
 ## Common DNS records
+
+DNS RR (Resourc records) have the following form:
+
+    {owner_domain} {class} {type} {ttl} {rdata}
+
+* `{owner_domain}` is the domain which owns this record
+* `{class}` two classes available: `IN` (Internet system, the one we actually use), `CH` (Chaos system, very uncommon these days)
+* `{type}` 16 bit value representing the type e.g. A, CNAME, MX, NS etc.
+* `{ttl}` 32 bit int representing number of seconds that resolvers should keep this record in cache (TTL does not apply to authorative servers)
+* `{rdata}` depends on the type, somtimes it is a binary string, sometimes a "domain name" (which I think is a particular format of null terminated string where the labels are prefixed by lengths)
+    * when it is a "domain name" type, then the value is often a pointer to other domains within the system
+
+The order of RRs i a domain is not relevant or maintained by the software.
 
 http://en.wikipedia.org/wiki/List_of_DNS_record_types
 
@@ -297,9 +346,15 @@ http://en.wikipedia.org/wiki/List_of_DNS_record_types
     * Fields
         * Record name field: `{the-alias}`
         * Record data field: `{fqdn-we-are-pointing-to}`
-    * Purpose: alias one hostname to another
-    * If a node has a CNAME then it shouldn't have any other kind of record
-    * if the "hostname" matches then retry the lookup with the string in "value" as a query
+    * Purpose: alias one domain name to another
+    * Many systems have the notion of a "canonical name" for a resource which can have many aliases i.e. there is one name that is singled out and treated as "special" and dubbed canonical.
+    * A CNAME record idenifies its `{owner_domain}` as a _non canonical alias_ for the domain listed in the `{rdata}` part of the record.
+    * **If a node has a CNAME then it can't have any other kind of record** because
+        1. It ensures that the aliases and the canonical name node cannot have different data
+        1. It ensures that a cached CNAME can be used without checking back with the authoritive server for other RR types
+    * CNAME RRs cause special action in DNS software.
+        * When a name server fails to find a desired RR in the resource set associated with the domain name, it checks to see if the resource set consists of a CNAME record with a matching class.  If so, the name server includes the CNAME record in the response and restarts the query at the domain name specified in the data field of the CNAME record.
+        * The one exception to this rule is that queries which match the CNAME type are not restarted.
 * TXT
     * Fields
         * Name: `$ORIGIN`
@@ -319,7 +374,18 @@ http://en.wikipedia.org/wiki/List_of_DNS_record_types
         * Name: `$ORIGIN`
         * Record data: `{fqdn-to-primary-name-server} {email-addr-of-responsible-person} {a} {b} {c} {d} {e}`
             * The email address has `@` replaced with `.` e.g. `miles.obrien.gmail.com`
+            * Numbers
+                1. `{a}` serial number
+                1. `{b}` slave refresh period
+                1. `{c}` slave retry time
+                1. `{d}` slave expiration time
+                1. `{e}` the maximum time to cache the record
     * This record asserts which name server is authoritive for the given domain
+    * Example:
+        ```
+        ackama.com.		900	IN	SOA	ns-1513.awsdns-61.org. awsdns-hostmaster.amazon.com. 1 7200 900 1209600 86400
+        ```
+
 * NS
     * Fields
         * Name: `$ORIGIN`
@@ -336,8 +402,8 @@ http://en.wikipedia.org/wiki/List_of_DNS_record_types
         * Name: `_{service}._{proto}.{name}.`
         * Record data: `{TTL} {class} {SRV} {priority} {weight} {port} {target}.`
 * ALIAS
-    * depends a lot on the authoritive server
-    * these look like `A` records to the querying client
+    * depends a lot on the authoritive server - not an official part of DNS spec
+    * these look like `A` records to the querying client so the authtoritive name server **must be able to resolve them to an IP address** because that is what it needs to return to queries
     * Fields
         * Name: `$ORIGIN`
         * Record data: `ALIAS some-elb-yoke.ap-southeast-2.elb.amazonaws.com.`
@@ -441,10 +507,10 @@ Pros/cons
 
 ## Name to address mapping
 
-1. You app calls libc `getaddrname` http://man7.org/linux/man-pages/man3/getaddrinfo.3.html to ask for the IP address(es in linked list) that corresponds to the given hostname
+1. You app calls libc `getaddrinfo` http://man7.org/linux/man-pages/man3/getaddrinfo.3.html to ask for the IP address(es in linked list) that corresponds to the given hostname
     * Chrome (and maybe other browsers) have their own networking stack so maybe they skip this?
     * Most resolver libs are quite "stupid" and must use a recursive query to get an answer because they can't handle doing it iteratively
-1. getaddrinfo asks the operating system "resolver" to do the lookup
+1. `getaddrinfo` asks the operating system "resolver" to do the lookup
     * Linux/unix
         * looks for resolver IP addresses listed in `/etc/resolv.conf`
     * macOS
@@ -466,17 +532,41 @@ Pros/cons
         * on a home network, the broadband modem is often also a resolver
 1. That DNS server behaves as a "resolving server" and either
     1. answer the query from its cache if possible
-    1. answer the query directly if it is authoritive for the domain being queried
+    1. answer the query directly if it is authoritive for the domain being queried (this is unlikely in most cases)
     1. do a query to the authoritive server
-    * the resolving server you talk to **does all the work** of talking to as many name servers as necessary to find your answer i.e.
-            * resolving server implementations are not required to do this but most do out of "politeness" :-)
-      * it starts by querying the root servers at `.` for NS servers which are authoritive for `.com`
-                * the IP addresses of the root name servers are hard-coded into bind distributions and can be updated by FTPing a new copy from InterNIC (i can't imagine that happens too often)
-            * The name server that receives the recursive query always sends the **same query** that the resolver sends it, for example, for the address of `waxwing.ce.berkeley.edu`.
-                * It never sends explicit queries for the name servers for `ce.berkeley.edu` or `berkeley.edu`, though this information is also stored in the name space.
-                * Sending explicit queries could cause problems: There may be no ce.berkeley.edu name servers (that is, ce.berkeley.edu may be part of the berkeley.edu zone).
-                * Also, it's always possible that an edu or berkeley.edu name server would know waxwing.ce.berkeley.edu's address. An explicit query for the berkeley.edu or ce.berkeley.edu name servers would miss this information.
-        * The first resolving server takes responsibility for finding you an answer and doesn't pass on your full query to other name servers (are there situations where this is not true?)
+
+
+How a resolver answers a recursive query:
+
+The resolving server you talk to **does all the work** of talking to as many name servers as necessary to find your answer. Resolving server implementations are not required to do this but most do out of "politeness" :-)
+
+Say we receive a query for A records on `www.foo.com`:
+
+1. Look up our internal, hard-coded set of root server IP addresses and choose one at random.
+1. Send the query we recieved to the root server
+1. The root server response
+    * ANSWER section: empty because it doesn't know the answer to our query
+    * AUTHORITY section: the names of server authoritive for `.com`
+    * ADDITIONAL section: the IP addresses of the servers mentioned in the AUTHORITY section
+1. Choose a server from the AUTHORITY section above and send it the exact query we originally received
+1. The .com authoritive server response will contain:
+    * ANSWER section: empty because it doesn't know the answer to our query
+    * AUTHORITY section: the names of server authoritive for `foo.com`
+    * ADDITIONAL section: the IP addresses of the servers mentioned in the AUTHORITY section
+1. Choose a server from the AUTHORITY section above and send it the exact query we originally received
+1. The foo.com authoritive server response will contain:
+    * ANSWER section: contains the answer we want
+    * AUTHORITY section: the names of server authoritive for `foo.com` (not that useful to us anymore)
+    * ADDITIONAL section: empty
+1. Store the answer in a cache to speed up future requests
+1. Send the answer back to the client
+
+Note that the resolver
+
+* naievely asked **every** server along the way about A records on `www.foo.com` - the resolver never split the query into labels
+    * splitting into labels and trying to be smart about it could bake in an assumption that zones of authority match the heirarch exactly which isn't true e.g. given a query `waxwing.ce.berkeley.edu` we cannot depend on there being a separate authoritive server at each level e.g. `{root}`, `edu`, `berkeley`, `ce`, `waxwing`. The reality is that the zones are probably organised as `{root}`, `edu`, `berkeley`
+* isn't really very smart - it puts the work on the receiving authoritive server to parse our query and send back a useful next step in the AUTHORITY section
+
 
 ## Address to name mapping
 
@@ -504,7 +594,6 @@ Overview
 * implementation of inverse queries is optional in the spec
 * bind 8 recognises inverse queries will make up fake responses for the query
 
-UP TO 2.7 CACHING
 ## Caching
 
 * BIND implements both
@@ -526,3 +615,27 @@ Aside: TTL and Route53
     authoritative data or not.
 
     How is this visible in dig?
+
+
+# EDNS
+
+* EDNS0 is the first approved set of mechanisms for DNS extensions
+* RFC: https://tools.ietf.org/html/rfc6891
+* Extension Mechanisms for DNS were specified in 1999 (https://tools.ietf.org/html/rfc2671), with a minor update in 2013 (https://tools.ietf.org/html/rfc6891)
+* Supported by cloudflare and Route53
+* It looks like basically everything supports EDNS0 now
+    * https://dnsflagday.net/ was a promise to stop working around DNS servers which didn't support it
+
+# DNS server software
+
+https://en.wikipedia.org/wiki/Comparison_of_DNS_server_software
+
+* Bind
+    * The most widely deployed
+* Dnsmasq
+    * not a real recursive DNS server
+    * is more of a "DNS forwarder" i.e. will attempt to answer out of `/etc/hosts` and then forward the query to a real recursive server
+    * is a kind of small network swiss-army knife. It does DNS forwarding, can be an authoritive server for your local network, is a DHCP server
+
+UP TO: RFC 1034 section 3.7
+UP TO 2.7 CACHING in DNS & Bind
