@@ -33,7 +33,7 @@ An Atlassian account
     * e.g. JIRA, Bitbucket, Confluence
 
 
-Question: it seems like access is granted to users through groups/[
+Question: it seems like access is granted to users through groups?
 
 There are 3 administrator groups
 

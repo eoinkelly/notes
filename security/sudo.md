@@ -60,21 +60,24 @@ User eoin may run the following commands on someserver:
 
 ## /etc/sudoers
 
-* config file for sudo
+* the default policy file for sudo
 * edit with `visudo` as this does some format checking - breaking sudo would be bad
-* if there are conflicting values the last value applied in the file wins
+* CAUDTION: if there are conflicting values the last value applied in the file wins!
 * comments prefix by `#` EXCEPT `#include` is a directive to include a file and is not a comment! W.T.F.
 * contains
-    1. aliases
+    1. aliases (4 kinds)
         * basically variable definitions
         * can have of 4 types
             * User_Alias
-                * specify groups of users
-                * can include system groups e.g. `%www`
-                * can include netgroups e.g. `+somegroup`
+                * used to create groups of users
+                * users don't have a prefix e.g. `deploy`
+                * groups have a `%` prefix e.g.  `%www`
+                * netgroups have a `+` prefix e.g. `+somegroup`
                 * can prefix with `!` to exclude that user/group/netgroup
             * Runas_Alias
-                * almost the same as user aliases but you can specify user by uid
+                * lets you specify groups of users whom a given User@Host combination can run processes as
+                * similar to user aliases but you can specify user by uid
+                * uids have a `#` prefix e.g. `#0` would be root (note this isn't a comment)
             * Cmnd_Alias
                 * lists of commands and directories
                 * used to specify groups of commands
@@ -85,21 +88,38 @@ User eoin may run the following commands on someserver:
                     * ip addresses,
                     * networks: if you don't specify netmask the netmask of this server will be used
                     * netgroups
-
+        * you can define multiple aliases on same line, `:` is the separator
         * each type has the `ALL` built-in alias that matches all users, all hosts etc.
         * you cannot override the ALL aliases
         * sudo knows which ALL you mean by the context of its use
-    2. user specifications
-        ```
-        <user list> <host list> = <operator (runas) list> <tag list> <command list>
-        ```
+    2. user specifications are of form `who where = (as_whom) tag_constraints what`.
+        * details:
+            ```
+            <user list> <host list> = <operator (runas) list> <tags> <command list>
+            User_Spec ::= User_List Host_List '=' Cmnd_Spec_List \
+                            (':' Host_List '=' Cmnd_Spec_List)*
+
+            Cmnd_Spec_List ::= Cmnd_Spec |
+                                Cmnd_Spec ',' Cmnd_Spec_List
+
+            Cmnd_Spec ::= Runas_Spec? Tag_Spec* Cmnd
+
+            Runas_Spec ::= '(' Runas_List? (':' Runas_List)? ')'
+
+            Tag_Spec ::= ('EXEC:' | 'NOEXEC:' | 'FOLLOW:' | 'NOFOLLOW' |
+                        'LOG_INPUT:' | 'NOLOG_INPUT:' | 'LOG_OUTPUT:' |
+                        'NOLOG_OUTPUT:' | 'MAIL:' | 'NOMAIL:' | 'PASSWD:' |
+                        'NOPASSWD:' | 'SETENV:' | 'NOSETENV:')
+            ```
         * tags allow you to set special instructions for each user specification line e.g.
-            * PASSWD
-                * user must enter a password
-            * NOPASSWD
-                * user does not have to enter a password
-            * NOEXEC
-                * don't allow creating of a shell
+            * tags end in `:`
+            * examples:
+                * PASSWD:
+                    * user must enter a password
+                * NOPASSWD:
+                    * user does not have to enter a password
+                * NOEXEC:
+                    * don't allow creating of a shell
 
 ```
 # exclude joe
@@ -255,4 +275,12 @@ Options can be set by default via the `Defaults` command
 Defaults        env_reset,pwfeedback
 ```
 
+A Common setup:
 
+```
+$ cat 90-cloud-init-users
+# Created by cloud-init v. 19.1-1-gbaa47854-0ubuntu1~18.04.1 on Tue, 11 Jun 2019 07:29:47 +0000
+
+# User rules for deploy
+deploy ALL=(ALL) NOPASSWD:ALL
+```
