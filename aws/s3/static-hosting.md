@@ -8,7 +8,7 @@ by default when files are marked public they are reset back to private when you 
     * oddly you have to explicitly reference the bucket name in the policy that is applied to it
     * note that bucket policy only applies to objects uploaded by the bucket owner - you need to use the object's ACL to make objects owned by another user public
     * example bucket policy
-        ```
+        ```json
         {
             "Version":"2012-10-17",
             "Statement":[
