@@ -9,7 +9,7 @@ Code smell: cache keys that are too granular
 
 ## Reasons why ruby code is slow
 
-* extra memory allocation which triggers GC (<-- usuall the main culprit)
+* extra memory allocation which triggers GC (usually the main culprit)
 * raw/algorithmic complexity of the code
 * data structure copying
 * context copying
