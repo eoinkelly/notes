@@ -1,5 +1,15 @@
 # Kubernetes
 
+
+## Installation
+
+```
+brew install cfssl # installs cfssl, cfssljson
+brew install kubectl # if you need it
+```
+
+## General points
+
 Getting started in a cloud provider seems best.
 
 AWS
@@ -35,3 +45,14 @@ kubectl cluster-info
 
 How do I setup a centos box to be a k8 master?
 https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/
+
+## Kubernetes the hard way
+
+The following components need a TLS certificate to establish their identity
+
+1. etcd
+1. kube-apiserver
+1. kube-controller-manager
+1. kube-scheduler
+1. kubelet
+1. kube-proxy

@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# apt-get update && apt-get upgrade -y
+
+echo '10.0.0.10 k8s-master' >> /etc/hosts
+echo '10.0.0.11 k8s-minion-1' >> /etc/hosts
+echo '10.0.0.12 k8s-minion-2' >> /etc/hosts
+echo '10.0.0.13 k8s-minion-3' >> /etc/hosts
+
 # yum update -y
 # yum install -y epel-release
 # yum install -y htop vim net-tools
