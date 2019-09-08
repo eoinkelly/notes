@@ -26,3 +26,6 @@ bower_components/
 *.log
 *.out
 *.dvi
+
+.php_cs.cache
+.rubocop*

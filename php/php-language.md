@@ -1,5 +1,7 @@
 # PHP language cheatsheet
 
+Tip: Install `psysh` because the built-in PHP interactive shell is annoying e.g. it doesn't echo return values
+
 ## General
 
 * All PHP files must have opening tag `<%php`
@@ -89,7 +91,7 @@ All type names are lowercase
     * can be treated like an array of bytes
     * concatenate with the `.` operator
     * variable expansion
-        ```php
+        ```
         <?php
         $a = 12;
         echo "hello $a"; // simple syntax
@@ -97,9 +99,10 @@ All type names are lowercase
         echo "hello {$a}bc"; // complex syntax, the '{' must be followed by '$' to be recognised
 
         # heredoc syntax
-        echo <<<EOM
+        echo <<<'EOM'
         stuff $a
-        EOM;
+        'EOM';
+
         // note the semicolon after EOM
 
         # nowdoc
@@ -144,7 +147,8 @@ All type names are lowercase
         * a new instance of `stdClass` is created for them when you do this
         * an array gets converted to an object where the object property names and values are taken from the array keys and values
         * examples
-            ```
+            ```php
+            <?php
             $ob = (object) ["name" => "Eoin", "age" => 40];
             ```
 7. callable
@@ -185,11 +189,11 @@ All type names are lowercase
         * all: https://www.php.net/manual/en/resource.php
     * you don't create resources directly, they are created by a set of built-in functions which manage those things
     * there are **many** types of resources e.g.
-        ```
+        ```php
         mysql_connect() : mysql link resource
         ```
     * examples
-        ```
+        ```php
         get_resource_type(resource $handle) : string
         is_resource(resource $handle) : boolean
         ```
@@ -226,12 +230,158 @@ Pseudo types used in documentation but cannot be used in code
 6. `$...`
     * indicates an infinite number of argments
 
-Type introspection
+* variables
+    * begin with `$` then a (single byte) letter or underscore
+        * => PHP variable names cannot use mutli-byte utf-8
+* variables are **always** assigned by value
+    * when you assign the result of an expression to a variable the whole thing is _copied_ to the expression
+* it has assign by reference available if you prepend the source variable with `&`
+    * Only _named_ variables can be assigned by reference
+* uninitialized variables get a default value depending on their type
+    * boolean = FALSW
+    * string = empty string
+    * array = empty array
+    * integer = 0
+    * float = 0.0
+* The first time that a variable is used in a scope, it's automatically created.
+* PHP `isset()` won't tell you whether a variable is not set or is set but has NULL value
+* Variable introspection
+    ```php
+    <?php
+    // isset() returns true if $a is declared and not NULL (it won't tell you
+    // the difference between undeclared and null)
+    >>> isset($a);
+    => false
+    >>> $a = NULL;
+    => null
+    >>> isset($a);
+    => false
+    >>> $a = 3;
+    => 3
+    >>> isset($a);
+    => true
+
+    >>> isset($ar);
+    => false
+    >>> $ar = array();
+    => []
+    >>> isset($ar);
+    => true
+
+    // empty() returns true if variable is 1) unset 2) NULL or 3) is empty array
+    >>> empty($b);
+    => true
+    >>> $b = 4;
+    => 4
+    >>> empty($b);
+    => false
+    >>> $b = array();
+    => []
+    >>> empty($b);
+    => true
+    >>> $b = NULL;
+    => null
+    >>> empty($b);
+    => true
+
+    // var_dump() outputs a string representation of the variable to STDOUT and returns NULL
+    >>> var_dump($b);
+	NULL
+	=> null
+
+    >>> $arr = array("name" => "Eoin");
+    => [
+        "name" => "Eoin",
+    ]
+    >>> var_dump($arr);
+    array(1) {
+    'name' =>
+    string(4) "Eoin"
+    }
+    => null
+
+    // gettype() returns string with name of the type of the argument
+    >>> gettype($arr);
+    => "array"
+
+
+    ```
+
+Namespaces
+
+* PHP Namespaces provide a way in which to group related classes, interfaces, functions and constants.
+* Only the following code cares about the namespace it was defined in
+    1. classes (including abstract and trait)
+    1. interfaces
+    1. functions
+    1. constants
+* Namespace names are **not** case sensitive
+* A file declaring a namespace must put that declaration at the very top of the file
+*
+* You can declare multiple namespaces in a file but this is strongly discouraged
+* The same namespace can be declared in multiple files (allowing you to build your namespace of code objects from multiple files
+* `\` is typically used to indicate levels within a namespace name
+* The `use` keyword (when used outside of a closure context) allows **aliasing**
+    * PHP can alias many kinds of things:
+        1. alias a namespace name
+        1. alias a class name
+        1. alias a interface name
+        1. alias a function name
+        1. alias a constnat name
+    * Full syntax: `use Some\Name\Space as MySpace;`
+    * If you omit the `as ...` then it gets aliased as the last `\` chunk in the namespace name e.g.
+        ```php
+        <?php
+        // these are equivalent
+        use Some\Name\Space;
+        use Some\Name\Space as Space;
+
+        use Some\Name\Space\MyClassThing;
+
+        use function Some\Name\Space\functionName;
+        use constant Some\Name\Space\CONSTY;
+        ```
+    * `use` happens at compile time not runtime so you cannot have `use` inside blocks
+
+```php
+<?php
+
+namespace Foo\Bar;
+
+// stuff ...
+
+// OR
+
+namespace Foo\Bar {
+    // stuff ...
+}
+
+// this puts your code in the "global" namespace
+namespace {
+    // stuff ...
+}
+```
+
+## Debugging
+
+```php
+<?php
+
+// old school
+var_dump($data); // prints to stdout, returns null
+die();
 
 ```
-# these return void but send output to the browser (which might be stdout)
-> echo var_dump(expression);
-> echo gettype(expression);
+
+## Loading code
+
+There are multiple autoloaders apparently
+
+https://getcomposer.org/doc/01-basic-usage.md
+
+```
+require
+require_once
 ```
 
 
@@ -243,3 +393,4 @@ use
 type hints
 $this
 namespace
+how does loading code work in PHP?
