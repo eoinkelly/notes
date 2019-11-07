@@ -1,6 +1,9 @@
 # SELECT clause
 
 * https://www.postgresql.org/docs/current/sql-select.html
+* https://blog.jooq.org/2016/12/09/a-beginners-guide-to-the-true-order-of-sql-operations/ (good blog about ordering)
+
+Key idea: the input and output of each step is **not** just a table!
 
 ```elixir
 # Elixir pseudocode showing the order of evaluation of a SELECT statement in Postgres
@@ -8,13 +11,15 @@ with temp_table_1 -> with_expression_1(),
      temp_table_2 <- with_expression_2() do
     from()
     |> where()
-    |> group_by()
-    |> having()
-    |> select()
+    |> group_by()   # inclusion of this clause  will trigger "grouped query", type :: [row] -> Hash<grouped_by_expression_value, [row]>
+    |> apply_aggregrations() # operates on the "Hash" created by group_by() type :: Hash<grouped_col, [row]> -> [row], maybe window functions applied ere too?
+    |> having()     # inclusion of this clause  will trigger "grouped query"
+    |> window_functions() #
+    |> select()     # inclusion of aggregate functions in here will trigger "grouped query"
     |> select_distinct()
-    |> order_by()
     |> union_intersect_except()
-    |> limit()
+    |> order_by() # this is the top level ORDER BY clause of the SELECT (there can be orderings within expressions too)
+    |> limit_fetch_top()
     |> locking()
 end
 ```
@@ -118,11 +123,32 @@ WHERE vs HAVING
 
 ### GROUP BY
 
-> When GROUP BY is present, or any aggregate functions are present, it is not
-> valid for the SELECT list expressions to refer to ungrouped columns except
-> within aggregate functions or when the ungrouped column is functionally
-> dependent on the grouped columns, since there woul otherwise be more than
-> one possible value to return for an ungrouped column.
+`GROUP BY` is only one way to trigger "grouped query" mode. There are a number of conditions that will flip the switch to make the query a "grouped query"
+
+1. if there is a GROUP BY clause
+2. if there is a HAVING clause (even if there is not GROUP BY clause)
+3. if the query contains aggregate functions (even if there is no GROUP BY)
+
+If _grouped query_ gets triggered and there is no GROUP BY to specify it then there is assumed to be one group which contains all the rows returned by the WHERE clause
+
+Consequences of _grouped query_ being triggered:
+
+1. in a grouped query there must be only one output row per group
+1. SELECT clause must be compatible i.e. it is not valid for the SELECT list expressions to refer to ungrouped columns except
+   1. within aggregate functions or
+   2. when the ungrouped column is functionally dependent on the grouped columns, since there woul otherwise be more than one possible value to return for an ungrouped column.
+
+Mental model for "grouped query":
+
+    are the rows taht come out of WHERE are "tagged" with group ???
+    or is it more like a boolean set on the query which causes the select list to be checked for "grouping validity" (my term) and then the actual grouping happens during the SELECT list evaluation
+    you can't convert the WHERE table into the output oF GROUP BY without reaching into the SELECT list ???
+
+    GROUP BY and the aggregate functions in SELECT are part of the same "grouping" operation
+
+    aggregate functions in the SELECT clause are actually a bit of an oddity because they are about removing rows, most (maybe all???) other SELECT expressions are about adding or removing columns
+
+a confusing thing is that the SELECT list isn't just for pulling out columns, it can also transform rows using aggregate functions
 
 ### HAVING
 
