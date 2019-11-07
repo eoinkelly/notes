@@ -37,17 +37,36 @@ sudo apt install vim
 ```bash
 # Install Unifi controller
 # ########################
-#
-# https://www.technologist.site/2016/06/02/how-to-install-ubiquiti-unifi-controller-5-on-the-raspberry-pi/3/
-#
+
+sudo apt install dirmngr
+sudo apt-key adv --recv-key --keyserver keyserver.ubuntu.com EEA14886
+sudo apt-key adv --recv-key --keyserver keyserver.ubuntu.com C2518248EEA14886 # launchpad VLC
+
+# add lines to /etc/apt/sources.list.d/java.list
+deb http://ppa.launchpad.net/webupd8team/java/ubuntu trusty main
+deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu trusty main
+
+apt update
+
+
+sudo systemctl disable mongodb
 
 sudo apt-get -y install oracle-java8-jdk
 
-echo 'deb http://www.ubnt.com/downloads/unifi/debian stable ubiquiti' | sudo tee -a /etc/apt/sources.list.d/100-ubnt.list > /dev/null
+# OLD echo 'deb http://www.ubnt.com/downloads/unifi/debian stable ubiquiti' | sudo tee -a /etc/apt/sources.list.d/100-ubnt.list > /dev/null
+# OLD sudo wget -O /etc/apt/trusted.gpg.d/unifi-repo.gpg https://dl.ubnt.com/unifi/unifi-repo.gpg
 
-sudo wget -O /etc/apt/trusted.gpg.d/unifi-repo.gpg https://dl.ubnt.com/unifi/unifi-repo.gpg
+
+echo 'deb http://www.ui.com/downloads/unifi/debian stable ubiquiti' | sudo tee /etc/apt/sources.list.d/100-ubnt-unifi.list
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 0C49F3730359A14518585931BC711F9BA15703C6
+echo "deb http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.4.list
+
+
 
 sudo apt-get update
+
+# makes startup quicker by compensating for lack of mouse movement randomness
+sudo apt-get install haveged -y
 
 sudo apt-get -y install unifi
 
@@ -125,3 +144,6 @@ sudo apt-get install libsystemd-dev
 ./configure     --prefix=/usr --exec-prefix=/usr --sysconfdir=/etc     --localstatedir=/var --libdir=/usr/lib/$DEB_HOST_MULTIARCH     --with-privatedir=/var/lib/samba/private     --with-smbpasswd-file=/etc/samba/smbpasswd     --enable-fhs --enable-spotlight --with-systemd
 
 ```
+
+
+/usr/lib/jvm/jdk-8-oracle-arm32-vfp-hflt/jre/bin/java -Dfile.encoding=UTF-8 -Djava.awt.headless=true -Dapple.awt.UIElement=true -Xmx1024M -XX:+ExitOnOutOfMemoryError -XX:+CrashOnOutOfMemoryError -XX:ErrorFile=/usr/lib/unifi/logs/hs_err_pid%p.log -jar /usr/lib/unifi/lib/ace.jar start

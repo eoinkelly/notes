@@ -106,6 +106,7 @@ Background
        * => If you want to upgrade your server, you must do it incrementally, one by one (rolling upgrade)
        * etcd 3.4 adds an ability to temporarily whitelist a downgraded version
 * You can use SRV DNS records to tell an etcd node how to bootstrap itself
+* etcd seems to take approx 1GB of RAM when used as a backing store for a small k8s install
 
 ```bash
 $ etcdctl get name
