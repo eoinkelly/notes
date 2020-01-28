@@ -19,7 +19,7 @@ A makefile is
 * the description file can be called
     * `Makefile`
     * `makefile`
-    * `GNUMakefile`
+    * `GNUmakefile` (note the lowercase 'm' in 'makefile' - it won't find your file if you name it `GNUMakefile`
 * most targets are filenames but you can create "phony" targets which are not
     * you can think of a phony target as a shell script embedded in a make file
     * conventional phony targets

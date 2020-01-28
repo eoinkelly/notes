@@ -1,8 +1,19 @@
 # Drupal
 
+## Timeline
+
+* Drupal 9 due June 2020
+  * Drupal 7 supported until Nov 2021
+* 9 will be identical to the last version of 8 but with deprecations removed and 3rd party deps updated
+    * so if an 8.x is kept up to date with minor versions then the jump to 9 should be ok
+* The drupal team think that 8-9 will be the easiest upgrade yet https://www.drupal.org/about/9/get-ready because 9 is not a complete re-invention of the platform
+* minor releases are released every 6 months
+* https://github.com/mglaman/drupal-check can be used to identify deprecations in 8.x code
+* Drupal 9 will use twig2, 8.x used twig1
+
+
+## Install
 ```
-
-
 # macOS instructions
 
 brew install composer
@@ -31,7 +42,6 @@ git add . && git commit -m "YOUR_LAST_COMMAND"
 
 ddev describe
 
-
 # cleanup
 
 ddev delete --omit-snapshot
@@ -39,25 +49,24 @@ ddev delete --omit-snapshot
 
 * A drupal 8 project is approx 180 MB of code
 
-Hint: use - separated project name
+Hint: use `-` as the separator in project names
 
 why mkcert - is it required or optional?
 
-
-Tool: ddev
+## ddev
 
 * wraps around docker to automate setting up a dev env with
     1. a web container
         * runs drupal, nginx, php-fpm, mailhog, managed by supervisord
-    1. a database container
-    1. an ssh container
+    2. a database container
+    3. an ssh container
         * allows you to ssh into any container
-    1. a phpmyadmin container
+    4. a phpmyadmin container
         * TODO: why is this separate container?
-    1. a router
+    5. a router
         * runs nginx
         * binds to host machine ports, routes connections to those ports to the appropriate other container and handles SSL termination for the connections too
-    1. an optional solr container
+    6. an optional solr container
 * it uses nginx-fpm by default but can use apache-fpm or apache-cgi
 * it constructs a docker-compose.yml in the .ddev dir
 
@@ -164,17 +173,7 @@ live in `web/themes/themename` within the project
     * Twig templates (*.twig)
     * lots of yaml config files in the `mayo` theme at least
 
-
 ## Tools
 
-* Drush
-    * command line shell for drupal
-    * it can
-        * run db updates
-        * import config
-        * clear cache
-        * modules can extend drush with their own commands
-        * run generators (Quickly build a Drupal module, controller, plugin, entity, migration)
-            * builds on https://github.com/Chi-teck/drupal-code-generator project
 * Drupal Console
     * The Drupal CLI. A tool to generate boilerplate code, interact with and debug Drupal

@@ -1,58 +1,5 @@
 # PHP
 
-## Building on macOS using phpenv
-
-```
-$ brew install openssl
-
-# Install phpenv and phpenv-install as per instructions on their githubs
-
-# required for phpenv to find brew's version of openssl
-$ export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig"
-
-# required to get zlib headers (at least, maybe other headers too) in a place where phpenv can find them
-$ open /Library/Developer/CommandLineTools/Packages/macOS_SDK_headers_for_macOS_10.14.pkg
-
-$ phpenv install 7.2.9
-
-# not all versions of php require all these packages but I needed all these to install 7.1 -> 7.3
-$ brew install re2c libzip libmcrypt
-
-$ phpenv install 7.3.8
-```
-
-```
-# Building PHP via phpenv defaults creates the following binaries:
-
-~/.phpenv/versions/7.2.9/bin $ ls -l
-lrwxr-xr-x 1 eoinkelly staff        9 Aug 24 09:10 phar -> phar.phar
--rwxr-xr-x 1 eoinkelly staff    14858 Aug 24 09:10 phar.phar
--rwxr-xr-x 1 eoinkelly staff 17250416 Aug 24 09:10 php
--rwxr-xr-x 1 eoinkelly staff 17188480 Aug 24 09:10 php-cgi
--rwxr-xr-x 1 eoinkelly staff     3836 Aug 24 09:10 php-config
--rwxr-xr-x 1 eoinkelly staff 17426116 Aug 24 09:10 phpdbg
--rwxr-xr-x 1 eoinkelly staff     4645 Aug 24 09:10 phpize
-
-
-# dump the config used to build php
-
-$ php-config
-Usage: /Users/eoinkelly/.phpenv/versions/7.3.8/bin/php-config [OPTION]
-Options:
-  --prefix            [/Users/eoinkelly/.phpenv/versions/7.3.8]
-  --includes          [-I/Users/eoinkelly/.phpenv/versions/7.3.8/include/php -I/Users/eoinkelly/.phpenv/versions/7.3.8/include/php/main -I/Users/eoinkelly/.phpenv/versions/7.3.8/include/php/TSRM -I/Users/eoinkelly/.phpenv/versions/7.3.8/include/php/Zend -I/Users/eoinkelly/.phpenv/versions/7.3.8/include/php/ext -I/Users/eoinkelly/.phpenv/versions/7.3.8/include/php/ext/date/lib]
-  --ldflags           [ -L/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/usr/lib -L/usr/local/Cellar/openssl/1.0.2s/lib -L/usr/local/lib -L/usr/local/Cellar/icu4c/64.2/lib -L/usr/local/Cellar/libzip/1.5.2/lib]
-  --libs              [  -lzip -lzip -lz -lexslt -ltidy -lresolv -ledit -lncurses -lstdc++ -liconv -liconv -lpng -lz -ljpeg -lbz2 -lz -lm  -lxml2 -lz -licucore -lm -lkrb5 -lssl -lcrypto -lcurl -lxml2 -lz -licucore -lm -lssl -lcrypto -licui18n -licuuc -licudata -licuio -lxml2 -lz -licucore -lm -lxml2 -lz -licucore -lm -lxml2 -lz -licucore -lm -lxml2 -lz -licucore -lm -lxml2 -lz -licucore -lm -lxml2 -lz -licucore -lm -lxslt -lxml2 -lz -licucore -lm -lssl -lcrypto ]
-  --extension-dir     [/Users/eoinkelly/.phpenv/versions/7.3.8/lib/php/extensions/no-debug-non-zts-20180731]
-  --include-dir       [/Users/eoinkelly/.phpenv/versions/7.3.8/include/php]
-  --man-dir           [/Users/eoinkelly/.phpenv/versions/7.3.8/share/man]
-  --php-binary        [/Users/eoinkelly/.phpenv/versions/7.3.8/bin/php]
-  --php-sapis         [ cli fpm phpdbg cgi]
-  --configure-options [--with-config-file-path=/Users/eoinkelly/.phpenv/versions/7.3.8/etc --with-config-file-scan-dir=/Users/eoinkelly/.phpenv/versions/7.3.8/etc/conf.d --prefix=/Users/eoinkelly/.phpenv/versions/7.3.8 --libexecdir=/Users/eoinkelly/.phpenv/versions/7.3.8/libexec --datadir=/Users/eoinkelly/.phpenv/versions/7.3.8/share/php --mandir=/Users/eoinkelly/.phpenv/versions/7.3.8/share/man --without-pear --with-gd --enable-sockets --with-jpeg-dir=/usr --enable-exif --enable-zip --with-zlib --with-zlib-dir=/usr --with-bz2 --enable-intl --with-kerberos --with-openssl --enable-soap --enable-xmlreader --with-xsl --enable-ftp --enable-cgi --with-curl=/usr --with-tidy --with-xmlrpc --enable-sysvsem --enable-sysvshm --enable-shmop --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd --with-pdo-sqlite --enable-pcntl --enable-mbstring --disable-debug --enable-fpm --enable-bcmath --enable-phpdbg --with-libedit --with-png-dir=/usr/X11 --with-icu-dir=/usr/local/opt/icu4c]
-  --version           [7.3.8]
-  --vernum            [70308]
-```
-
 ## Features
 
 * Interactive shell:
@@ -71,7 +18,6 @@ Options:
     * Don't use for production envs
     * Is quite slow
         * The web server runs only one single-threaded process, so PHP applications will stall if a request is blocked.
-
 
 ## Running PHP
 

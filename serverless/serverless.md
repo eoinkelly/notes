@@ -1,3 +1,18 @@
+# Serverless framework
+
+* Use camelCase not snake_care or kebab-case for service and function names
+    * it converts _ to 'Underscore' and - to 'dash' in AWS resource names which is very ugly
+
+
+`invoke local`
+* runs your code locally direclty in node/ruby/java/python and in docker for other things
+* `sls invoke -f my-func` - all AWS API calls are performed as the role setup for the lambda
+* `sls invoke local -f my-func` - all AWS API calls are performed as the AWS user you have configured locally! Be careful here!
+
+
+
+
+
 
 Open questions
 

@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+mysql --user=root --host=127.0.0.1 --password=password --database=drupal_dpc

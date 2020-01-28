@@ -79,21 +79,126 @@ go clean -i  ./...
     * things that begin with lowercase are private to the package
 * go has no implicit conversions between types
 * constants
-    * are idealized - they don't have a type until you try to store them in
-      some memeory cell
+    * are idealized - they don't have a type until you try to store them in some memeory cell
+    * they are compiled away - they only exist at compile time - they are **not** read-only variables
     * this means that number constants can have arbitrary precision
+    * introduced with `const`
+    * must be initialized iwth a value (you cannot create a constant without an initial value)
+    * they have a parallel type system
+    * constants have the same variable naming rules as variables
+        * the standard lib uses camel case (whether the first letter is upper/lower depends whether you want to export it from the package or not)
+        * go variables and constants do not use snake_case - they use camelCase or CamelCase
+        * there are a few POSIX constants which are all UPPERCASE because history e.g. O_CREAT
+        * => go code does not try to visually differentiate constant names from variable names
+    * can be typed or untyped - untyped constants are considered to have a "kind" not a "type"
+        ```go
+        123345 // literal constant of kind: integer
+
+        const Aa = 123 // kind: integer
+        const Ab = 123.345 // kind: floating-point
+
+        // constants can store up to 256 bits - much more most of the actual types we will convert them to
+        const Xx = 12319230384039398938749020948903034004982382334344248338377394383
+
+        // this constnat is "locked down" to being an int - go lang can not change its type
+        const Bb int = 123 //type: int
+
+        // iota - https://github.com/golang/go/wiki/Iota
+        // `iota` is a special value which starts at 0 and can be used when declaring a
+        // block of related constants. It will automatically increment and be assigned
+        // to the constants that follow even if they aren't explicitly assigned to it.
+        //
+        // It is useful when you want to make an enum alike thing
+        const (
+            Aa = iota // 0
+            Bb        // 1
+            Cc        // 2
+        )
+        ```
+    * kinds are _implicitly_ converted by the compiler (this is unlike types which must be explicitly converted)
+        * the language spec has rules about "kind promotion" so it can
+* culture
+    * use short name for vars that don't last long
+    * use anonymous structs (type declared at same time as value initialized) - adding names adds "pollution"
+* escape analysis
+    * if your function returns a pointer to a value it created then go will figure that out ahead of time and put the value in the heap not the stack - this ensures that the value will be accessible to the calling code
+    * we get better perf when values stay on the stack
+        * but how much does it matter?
+    * you only need garbage collection when the value is put on the heap - stack values are cleaned up automatially
+* go stacks
+    * go routine stacks start at 2k (compare to OS threads which start at 1M)
+    * go stacks are allocated contigiously
+      * "contigious memory is at the heart of mechanical sympathy"
+    * at compile time we know the size of every stack frame
+    * if a stack exceeds it's 2k allocation then **the whole stack** has to be moved because of the contigious allocation of stacks
+    * when you stack size reduces back down, GC may move it back
+    * because whole stacks can move, no go routine can have a pointer to any **other** goroutines _stack_ - pointers between frames on a single stack are fine
+        * => if you want to share a value between goroutines it must move to the heap - go takes care of this for you
+* the go heap
+    * the GC manages the heap
+* GC
+    * uses a "pacing algorithm" to decide at what % of used heap to run GC
+    * up to go 1.8 the GC had two phases of _stop the world_ - now it is still _stop the world_ but the latency is reduced
+        * 1.8 was a significant release for GC - it greatly reduced GC latencies
+    * GC is implemented as a group of go routines
+    * if a goroutine starts allocating a lot of memory the GC will move it on to the same CPU as the GC is scheduled on
+
+## scope
+
+https://medium.com/golangspec/scopes-in-go-a6042bb4298c
+
+Things that care about scope
+
+1. variable declaration
+2. constant declaration
+3. type declaration
+
+They all follow the same scoping rules.
+
+Go has two main scopes
+
+1. package global scope
+   * constants and variables declared outside of a function are visable across the whole **package**
+   * short variable declaration `:=` cannot be used
+2. block scope
+   * constants and variables declared within a block of `{}`
+       * a function is the most common kind of block
+   * short variable declaration `:=` can be used
+3. file scope
+   * **only** used for imports - file scope **does not exist** for variables and constants
+
+
 
 ## Syntax
 
 ### Built-in Types
 
+
 * int
+    * go will choose size of `int` based on the word size of the architecture you **compile** on. It ensures that the size of `int` matches your pointer size - this helps achieve some "mechanical sympathy" at the cost of having to be careful about overflows (again, I presume???)
 * string
+    * a 2 word data structure (i.e. size can be diff on diff architectures, 16 bytes on a a 64bit arch)
+        * word 1: pointer to a backing array of bytes
+        * word 2: length
 * bool
 * channel
 * float
 * array
+* struct
+    * composite type
+    * contigiously allocated memory for the types which make up the struct
+    * padding bytes are automatically added to line up nicely to alignment boundaries
+    * rules are:
+        * 1 byte values can be put wherever they land
+        * _every 2 byte value must fall on a 2 byte boundary_
+        * _every 4 byte value must fall on a 4 byte boundary_
+        * _every 8 byte value must fall on a 8 byte boundary_
+    * tip: order values within a struct in descending byte size to minimize padding overhead
+    * Go "named types"  are nominally typed not structurally typed - if you have two structs with exactly the same shape but different names you cannot assign them to each other. You can explicitly do a conversion on them
+    * if you careate an anonymous type then the compiler will compare shape and allow assignment
 * ??? others
+
+Go will always initialize values to whatever their "zero value" is (string = empty string, bool = false, int = 0, float = 0.0 etc.)
 
 ### increment and decrement
 
@@ -159,7 +264,13 @@ for _, value := range someArrayOrSlice {
 * can be used to declare one or more variables and automatically give them types based on the initial values
     * QUESTION: how does it work for more than one var?
     * seems to be a sort of type inference
+* using `var x TYPE_NAME` is probably better for variables you want to start at their "zero value"
 
+### casting vs conversation
+
+* go does not have _casting_ (where we tell the compiler to treat a value as a differnet type)
+* go has _conversion_ - it will convert the old type to the new (and allocate new memory for the new value as required)
+    * => conversion can lead to allocation
 
 ## Tools
 

@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+set -e
+set -x
+
+filepath=$1
+npx babel $filepath | npx prettier --stdin --parser babel > $filepath.compiled.js

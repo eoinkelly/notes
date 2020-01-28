@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+
+PROJECT_ROOT = File.absolute_path(File.join(__dir__, "..")).to_s
+
+puts "Changing working directory to project root at '#{PROJECT_ROOT}'"
+
+Dir.chdir(PROJECT_ROOT) do
+  puts "Starting nginx"
+  `nginx -p . -c ./bin.gitignored/nginx.conf`
+end
