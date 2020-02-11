@@ -292,7 +292,7 @@ runes := []rune(s) // slice of int32 aka rune
 
 ### channel
 
-### floating point numbers (float32, float64 complex64, complex128)
+### floats (float32, float64 complex64, complex128)
 
 Go has two floating point types:
 
@@ -876,6 +876,89 @@ err := fmt.Errorf("user %q (id %d) not found", name, id)
 
 * it seems like errors are intended to be created as package level values
     * that way you can compare the error you got to the value it might be
+
+### defer
+
+https://blog.golang.org/defer-panic-and-recover
+
+ * A defer statement defers the execution of a function until the surrounding function returns.
+* The deferred call's arguments are evaluated immediately, but the function call is not executed until the surrounding function returns
+* Deferred function calls are pushed onto a stack. When a function returns, its deferred calls are executed in last-in-first-out order.
+* you can defer a call to a func
+* deferred code runs **even if the function panics**
+* Deferred functions may read and assign to the returning function's named return values.
+In many ways defer'd functions act a bit like "finally" clauses in other langs e.g. `ensure` in Ruby.
+You can use defer to change/replace the return value in the case of an panic
+
+You can use the `recover` function insided a defered function to recover from a panic
+
+When a function panics
+
+1. it stops executing
+2. it run any defered functions it has (in LIFO order)
+3. it returns to the caller but behaves like a call to panic in the caller so go back to step 1.
+4. When it gets to the top of top of the stack the program crashes
+
+Recover from panic
+
+* `recover()` function does nothing under normal execution
+* if `recover()` is run during a panic then it captures the value given to panic and resumes normal operation
+
+* you can use `panic()` and `recover()` to simulate an exception flow ???
+    * is that accurate? what at the differences?
+
+Go recommends that you keep panics within package boundaries - use defer functions with recover() to convert them into errors
+
+> If you're already worrying about discriminating different kinds of panics, you've lost sight of the ball.
+> Rob Pike
+
+```go
+package main
+func main() {
+    doThing() // => 2
+}
+
+func doThing() int {
+    i := 1
+
+    // inlined defer functions allow interesting stuff
+    defer func() {
+        // change the return value of doThing()
+        i++
+    }
+}
+```
+
+```go
+package main
+
+import (
+	"fmt"
+	"reflect"
+)
+
+func main() {
+	fmt.Println("Hello, playground")
+	fmt.Println("return value of c():", c())
+}
+
+func c() (i int) {
+	defer func() {
+		err := recover()
+		if err != nil {
+			// there is something to recover from
+			fmt.Println("c() had error:", err, reflect.TypeOf(err))
+			// runtime error: index out of range [2] with length 2
+		} else {
+			fmt.Println("c() went fine")
+		}
+	}()
+	aa := []int{33, 44}
+
+	fmt.Println("val from array", aa[2]) // try to get an index which doesn't exist
+	return 1
+}
+```
 
 ## Tools
 
