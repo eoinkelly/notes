@@ -1,11 +1,21 @@
 version: "3"
 services:
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:5.5.0
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.6.0
     environment:
-      - "cluster.name=my-play-cluster"
-      - "bootstrap.memory_lock=true"
+      # set a unique cluster name to avoid joining another cluster
+      # - cluster.name=my-play-cluster
+
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - bootstrap.memory_lock=true
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - xpack.monitoring.enabled=false # cuts down on server log noise
+      # - logger.level=DEBUG # very noisy
+
+      # These are required for elasticsearch-head
+      # - http.cors.enabled=true
+      # - http.cors.allow-origin="*" # note this is unsafe for any real use
     ulimits:
       memlock:
         soft: -1
@@ -15,15 +25,23 @@ services:
     #   limits:
     #     memory: 1G
     volumes:
-      - ./elasticsearch_data:/usr/share/elasticsearch/data
+      - ./elasticsearch-7.6.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      # - ./elasticsearch_data:/usr/share/elasticsearch/data
     ports:
+      # host:container
       # 9200 for REST
-      - 9200:9200
+      - "8200:9200"
       # 9300 for inter-node communication
-      # - 9300:9300
+      - "8300:9300"
   kibana:
-    image: docker.elastic.co/kibana/kibana:5.5.0
+    image: docker.elastic.co/kibana/kibana:7.6.0
     ports:
-      - 5601:5601
+      # host:container
+      - 4601:5601
     depends_on:
       - elasticsearch
+  head:
+    image: mobz/elasticsearch-head:5
+    ports:
+      # host:container
+      - 8100:9100

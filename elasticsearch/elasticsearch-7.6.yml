@@ -1,0 +1,9 @@
+# #####################
+# the default docker elasticsearch.yml contains:
+cluster.name: "eoin-custom-cluster"
+network.host: 0.0.0.0
+# #####################
+
+# these are required for elasticsearch-head to work (and seemingly can't be set as env vars)
+http.cors.enabled: true
+http.cors.allow-origin: "*"
