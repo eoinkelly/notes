@@ -1,0 +1,37 @@
+version: "2.2"
+services:
+  elasticsearch:
+    # init: true
+    # image: elasticsearch:2.3
+    # image: docker.elastic.co/elasticsearch/elasticsearch:5.6.16
+    # image: docker.elastic.co/elasticsearch/elasticsearch:6.8.6
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.6.0
+    ports:
+      # note these are not default because I want to run this beside ES
+      # instance for actual dev work
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      - bootstrap.memory_lock=true
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      # - node.name=eoin-play-node
+      # - cluster.name=eoin-play-cluster # custom name so we don't accidentally join another cluster
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+  kibana:
+    # init: true
+    # image: docker.elastic.co/kibana/kibana:5.6.0
+    image: docker.elastic.co/kibana/kibana:7.6.0
+    ports:
+      # host:container
+      # NB not default mappings!
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+    # environment:
+      # - ELASTICSEARCH_HOSTS=http://play_elasticsearch:9200
+      # - xpack.security.enabled=false
