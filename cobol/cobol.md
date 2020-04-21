@@ -1,5 +1,17 @@
 # COBOL
 
+## Installation
+
+```sh
+# commands installed by gnu-cobol
+$ cobc
+$ cob-config
+$ cobcrun
+```
+
+
+## Overview
+
 Source: http://opencobol.add1tocobol.com/guides/GNU%20COBOL%202.0%20Programmers%20Guide.pdf
 
 Programs have 4 "divisions"
