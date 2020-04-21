@@ -1,0 +1,1755 @@
+/*
+* the search type is QUERY_AND_FETCH
+* there are separate log lines for the QUERY and FETCH
+
+A single search for "bassoon" generates the following queries:
+
+1. query types contributor,contributor,event,organisation,resource,resource,sample,work
+2. query type resource
+3. query type resource
+4. query types contributor,contributor,event,organisation,resource,resource,sample,work
+
+*/
+
+[2020-03-03 09:13:58,264][DEBUG][index.search.slowlog.query] [catalogue-staging]took[1.3s], took_millis[1398], types[contributor,contributor,event,organisation,resource,resource,sample,work], stats[], search_type[QUERY_AND_FETCH], total_shards[1], source[
+{
+    "query": {
+        "bool": {
+            "should": [
+                {
+                    "bool": {
+                        "should": [
+                            [
+                                {
+                                    "match": {
+                                        "title.title_exact": {
+                                            "query": "bassoon",
+                                            "boost": 30
+                                        }
+                                    }
+                                },
+                                {
+                                    "query_string": {
+                                        "fields": [
+                                            "title"
+                                        ],
+                                        "default_operator": "AND",
+                                        "query": "bassoon",
+                                        "boost": 10,
+                                        "fuzziness": "AUTO"
+                                    }
+                                },
+                                {
+                                    "query_string": {
+                                        "fields": [
+                                            "title"
+                                        ],
+                                        "default_operator": "OR",
+                                        "query": "bassoon",
+                                        "boost": 10,
+                                        "fuzziness": "AUTO"
+                                    }
+                                }
+                            ],
+                            [
+                                {
+                                    "bool": {
+                                        "should": [
+                                            {
+                                                "nested": {
+                                                    "path": "composers",
+                                                    "query": {
+                                                        "match": {
+                                                            "composers.full_name": {
+                                                                "query": "bassoon",
+                                                                "operator": "AND",
+                                                                "boost": 10
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "nested": {
+                                                    "path": "composers",
+                                                    "query": {
+                                                        "match": {
+                                                            "composers.full_name": {
+                                                                "query": "bassoon",
+                                                                "operator": "OR",
+                                                                "boost": 15
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
+                        ],
+                        "must": [
+                            {
+                                "match": {
+                                    "_type": "work"
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    "bool": {
+                        "should": [
+                            {
+                                "match": {
+                                    "title.title_exact": {
+                                        "query": "bassoon",
+                                        "boost": 10
+                                    }
+                                }
+                            },
+                            {
+                                "query_string": {
+                                    "fields": [
+                                        "title"
+                                    ],
+                                    "default_operator": "AND",
+                                    "query": "bassoon",
+                                    "boost": 3,
+                                    "fuzziness": "AUTO"
+                                }
+                            },
+                            {
+                                "query_string": {
+                                    "fields": [
+                                        "title"
+                                    ],
+                                    "default_operator": "OR",
+                                    "query": "bassoon",
+                                    "boost": 3,
+                                    "fuzziness": "AUTO"
+                                }
+                            }
+                        ],
+                        "must": [
+                            {
+                                "match": {
+                                    "_type": "resource"
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    "bool": {
+                        "should": [
+                            {
+                                "match": {
+                                    "full_name": {
+                                        "query": "bassoon",
+                                        "boost": 10
+                                    }
+                                }
+                            },
+                            {
+                                "query_string": {
+                                    "fields": [
+                                        "full_name"
+                                    ],
+                                    "query": "bassoon",
+                                    "default_operator": "AND",
+                                    "boost": 5
+                                }
+                            },
+                            {
+                                "query_string": {
+                                    "fields": [
+                                        "first_names",
+                                        "last_name"
+                                    ],
+                                    "query": "bassoon",
+                                    "default_operator": "OR",
+                                    "boost": 5,
+                                    "fuzziness": "AUTO"
+                                }
+                            }
+                        ],
+                        "must": [
+                            {
+                                "match": {
+                                    "_type": "contributor"
+                                }
+                            }
+                        ]
+                    }
+                },
+                [
+                    {
+                        "match": {
+                            "_all": {
+                                "query": "bassoon",
+                                "operator": "OR"
+                            }
+                        }
+                    },
+                    {
+                        "match": {
+                            "_all": {
+                                "query": "bassoon",
+                                "operator": "AND",
+                                "boost": 2,
+                                "fuzziness": 1
+                            }
+                        }
+                    }
+                ]
+            ],
+            "minimum_should_match": "50%"
+        }
+    },
+    "sort": {
+        "_score": {
+            "order": "desc"
+        }
+    },
+    "aggregations": {
+        "count_by_type": {
+            "terms": {
+                "field": "_type"
+            }
+        }
+    },
+    "size": 0
+}
+], extra_source[],
+[2020-03-03 09:13:58,452][DEBUG][index.search.slowlog.fetch] [catalogue-staging]took[204.2ms], took_millis[204], types[contributor,contributor,event,organisation,resource,resource,sample,work], stats[], search_type[QUERY_AND_FETCH], total_shards[1], source[
+{
+    "query": {
+        "bool": {
+            "should": [
+                {
+                    "bool": {
+                        "should": [
+                            [
+                                {
+                                    "match": {
+                                        "title.title_exact": {
+                                            "query": "bassoon",
+                                            "boost": 30
+                                        }
+                                    }
+                                },
+                                {
+                                    "query_string": {
+                                        "fields": [
+                                            "title"
+                                        ],
+                                        "default_operator": "AND",
+                                        "query": "bassoon",
+                                        "boost": 10,
+                                        "fuzziness": "AUTO"
+                                    }
+                                },
+                                {
+                                    "query_string": {
+                                        "fields": [
+                                            "title"
+                                        ],
+                                        "default_operator": "OR",
+                                        "query": "bassoon",
+                                        "boost": 10,
+                                        "fuzziness": "AUTO"
+                                    }
+                                }
+                            ],
+                            [
+                                {
+                                    "bool": {
+                                        "should": [
+                                            {
+                                                "nested": {
+                                                    "path": "composers",
+                                                    "query": {
+                                                        "match": {
+                                                            "composers.full_name": {
+                                                                "query": "bassoon",
+                                                                "operator": "AND",
+                                                                "boost": 10
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "nested": {
+                                                    "path": "composers",
+                                                    "query": {
+                                                        "match": {
+                                                            "composers.full_name": {
+                                                                "query": "bassoon",
+                                                                "operator": "OR",
+                                                                "boost": 15
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
+                        ],
+                        "must": [
+                            {
+                                "match": {
+                                    "_type": "work"
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    "bool": {
+                        "should": [
+                            {
+                                "match": {
+                                    "title.title_exact": {
+                                        "query": "bassoon",
+                                        "boost": 10
+                                    }
+                                }
+                            },
+                            {
+                                "query_string": {
+                                    "fields": [
+                                        "title"
+                                    ],
+                                    "default_operator": "AND",
+                                    "query": "bassoon",
+                                    "boost": 3,
+                                    "fuzziness": "AUTO"
+                                }
+                            },
+                            {
+                                "query_string": {
+                                    "fields": [
+                                        "title"
+                                    ],
+                                    "default_operator": "OR",
+                                    "query": "bassoon",
+                                    "boost": 3,
+                                    "fuzziness": "AUTO"
+                                }
+                            }
+                        ],
+                        "must": [
+                            {
+                                "match": {
+                                    "_type": "resource"
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    "bool": {
+                        "should": [
+                            {
+                                "match": {
+                                    "full_name": {
+                                        "query": "bassoon",
+                                        "boost": 10
+                                    }
+                                }
+                            },
+                            {
+                                "query_string": {
+                                    "fields": [
+                                        "full_name"
+                                    ],
+                                    "query": "bassoon",
+                                    "default_operator": "AND",
+                                    "boost": 5
+                                }
+                            },
+                            {
+                                "query_string": {
+                                    "fields": [
+                                        "first_names",
+                                        "last_name"
+                                    ],
+                                    "query": "bassoon",
+                                    "default_operator": "OR",
+                                    "boost": 5,
+                                    "fuzziness": "AUTO"
+                                }
+                            }
+                        ],
+                        "must": [
+                            {
+                                "match": {
+                                    "_type": "contributor"
+                                }
+                            }
+                        ]
+                    }
+                },
+                [
+                    {
+                        "match": {
+                            "_all": {
+                                "query": "bassoon",
+                                "operator": "OR"
+                            }
+                        }
+                    },
+                    {
+                        "match": {
+                            "_all": {
+                                "query": "bassoon",
+                                "operator": "AND",
+                                "boost": 2,
+                                "fuzziness": 1
+                            }
+                        }
+                    }
+                ]
+            ],
+            "minimum_should_match": "50%"
+        }
+    },
+    "sort": {
+        "_score": {
+            "order": "desc"
+        }
+    },
+    "aggregations": {
+        "count_by_type": {
+            "terms": {
+                "field": "_type"
+            }
+        }
+    },
+    "size": 0
+}
+], extra_source[],
+[2020-03-03 09:13:58,911][DEBUG][index.search.slowlog.query] [catalogue-staging]took[132.1ms], took_millis[132], types[resource], stats[], search_type[QUERY_AND_FETCH], total_shards[1], source[
+{
+    "query": {
+        "bool": {
+            "should": [
+                {
+                    "bool": {
+                        "should": [
+                            [
+                                {
+                                    "match": {
+                                        "title.title_exact": {
+                                            "query": "bassoon",
+                                            "boost": 30
+                                        }
+                                    }
+                                },
+                                {
+                                    "query_string": {
+                                        "fields": [
+                                            "title"
+                                        ],
+                                        "default_operator": "AND",
+                                        "query": "bassoon",
+                                        "boost": 10,
+                                        "fuzziness": "AUTO"
+                                    }
+                                },
+                                {
+                                    "query_string": {
+                                        "fields": [
+                                            "title"
+                                        ],
+                                        "default_operator": "OR",
+                                        "query": "bassoon",
+                                        "boost": 10,
+                                        "fuzziness": "AUTO"
+                                    }
+                                }
+                            ],
+                            [
+                                {
+                                    "bool": {
+                                        "should": [
+                                            {
+                                                "nested": {
+                                                    "path": "composers",
+                                                    "query": {
+                                                        "match": {
+                                                            "composers.full_name": {
+                                                                "query": "bassoon",
+                                                                "operator": "AND",
+                                                                "boost": 10
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "nested": {
+                                                    "path": "composers",
+                                                    "query": {
+                                                        "match": {
+                                                            "composers.full_name": {
+                                                                "query": "bassoon",
+                                                                "operator": "OR",
+                                                                "boost": 15
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
+                        ],
+                        "must": [
+                            {
+                                "match": {
+                                    "_type": "work"
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    "bool": {
+                        "should": [
+                            {
+                                "match": {
+                                    "title.title_exact": {
+                                        "query": "bassoon",
+                                        "boost": 10
+                                    }
+                                }
+                            },
+                            {
+                                "query_string": {
+                                    "fields": [
+                                        "title"
+                                    ],
+                                    "default_operator": "AND",
+                                    "query": "bassoon",
+                                    "boost": 3,
+                                    "fuzziness": "AUTO"
+                                }
+                            },
+                            {
+                                "query_string": {
+                                    "fields": [
+                                        "title"
+                                    ],
+                                    "default_operator": "OR",
+                                    "query": "bassoon",
+                                    "boost": 3,
+                                    "fuzziness": "AUTO"
+                                }
+                            }
+                        ],
+                        "must": [
+                            {
+                                "match": {
+                                    "_type": "resource"
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    "bool": {
+                        "should": [
+                            {
+                                "match": {
+                                    "full_name": {
+                                        "query": "bassoon",
+                                        "boost": 10
+                                    }
+                                }
+                            },
+                            {
+                                "query_string": {
+                                    "fields": [
+                                        "full_name"
+                                    ],
+                                    "query": "bassoon",
+                                    "default_operator": "AND",
+                                    "boost": 5
+                                }
+                            },
+                            {
+                                "query_string": {
+                                    "fields": [
+                                        "first_names",
+                                        "last_name"
+                                    ],
+                                    "query": "bassoon",
+                                    "default_operator": "OR",
+                                    "boost": 5,
+                                    "fuzziness": "AUTO"
+                                }
+                            }
+                        ],
+                        "must": [
+                            {
+                                "match": {
+                                    "_type": "contributor"
+                                }
+                            }
+                        ]
+                    }
+                },
+                [
+                    {
+                        "match": {
+                            "_all": {
+                                "query": "bassoon",
+                                "operator": "OR"
+                            }
+                        }
+                    },
+                    {
+                        "match": {
+                            "_all": {
+                                "query": "bassoon",
+                                "operator": "AND",
+                                "boost": 2,
+                                "fuzziness": 1
+                            }
+                        }
+                    }
+                ]
+            ],
+            "minimum_should_match": "50%",
+            "filter": {
+                "bool": {
+                    "must": [
+                        {
+                            "bool": {
+                                "should": [
+                                    {
+                                        "term": {
+                                            "available_for_sale": true
+                                        }
+                                    }
+                                ],
+                                "minimum_should_match": 1
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    "sort": {
+        "_score": {
+            "order": "desc"
+        }
+    }
+}
+], extra_source[
+{
+    "from": 0,
+    "size": 10
+}
+],
+[2020-03-03 09:13:59,084][DEBUG][index.search.slowlog.fetch] [catalogue-staging]took[172.5ms], took_millis[172], types[resource], stats[], search_type[QUERY_AND_FETCH], total_shards[1], source[
+{
+    "query": {
+        "bool": {
+            "should": [
+                {
+                    "bool": {
+                        "should": [
+                            [
+                                {
+                                    "match": {
+                                        "title.title_exact": {
+                                            "query": "bassoon",
+                                            "boost": 30
+                                        }
+                                    }
+                                },
+                                {
+                                    "query_string": {
+                                        "fields": [
+                                            "title"
+                                        ],
+                                        "default_operator": "AND",
+                                        "query": "bassoon",
+                                        "boost": 10,
+                                        "fuzziness": "AUTO"
+                                    }
+                                },
+                                {
+                                    "query_string": {
+                                        "fields": [
+                                            "title"
+                                        ],
+                                        "default_operator": "OR",
+                                        "query": "bassoon",
+                                        "boost": 10,
+                                        "fuzziness": "AUTO"
+                                    }
+                                }
+                            ],
+                            [
+                                {
+                                    "bool": {
+                                        "should": [
+                                            {
+                                                "nested": {
+                                                    "path": "composers",
+                                                    "query": {
+                                                        "match": {
+                                                            "composers.full_name": {
+                                                                "query": "bassoon",
+                                                                "operator": "AND",
+                                                                "boost": 10
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "nested": {
+                                                    "path": "composers",
+                                                    "query": {
+                                                        "match": {
+                                                            "composers.full_name": {
+                                                                "query": "bassoon",
+                                                                "operator": "OR",
+                                                                "boost": 15
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
+                        ],
+                        "must": [
+                            {
+                                "match": {
+                                    "_type": "work"
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    "bool": {
+                        "should": [
+                            {
+                                "match": {
+                                    "title.title_exact": {
+                                        "query": "bassoon",
+                                        "boost": 10
+                                    }
+                                }
+                            },
+                            {
+                                "query_string": {
+                                    "fields": [
+                                        "title"
+                                    ],
+                                    "default_operator": "AND",
+                                    "query": "bassoon",
+                                    "boost": 3,
+                                    "fuzziness": "AUTO"
+                                }
+                            },
+                            {
+                                "query_string": {
+                                    "fields": [
+                                        "title"
+                                    ],
+                                    "default_operator": "OR",
+                                    "query": "bassoon",
+                                    "boost": 3,
+                                    "fuzziness": "AUTO"
+                                }
+                            }
+                        ],
+                        "must": [
+                            {
+                                "match": {
+                                    "_type": "resource"
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    "bool": {
+                        "should": [
+                            {
+                                "match": {
+                                    "full_name": {
+                                        "query": "bassoon",
+                                        "boost": 10
+                                    }
+                                }
+                            },
+                            {
+                                "query_string": {
+                                    "fields": [
+                                        "full_name"
+                                    ],
+                                    "query": "bassoon",
+                                    "default_operator": "AND",
+                                    "boost": 5
+                                }
+                            },
+                            {
+                                "query_string": {
+                                    "fields": [
+                                        "first_names",
+                                        "last_name"
+                                    ],
+                                    "query": "bassoon",
+                                    "default_operator": "OR",
+                                    "boost": 5,
+                                    "fuzziness": "AUTO"
+                                }
+                            }
+                        ],
+                        "must": [
+                            {
+                                "match": {
+                                    "_type": "contributor"
+                                }
+                            }
+                        ]
+                    }
+                },
+                [
+                    {
+                        "match": {
+                            "_all": {
+                                "query": "bassoon",
+                                "operator": "OR"
+                            }
+                        }
+                    },
+                    {
+                        "match": {
+                            "_all": {
+                                "query": "bassoon",
+                                "operator": "AND",
+                                "boost": 2,
+                                "fuzziness": 1
+                            }
+                        }
+                    }
+                ]
+            ],
+            "minimum_should_match": "50%",
+            "filter": {
+                "bool": {
+                    "must": [
+                        {
+                            "bool": {
+                                "should": [
+                                    {
+                                        "term": {
+                                            "available_for_sale": true
+                                        }
+                                    }
+                                ],
+                                "minimum_should_match": 1
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    "sort": {
+        "_score": {
+            "order": "desc"
+        }
+    }
+}
+], extra_source[
+{
+    "from": 0,
+    "size": 10
+}
+],
+[2020-03-03 09:13:59,231][DEBUG][index.search.slowlog.query] [catalogue-staging]took[27ms], took_millis[27], types[resource], stats[], search_type[QUERY_AND_FETCH], total_shards[1], source[
+{
+    "query": {
+        "bool": {
+            "should": [
+                {
+                    "bool": {
+                        "should": [
+                            [
+                                {
+                                    "match": {
+                                        "title.title_exact": {
+                                            "query": "bassoon",
+                                            "boost": 30
+                                        }
+                                    }
+                                },
+                                {
+                                    "query_string": {
+                                        "fields": [
+                                            "title"
+                                        ],
+                                        "default_operator": "AND",
+                                        "query": "bassoon",
+                                        "boost": 10,
+                                        "fuzziness": "AUTO"
+                                    }
+                                },
+                                {
+                                    "query_string": {
+                                        "fields": [
+                                            "title"
+                                        ],
+                                        "default_operator": "OR",
+                                        "query": "bassoon",
+                                        "boost": 10,
+                                        "fuzziness": "AUTO"
+                                    }
+                                }
+                            ],
+                            [
+                                {
+                                    "bool": {
+                                        "should": [
+                                            {
+                                                "nested": {
+                                                    "path": "composers",
+                                                    "query": {
+                                                        "match": {
+                                                            "composers.full_name": {
+                                                                "query": "bassoon",
+                                                                "operator": "AND",
+                                                                "boost": 10
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "nested": {
+                                                    "path": "composers",
+                                                    "query": {
+                                                        "match": {
+                                                            "composers.full_name": {
+                                                                "query": "bassoon",
+                                                                "operator": "OR",
+                                                                "boost": 15
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
+                        ],
+                        "must": [
+                            {
+                                "match": {
+                                    "_type": "work"
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    "bool": {
+                        "should": [
+                            {
+                                "match": {
+                                    "title.title_exact": {
+                                        "query": "bassoon",
+                                        "boost": 10
+                                    }
+                                }
+                            },
+                            {
+                                "query_string": {
+                                    "fields": [
+                                        "title"
+                                    ],
+                                    "default_operator": "AND",
+                                    "query": "bassoon",
+                                    "boost": 3,
+                                    "fuzziness": "AUTO"
+                                }
+                            },
+                            {
+                                "query_string": {
+                                    "fields": [
+                                        "title"
+                                    ],
+                                    "default_operator": "OR",
+                                    "query": "bassoon",
+                                    "boost": 3,
+                                    "fuzziness": "AUTO"
+                                }
+                            }
+                        ],
+                        "must": [
+                            {
+                                "match": {
+                                    "_type": "resource"
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    "bool": {
+                        "should": [
+                            {
+                                "match": {
+                                    "full_name": {
+                                        "query": "bassoon",
+                                        "boost": 10
+                                    }
+                                }
+                            },
+                            {
+                                "query_string": {
+                                    "fields": [
+                                        "full_name"
+                                    ],
+                                    "query": "bassoon",
+                                    "default_operator": "AND",
+                                    "boost": 5
+                                }
+                            },
+                            {
+                                "query_string": {
+                                    "fields": [
+                                        "first_names",
+                                        "last_name"
+                                    ],
+                                    "query": "bassoon",
+                                    "default_operator": "OR",
+                                    "boost": 5,
+                                    "fuzziness": "AUTO"
+                                }
+                            }
+                        ],
+                        "must": [
+                            {
+                                "match": {
+                                    "_type": "contributor"
+                                }
+                            }
+                        ]
+                    }
+                },
+                [
+                    {
+                        "match": {
+                            "_all": {
+                                "query": "bassoon",
+                                "operator": "OR"
+                            }
+                        }
+                    },
+                    {
+                        "match": {
+                            "_all": {
+                                "query": "bassoon",
+                                "operator": "AND",
+                                "boost": 2,
+                                "fuzziness": 1
+                            }
+                        }
+                    }
+                ]
+            ],
+            "minimum_should_match": "50%",
+            "filter": {
+                "bool": {
+                    "must": [
+                        {
+                            "bool": {
+                                "should": [
+                                    {
+                                        "term": {
+                                            "resource_type": "Media_on_Demand"
+                                        }
+                                    }
+                                ],
+                                "minimum_should_match": 1
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    "sort": {
+        "_score": {
+            "order": "desc"
+        }
+    }
+}
+], extra_source[
+{
+    "from": 0,
+    "size": 10
+}
+],
+[2020-03-03 09:13:59,256][DEBUG][index.search.slowlog.fetch] [catalogue-staging]took[25.3ms], took_millis[25], types[resource], stats[], search_type[QUERY_AND_FETCH], total_shards[1], source[
+{
+    "query": {
+        "bool": {
+            "should": [
+                {
+                    "bool": {
+                        "should": [
+                            [
+                                {
+                                    "match": {
+                                        "title.title_exact": {
+                                            "query": "bassoon",
+                                            "boost": 30
+                                        }
+                                    }
+                                },
+                                {
+                                    "query_string": {
+                                        "fields": [
+                                            "title"
+                                        ],
+                                        "default_operator": "AND",
+                                        "query": "bassoon",
+                                        "boost": 10,
+                                        "fuzziness": "AUTO"
+                                    }
+                                },
+                                {
+                                    "query_string": {
+                                        "fields": [
+                                            "title"
+                                        ],
+                                        "default_operator": "OR",
+                                        "query": "bassoon",
+                                        "boost": 10,
+                                        "fuzziness": "AUTO"
+                                    }
+                                }
+                            ],
+                            [
+                                {
+                                    "bool": {
+                                        "should": [
+                                            {
+                                                "nested": {
+                                                    "path": "composers",
+                                                    "query": {
+                                                        "match": {
+                                                            "composers.full_name": {
+                                                                "query": "bassoon",
+                                                                "operator": "AND",
+                                                                "boost": 10
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "nested": {
+                                                    "path": "composers",
+                                                    "query": {
+                                                        "match": {
+                                                            "composers.full_name": {
+                                                                "query": "bassoon",
+                                                                "operator": "OR",
+                                                                "boost": 15
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
+                        ],
+                        "must": [
+                            {
+                                "match": {
+                                    "_type": "work"
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    "bool": {
+                        "should": [
+                            {
+                                "match": {
+                                    "title.title_exact": {
+                                        "query": "bassoon",
+                                        "boost": 10
+                                    }
+                                }
+                            },
+                            {
+                                "query_string": {
+                                    "fields": [
+                                        "title"
+                                    ],
+                                    "default_operator": "AND",
+                                    "query": "bassoon",
+                                    "boost": 3,
+                                    "fuzziness": "AUTO"
+                                }
+                            },
+                            {
+                                "query_string": {
+                                    "fields": [
+                                        "title"
+                                    ],
+                                    "default_operator": "OR",
+                                    "query": "bassoon",
+                                    "boost": 3,
+                                    "fuzziness": "AUTO"
+                                }
+                            }
+                        ],
+                        "must": [
+                            {
+                                "match": {
+                                    "_type": "resource"
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    "bool": {
+                        "should": [
+                            {
+                                "match": {
+                                    "full_name": {
+                                        "query": "bassoon",
+                                        "boost": 10
+                                    }
+                                }
+                            },
+                            {
+                                "query_string": {
+                                    "fields": [
+                                        "full_name"
+                                    ],
+                                    "query": "bassoon",
+                                    "default_operator": "AND",
+                                    "boost": 5
+                                }
+                            },
+                            {
+                                "query_string": {
+                                    "fields": [
+                                        "first_names",
+                                        "last_name"
+                                    ],
+                                    "query": "bassoon",
+                                    "default_operator": "OR",
+                                    "boost": 5,
+                                    "fuzziness": "AUTO"
+                                }
+                            }
+                        ],
+                        "must": [
+                            {
+                                "match": {
+                                    "_type": "contributor"
+                                }
+                            }
+                        ]
+                    }
+                },
+                [
+                    {
+                        "match": {
+                            "_all": {
+                                "query": "bassoon",
+                                "operator": "OR"
+                            }
+                        }
+                    },
+                    {
+                        "match": {
+                            "_all": {
+                                "query": "bassoon",
+                                "operator": "AND",
+                                "boost": 2,
+                                "fuzziness": 1
+                            }
+                        }
+                    }
+                ]
+            ],
+            "minimum_should_match": "50%",
+            "filter": {
+                "bool": {
+                    "must": [
+                        {
+                            "bool": {
+                                "should": [
+                                    {
+                                        "term": {
+                                            "resource_type": "Media_on_Demand"
+                                        }
+                                    }
+                                ],
+                                "minimum_should_match": 1
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    "sort": {
+        "_score": {
+            "order": "desc"
+        }
+    }
+}
+], extra_source[
+{
+    "from": 0,
+    "size": 10
+}
+],
+[2020-03-03 09:13:59,568][DEBUG][index.search.slowlog.query] [catalogue-staging]took[41.5ms], took_millis[41], types[contributor,contributor,event,organisation,resource,resource,sample,work], stats[], search_type[QUERY_AND_FETCH], total_shards[1], source[
+{
+    "query": {
+        "bool": {
+            "should": [
+                {
+                    "bool": {
+                        "should": [
+                            [
+                                {
+                                    "match": {
+                                        "title.title_exact": {
+                                            "query": "bassoon",
+                                            "boost": 30
+                                        }
+                                    }
+                                },
+                                {
+                                    "query_string": {
+                                        "fields": [
+                                            "title"
+                                        ],
+                                        "default_operator": "AND",
+                                        "query": "bassoon",
+                                        "boost": 10,
+                                        "fuzziness": "AUTO"
+                                    }
+                                },
+                                {
+                                    "query_string": {
+                                        "fields": [
+                                            "title"
+                                        ],
+                                        "default_operator": "OR",
+                                        "query": "bassoon",
+                                        "boost": 10,
+                                        "fuzziness": "AUTO"
+                                    }
+                                }
+                            ],
+                            [
+                                {
+                                    "bool": {
+                                        "should": [
+                                            {
+                                                "nested": {
+                                                    "path": "composers",
+                                                    "query": {
+                                                        "match": {
+                                                            "composers.full_name": {
+                                                                "query": "bassoon",
+                                                                "operator": "AND",
+                                                                "boost": 10
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "nested": {
+                                                    "path": "composers",
+                                                    "query": {
+                                                        "match": {
+                                                            "composers.full_name": {
+                                                                "query": "bassoon",
+                                                                "operator": "OR",
+                                                                "boost": 15
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
+                        ],
+                        "must": [
+                            {
+                                "match": {
+                                    "_type": "work"
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    "bool": {
+                        "should": [
+                            {
+                                "match": {
+                                    "title.title_exact": {
+                                        "query": "bassoon",
+                                        "boost": 10
+                                    }
+                                }
+                            },
+                            {
+                                "query_string": {
+                                    "fields": [
+                                        "title"
+                                    ],
+                                    "default_operator": "AND",
+                                    "query": "bassoon",
+                                    "boost": 3,
+                                    "fuzziness": "AUTO"
+                                }
+                            },
+                            {
+                                "query_string": {
+                                    "fields": [
+                                        "title"
+                                    ],
+                                    "default_operator": "OR",
+                                    "query": "bassoon",
+                                    "boost": 3,
+                                    "fuzziness": "AUTO"
+                                }
+                            }
+                        ],
+                        "must": [
+                            {
+                                "match": {
+                                    "_type": "resource"
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    "bool": {
+                        "should": [
+                            {
+                                "match": {
+                                    "full_name": {
+                                        "query": "bassoon",
+                                        "boost": 10
+                                    }
+                                }
+                            },
+                            {
+                                "query_string": {
+                                    "fields": [
+                                        "full_name"
+                                    ],
+                                    "query": "bassoon",
+                                    "default_operator": "AND",
+                                    "boost": 5
+                                }
+                            },
+                            {
+                                "query_string": {
+                                    "fields": [
+                                        "first_names",
+                                        "last_name"
+                                    ],
+                                    "query": "bassoon",
+                                    "default_operator": "OR",
+                                    "boost": 5,
+                                    "fuzziness": "AUTO"
+                                }
+                            }
+                        ],
+                        "must": [
+                            {
+                                "match": {
+                                    "_type": "contributor"
+                                }
+                            }
+                        ]
+                    }
+                },
+                [
+                    {
+                        "match": {
+                            "_all": {
+                                "query": "bassoon",
+                                "operator": "OR"
+                            }
+                        }
+                    },
+                    {
+                        "match": {
+                            "_all": {
+                                "query": "bassoon",
+                                "operator": "AND",
+                                "boost": 2,
+                                "fuzziness": 1
+                            }
+                        }
+                    }
+                ]
+            ],
+            "minimum_should_match": "50%"
+        }
+    },
+    "sort": {
+        "_score": {
+            "order": "desc"
+        }
+    }
+}
+], extra_source[
+{
+    "from": 0,
+    "size": 10
+}
+],
+[2020-03-03 09:13:59,585][DEBUG][index.search.slowlog.fetch] [catalogue-staging]took[16.9ms], took_millis[16], types[contributor,contributor,event,organisation,resource,resource,sample,work], stats[], search_type[QUERY_AND_FETCH], total_shards[1], source[
+{
+    "query": {
+        "bool": {
+            "should": [
+                {
+                    "bool": {
+                        "should": [
+                            [
+                                {
+                                    "match": {
+                                        "title.title_exact": {
+                                            "query": "bassoon",
+                                            "boost": 30
+                                        }
+                                    }
+                                },
+                                {
+                                    "query_string": {
+                                        "fields": [
+                                            "title"
+                                        ],
+                                        "default_operator": "AND",
+                                        "query": "bassoon",
+                                        "boost": 10,
+                                        "fuzziness": "AUTO"
+                                    }
+                                },
+                                {
+                                    "query_string": {
+                                        "fields": [
+                                            "title"
+                                        ],
+                                        "default_operator": "OR",
+                                        "query": "bassoon",
+                                        "boost": 10,
+                                        "fuzziness": "AUTO"
+                                    }
+                                }
+                            ],
+                            [
+                                {
+                                    "bool": {
+                                        "should": [
+                                            {
+                                                "nested": {
+                                                    "path": "composers",
+                                                    "query": {
+                                                        "match": {
+                                                            "composers.full_name": {
+                                                                "query": "bassoon",
+                                                                "operator": "AND",
+                                                                "boost": 10
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "nested": {
+                                                    "path": "composers",
+                                                    "query": {
+                                                        "match": {
+                                                            "composers.full_name": {
+                                                                "query": "bassoon",
+                                                                "operator": "OR",
+                                                                "boost": 15
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
+                        ],
+                        "must": [
+                            {
+                                "match": {
+                                    "_type": "work"
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    "bool": {
+                        "should": [
+                            {
+                                "match": {
+                                    "title.title_exact": {
+                                        "query": "bassoon",
+                                        "boost": 10
+                                    }
+                                }
+                            },
+                            {
+                                "query_string": {
+                                    "fields": [
+                                        "title"
+                                    ],
+                                    "default_operator": "AND",
+                                    "query": "bassoon",
+                                    "boost": 3,
+                                    "fuzziness": "AUTO"
+                                }
+                            },
+                            {
+                                "query_string": {
+                                    "fields": [
+                                        "title"
+                                    ],
+                                    "default_operator": "OR",
+                                    "query": "bassoon",
+                                    "boost": 3,
+                                    "fuzziness": "AUTO"
+                                }
+                            }
+                        ],
+                        "must": [
+                            {
+                                "match": {
+                                    "_type": "resource"
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    "bool": {
+                        "should": [
+                            {
+                                "match": {
+                                    "full_name": {
+                                        "query": "bassoon",
+                                        "boost": 10
+                                    }
+                                }
+                            },
+                            {
+                                "query_string": {
+                                    "fields": [
+                                        "full_name"
+                                    ],
+                                    "query": "bassoon",
+                                    "default_operator": "AND",
+                                    "boost": 5
+                                }
+                            },
+                            {
+                                "query_string": {
+                                    "fields": [
+                                        "first_names",
+                                        "last_name"
+                                    ],
+                                    "query": "bassoon",
+                                    "default_operator": "OR",
+                                    "boost": 5,
+                                    "fuzziness": "AUTO"
+                                }
+                            }
+                        ],
+                        "must": [
+                            {
+                                "match": {
+                                    "_type": "contributor"
+                                }
+                            }
+                        ]
+                    }
+                },
+                [
+                    {
+                        "match": {
+                            "_all": {
+                                "query": "bassoon",
+                                "operator": "OR"
+                            }
+                        }
+                    },
+                    {
+                        "match": {
+                            "_all": {
+                                "query": "bassoon",
+                                "operator": "AND",
+                                "boost": 2,
+                                "fuzziness": 1
+                            }
+                        }
+                    }
+                ]
+            ],
+            "minimum_should_match": "50%"
+        }
+    },
+    "sort": {
+        "_score": {
+            "order": "desc"
+        }
+    }
+}
+], extra_source[
+{
+    "from": 0,
+    "size": 10
+}
+],

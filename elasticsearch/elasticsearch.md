@@ -82,6 +82,9 @@ After 6.x:
         * -- you have to do more work to get results
 * A lot of the constraints of ES are actually constraints from Lucene
 * The part of ES that writes data to disk is called the "gateway"
+* ES is described as "schema free" or "schemaless"
+    * It's kinda bs
+    * That means the docs are not _bound_ by a schema, it doesn't mean there is no schema
 
 ### Default ports
 
@@ -335,10 +338,10 @@ TODO
 * returns 10 results by default
 * Sends GET requests with a body
 * Form is
-    ```
+    ```sh
     GET /_search
     GET /{index name}/_search
-    GET /{index name}/{type name}/_search
+    GET /{index name}/{type name}/_search # Pre 6.x only
     ```
 
 ```bash
@@ -393,19 +396,62 @@ GET /_search
     * all resutls receive a neutral score of `1` because they are all equally relevant
 
 #### match
-    * good for full text search OR exact value search
-    * how it functions depends on they type of the field
-        * full text field => use the defined _analyzer_ for that field
-        * exact field e.g. numger, date, boolean, _not_analyzed_ string => do an exact match
-            * NOTE: for exact matches you probably want a filter clause instead because it will be faster and cached
 
-    { "match": { "fieldName": "field value" }}
+https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-match-query.html
 
-    { "match": { "tweet": "About Search" }}
-    { "match": { "age":    26           }}
-    { "match": { "date":   "2014-09-01" }}
-    { "match": { "public": true         }}
-    { "match": { "tag":    "full_text"  }}
+```js
+// short-hand version:
+GET /eoin-test-1/_search
+{
+  "query": { // required wrapper for all queries
+    "match": { // open the "match query"
+      "description": "Enterprise" // the only require param to "match" is a field name and value
+    }
+  }
+}
+
+
+// long-hand version of the same query
+GET /eoin-test-1/_search
+{
+  "query": {
+    "match": {
+      "description": { // <-- name of field to query
+        "query": "Enterprise", // this text gets analysed
+        "analyzer": "blah", // defaults to the analyzer defined for this field at index time, falls back to the default analyzer for the index
+        "fuzziness": 0 // defaults to 0, increase value to be tolerant of misspellings and finding similar words
+        "operator": "and", // change default operator from OR to AND
+        "lenient" true, // ignore exceptions caused by data-type mismatches
+      }
+    }
+  }
+}
+```
+
+* searches a single field - see `multi_match` for searching more than one field at once
+* The query will be analysed by
+    * The analyser setup for the field, falling back to the default analyser for the index.
+        * This helps ensure that your query will be analysed in the same way your indexed text was
+* Query text is analysed and the terms created by analysis are used to create a `boolean` query
+    * The default operator is `OR`
+    * Example:
+        * When you give it a query `Hello There boo boo` it will by default search for `hello OR there OR boo OR boo`
+* good for _full text search_ OR _exact value_ search
+* how it functions depends on they type of the field:
+    * full text field
+        * => use the defined _analyzer_ for that field
+        * it will find substrings
+    * exact field e.g. numger, date, boolean, _not_analyzed_ string => do an exact match
+        * NOTE: for exact matches you probably want a filter clause instead because it will be faster and cached
+
+```js
+// { "match": { "fieldName": "field value" }}
+{ "match": { "tweet": "About Search" }}
+{ "match": { "age":    26           }}
+{ "match": { "date":   "2014-09-01" }}
+{ "match": { "public": true         }}
+{ "match": { "tag":    "full_text"  }}
+```
 
 #### multi_match
 
@@ -468,9 +514,79 @@ GET /_search
         }
     }
 
+#### query_string
+
+https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html
+
+* seems to overlap with the `match` query a lot
+    * When should you use each?
+* It is tempting to let users type this syntax into your site and just pass it on to ES but this is bad because
+    * Your users are now tied to the query_string DSL and any changes which might happen to it
+    * You cannot easily tune queries e.g. add boosting
+    * Your users can DoS you pretty easily
+
+* `query`
+    * uses a DSL to allow searches to be performed on one line because this is basically the JSON version of the putting the query inline in the URL via `q=...`
+    * it gets a series of _terms_ (NB term doesn't mean exactly the same thing as the normal ES use of the word) and _operators_
+    * term
+        * can be single word or `"multiple words surrounded by quotes"`
+        * matches if the term is **contained** in the field - it is not an exact match
+    * supports wildcards
+    * supports regular expressions
+    * supports a unique fuziness operator `~` which uses Damerau-Levenshtein distance
+        * `~` is shorthand for `~2` (setting the edit distance to 2)
+        * `~1` is also available
+        * http://en.wikipedia.org/wiki/Damerau-Levenshtein_distance
+    * supports boosting
+    * supports explicit boolean operators `AND`, `OR`, `NOT`
+    * supports grouping with `()`
+    * examples
+        ```sh
+        # where the status field contains "active"
+        status:active
+
+        # where the title field contains either "quick" or "brown"
+        title:(quick OR brown)
+
+        # where book.author field contains "Josh Smith"
+        book.author:"Josh Smith"
+
+        # any field in book which contains "Joan"
+        book.\*:"Joan"
+
+        # where the title field has any non-null value
+        _exists_:title
+        ```
+
+* fields = what fields to search
+* default operator
+    * the default boolean operator to use to combine
+```json
+{
+    "query_string": {
+        "fields": [
+            "title"
+        ],
+        "default_operator": "AND",
+        "query": "bassoon",
+        "boost": 10,
+        "fuzziness": "AUTO"
+    }
+},
+```
+
+#### simple_query_string
+
+https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-simple-query-string-query.html
+
+* more limited version of `query_string` but safer for it
+* doesn't return errors for invalid syntax
+* is designed for the use case where you want to provide and advanced query syntax for users with minimal work
+    * Caution: this assumes you trust your users
+
 #### bool
 
-* combines other queryies
+* combines other queries
 * takes the following arguments:
     * must
         * clauses which must match for the document to be included
@@ -482,7 +598,7 @@ GET /_search
     * filter
         * these clauses **must** match but don't contribute to the score
         * useful when you don't want a particular criteria to contribute to the score
-* a `bool` query can be nested within a `filter` of another `bool`
+* a `bool` query can be nested within a `filter`, `should` of another `bool`
 * combines scores together to return a single score
 
 Queries can be used in two contexts
@@ -509,19 +625,54 @@ You can combine both kinds of query for best performnace. First filter out the d
 
 #### Boosting
 
+https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-boost.html
+
 You can apply a boost parameter (many/most/all ???) queries
 
 * A boost is a floating point number used to decrease or increase the relevance scores of a query.
-* Defaults to 1.0.
-* You can use the boost parameter to adjust relevance scores for searches containing two or more queries.
+* You can use the boost parameter to adjust relevance scores for searches containing **two or more queries**.
+* The boost is applied only for term queries (prefix, range and fuzzy queries are not boosted).
 * Boost values are relative to the default value of 1.0.
 * A boost value between 0 and 1.0 decreases the relevance score.
 * A value greater than 1.0 increases the relevance score.
+* Pre 5.0 you could apply boost at index time but that is deprecated now
+    * Query time boost can be changed at will without re-indexing
 
 ### Fuzziness
 
-* Use-cases:
-  * handling typos and misspellings in search queries
+Sources
+
+* https://www.elastic.co/guide/en/elasticsearch/reference/current/common-options.html#fuzziness
+* https://en.wikipedia.org/wiki/Levenshtein_distance
+
+
+Use-cases:
+
+* handling typos and misspellings in search queries
+
+Querys which support fuzziness:
+
+1. match
+2. ???
+
+Overview
+
+* interpreted as the _Lenvenshtein edit distance_ i.e. the number of one character changes needed to make one string be the same as another string
+* defaults to 0
+* increasing fuzziness increases the number of results you get but can decrease how relevant those results are e.g. if I set fuzziness to 2 and search for a 2 character query then it will always match every record (because 2 edits can turn it into any other 2 character string)
+    * => you should probably use `"AUTO"` as the value for fuzziness
+
+Values
+
+* A number between 0-2 (inclusive)
+* `"AUTO"`, `"AUTO:low,high"`
+    * is the preferred value
+    * Generates an edit distance based on the length of the term
+    * value "AUTO" is shorthand for "AUTO:3,6"
+    * When the value is AUTO then for lengths
+        * 0..2 must match exactly
+        * 3..5 one edit allowed
+        * >5 two edits allowed
 
 ### Derivatives
 
@@ -1089,7 +1240,78 @@ Existing type and field mappings **cannot be changed** because it would invalida
 > Thanks to dynamic mapping, new mapping types and new field names will be
 > added automatically, just by indexing a document.
 
-## Clusters
+### Aliases
+
+* you can alias an index or indexs
+* creates a level of indirection between your users and your indexes
+    * useful to allow you to reindex without breaking your users
+
+## Physical layout
+
+### Decisions you make when you create an index
+
+Sources
+
+* https://thoughts.t37.net/designing-the-perfect-elasticsearch-cluster-the-almost-definitive-guide-e614eabc1a87 (this is very good)
+* https://www.elastic.co/blog/how-many-shards-should-i-have-in-my-elasticsearch-cluster
+
+Overview
+
+* Decisions you can change later
+    * Choose number of nodes in cluster
+    * Choose number of replica shards for each primary shard
+* Decisions you cannot change later
+    * Choose number of primary shards
+
+* Your first design will probably suck because you don't know what the workload will be
+    * => you will have to iterate a few times
+    * questions you won't yet know the answers to
+        * how many queries/sec?
+        * does your cluster's workload need a lot of CPU, memory or both?
+            * influences whether to go with a few large hosts or more smaller hosts
+        * what kinds of queries?
+        * how fast do indexes grow?
+* You should have an odd number of master nodes to avoid split-brain
+* lucene creates lots of small files - choose a file system which can handle this - inodes etc.
+* during a merge lucene makes copies of all segments before changing them so your shard can't be more than 0.5 your free disk space
+    * a merge is when lucene consolidates two smaller segments into one
+* shard size
+    * 50GB shard should be your max (it's not an enforced max)
+    * don't make them too small because small shards have many small segment files
+    * aim for shards in the 20GB - 50GB range
+* ES can scale to many, many nodes
+
+Advice from the t37.net blog post
+
+> less 3M documents: 1 shard
+> between 3M and 5M documents with an expected growth over 5M: 2 shards.
+> More than 5M: int (number of expected documents / 5M +1)
+
+```js
+// recommended settings to get better logs from slower queries
+PUT /index/_settings
+{
+    "index.search.slowlog.threshold.query.warn: 1s",
+    "index.search.slowlog.threshold.query.info: 500ms",
+    "index.search.slowlog.threshold.query.debug: 1500ms",
+    "index.search.slowlog.threshold.query.trace: 300ms",
+    "index.search.slowlog.threshold.fetch.warn: 500ms",
+    "index.search.slowlog.threshold.fetch.info: 400ms",
+    "index.search.slowlog.threshold.fetch.debug: 300ms",
+    "index.search.slowlog.threshold.fetch.trace: 200ms"
+}
+```
+
+### Index
+
+* each index is stored on disk as the a single set of files (fields, mapping, settings)
+* index refreshes are
+    * where ES checks for new documents to index in the index
+    * expensive so it happens once per second by default
+        * ES is _near real-time_ not _real-time_
+
+
+### Clusters
 
 A cluster
 
@@ -1109,15 +1331,41 @@ A cluster
 * a node is a single instance of the elstic search process
 * a node is always part of a cluster, even if it is the only node in the cluster
 * nodes try to join a cluster called `elasticsearch` by default
-    * you should edit the cluster name to ensure your node doesn't accidentaly join another cluster
+    * you should edit the cluster name to ensure your node doesn't accidentally join another cluster
+* nodes on the same network will automatically find each other
+
+Question: how do nodes find other nodes? do they spam the network on 9200 or 9300?
 
 ### Shards
 
+* Physically it is a directory of files where Lucene stores data for your index
+* A shard is the smallest unit of data that can be moved between nodes
 * A single index can be split across multiple nodes i.e. it has some documents on each node
 * The process of dividing an index across nodes is called _sharding_
 * Once an index is created the **number** of shards cannot be modified
     * can the location of shards be modified?
 * When you query, ES will collect results from all shards on all nodes
+* WHen you search an index
+    * ES will search a complete set of shards but they can be a mix of primary and replica
+* A shard is a _Lucene index_
+    * A directory of files containing an inverted index
+    * => An _Elasticsearch index_ is made up of multiple _Lucene indexes_ (shards)
+* When you index a document the following things get stored
+    1. The document itself (provided your index uses the default to store `_source`)
+    2. Term dictionary
+        * maps terms to document ids
+        * My guess is that searches only need to look in the term dictionary and not at the documents themselves
+    3. Term frequencies
+        * quick access to the number of appearance of a term in a document
+        * used to calculate relevancy
+
+
+#### Primary shards
+
+* When you index a document it is first sent to one of the primary shards in the index
+    * That shard is chosen at random based on a hash of the document's ID
+    * The shard could be on a different node to the one you connected to
+    * Once the primary shard has written the new document it sends it to its replicas to keep them in sync
 
 #### Replica shards
 
@@ -1126,6 +1374,7 @@ A cluster
 * replica shards are promoted to primary shard when the node holding the primary shard fails
 * All read operations .e.g. query operations and aggregations can be executed on replica shards too!
     * Only write operations must go to the primary shard I guess?
+* Useful for both increasing search performance (searchs hit a mix of primary and replica shards) and fault tolerance
 
 ### Get cluster info and health
 
