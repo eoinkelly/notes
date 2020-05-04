@@ -39,6 +39,8 @@ vim /usr/local/etc/httpd/httpd.conf
 sudo apachectl restart
 # cd to the project you care about so that we pick-up .php-version file when we run php-fpm
 cd path/to/drupal/project
+
+
 # run php-fpm in foreground (logging to stderr)
 # this means we don't have to care about the location of the php-fpm log
 php-fpm -F

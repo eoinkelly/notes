@@ -177,3 +177,15 @@ live in `web/themes/themename` within the project
 
 * Drupal Console
     * The Drupal CLI. A tool to generate boilerplate code, interact with and debug Drupal
+
+## Database abstraction layer
+
+PHP Data Objects
+
+* Built into PHP
+* Has drivers for most popular databases
+
+> DO provides a data-access abstraction layer, which means that, regardless of
+> which database you're using, you use the same functions to issue queries and
+> fetch data. PDO does not provide a database abstraction; it doesn't rewrite
+> SQL or emulate missing features.

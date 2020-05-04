@@ -1,0 +1,32 @@
+version: '3.7'
+
+services:
+    mysql:
+        #  MySQL 8 is supported only on Drupal 8.6 or higher,
+        image: "mysql:5.7"
+        ports:
+            - "3306:3306"
+        environment:
+                MYSQL_ROOT_PASSWORD: drupal
+                MYSQL_DATABASE: drupal
+                MYSQL_USER: drupal
+                MYSQL_PASSWORD: drupal
+        # volumes:
+            # - "database:/var/lib/mysql"
+            # - "./data/drupal-base.sql:/docker-entrypoint-initdb.d/dump.sql"
+    drupal:
+        image: drupal:latest
+        ports:
+            - 8080:80
+        depends_on:
+            - mysql
+        # volumes:
+        #     - ./public/composer.json:/var/www/html/composer.json
+        #     - ./public/composer.lock:/var/www/html/composer.lock
+        #     - ./public/modules:/var/www/html/modules
+        #     - ./public/profiles:/var/www/html/profiles
+        #     - ./public/themes:/var/www/html/themes
+        #     # this takes advantage of the feature in Docker that a new anonymous
+        #     # volume (which is what we're creating here) will be initialized with the
+        #     # existing content of the image at the same location
+        #     - ./public/sites:/var/www/html/sites
