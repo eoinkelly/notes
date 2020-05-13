@@ -33,7 +33,7 @@
     * statistical analysis
     * data manipulation
 * culture
-    * stable, they don't "move fast and break thing"
+    * stable, they don't "move fast and break things"
     * Rstudio is the standard IDE (seems to be the "photoshop" of the R world)
     * lots of users use R in Rstudio without thinking of themselves as "programmers"
 * is great at
@@ -59,6 +59,8 @@
     * Packrat is an attempt to solve this
         * http://rstudio.github.io/packrat/
         * it vendors your packages into your project dir
+    * renv is basically Packrat 2.0 and is probably what you should use
+    * Note that rsconnect (the thing that publishes to shinyapps.io) does not support renv.lock
 * All character strings in R stored in a single global hash (like symbols are in Ruby)
     * => more efficient for strings which appear a lot in data sets.
     * => No GC of string data - if you load lots of transient strings you'll probably eat memory ???
@@ -141,7 +143,7 @@
         ```
     * you can use the `,` within the square bracket notation to get a whole column or whole row
 * functions
-    * can have default args ` foo <- function(a=1, b=TRUE, c=F)
+    * can have default args ` foo <- function(a=1, b=TRUE, c=F)`
     * function application is C alike
     * have implicit returns but you can use an explicit `return()` statement
         * doing so is recommended by style guides
@@ -150,7 +152,6 @@
         * R is totally pass by value even for complex data structures
         * => functions can mutate their args and changes are ignored
         * this has performance implications!
-
 * scoping
     * variables created outside functions are global
     * variables declared within a function are local to that function
