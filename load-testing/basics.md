@@ -1,5 +1,4 @@
-QUESTION: to test concurrency of aws instances, is it good to have two instances in the same AZ? does the testing instance need to be gruntier than the server to properly stress it?
-
+# Load Testing
 
 Sources
 
@@ -30,12 +29,14 @@ Types of testing
     * written in Java
     * supports many protocols, SMTP, TCP, others
     * has a GUI and command line
-    * can be told to scan resposnes for CSRF tokens
+    * can be told to scan responses for CSRF tokens
+    * definitely the most capable of the OSS tools
 * apache bench (ab)
     * basic
     * -- doesn't let you hit different endpoints as part of a session
     * ++ simple
     * -- doesn't do groups of requests (flows)
+    * -- doesn't let you pause between requests
     * -- https://stackoverflow.com/a/10264501 indicates its reporting isn't as good as jmeter
     * `ab -n NUM_REQUESTS_TO_MAKE -c CONCURRENCY http://example.com/foo`
     * ab timing results:
@@ -43,9 +44,10 @@ Types of testing
         * Processing is the amount of time between sending the first byte of the request and receiving the first byte of the response.
         * Waiting is the time between the last byte of the request and the first byte of the response
 * siege
-    * slightly more featureful that `ab`
+    * a few more features than `ab`
     * lets you somewhat simulate real users by having a list of URLs to hit in sequence
     * https://www.sonassi.com/blog/magento-kb/why-siege-isnt-an-accurate-test-tool-for-magento-performance
+    * pretty similar to `ab` in usage
 * https://k6.io/
     * https://docs.k6.io/
     * JS scripting, tool itself written in go
