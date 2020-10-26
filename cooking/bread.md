@@ -35,3 +35,7 @@ Bake #2
 * Thin crust from the fast bake - not sure if that's good or bad?
 
 Verdict: decent
+
+Bake #3
+
+Same setup as #2 but it was under cooked.
