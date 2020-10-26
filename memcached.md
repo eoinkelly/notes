@@ -93,7 +93,7 @@ END
 
 # dump the slab to see items in it
 # stats cachedump <slab-number> <max-num-keys-to-retrieve>
-# You must provide a <max-num-keys-to-retrieve> parameter
+# You must provide a <max-num-keys-to-retrieve> parameter - set it to 0 to get all keys in the slab
 stats cachedump 1 100
 
 # Example output:

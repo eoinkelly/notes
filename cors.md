@@ -18,8 +18,8 @@ If HTML is loaded from `http://foo.com/index.html` then
 ```
 https://foo.com/index.html          no match (different protocol)
 http://other.com/index.html         no match (different domain)
-https://foo.com:8080/index.html     no match (different port)
-https://foo.com/things/blah.html    matches even though path is different
+http://foo.com:8080/index.html      no match (different port)
+http://foo.com/things/blah.html     matches even though path is different
 ```
 
 There are a number of "cross origin" things that the browser can do
