@@ -78,7 +78,7 @@ similar to block formatting context:
     * float, clear does nothing
     * vertical-align does nothing
     * `column-*` properties do nothing
-* absolutely positioned children of flex-containers do not particupate in flex because they are not in flow
+* absolutely positioned children of flex-containers do not participate in flex because they are not in flow
 
 * flex-item
     * establishes a new formatting context for its contents
@@ -88,5 +88,3 @@ similar to block formatting context:
 
 > Auto margins expand to absorb extra space in the corresponding dimension.
 > They can be used for alignment, or to push adjacent flex items apart.
-1. flexbox layout
-

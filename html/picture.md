@@ -16,6 +16,23 @@ most projects.
         * need a pipeline that can transcode images
         * both images added by devs (easy enough) and images uploaded by users (harder)
 
+## <img>
+
+* width and height attrs will be used by browser to calculate an aspect ratio for the width and height set in CSS
+    * best practice is to add `width` and `height` attributes to the `img`
+    * must also set `height: auto` in the CSS
+
+```html
+<style>
+img {
+  width: 100%;
+  height: auto; // you
+}
+</style>
+
+<img src="..." width="100" height="100" />
+```
+
 ## <picture>
 
 Sources
