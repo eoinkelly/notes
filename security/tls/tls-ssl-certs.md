@@ -25,7 +25,7 @@
 
 ## SSL Vendors
 
-* They differenentiate on
+* They differentiate on
     * how much validation they do of the info you send them (this doesn't really matter anymore because browsers don't show EV certs more prominiently)
     * how fast they will issue the cert
     * price
