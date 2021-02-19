@@ -4,7 +4,7 @@
 * Is just the generalised idea of a moving window of "items" in a stream of text, where items can be various parts of text.
     * the items are often words in NLP
     * In Elasticsearch the items seem to be characters
-* a contigious sequence of _n_ items from a given sample of text or speech
+* a contiguous sequence of _n_ items from a given sample of text or speech
 
 Items can be:
 
@@ -18,10 +18,10 @@ If the items are words, n-grams can also be called shingles
 
 n-gram is an idea from the fields of:
 
-* Computational lingusitics
+* Computational linguistics
 * Probability
 
-Differnt sizes of n-gram have common names
+Different sizes of n-gram have common names:
 
 | n   | name             |
 | --- | ---------------- |
@@ -54,12 +54,12 @@ This is useful to
 * Grammar correction
 * Speech recognition
 
-n-gram models
+### n-gram models
 
-We want to be able to calculate the probablity of what the next word in a sequence will be
-To do it properly, the probablity of the next word depends on all the previous words
+We want to be able to calculate the probability of what the next word in a sequence will be
+To do it properly, the probability of the next word depends on all the previous words
 But that is very hard to do
-So Markov made an assumption that we could get a "good enough" probablity of the next word by just looking at the more recent N words in the sentence
+So Markov made an assumption that we could get a "good enough" probability of the next word by just looking at the more recent N words in the sentence
 This is the n-gram language model
 It's not great
 

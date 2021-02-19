@@ -1,4 +1,91 @@
-# vi: ft=bash
+# Getting started with a new Kibana instance
+
+When faced with a new ES instance (via Kibana) and you want to figure out what is going on.
+
+## Dev tools commands
+
+1. Go to the dev tools section
+2. Paste the following into the Console and run lines as required
+
+```bash
+# Cmd-enter to run query when cursor is on same line
+
+# List indices (similar to \l in psql)
+GET /_cat/indices?bytes=mb&s=store.size:desc&v
+# Columns:
+#
+#   health = red|yellow|green
+#   status = open| ???
+#   index = name of index
+#   uuid = uuid of index
+#   pri = number of primary shards
+#   rep = number of replica shards
+#   docs.count = number of docs in the index
+#   docs.deleted = ???
+#   store.size = ???
+#   pri.store.size = ???
+#
+# Example:
+#
+#       health status index             uuid                   pri rep docs.count docs.deleted store.size pri.store.size
+#       yellow open   awswaf-2021-02-17 6XGGo8fHRsSIF9CTV_t7JA   1   1       2965            0          5              5
+#       yellow open   awswaf-2021-02-16 0WVipiG4TBKDDNCps6dvzw   5   1       1318            0          2              2
+#       yellow open   awswaf-2021-02-18 2EqDblofS-KSF0lxC9UOjg   1   1       2261            0          2              2
+#       yellow open   awswaf-2021-02-19 qpZy4fC-Q4iYBzJmxXTKCA   1   1       1388            0          2              2
+#       green  open   .kibana_1         gMynp5xTQB6QfmOrw7pxMA   1   0         20            2          0              0
+
+# When you have an index(or indices) you are interested in, run:
+
+# search all indices (includes the kibana index so usually not what you want)
+GET /_search?size=10
+
+# search all indices which begin with 'awswaf-'
+GET /awswaf-*/_search?size=5
+
+# return the first document from a single index
+GET awswaf-2021-02-17/_search?size=1
+# Now you have an example of a document
+
+# Show the mapping for an index
+GET awswaf-2021-02-17/_mapping
+# Now you have the mapping
+
+# Suggestion: save the example doc and mapping into text files and compare to understand the data
+
+# How many documents and shards in index?
+GET awswaf-2021-02-17/_count
+
+# Show the settings for the index
+GET awswaf-2021-02-17/_settings
+
+# Get document count for entire cluster
+GET _cat/count?v
+# Example:
+#       epoch      timestamp count
+#       1613762202 19:16:42  7956
+```
+
+## Kibana saved index patterns
+
+Not sure
+they seem to be what lets kibana interpret an index
+how diff from ES mapping?
+
+## Kibana saved objects
+
+Types
+
+1. Visualisation object
+    * Appear under the "Visualise" tab in Kibana
+2. Dashboard
+    * Appear under the "Dashboard" tab in Kibana
+3. Index pattern
+
+They are presented as multiple JSON blobs in the "Saved Objects" UI
+
+
+## Other useful commands
+```bash
 
 # Cluster settings
 GET /_cluster/settings
@@ -7,7 +94,7 @@ GET /_cluster/settings
 GET /_cluster/health
 
 # ########
-# Cat APIs
+# Cat APIs (find out about the cluster)
 # ########
 
 # Add `v` query param to get headings in plain text output
@@ -146,3 +233,5 @@ POST /catalogue-development-organisation/_analyze
   "field": "author_note",
   "text": "example text"
 }
+
+```
