@@ -1,5 +1,5 @@
 class SaferRawSQL
-  # The formats refer to the format of messag
+  # The formats refer to the format of message
   # There are two formats a client can use to exchange messages with a PostgreSQL server (text or binary).
   # TEXT_FORMAT = 0
   # BINARY_FORMAT = 1

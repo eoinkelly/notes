@@ -43,38 +43,3 @@ The main way is to call the `execute` method with a string of SQL to execute
 execute "ALTER TABLE blah ...."
 ```
 
-## constraints
-
-You can setup custom constaints on a table for Rails
-
-* http://hashrocket.com/blog/posts/deferring-database-constraints
-
-* Use foreigner gem to create foreign keys in older rails versions
-
-Note that Postgres constraints are enforced _immediately_ by default - this
-means that if you have a transaction that temporarily puts the table in an
-illegal state PG will not allow it.
-
-You can use the following options to tweak this
-    * DEFERRABLE INITIALLY IMMEDIATE
-    * DEFERRABLE INITIALLY DEFERRED
-    * See http://www.postgresql.org/docs/9.4/static/sql-set-constraints.html
-
-```ruby
-class AddUniquenessValidationOnListItems < ActiveRecord::Migration
-  def up
-    execute <<-SQL
-      alter table list_items
-        add constraint list_item_position unique (list_id, position);
-    SQL
-  end
-
-  def down
-    execute <<-SQL
-      alter table list_items
-        drop constraint if exists list_item_position;
-    SQL
-  end
-end
-```
-

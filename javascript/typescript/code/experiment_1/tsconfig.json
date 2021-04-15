@@ -1,0 +1,86 @@
+// {
+//   // choose a base configuration to be our basis
+//   // these bases are created by the community
+//   // you must install the corresponding npm package to use this e.g.
+//   // npm i @tsconfig/node14
+//   // "extends": "@tsconfig/node14/tsconfig.json",
+//   //
+//   //
+//   // Tweak compiler options
+//   "compilerOptions": {
+//     // "module": "commonjs",
+//     // "module": "system",
+//     // "outFile": "../../built/local/tsc.js",
+//     "outDir": "lib", // ?
+//     "rootDir": "src", // ?
+//     "noImplicitAny": true,
+//     "preserveConstEnums": true,
+//     "removeComments": true,
+//     "sourceMap": true
+//   },
+//   // Options for telling the compiler where to find .ts files
+//   // "files": [
+//   //   "core.ts",
+//   //   "sys.ts",
+//   //   "types.ts",
+//   //   "scanner.ts",
+//   //   "parser.ts"
+//   // ],
+//   "include": [
+//     "src/**/*"
+//   ],
+//   "exclude": [
+//     "node_modules",
+//     "**/*.spec.ts"
+//   ]
+// }
+{
+  "compilerOptions": {
+    // sensible production config:
+    "target": "ES2020",
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    //
+    //
+    "outDir": "dist",
+    //
+    // load some built-in type definitions
+    "lib": [
+      "ES2020"
+    ],
+    //
+    //
+    "rootDir": "./src",
+    "allowJs": true,
+    "checkJs": true,
+    "noEmit": false,
+    "isolatedModules": true,
+    "strict": true,
+    "resolveJsonModule": true,
+    "useDefineForClassFields": true,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitReturns": true,
+    "noEmitOnError": true,
+    "removeComments": true,
+    "esModuleInterop": true,
+    "sourceMap": false,
+    // make compiler output very verbose but educational
+    "listEmittedFiles": true,
+    // "listFiles": true,
+    // "extendedDiagnostics": true
+  },
+  // "exclude": [
+  //   ".serverless",
+  //   "coverage",
+  //   "node_modules",
+  //   "lib"
+  // ],
+  // "files": [
+  //   ".eslintrc.js",
+  //   "jest.config.ts"
+  // ],
+  "include": [
+    "src/**/*.js",
+    "src/**/*.ts"
+  ]
+}

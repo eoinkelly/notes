@@ -1,0 +1,45 @@
+// you can put comments in tsconfig.json!
+{
+  // tsconfig files can extend each other
+  // "extends": "./tsconfig.build.json",
+  // I presume they override? can original and new config be merged?
+  //
+  //
+  // choose a base configuration to be our basis
+  // these bases are created by the community
+  // you must install the corresponding npm package to use this e.g.
+  // npm i @tsconfig/node14
+  "extends": "@tsconfig/node14/tsconfig.json",
+  //
+  //
+  // Tweak compiler options
+  "compilerOptions": {
+    // "module": "commonjs",
+    // "noImplicitAny": true,
+    // "removeComments": true,
+    // "preserveConstEnums": true,
+    // "sourceMap": true
+    // "module": "system",
+    // "noImplicitAny": true,
+    // "removeComments": true,
+    // "preserveConstEnums": true,
+    // "outFile": "../../built/local/tsc.js",
+    // "sourceMap": true
+  },
+  // Options for telling the compiler where to find .ts files
+  // compiler will error if any of these are missing (so you might want to use `files` and `include` together)
+  "files": [
+    "core.ts",
+    "sys.ts",
+    "types.ts",
+    "scanner.ts",
+    "parser.ts"
+  ],
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts"
+  ]
+}

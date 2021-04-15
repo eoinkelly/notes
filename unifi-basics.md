@@ -1,3 +1,41 @@
+# macOS Controller
+
+
+Overview
+
+* The app: `/Applications/UniFi.app`
+* App data:
+    * `~/Application Support/UniFi/`
+    * `~/Application Support/UniFi/data` (MongoDB data)
+
+* It bundles mongod and Java
+* it stores backups as a binary .unf file
+* Q: is all the data in mongo or is some on disk too?
+
+## mongod
+
+* runs mongodb on non-standard port
+
+```
+bin/mongod
+    --dbpath /Applications/UniFi.app/Contents/Resources/data/db
+    --port 27117
+    --unixSocketPrefix /Applications/UniFi.app/Contents/Resources/run
+    --logappend
+    --logpath /Applications/UniFi.app/Contents/Resources/logs/mongod.log
+    --bind_ip 127.0.0.1
+```
+
+Can use details above to conect with mongodb-shell or mongodb-compass
+
+```
+# connect with CLI
+mongo mongodb://127.0.0.1:27117/
+
+# backup the mongo database
+mongodump -o ~/Desktop/unifi_mongo_backup mongodb://127.0.0.1:27117/
+```
+
 # Cheatsheet
 
 To setup letsencrypt for the controller:

@@ -12,12 +12,12 @@ def execute_sql(my_sql)
   # out of the PG::Result in preparation for later clearing the PG::Result
   results = pg_result.to_a
 
-  yield results if block_given?
-
   # Calling #clear on the PG::Result is the important bit of cleanup and the
   # whole reason this method exists. See
   # https://www.rubydoc.info/gems/pg/PG/Result#clear-instance_method
   pg_result.clear
+
+  yield results if block_given?
 
   results
 end

@@ -10,12 +10,10 @@ Includes the `Broadcom BCM2837` SoC
 * The Cortex-A53 supports the full ARMv8-A architecture.
 * It not only runs 64-bit applications also seamlessly and efficiently runs legacy ARM 32-bit applications.
 
-
 ## My Raspberry Pi 3
 
 * has 31 general purpose 64-bit registers
 * has 32 floating point (NEON) registers which are 128bits wide
-
 
 ```
 # specs for my Pi
@@ -73,3 +71,4 @@ Serial          : 000000005319d64d
 
 # Raspberry Pi 4
 
+TODO

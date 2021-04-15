@@ -50,3 +50,35 @@ dig -t ANY interesting.com @some_name_server
 dig -t ANY interesting.com @8.8.8.8
 ```
 
+## TTL values in dig responses
+
+Sometimes `dig` responses contain the TTL in the answer section, sometimes they do not. why?
+
+If the server is authoritive, the number is the raw TTL of the record
+If the server is not authoritive, it shows time remaining until the next refresh. You will get a different answer on the next request as the counter counts down
+Note that for servers where one IP is multiple servers e.g. `@8.8.8.8` then you'll get the time of the server you are talking to so might get a different answer on the next request.
+
+```
+$ dig www.cst.cam.ac.uk
+
+; <<>> DiG 9.10.6 <<>> www.cst.cam.ac.uk
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 64631
+;; flags: qr rd ra; QUERY: 1, ANSWER: 3, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 4096
+;; QUESTION SECTION:
+;www.cst.cam.ac.uk.		IN	A
+
+;; ANSWER SECTION:
+www.cst.cam.ac.uk.	21593	IN	CNAME	dept1-live.drupal.uis.cam.ac.uk.
+dept1-live.drupal.uis.cam.ac.uk. 3593 IN CNAME	tm-128-232-132-21.tm.uis.cam.ac.uk.
+tm-128-232-132-21.tm.uis.cam.ac.uk. 3593 IN A	128.232.132.21
+
+;; Query time: 50 msec
+;; SERVER: 192.168.1.1#53(192.168.1.1)
+;; WHEN: Thu Nov 26 19:29:04 NZDT 2020
+;; MSG SIZE  rcvd: 155
+```

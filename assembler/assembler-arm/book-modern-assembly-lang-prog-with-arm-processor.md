@@ -37,7 +37,7 @@ There are three main ways of representing signed integers
     * the first digit is used to represent whether the number is positive or negative
         * this is subtly different to how it works in _sign magnitude_
         * number is negative if `first_digit > radix / 2`
-        * Aside: two's complement is not a more efficeint way to store numbers
+        * Aside: two's complement is not a more efficient way to store numbers
           (it is more efficient for doing computations with them)
     * the other digits represent the magnitude
         * the magnitude of a number can be found by taking its "radix complement"
@@ -50,7 +50,7 @@ There are three main ways of representing signed integers
     * to get the two's complement
         1. flip all the bits (to get the diminished radix complement)
         1. add 1 (to get to the radix complement)
-    * ++ hardware is simplified because you don't have to build a specialized subtractor circuit
+    * ++ hardware is simplified because you don't have to build a specialized subtracter circuit
     * ++ is the most common way to represent signed numbers in computers
     * -- harder for humans to do in their head
     * complement notation is most useful in base 2 (binary) numbers
@@ -108,15 +108,16 @@ first digit is the n+1 digit which we remove to subtract base^n from the number
 * Assembler uses ASCII NUL (0x00) to represent the end of strings in memory aka "the null terminated string"
 * ISO 8559 family of standards all extend ASCII to 8 bits
     * They are incompatible with each other e.g. ISO-8559-1 (Latin1) will map different glyphs to values 0x7F to 0xFF than ISO-8559-9 (Latin 5 Turkish) will
-* ISO/IEC 10646 Universal charaacter set solves this
+* ISO/IEC 10646 Universal character set solves this
     * defines code points (numbers) for almost all human languages
-    * code points written as `U+XXXXX`
+    * code points usually written as `U+XXXXX`
 * Unicode extends ISO 10646 with language specific features
 * There are a number of encodings available for codepoints from 10646 e.g.
     * UTF-8
         * variable length encoding
-        * uses the upper bits of each byte to identify whether it is the start of a new character of the continuiation of one
+        * uses the upper bits of each byte to identify whether it is the start of a new character of the continuation of one
     * UTF-16
+        * was the default on macOS and Windows (might still be?)
     * UTF-32
         * use 4 bytes for each character
         * ++ simple

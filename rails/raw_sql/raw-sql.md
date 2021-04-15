@@ -8,7 +8,7 @@ Overview of the various methods of sending Raw SQL in ActiveRecord:
 
 * ActiveRecord::Base.connection.execute
     * Always does Simple-Query at Postgres protocol level
-    * You must use `PREPARE...EXECUTE` in your SQL string to get separation or just rely on escaping
+    * -- You must use `PREPARE...EXECUTE` in your SQL string to get separation or just rely on escaping
     * -- Some manual memory management of the PG::Result seems to be required
 * ActiveRecord::Base.connection.select_all
     * Does Parse/Bind/Describe/Execute/Sync at the Postgres protocol level

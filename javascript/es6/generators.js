@@ -15,8 +15,8 @@ console.log(helloWorldIterator.next()); // prints { value: undefined, done: true
 // Normal JS functions are "run to completion" i.e. a function will always
 // complete in its turn of the event loop.
 //
-// Generators are "coorperative" concurrency
-// A generator is a function that can yeild control back to the caller
+// Generators are "cooperative" concurrency
+// A generator is a function that can yield control back to the caller
 // when it does so, the caller has to restart it
 // values can be passed out to the caller when it yields
 // values can be passed back in when it is resumed
@@ -35,7 +35,7 @@ function *foo() { }
 // * whatever is passed in on resumption becomes the value of the expression
 // * you can think of "yield" as a request for a value
 //
-// calling a generator in the normal way does NOT execute it
+// calling a generator in the normal way does NOT execute it, it simply returns the iterator which can be used to run the generator
 
 function *reallySimpleGenerator() {
   yield 1;

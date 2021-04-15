@@ -1,10 +1,11 @@
 use std::fmt::Display;
 
 fn main() {
-    example_0();
-    example_1();
-    example_2();
-    show(33, "foo");
+    // example_0();
+    // example_1();
+    // example_2();
+    example_4();
+    // show(33, "foo");
 }
 
 fn show<T: Display, U: Display>(a: T, b: U) {
@@ -24,7 +25,6 @@ fn example_0() {
 
 // s1 has a longer lifetime than s2
 fn example_1() {
-
     let s1 = String::from("foofoo");
 
     {
@@ -52,6 +52,61 @@ fn example_2() {
     // }
 }
 
+// This version does not compile because rustc can't tell at compile time
+// whether the return value will be a reference to x or y (x and y could have
+// different lifetimes)
+// fn longest2(x: &str, y: &str) -> &str {
+//     if x.len() > y.len() {
+//         x
+//     } else {
+//         y
+//     }
+// }
+
+fn example_4() {
+    // works
+    // let x = String::from("hello");
+    // {
+    //     let y = String::from("goodbye");
+    //     let z = longest(&x, &y);
+    //     println!("Z: {}", z)
+    // }
+
+    // works
+    // let x = String::from("hello");
+    // let y;
+    // let z;
+    // {
+    //     y = String::from("goodbye");
+    //     z = longest(&x, &y);
+    // }
+    // println!("Z: {}", z)
+
+    // breaks
+    // let x = String::from("hello");
+    // let z;
+    // {
+    //     let y = String::from("goodbye");
+    //     z = longest(&x, &y);
+    // }
+    // println!("Z: {}", z)
+
+}
+
+// These lifetime annotations do not require x and y to have exactly the same lifetime
+// I think rust will take the shortest of the concrete lifetimes of x and y and assign that to 'a
+// We are tlling the compiler "there must exist a lifetime in the set of
+// lifetimes that are passed in from the params that satisfies this constraint
+// and you can assume return value lives for that length"
 fn longest<'a>(x: &'a str, y: &'a str) -> &'a str {
-    if x.len() > y.len() { x } else { y }
+    if x.len() > y.len() {
+        x
+    } else {
+        y
+    }
+}
+
+fn bad_idea() -> &str {
+    let x = String::from("blah");
+    &x
 }

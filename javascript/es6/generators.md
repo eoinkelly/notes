@@ -2,15 +2,15 @@
 
 ## Use cases
 
-* I'm unsure tbh
-* they seem to exist in part to enable `async` and `await`
+* they enable `async` and `await`
+* they are used by `for ... of` syntax
 
 ## About
 
 * a generator returns an iterator when it is run. From then on you work with the iterator
 * generators are just a factory for an iterator
-* the iterator is a thing which can be re-run as often as possible and will generate values
-* it keeps its own state between runs
+* the iterator is an object with some functions (e.g. `next()`)
+* the generator keeps its own state between runs
 * it can be approximated with a closure returning an object but it is a bit clumsy
 
 Getting value out of the generator
@@ -18,7 +18,7 @@ Getting value out of the generator
 * `yield someValue` is an expression that pauses the generator and can send a value out of it
 * the value comes out wrapped in an object of the form `{ value: "theValue", done: false }`
 
-Pumping values into the generator
+You can pass values into the generator for it's next run e.g.
 
 * `iterator.next(someIncomingValue)`
 * next is used to run the generator until the next yield

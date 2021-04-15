@@ -7,7 +7,7 @@ Overview
 
 * set tab width something consistent
 * instruction memonics and operand names in lowercase
-* lots of comments
+* use lots of comments
 * clear columns for
     * labels
     * instruction name

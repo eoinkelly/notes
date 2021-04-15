@@ -9,6 +9,11 @@ When faced with a new ES instance (via Kibana) and you want to figure out what i
 
 ```bash
 # Cmd-enter to run query when cursor is on same line
+# add `v` query param to see table headings
+# add 'help' query param to see description of table headings
+
+# get help about what the output columns mean
+GET /_cat/indices?help
 
 # List indices (similar to \l in psql)
 GET /_cat/indices?bytes=mb&s=store.size:desc&v
@@ -20,10 +25,10 @@ GET /_cat/indices?bytes=mb&s=store.size:desc&v
 #   uuid = uuid of index
 #   pri = number of primary shards
 #   rep = number of replica shards
-#   docs.count = number of docs in the index
-#   docs.deleted = ???
-#   store.size = ???
-#   pri.store.size = ???
+#   docs.count = number of available docs
+#   docs.deleted = number of deleted docs
+#   store.size = store size of primaries and replicas
+#   pri.store.size = store size of primaries
 #
 # Example:
 #

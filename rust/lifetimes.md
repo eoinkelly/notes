@@ -1,5 +1,45 @@
 # Lifetimes
 
+* lifetimes only apply to _references_ (i.e. borrowed variables)
+* lifetime syntax is about connecting the lifetimes of function parameters to function return values
+* rust will usually be able to figure out lifetimes on its own but it sometimes needs help
+* lifetime _annotations_ (the `'a` etc.)
+    * do not change how long references live - they just give the rust compiler some hints
+    * describe the **relationship** of multiple lifetimes to each other - practically you'll never see code with just one variable with a lifetime annotation (I think!)
+    * are a kind of **generic** parameter to the function
+        * they need to be introduced within `<>` before they can be used in the function signature
+        * they do not refer to the actual lifetime of any variable!
+        * rather they are a constraint that the actual lifetimes must satisfy
+        * the compiler knows the actual lifetimes and we have give it some constraints with our lifetime annotations so it will compile if it can fit the actual lifetimes into our constraints
+        * e.g. if you pass multiple references to a function
+
+* When returning a reference from a function, the lifetime of the return value needs to match the lifetime for one of the parameters
+    * if you return an arbitrary reference created within the function then it will be dangling immediately after the function returns
+
+what can functions in rust return
+
+they can move their return value back to the caller
+if they return a reference, it must be a reference to one if their params
+it makes no sense to return a reference to something created in the function
+
+
+```rust
+// the concrete lifetime that rustc assigns to 'a will be the smaller of the lifetimes of x and y
+// then it can use that as the lifetime of the return value
+fn longest<'a>(x: &'a str, y: &'a str) -> &'a str {
+    if x.len() > y.len() {
+        x
+    } else {
+        y
+    }
+}
+```
+
+
+
+
+
+
 > Ultimately, lifetime syntax is about connecting the lifetimes of various
 > arguments and return values of functions. Once they're connected, Rust has
 > enough information to allow memory-safe operations and disallow operations

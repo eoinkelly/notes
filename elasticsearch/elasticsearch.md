@@ -7,7 +7,6 @@
 ## Sources
 
 * Elasticsearch in Action (but out of date but very good IMHO)
-    * up to
 * Official ES docs
 
 ## Installing
@@ -35,7 +34,17 @@ PUT /_all/_settings
 "index.search.slowlog.threshold.query.debug": "0s"}
 ```
 
-## Overview
+## Differences in 6.x
+
+* There were some significant changes in ES 6.x
+    * The concept of mapping types was removed
+        * https://www.elastic.co/guide/en/elasticsearch/reference/6.8/removal-of-types.html
+        * Summary: it was inefficient at the Lucene layer to have different types of document in the same index
+        * 6.x deprecated them
+        * Before 6.x you could have multiple types per index. Now the enforce one type per index.
+        * After 6.x the place in the APIs where you could specify a custom type is filled by `_doc` which roughly means "the one type in this index"
+* Breaking changes in 7.x
+  * The APIs were changed to no longer have space for the type name
 
 Pre 6.x:
 
@@ -55,6 +64,16 @@ After 6.x:
 | Row           | Document                    |
 | Column        | Field                       |
 
+You can implement your own "type" field if you really do need to store multiple types of doc in same field because
+
+> there is a limit to how many primary shards can exist in a cluster so you
+> may not want to waste an entire shard for a collection of only a few thousand
+> documents.
+
+TODO: what is this about? how does a collection "use up" a primary shard
+
+## Overview
+
 * A node is an instance of ES
 * node exposes Restful JSON API on port 9200
 * nodes form a cluster on port 9300 (also what the java APIs use)
@@ -64,12 +83,12 @@ After 6.x:
 * uses JSON as the serialization format for documents
 * storing a document in ES is called "indexing the document"
 * A cluster is a group of nodes with the same value of `cluster_name` (you can see this value by visiting in a browser http://localhost:9200/)
-* Provides a Java API has two kinds of clients
+* Provides a Java API which has two kinds of clients
     1. Node client
         * your client joins the cluster as a "non data" node
         * it can forward requests to the node which does have the data
         * uses port 9300 and the native ES transport protocol
-    1. Transport client
+    2. Transport client
         * lighter weight
         * just forwards requests to the cluster
         * uses port 9300 and the native ES transport protocol
@@ -198,6 +217,9 @@ You can run search and aggregation queries against multiple indexes at the same 
     ```js
     // search all documents in the named indexes
     GET /myindex,otherindex,blahindex/_search
+
+    // search all documents in all indices which begin with 'myindex'
+    GET /myindex*/_search
     ```
 5. Search all documents of a particular type in all indexes
     ```js
@@ -328,8 +350,8 @@ DELETE /mythings/_doc/123
 * As well as FTS, ES can be used for data analytics
 * Example use-cases
     * most popular blog tags
-    * average poplularity of a certain group of posts
-    * average popularlity of posts for each tag
+    * average popularity of a certain group of posts
+    * average popularity of posts for each tag
 
 TODO
 
@@ -347,13 +369,13 @@ TODO
 ```bash
 # Kibana console
 
-GET /megacorp/employee/_search # "search lite" - return all documents of given index and type
+GET /megacorp/_doc/_search # "search lite" - return all documents of given index
 
-GET /megacorp/employee/_search?q=last_name:Smith # filter those documents based on a field
+GET /megacorp/_doc/_search?q=last_name:Smith # filter those documents based on a field
 
 # exaclty same as line above (but using the query DSL)
 # notice this is a GET request with a body. ES authors are fine with this.
-GET /megacorp/employee/_search
+GET /megacorp/_doc/_search
 {
     "query" : {
         "match" : {
@@ -393,7 +415,7 @@ GET /_search
 
 #### match_all
 { "match_all": {}} # match all documents
-    * all resutls receive a neutral score of `1` because they are all equally relevant
+    * all results receive a neutral score of `1` because they are all equally relevant
 
 #### match
 
