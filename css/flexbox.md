@@ -88,3 +88,24 @@ similar to block formatting context:
 
 > Auto margins expand to absorb extra space in the corresponding dimension.
 > They can be used for alignment, or to push adjacent flex items apart.
+
+## Flexbox gap
+
+My codepen: https://codepen.io/eoinkelly/pen/LYxaBdm?editors=1100
+
+* support: modern browsers except Safari but it is in the TP
+    * https://caniuse.com/flexbox-gap
+* these properties are also supported on `grid` and `multi-column` layouts but browser support differs so check before using.
+* sets the size between rows and columns of items in the flex container
+* lets you avoid using margin and padding for spacing elements within a flexbox container
+
+```scss
+.flexy-thing {
+    display: flex;
+    gap:  100px // shorthand for
+    column-gap: 100px;
+    row-gap: 100px;
+}
+```
+
+https://css-tricks.com/almanac/properties/g/gap/
