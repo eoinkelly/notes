@@ -1,5 +1,16 @@
-# Add this method to some appropriate class in your Rails app
-
+##
+# A function for running raw SQL in a Rails app.
+#
+# Note that it may be much more memory efficent to directly use the
+# `PG::Result` instance and then call `clear` rather than copying it into an
+# array like we do here.
+#
+# The method shown here does **nothing** to prevent or mitigate SQLi - you need
+# to manage it yourself.
+#
+# Use this function for inspriation not copy & paste :-)
+#
+# @param [String] my_sql String
 def execute_sql(my_sql)
   pg_result = ActiveRecord::Base.connection.execute(my_sql)
 
