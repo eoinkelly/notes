@@ -1,0 +1,19 @@
+[sqlfluff]
+output_line_length = 120
+sql_file_exts = .sql,.sql.j2,.dml,.ddl,.sql.erb
+
+
+[sqlfluff:rules]
+
+[sqlfluff:rules:L003]
+tab_space_size = 2
+indent_unit = space
+
+[sqlfluff:rules:L016]
+ignore_comment_lines = False
+max_line_length = 120
+tab_space_size = 2
+indent_unit = space
+
+[sqlfluff:rules:L010]
+capitalisation_policy = lower

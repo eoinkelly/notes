@@ -1,11 +1,13 @@
 # Postgres data types
 
-* Postgres types are lowercase (only SQL keywords are uppercase)
+* Postgres type names
+    * are case insensitive unless quoted (like all other identifiers)
+    * can have spaces in the name which is confusing to me sometimes
 * Each data type has an internal representation and has one or more external representations.
 * Each external representation is decided by which input and output function you use.
 * Some input and output functions for a type are not "invertible" i.e. you might lose precision if you put data in and out of Postgres via these functions
 
-Postgres has 40+ (TODO: exactly how many?) built-in data types
+Postgres has 40+ built-in data types
 
 #### Numeric types
 
@@ -34,12 +36,13 @@ Numeric type
     * ++ calculations are precise
     * -- calculations are slow
 
-QUESTION: how do i use the numeric type?
+
+          QUESTION: how do i use the numeric type?
 
 ### serial types
 
 * `serial` is not a real type!
-* serial types are just syntax sugar for
+* serial types are just syntax sugar for doing the following
     1. create a column of type `integer NOT NULL nextval('sertest_id_seq'::regclass)`
     2. create a sequence named `{tablename}_{columnname}_seq` with the owner set to the column (so the sequence is dropped if the colum is dropped)
 * note: serial type does not add PRIMARY KEY or any uniqueness constraint
@@ -63,7 +66,9 @@ QUESTION: how do i use the numeric type?
 * use this for storing "raw bytes"
 * allows storing of arbitrary binary strings (including null bytes and other sequences not allowed by the DB character sets)
 
-Why no BLOB type?
+
+        Q: Why no BLOB type?
+
 
 The SQL standard defines a different binary string type, called BLOB or BINARY LARGE OBJECT.
 
@@ -167,8 +172,28 @@ There are also two internal textual types
 ### Casting
 
 ```sql
+
+-- Option 1:
+-- * doesn't work for arrays, only works for setting the type of a "simple literal constant"
+-- * SQL standard allows this on only a few types, Postgres allows it on all
+type 'string'
+
+-- Option 2:
+-- historic postgres syntax
+'string'::type
+
+-- you can chain casts
 -- cast x to type1 then cast that to type2 and so on
 x::type1::type2::type3
+
+-- Option 3:
+-- Fully SQL standard compliant
+CAST ( 'string' AS type )
+
+-- Option 4:
+-- historic postgres syntax
+-- there is a 4th syntax but it doesn't work for all types
+typename ( 'string' )
 ```
 
 #### Types which are portable across database systems
@@ -199,7 +224,4 @@ These 19 types are the only types you can use portably across DB systems
 
 You can create new types with `CREATE TYPE ..` - `man CREATE_TYPE`
 
-QUESTION: how do I use a "type input function"
-QUESTION: how do i do explicit casts?
-QUESTION: when to use the serial types and when to use a sequence?
-QUESTION: what types does rails map to (make a table for rails4 and 5)
+    QUESTION: how do I use a "type input function"

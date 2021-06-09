@@ -147,3 +147,33 @@ Ways:
 
 
 Conclusion: favour clients who use extended query syntax because it avoids the need for escaping data values but you still need to make sure that the _code_ you are sending the server doesn't get built from user inputted values
+
+## Copy sub-protocol
+
+> Copy-in and copy-out operations each switch the connection into a distinct
+> sub-protocol, which lasts until the operation is completed.
+
+https://www.postgresql.org/docs/current/protocol-flow.html#PROTOCOL-COPY
+
+Copy-in mode (transferring data **to** the server):
+
+1. Backend executes a `COPY FROM STDIN` SQL statement
+1. Backend enters copy-in processing mode
+1. Backend (server) sends `CopyInResponse` message to frontend
+1. Frontend sends 0+ `CopyData` messages (usually but not required to be one per row)
+1. Frontend sends either `CopyDone` (for success) or `CopyFail` (failure)
+1. Backend reverts back to the command processing mode it was in before moving to copy-in mode
+
+Copy-out mode (transferring data **from** the server)
+
+1. Backend executes a `COPY TO STDOUT` SQL statement
+1. Backend enters copy-out processing mode
+1. Backend (server) sends `CopyOutResponse` message to frontend
+1. Backend sends 0+ `CopyData` messages (always one per row)
+1. Backend sends either `CopyDone` (for success) or `ErrorResponse` (failure)
+1. Backend reverts back to the command processing mode and issues `CommandComplete`
+
+Copy-both mode
+
+> Copy-both mode is initiated when a backend in walsender mode executes a START_REPLICATION statemen
+

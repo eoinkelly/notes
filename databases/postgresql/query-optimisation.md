@@ -2,7 +2,7 @@
 
 Sources
 
-*Chap 10 of High-perf Postgres book
+* Chap 10 of High-perf Postgres book
 
 Overview
 
