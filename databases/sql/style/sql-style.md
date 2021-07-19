@@ -38,6 +38,14 @@ My faves:
     * -- it can't handle placeholders like `$1`
     * -- it cannot handle `SQL COPY () TO STDOUT`
     * still bit buggy as of Jun 2021
+* https://github.com/mjibson/sqlfmt
+    * manually installed go binary
+    * -- seems to choke on some of my examples
+    * -- no config file, cmd line only
+    * Limited to CockroachDB https://github.com/mjibson/sqlfmt/issues/53
+        > This library uses the CockroachDB SQL parser, which effectively limits
+        > it to use with just CockroachDB, since CockroachDB lacks significant
+        > amounts of SQL support: WITH RECURSIVE, CREATE FUNCTION, and CREATE TYPE.
 
 ## linters
 

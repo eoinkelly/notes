@@ -36,7 +36,7 @@ end
 
 There are 5 kinds of join. Each kind of join has multiple syntaxes which trigger it.
 
-1. CROSS JOIN (carthesian product)
+1. CROSS JOIN (cartesian product)
 2. INNER JOIN
 3. LEFT OUTER JOIN (aka LEFT JOIN)
 4. RIGHT OUTER JOIN (aka RIGHT JOIN)
@@ -107,7 +107,16 @@ Duplicating the columns in a table by INNER JOINing it to itself:
 -- If you need to make a new table which is the original table copied beside
 -- itself multiple times then you can join it to itself:
 
-select * from genre as a, genre as b where a.genreid = b.genreid;
+SELECT *
+FROM genre AS a, genre AS b
+WHERE a.genreid = b.genreid;
+
+-- alternative
+
+SELECT *
+FROM genre AS a,
+INNER JOIN genre AS b
+  ON a.genreid = b.genreid;
 ```
 
 

@@ -27,7 +27,6 @@
 
 ## 5 Policy types
 
-ttime
 1. Identity based Policy
 2. Resource based Policy
 3. Permissions Boundary Policy
@@ -44,14 +43,16 @@ ttime
     * The pattern in an SCP is to have one Allow statement which allows everything and then explicitly Deny things in granular way
     * If an SCP is considered as part of a request, it **must** have an Allow for the action
 5. Session Policy
+    * When you create a session via `AssumeRole` you can add a JSON policy which can make the session more restricted than the role would normally allow.
 
-Places a policy can be stored in one of 5 places:
+A policy can be stored in one of:
 
 1. A dedicated policy object, either customer or AWS managed (Type: identity policy, permissions boundary policy, Service control policy)
 2. Inline in a user (Type: Identity policy)
 3. Inline in a group (Type: Identity policy)
 4. Inline in a role  (Type: Identity policy)
 5. Inline in an AssumeRole API call (Type: Session policy)
+6. Inline in a resource e.g. S3 bucket (Type: resource policy)
 
 ## Evaluation
 
@@ -77,10 +78,9 @@ Consequences
 
 A cloudtrail event contains most (maybe all?) the things relevant to the policy evaluation process
 
-* separate statements in a policy are combined with logical OR
-* separate policy documents are combined ???
-    * does it depend on policy type? are SCPs different
-    * or are they just all combined (conceptually at least) into one big policy document
+* separate statements in a policy document are combined with logical OR
+* separate policy documents are combined from the same "storage place" are (conceptually) contatenated
+    * See the diagram of the evaluation order for details
 
 ## Overview
 

@@ -9,10 +9,14 @@
   - [Semi join](#semi-join)
   - [Anti join](#anti-join)
   - [LATERAL JOIN (not really a new kind of join tbh)](#lateral-join-not-really-a-new-kind-of-join-tbh)
+  - [JOIN order](#join-order)
+  - [Do JOIN always duplicate rows?](#do-join-always-duplicate-rows)
+  - [How does Postgres decide which table to put in inner loop in a CROSS JOIN?](#how-does-postgres-decide-which-table-to-put-in-inner-loop-in-a-cross-join)
 
 ## Sources
 
 * https://blog.jooq.org/2016/07/05/say-no-to-venn-diagrams-when-explaining-joins/
+* https://learnsql.com/blog/how-to-left-join-multiple-tables/
 
 ## Overview
 
@@ -51,6 +55,7 @@ Describing how you get from cross join to other joins:
     * Consequences
         * is a filtered CROSS JOIN
         * The output **is a subset of the CROSS JOIN table**
+        * The rows of either table can be duplicated in the output
 * LEFT OUTER JOIN:
     * Steps
         1. Do an INNER JOIN
@@ -75,50 +80,70 @@ Describing how you get from cross join to other joins:
 
 ```sql
 -- Use a real LEFT OUTER JOIN from the database
-select * from owners left outer join dogs on dogs.owner_id = owners.id;
+SELECT *
+FROM owners
+LEFT JOIN dogs
+    ON dogs.owner_id = owners.id;
 
 -- ************************************
 -- Make a LEFT OUTER JOIN from scratch
 --
--- The ordering between my "from scratch" one and the real one is different.
--- Fixing this would make the example very verbose so meh.
+-- Postgres will choose the table with fewer rows (according to it's statistics
+-- at least) to be in the "inner" loop so the order of rows output from a LEFT
+-- JOIN will change as the data changes!
 --
 -- ************************************
-with
-  inner_join_all_fields as (
-    --  id | name | email | id |  name  | owner_id
-    select * from owners join dogs on dogs.owner_id = owners.id
-  ),
-  inner_join_just_owners as (
-    --  id | name | email
-    select owners.* from owners join dogs on dogs.owner_id = owners.id
-  ),
-  owner_leftovers as (
-    --  id | name | email
-    select owners.* from owners
-    except
-    select * from inner_join_just_owners
-  ),
-  owner_leftovers_extended_w_nulls as (
-    --  id | name | email | id |  name  | owner_id
-    select *,
-      null::bigint as id,
-      null::text as name,
-      null::bigint as owner_id
-     from owner_leftovers
-  ),
-  left_outer_join as (
-    --  id | name | email | id |  name  | owner_id
-    select * from owner_leftovers_extended_w_nulls
-    union
-    select * from inner_join_all_fields
-  )
-select * from left_outer_join ;
+WITH inner_join_all_fields AS (
+
+    SELECT *
+    FROM owners
+    JOIN dogs
+      ON dogs.owner_id = owners.id
+
+  ), inner_join_just_owners AS (
+
+      SELECT
+        owners.*
+      FROM owners
+      JOIN dogs
+        ON dogs.owner_id = owners.id
+
+  ), owner_leftovers AS (
+
+      SELECT owners.*
+      FROM owners
+      EXCEPT
+      SELECT *
+      FROM inner_join_just_owners
+
+  ), owner_leftovers_extended_w_nulls AS (
+
+      SELECT
+        *,
+        NULL::INT8 AS id,
+        NULL::STRING AS name,
+        NULL::INT8 AS owner_id
+      FROM owner_leftovers
+
+  ), left_outer_join AS (
+
+      SELECT *
+      FROM owner_leftovers_extended_w_nulls
+      UNION
+      SELECT *
+      FROM inner_join_all_fields
+
+)
+SELECT *
+FROM left_outer_join;
 ```
 
 ## Semi join and Anti join
 
+* A fancy name for when you put a SELECT query in the WHERE clause of your original query
 * semi join and anti join are ideas from relational algebra
+* Semi and Anti joins only return columns from one table not two
+* Use them when you want to filter a table based on data in another table and **you don't want any duplicate rows generated**
 * there is no SQL syntax for these
 * you can implement them in SQL using sub selects with
     * IN()
@@ -160,8 +185,8 @@ Overview
 
 * Sometimes called a "half join"
 
-> What we really mean is we want all actors that played in films. But we don’t
-> want any films in the results, just the actors. More specifically, we don’t want
+> What we really mean is we want all actors that played in films. But we don't
+> want any films in the results, just the actors. More specifically, we don't want
 > each actor several times, once per film. We want each actor only once (or zero
 > times) in the result.
 
@@ -194,8 +219,8 @@ WHERE actor_id IN (
 > In principle, "ANTI" JOIN is just the opposite of "SEMI" JOIN.
 
 What we really mean is We want all actors that **didn't** play in films. But we
-don’t want any films in the results, just the actors. More specifically, we
-don’t want each actor several times, once per film. We want each actor only once
+don't want any films in the results, just the actors. More specifically, we
+don't want each actor several times, once per film. We want each actor only once
 (or zero times) in the result.
 
 ```sql
@@ -224,18 +249,81 @@ WHERE NOT EXISTS (
 > from the left hand side.
 >
 > This of course has nothing to do with relational algebra anymore, because it
-> imposes a JOIN order (from left to right). But sometimes, that’s OK and
-> sometimes, your table-valued function (or subquery) is so complex, that’s the
+> imposes a JOIN order (from left to right). But sometimes, that's OK and
+> sometimes, your table-valued function (or subquery) is so complex, that's the
 > only way you can actually use it.
 
-The LATERAL keyword doesn’t really change the semantics of the JOIN type that it is applied to.
+The LATERAL keyword doesn't really change the semantics of the JOIN type that it is applied to.
 
 TODO: get more use cases for lateral joins
-I think they make sense when the rhs of your join is dynamically calculated and wants to reference the left side of your join
-they don't seem to make much sense for joining two tables on disk
 
+I think they make sense when the rhs of your join is dynamically calculated and wants to reference the left side of your join
+
+they don't seem to make much sense for joining two tables on disk
 
 The LATERAL key word can precede a sub-SELECT FROM item. This allows the
 sub-SELECT to refer to columns of FROM items that appear before it in the FROM
 list. (Without LATERAL, each sub-SELECT is evaluated independently and so cannot
 cross-reference any other FROM item.)
+
+
+## JOIN order
+
+* INNER JOIN are commutative and associative so order does not matter
+    * Some databases will choose which order it thinks is best
+* OUTER JOIN order does matter
+    * Joins happen in the order written
+    * Start with the table that you want to keep all the rows from
+
+
+```sql
+a LEFT JOIN b LEFT JOIN c
+-- becomes
+(a LEFT JOIN b) LEFT JOIN c
+```
+
+## Do JOIN always duplicate rows?
+
+A join will almost always duplicate rows
+
+In some ways, the whole point of a JOIN is to duplicate rows to build new, bigger, rows that you can then filter
+
+* All joins do start with a CROSS JOIN
+    * => all joins **start** by duplicating **all the rows** i.e. they naturally tend to duplicate rows
+        * the only time they don't is if there is a very specific filter applied
+* INNER JOIN = CROSS JOIN which is then filtered
+* LEFT JOIN or RIGHT JOIN = CROSS JOIN which is then filtered, and then has rows from one table appended and extended to fit
+    * the subtle bit is that the extra rows are appended **after** the filtering happens
+    * the filtering happens to the cross-join output but the extension adds any row which hasn't appeared at least once already
+    * you will have all the duplicates that the INNER JOIN gave you, and **then** you add one copy of each row which didn't match the filter
+* FULL JOIN = CROSS JOIN which is then filtered, and then has rows from **two** tables appended and extended to fit
+
+You can use a GROUP BY to collapse the output back to just the rows from the left table, provided you have some way of grouping the data from the columns of the rhs table
+
+## How does Postgres decide which table to put in inner loop in a CROSS JOIN?
+
+* The table with fewer rows will always be in the "inner loop".
+* If both tables have the same number of rows then it _seems_ (I can't be sure without checking PG source) that PG will use lhs table as the outer loop.
+
+```ruby
+# pseudo code to implement cross join
+def do_cross_join(lhs_table, rhs_table)
+    # shorter table is in the inner loop
+    output = []
+    if len(lhs_table) >= len(rhs_table)
+        foreach r_lhs in lhs_table do
+            foreach r_rhs in rhs_table do
+                # lhs cols are always on the left
+                output << r_lhs + r_rhs
+            end
+        end
+    else
+        foreach r_rhs in rhs_table do
+            foreach r_lhs in lhs_table do
+                # lhs cols are always on the left
+                output << r_lhs + r_rhs
+            end
+        end
+    end
+end
+```

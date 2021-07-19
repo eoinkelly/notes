@@ -567,7 +567,7 @@ https://www.postgresql.org/docs/13/sql-createfunction.html
         * `RETURNS TABLE(columns)`
         * `RETURNS SETOF sometype`
 * body
-    * arguments referenced by eithee name or position e.g. `$1`
+    * arguments referenced by either name or position e.g. `$1`
     * written as a string constant
     * usually delimited with `$$` because it is the most flexible
     * runs SQL in order
