@@ -54,7 +54,6 @@ DynamoDB is
           * can match exact
           * can match prefix
           * can do range queries ("all values between X and Y")
-          *
 * fully managed
 * infinite scaling with no perf decline
     * limited by your wallet
@@ -101,6 +100,7 @@ Q: how is to use from things outside AWS?
 
 
 Indexing in Dynamo is much more limited than other DBs
+
 * no geospatial
 * no full text search
 * no location based
@@ -153,9 +153,9 @@ Unless you do full table scans, it is hard to write a slow query.
             * every element must be same type
             * duplicates are not stored
             * types:
-            1. string set
-            2. number set
-            3. binary set
+                1. string set
+                2. number set
+                3. binary set
 1. Primary keys
     * two types:
        1. simple
@@ -204,19 +204,19 @@ Unless you do full table scans, it is hard to write a slow query.
 
 * a stream is an immutable sequence of records which can be processed by multiple independent consumers
 * you get a transactional log of each write transaction to the table
-  * so you can observe all writes and process them (how???)
+    * so you can observe all writes and process them (how???)
 * use cases
-  * update record in another DynamoDB table
-  * update record in another data store
-  * trigger an event when a particular item (or items) change
-  * audit and archive data
-  * replicate data across multiple tables (similar to materialized views)
-  * you could even push all data into a SQL DB for later report generation
-  * analytics
+    * update record in another DynamoDB table
+    * update record in another data store
+    * trigger an event when a particular item (or items) change
+    * audit and archive data
+    * replicate data across multiple tables (similar to materialized views)
+    * you could even push all data into a SQL DB for later report generation
+    * analytics
 * how
-  * common
-    * lambda
-    * app that uses the Kinesis client library with the streams kinesis adapter
+    * common
+        * lambda
+        * app that uses the Kinesis client library with the streams kinesis adapter
 
 
 ### TTL
@@ -255,12 +255,12 @@ Unless you do full table scans, it is hard to write a slow query.
 1. single item limited to 400 KB
     * be careful if you try to store a one to many relationship in a single item
 1. `Query` and `Scan` will read max 1MB from table.
-  * limit applied **before** filter expressions are considered
-  * => you will need to paginate more often
+    * limit applied **before** filter expressions are considered
+    * => you will need to paginate more often
 1. Single partition  can have a max of 3000 RCU or 1000 WCU
-  * capacity units re on a per-second basis
-  * limit applies to a single partition, not a table as a whole
-  * you need to be doing 3000 reads/sec for given partition key to hit these limits
+    * capacity units re on a per-second basis
+    * limit applies to a single partition, not a table as a whole
+    * you need to be doing 3000 reads/sec for given partition key to hit these limits
 1. If you have a **local** secondary index, a single item collection cannot be larger than 10GB
     * If you have a data model with many items with the same partition key this could mean your writes start getting rejected because you run out of partition space
     * this is not a problem for **global** secondary indexes
@@ -273,9 +273,9 @@ Model a 1-many
 
 | PK            | SK              | Notes                       |
 | ------------- | --------------- | --------------------------- |
-| ORG#<OrgName> | ORG#<OrgName>   | the actual org record       |
-| ORG#<OrgName> | USER#<UserName> | record of a user within org |
-| ORG#<OrgName> | USER#<UserName> | record of a user within org |
-| ORG#<OrgName> | USER#<UserName> | record of a user within org |
+| ORG#{OrgName} | ORG#{OrgName}   | the actual org record       |
+| ORG#{OrgName} | USER#{UserName} | record of a user within org |
+| ORG#{OrgName} | USER#{UserName} | record of a user within org |
+| ORG#{OrgName} | USER#{UserName} | record of a user within org |
 
 ## The three api action types
