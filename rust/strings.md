@@ -154,3 +154,13 @@ fn main() {
 }
 
 ```
+
+Rust  stdlib does not include the ability to iterate across a string by grapheme cluster (aka "human letters") - it was in `std` but was removed. Full unicode support is now in these crates:
+
+* https://crates.io/crates/unicode-normalization
+* https://crates.io/crates/unicode-segmentation (allows iteration)
+* https://crates.io/crates/unicode-width
+
+
+
+

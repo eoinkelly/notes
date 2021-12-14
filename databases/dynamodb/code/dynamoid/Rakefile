@@ -1,0 +1,5 @@
+require_relative "./init"
+
+Rake::Task.define_task(:environment)
+
+require 'dynamoid/tasks'

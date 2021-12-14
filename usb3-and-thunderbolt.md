@@ -44,3 +44,41 @@
     ```
 
 TODO: I think Type B differs across USB variations
+
+Cables can be active or passive. Passive cables cannot carry the full data rate at longer lenghts
+
+USB history
+
+* USB 1: 12 Mbps in one direction, less in the other
+* USB 2: 480 Mbps in one direction, less in the other
+* USB 3: 5 Gbps in both directions
+* USB 3.1: 10 Gbps in both directions
+    * Type C connector introduced
+* USB 3.2:  can be:
+  * 10 Gbps symmetrical in USB-C and earlier connectors
+  * 20 Gbps symmetrical in USB-C only
+
+
+Thunderbolt history
+
+* versions 1 and 2 got very little adoption
+* Thunderbolt 3
+    * supports usb-c connection
+    * the thunderbolt protocol is sent instead of USB protocol data in an "Alternate mode"
+    * two thunderbolt controllers can communicate over a USB-C cable
+        * the cable and connectors are "USB" but nothing about the data passing is - it's thunderbolt
+* Thunderbolt 4
+  * min 20 Gbps but up to 40 Gbps
+  * requires USB-C for all connections
+  * passive cables only 40 Gbps up to 0.5m, active cables 40 Gbps up to 2m
+
+THere are "thunderbolt cables" and "USB-3" and "USB-4" cables
+
+USB alternate modes:
+
+the usb data protocol stream can be replaced by one of:
+
+* thunderbolt 3 or 4 data stream
+* displayport data stream
+* hdmi video data stream
+* PCI express stream

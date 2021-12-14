@@ -35,14 +35,9 @@ Takeaways
 * Dynamo can scale
     * Amazon and AWS use DynamoDB for all their Tier1 (lose money if it goes down) services
 * But you can design a DynamoDB that does not scale!
-
-
-Constraint: Unlike SQL DB, you must know you access patterns **before** you model with DynamoDB
-You can evolve your data model over time
-    I wonder how easy that is compared to SQL?
-
-Dynamo does not **enforce** a schema but you do need one
-Dynamo won't enforce it so you need to do that in your application
+* Constraint: Unlike SQL DB, you must know you access patterns **before** you model with DynamoDB
+* Dynamo does not **enforce** a schema but you do need one
+* Dynamo won't enforce it so you need to do that in your application
 
 DynamoDB is
 
@@ -90,11 +85,11 @@ DynamoDB is
 
 Q: how is to use from things outside AWS?
 
-> “As Amazon scaled up their operations, they couldn’t use costly operations
+> As Amazon scaled up their operations, they couldn't use costly operations
 > like joins because they were too slow and resource-intensive. Werner shared that
 > 70% of their database operations operated on a single record, and another 20%
 > would return multiple rows but would use only a single table. Thus, over 90% of
-> all queries did not use joins!”
+> all queries did not use joins!
 
 2012 AWS publish a paper on Dynamo https://www.dynamodbguide.com/the-dynamo-paper/
 
@@ -107,10 +102,10 @@ Indexing in Dynamo is much more limited than other DBs
 * multi-key indexes
 
 
-> “One benefit of DynamoDB is that its rigidity limits you in a good way. As
-> long as you aren’t using full-table scans, it’s tough to write an inefficient
+> One benefit of DynamoDB is that its rigidity limits you in a good way. As
+> long as you aren't using full-table scans, it's tough to write an inefficient
 > query in DynamoDB. The data model and API restrict you into best practices
-> upfront and ensure your database will scale with your application.”
+> upfront and ensure your database will scale with your application.
 
 Eat your vegetables ...
 
@@ -279,3 +274,39 @@ Model a 1-many
 | ORG#{OrgName} | USER#{UserName} | record of a user within org |
 
 ## The three api action types
+
+1. Item based actions
+   * operates on specific item(s)
+   * actions:
+        1. `GetItem` - read single item
+        1. `PutItem` - write single item
+        1. `UpdateItem` - edit single item, create if doesn't exist (upsert)
+       1. `DeleteItem` - delete single item from table
+    * must be performed on main table, not global secondary indexes
+    * must specify primary key
+    * batch actions
+        * do multiple single item actions in one request
+        * each action succeeds/fails independently - failure of one won't stop the others
+    * transaction actions
+        * do multiple single item actions in one request
+        * all actions succeed/fail as one - if one fails they all fail and cause the data to be rolled back
+    * You must specify exactly which items you want to act on - you can't do `DELETE FROM things WHERE age > 10` kind of stuff
+2. Queries
+   * operates on item collection
+   * retrieve multiple items with same partition key
+   * can query on either main table for a global secondary index
+3. Scans
+   * operates on whole table
+
+### Migrations
+
+You can evolve your data model over time - I wonder how easy that is compared to SQL?
+    It's gotta be scans of the whole table and update each relevant record?
+    Or maybe migrate to a whole new table if that's feasible
+    Do I need to keep some sort of "version" string on each table? or implement migrations somehow?
+
+I could mimic rails migrations by
+
+* have a bunch of ruby scripts which perform a migration action as code - no DSL, just making changes
+* keep a table in the DB to keep track of which scripts have run
+* have a runner rake task which coordinates running them

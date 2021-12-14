@@ -9,7 +9,7 @@ brew services start solr
 # or
 solr start
 
-❯ curl -v http://localhost:8983/solr/
+❯ 'curl' -v http://localhost:8983/solr/
 ```
 
 /usr/local/Cellar/solr/8.4.1_2

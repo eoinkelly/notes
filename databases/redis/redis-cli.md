@@ -19,28 +19,6 @@ Installing `redis-cli`
 * Ubuntu linux: `apt install redis-tools`
 
 
-```
-# continious latency sampling
-redis-cli -h my.cache.server -n 6 --latency
-
-# sample for 5 sec
-redis-cli -h my.cache.server -n 6 -n 6 --latency -i 5 --raw
-
-
-# show latency history
-redis-cli -h my.cache.server -n 6 --latency-history -i 5
-min: 0, max: 11, avg: 1.03 (448 samples) -- 5.01 seconds range
-min: 0, max: 3, avg: 1.03 (448 samples) -- 5.00 seconds range
-min: 0, max: 22, avg: 1.06 (446 samples) -- 5.00 seconds range
-min: 0, max: 3, avg: 0.98 (450 samples) -- 5.01 seconds range
-min: 0, max: 3, avg: 1.01 (448 samples) -- 5.01 seconds range
-min: 0, max: 3, avg: 1.01 (448 samples) -- 5.01 seconds range
-min: 0, max: 10, avg: 1.05 (446 samples) -- 5.01 seconds range
-min: 0, max: 3, avg: 1.01 (447 samples) -- 5.01 seconds range
-
-
-redis-cli -h my.cache.server -n 6
-```
 
 what's the deail with redis "db numbers"?
 
@@ -78,6 +56,15 @@ $ redis-cli config get '*'
 # connect to server
 $ redis-cli
 
+# connect to a non-default host
+$ redis-cli -h myredis.aws.internal
+
+# connect to database 4 instead of 0 (the default)
+$ redis-cli -n 4
+
+# get a realtime dump of commands as the server receives them
+redis> monitor
+
 # dump runtime info about server
 redis> info
 
@@ -99,4 +86,27 @@ redis> set keyname "some value"
 
 # exit the cli
 redis> exit
+```
+
+```
+# continious latency sampling
+redis-cli -h my.cache.server -n 6 --latency
+
+# sample for 5 sec
+redis-cli -h my.cache.server -n 6 -n 6 --latency -i 5 --raw
+
+
+# show latency history
+redis-cli -h my.cache.server -n 6 --latency-history -i 5
+min: 0, max: 11, avg: 1.03 (448 samples) -- 5.01 seconds range
+min: 0, max: 3, avg: 1.03 (448 samples) -- 5.00 seconds range
+min: 0, max: 22, avg: 1.06 (446 samples) -- 5.00 seconds range
+min: 0, max: 3, avg: 0.98 (450 samples) -- 5.01 seconds range
+min: 0, max: 3, avg: 1.01 (448 samples) -- 5.01 seconds range
+min: 0, max: 3, avg: 1.01 (448 samples) -- 5.01 seconds range
+min: 0, max: 10, avg: 1.05 (446 samples) -- 5.01 seconds range
+min: 0, max: 3, avg: 1.01 (447 samples) -- 5.01 seconds range
+
+
+redis-cli -h my.cache.server -n 6
 ```

@@ -1,5 +1,11 @@
 # Bash
 
+Sources
+
+* https://tldp.org/LDP/abs/html/fto.html
+* https://mywiki.wooledge.org/BashGuide
+* https://mywiki.wooledge.org/BashPitfalls
+
 It is a *convention* that your login name and home directory are the same but it could be different. IIRC `/etc/passwd` is consulted to decide what to use as the cwd of your login shell process.
 
 Changing working dirs with `cd` is actually changing the working dir of your shell process
