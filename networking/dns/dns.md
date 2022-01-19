@@ -1,5 +1,24 @@
 # DNS records
 
+All modern DNS servers fall into one of these roles:
+
+1. Recursive resolvers
+2. Root nameservers
+3. TLD nameservers
+4. Authoritative nameservers
+5. Forwarding resolver (not really a DNS server, more of a caching DNS proxy)
+
+These roles a bit fuzzy because a single piece of software can play multiple roles e.g. Bind
+
+Terminology: Stub resolver
+
+> In RFC 1034 terminology, a "stub resolver" is what is generally employed in
+> the Unix and Linux world: a fairly dumb DNS client library running in the
+> application processes, talking the same DNS/UDP and DNS/TCP protocols to an
+> external program running as another process, that actually does the grunt work
+> of query resolution by making back-end transactions and building up the
+> front-end response from them.
+
 ## /etc/hosts (HOSTS.TXT) - the original DNS
 
 * Througout the 70's HOSTS.TXT contained the `Name <-> IP` mapping of every domain on the Internet

@@ -1,0 +1,14 @@
+# CoreDNS config file
+
+# zone = . i.e. all zones
+# port = 1053
+# .:1053 {
+# 	bind lo # eth0, other network interfaces
+# 	health # enables health for all server blocks (is special directive)
+# 	whoami
+# }
+
+.:1053 {
+    forward . 8.8.8.8 9.9.9.9
+    log
+}
