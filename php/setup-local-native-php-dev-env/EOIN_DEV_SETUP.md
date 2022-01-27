@@ -1,5 +1,7 @@
 # How-to set up a new PHP project on my laptop
 
+# THIS IS DEPRECATED NOW - USE DOCKER INSTEAD
+
 ## Overview
 
 * PHP

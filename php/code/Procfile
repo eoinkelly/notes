@@ -1,0 +1,2 @@
+php: php-fpm -F
+server: nginx -p . -c ./nginx.conf

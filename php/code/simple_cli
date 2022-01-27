@@ -1,8 +1,11 @@
 #!/usr/bin/env php
-
 <?php
 
+// Usage
+// $ ./simple_cli
+
 if ($argc != 2 || in_array($argv[1], array('--help', '-help', '-h', '-?'))) {
+  // this is a very old-school interleaved way to put content out - better to use a now var these days
 ?>
 
 This is a command line PHP script with one option.

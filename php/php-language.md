@@ -44,7 +44,7 @@ All type names are lowercase
 1. boolean
     * use the (case insenstive) constants `TRUE` and `FALSE`
     * cast to boolean with `(bool)` or `(boolean)`
-    * expressions are automatically cast to boolean if passed to a control structure
+    * expressions are automatically **coerced** to boolean if passed to a control structure
     * falsy values
         1. 0
         2. -0
@@ -61,7 +61,8 @@ All type names are lowercase
         ```php
         <?php
         $a = 123; // decimal
-        $a = 0123; // octal (GOTCHA!)
+        $a = 0123; // standard surprise octal
+        $a = 0o123; // explicit octal
         $a = 0x123 // hex
         $a = 0b001111 // binary
         ```
@@ -107,7 +108,10 @@ All type names are lowercase
 
         # nowdoc
         echo <<<'EOM'
-        no parsing in here
+        // no parsing in here
+        $a = 123;
+        echo $a;
+        Cloud be any data in here
         EOM;
         // note the semicolon after EOM
         ```
@@ -238,7 +242,7 @@ Pseudo types used in documentation but cannot be used in code
 * it has assign by reference available if you prepend the source variable with `&`
     * Only _named_ variables can be assigned by reference
 * uninitialized variables get a default value depending on their type
-    * boolean = FALSW
+    * boolean = FALSE
     * string = empty string
     * array = empty array
     * integer = 0
@@ -317,7 +321,6 @@ Namespaces
     1. constants
 * Namespace names are **not** case sensitive
 * A file declaring a namespace must put that declaration at the very top of the file
-*
 * You can declare multiple namespaces in a file but this is strongly discouraged
 * The same namespace can be declared in multiple files (allowing you to build your namespace of code objects from multiple files
 * `\` is typically used to indicate levels within a namespace name
@@ -375,22 +378,65 @@ die();
 
 ## Loading code
 
-There are multiple autoloaders apparently
+Old school: `include`
 
-https://getcomposer.org/doc/01-basic-usage.md
+### include and include_once
+
+* is an expression (returns a value)
+* emits warning if it can't find the file
+* behaves as if the code was typed in at that point in the file - gets whatever scope the `include` line is in
+* include_once will handle re-includes
+
+```php
+<?php
+
+// php searches the include_path, then . for this file
+include 'file.php';
+
+// explicit path - must start with / or . or .. to be recognised as explicit
+include './path/to/file.php';
+include 'path/to/file.php'; // won't be recognised as explicit
+
+
+$myvar = include 'file.php'; // if the file has a `return` statemetn it will be returned
+```
+
+### require and require_once
+
+* same as `include` but creates fatal error instead of warning if something goes wrong
+* preferred
+
+```php
+<?php
+
+require __DIR__.'path/to/file.php`
+```
+
+### handy magic constants
+
+* https://www.php.net/manual/en/language.constants.magic.php
+* resolved at compile time (regular constants are resolved at runtime)
+
+```php
+<?php
+// __DIR__ is absolute path of current script's directory
+// __FILE__ is absolute path of current script's file
 
 ```
-require
-require_once
-```
 
+
+### autoloaders
+
+* Most PHP projects use a dynamic autoloader to avoid having many explicit `require` statements
+* The composer autoloader is most popular and found in `vendor/autoload.php` in your project
+* See https://getcomposer.org/doc/01-basic-usage.md
 
 ## Questions
 
-use
-    pulls in the given symbol
-    but how does it find it in files?
-type hints
-$this
-namespace
-how does loading code work in PHP?
+    use
+        pulls in the given symbol
+        but how does it find it in files?
+    type hints
+    $this
+    namespace
+    how does loading code work in PHP?
