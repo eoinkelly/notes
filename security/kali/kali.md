@@ -1,5 +1,7 @@
 # Kali
 
+## Via virtualbox
+
 I try to treat kali as much of an "appliance" as possible - I don't want to waste time faffing around with customising it.
 
 * I started with the virtualbox ova version
@@ -24,7 +26,7 @@ I try to treat kali as much of an "appliance" as possible - I don't want to wast
 1. optional: disable semi-transparent background in terminal
 
 
-Terminal shortcuts
+## Terminal shortcuts
 
 ```
 new tab     = ctrl+T
@@ -45,3 +47,17 @@ zoom in     = ctrl++
 zoom out    = ctrl+-
 normal zoom = ctrl+0
 ```
+
+## Tips
+
+When setting up kali
+
+1. disable screensaver
+    * Go to settings -> privacy -> disable screenlock
+2. setup aliases
+    ```
+    # handy for pasting content between VM and host
+    alias pbcopy='xclip -selection clipboard'
+    alias pbpaste='xclip -selection clipboard -o'
+    ```
+
