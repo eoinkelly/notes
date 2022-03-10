@@ -1,0 +1,5 @@
+#!/bin/bash
+
+echo "you will need to kill this terminal to log out"
+
+socat ~/Library/Containers/com.docker.docker/Data/vms/0/console.sock -,rawer

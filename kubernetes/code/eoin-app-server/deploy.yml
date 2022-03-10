@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: eoin-app-server
+  name: eoin-app-server
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: eoin-app-server
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: eoin-app-server
+    spec:
+      containers:
+      - image: nginx
+        name: nginx
+        # ports:
+        # - containerPort: 1234
+        resources: {}
+status: {}
