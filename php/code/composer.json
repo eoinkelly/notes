@@ -1,0 +1,13 @@
+{
+    "name": "eoinkelly/example-code",
+    "type": "project",
+    "require": {
+        "monolog/monolog": "^2.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Eoin\\": "src/"
+        }
+    },
+    "authors": []
+}

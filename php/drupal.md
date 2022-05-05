@@ -11,6 +11,9 @@
 * https://github.com/mglaman/drupal-check can be used to identify deprecations in 8.x code
 * Drupal 9 will use twig2, 8.x used twig1
 
+* it comes with server config files in multiple directores to control access
+    * `.htaccess` for Apache
+    * `web.config` for IIS
 
 ## Install
 ```

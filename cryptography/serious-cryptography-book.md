@@ -6,14 +6,13 @@ Terms
 
 * encryption is the principal application of cryptography
 * make data incomprehensible to ensure it's confidentiality
-* encryption has = parts:
+* encryption has 2 parts:
     1. algorithm (aka cipher)
     2. secret key
 * A cipher is
 	* the algorithm used to get from plaintext to ciphertext and back again
 	* is two functions (also called modes): encrypt and decrypt
 	* confusingly, there is also a "mode of operation" for the algorithm which is unrelated
-
 
 > ciphertext can be same length as plaintext or longer. It can never be shorter
 > than the plaintext.
@@ -25,19 +24,21 @@ Terms
 
 	* TODO: why exactly?
 
-Categories
+### Categories of cipher
+
+We can categorise ciphers in a few ways
 
 * symmetric encryption
     * encrypting key and decrypting key are the same (or one can be easily derived from the other via a transformation)
-	* note: this does not mean the encryption and decryption ciphers are exactly the same, only that they use the same key as input
+	* note: this does not mean the encryption and decryption **ciphers** are exactly the same, only that they use the same key as input
 * "input processing" type
 	* block algorithm: complete blocks are encrypted
 		* examples: AES, IDEA, Blowfish, DES, RC5, RC6
 	* stream algorithm: data is encrypted as it arrives
-    	* ??? at single byte level or single bit? presumably byte
+    	* can operate on single byte or single bit
 		* examples: RC4
 * classical cipher
-    * encryption and decryption can happen in your head on pen+paper
+    * encryption and decryption can happen in your head or pen+paper
 
 ### Classical ciphers
 
@@ -60,7 +61,7 @@ Categories
 
 #### Mode of operation
 
-A cipher takes a chunk (could be a block or a byte) or plaintext and creates a chunk of ciphertext (or vice versa)
+A cipher takes a chunk (could be a block or a byte) of plaintext and creates a chunk of ciphertext (or vice versa)
 
 Ciphers need a _mode of operation_ (or _mode_) to support messages of any length.
 
@@ -79,8 +80,10 @@ Things in the domain of the mode:
 	* symmetric
 * an alphabetic shift 3 positions to right
 * no secret involved (shift is always 3)
-* not symmetric
-	* key is fixed and known but different key required to decrypt (left shift 3 positions)
+* key is fixed and known but different key required to decrypt (left shift 3 positions)
+    * is caesar symmetric?
+      * yes case: you can easily derive the decryption key from the encryption key
+      * no case: the encryption key and decryption keys are technically different
 * even making the shift amount secret isn't secure because it's trivial to try all 25 possible shifts
 
 #### Example: Vigenere Cipher
@@ -95,13 +98,12 @@ Things in the domain of the mode:
 * Similar to Caesar cipher but shifts are based on a key
 * Key is a collection of letters which represent numbers based on their position in the alphabet relative to A e.g. D => 3 because it is 3 after A
 * The key is repeated as many times as necessary to encrypt the plain-text
-
 * Security
 	* more secure than Caesar
 	* still easy to break
 	* breaker needs to figure out key length first
 	* can do so by looking for repeated sequences in the ciphertext
-	* or via frequency analysis (using the known likelihood of letters to appear in language
+	* or via frequency analysis (using the known likelihood of letters to appear in language)
 	* can be ok if the message is short compared to key length or if secrecy only required for a short period of time.
 
 #### Example: random ideas
@@ -111,12 +113,10 @@ Things in the domain of the mode:
 		* equivalent secrecy to caesar I guess?
 		* it's a fixed shift from plain text to cipher text
 		* maybe bit better than caesar because you have more than 25 shifts available but still vulnerable to frequency analysis and guessing patterns
-	* idea map a-z to 26 numbers
+	* idea: map a-z to 26 numbers
 		* it's a fixed shift from plain text to cipher text
-    	* (can be any numbers but need to be able to tell where they end )
-			* how to solve this? - e.g. is 19 "nineteen" or "one, nine"?
+    	* can be any numbers but need to be able to tell where they end e.g. comma separated
 		* equivalent secrecy to caesar I guess?
-	* idea: map a-z to
 * bit based ideas for substitution ciphers
     * ???
 
@@ -127,11 +127,12 @@ Things in the domain of the mode:
 	* symmetric
 	* substitution
 * ++ is perfectly secure provided the key is at least as long as the message and never re-used
+* ++ simple to implement
 * -- is very impractical in most cases
 * each key must only be used once (it's in the name)
 * proved secure by Claude Shannon
     * Assume K is random
-    * then C looks as ransom as K because XOR of a random string with anything is random
+    * then C looks as random as K because XOR of a random string with anything is random
     * if C is totally random then then all possible plaintexts are equally likely so the attacker has to try them all
     * therefore it is secure
     * of course that doesn't really matter if the attacker has the resources to try all the plaintexts
@@ -293,8 +294,8 @@ Kerckhoff's principle, coined during a time when the "cipher" was a mechanical b
 
 Types of model
 
-* Black-box model
-    *
+#### Black-box model
+
 Query = send input to a function and see the output but nothing about how the function works
 Encryption query = send plaintext into the encryption function and see the ciphertext output
 Decryption query = send ciphertext into the encryption function and see the plaintext output
@@ -321,13 +322,15 @@ Decryption query = send ciphertext into the encryption function and see the plai
     * e.g. breaking the decryption key in a chip in all playstation's or whatever. You can encrypt and decrypt but what you want is the key
 
 
-* Grey-box model
-    * attacker has access to the cipher's implementation
-    * more realistic than black box
-    * these models are harder to define than black-box
-    * attacks often depend on side-channels or other analog/real world properties of the system rather than just the algorithms's inputs and outputs
-      * => crypto theory will often fail to model these properly
-    * examples
+#### Grey-box model
+
+* attacker has access to the cipher's implementation
+* more realistic than black box
+* these models are harder to define than black-box
+* attacks often depend on side-channels or other analog/real world properties of the system rather than just the algorithms's inputs and outputs
+    * => crypto theory will often fail to model these properly
+* examples
+
 Example grey-box attacks
 
 1. Side-channel attack
@@ -523,7 +526,7 @@ $$log(\frac{1}{2^n}) = -n$$
 * lower entropy values imply less randomness
 * Entropy is also a measure of information You get the most information when you learn the most i.e remove the most uncertainty
 
-### How to generate random numbers?
+### Types of RNG
 
 * RNGs
     * usually harvest entropy from the environment:
@@ -560,7 +563,7 @@ $$log(\frac{1}{2^n}) = -n$$
     * they use the actual random bits and put them into a _Deterministic random bit generator (DRBG)_
     * need to ensure the DRBG never gets the same input twice
 
-Operations within a PRNG
+### Operations within a PRNG
 
 1. `init()`
     * initializes the entropy pool to some default value
@@ -577,6 +580,8 @@ Operations within a PRNG
     * usually called by the application requiring random bits
 
 
+### PRNG desirable security features
+
 A PRNG should be
 
 1. resistant to backtracking (forward secrecy)
@@ -588,20 +593,21 @@ A PRNG should be
     * if an attacker can get access to the current value of the entropy pool, they should not be able to use it predict future values of the pool or future generated bits
     * `refresh(R)` should be called regularly with `R` values that are unknown to the attacker and difficult to guess
     * even if the `R` values are known, attacker would need to know the order that `refresh(R)` and `next()` operations were called to reconstruct the pool.
+3. Author says this is not a complete list ...
 
+### PRNG implementations
 
-PRNG implementations
-
-Yarrow
+### Yarrow
 
 * 1998 by Kelsey a& Schneier
 * used in macOS and iOS
 
-Fortuna
+### Fortuna
 
 * 2003 by Ferguson and Schneier
 * replaced yarrow in Windows
 
+Fortuna implementation
 
 * 32 entropy pools $P_1, P_2,...,P_32$ such that $P_i$ is used every $2^{32}$ reseeds.
 * Internal state of the DRBG
@@ -629,8 +635,7 @@ Ways it can go wrong
 * Multiple instances of fortuna share a seed file (seed files must never be re-used)
 * you have just rebooted so not enough RNG data is available yet
 
-
-Cryptographic PRNG vs Non-Cryptographic PRNG
+### Cryptographic PRNG vs Non-Cryptographic PRNG
 
 * Non-crypto PRNGs
     * produce uniform distributions for simulations and video games but are not secure enough to use for crypto
@@ -645,7 +650,7 @@ Cryptographic PRNG vs Non-Cryptographic PRNG
 * Crypto PRNGs (CPRNG)
     * Are unpredictable as well as delivering a uniform distribution of probabilities
 
-Non-crypto PRNG example: Mersenne Twister
+### Non-crypto PRNG example: Mersenne Twister
 
 * Used by PHP, Ruby, Python, R etc.
     * From ruby `Random` docs
@@ -654,7 +659,7 @@ Non-crypto PRNG example: Mersenne Twister
 * but it's predictable - given a few bits produced by MT, it easy to tell which bits will follow
 
 
-Aside: Ruby SecureRandom
+### Aside: Ruby SecureRandom
 
 * Supports the following secure random number generators:
     * openssl
@@ -663,7 +668,7 @@ Aside: Ruby SecureRandom
 * TODO: the docs don't say how it picks or how it works under the hood
 * `openssl rand <num bytes> -out <output file>` get random data out of openssl
 
-Linearity
+### Security: linearity (insecure) vs non-linearity (secure)
 
 Mersenne twister is weak because it is linear.
 
@@ -690,8 +695,7 @@ Cryptographers design PRNGs so that they emulate complex non-linear transformati
 
     TODO: I don't fully understand linearity
 
-
-Statistical tests are not a measure of cryptographic security
+### Statistical tests are not a measure of cryptographic security
 
 There are standard test suites for PRNGs
 
@@ -699,13 +703,16 @@ There are standard test suites for PRNGs
 * Diehard
 * NIST test suite
 
-They test the output against a perfect uniform distribution, check distribution of 0 and 1 bits or the distribution of 8bit patterns. These tests are **not a measure of PRNG security**
+They test the output against a perfect uniform distribution, check distribution of 0 and 1 bits or the distribution of 8-bit patterns. These tests are **not a measure of PRNG security**
+
+### Real-world PRNG user interfaces
 
 * Linux
     * `/dev/urandom`
         * `/dev/urandom` is the userland interface to the crypto PRNG in the kernel
         * `dd if=/dev/urandom of=myfile bs=1M count=10`
         * when you read it in C, you **must check the result of open() and read()** lest your buffer be unchanged or just filled with 0's
+        * based on Blake2s now https://lore.kernel.org/lkml/20211223141113.1240679-2-Jason@zx2c4.com/
     * `/dev/random`
         * contains an entropy estimator
             * these are considered unreliable and can be fooled by attackers
@@ -720,35 +727,34 @@ They test the output against a perfect uniform distribution, check distribution 
         * legacy userland interface to kernel PRNG
     * `BcryptGenRandom()`
         * more modern userland interface to kernel PRNG
-* Hardware: RDRAND in Intel
+* Hardware: `RDRAND` in Intel
     * Access via `RDRAND` assembly instruction
-    * baed on NIST SP-800-90 guidelines
+    * based on NIST SP-800-90 guidelines
         * uses AES in CTR_DRBG mode
-    * entropy cource is a _dual differential jamb latch with feedback_
+    * entropy source is a _dual differential jamb latch with feedback_
     * a small hardware circuit which jumps between 0 and 1 at 800 MHz depending on thermal noise fluctuation
     * only partially documented
     * some security concerns about it being backdoored post snowden
         * can be mitigated by mixing the bits with other sources
     * Intel also provides `RDSEED` instruction which returns some random bits directly from the entropy source
         * This is designed to be used to seed other PRNGs
+    * Json Donenfeld says `RDRAND`is actually slow https://lore.kernel.org/lkml/20211230165052.2698-1-Jason@zx2c4.com/
 
-Ways PRNG can go wrong
+### Ways PRNG can go wrong
 
 1. Choose a poor entropy source
     * choosing guessable sources like
         * time of day
         * PIDs of processes
-1. Insufficient entropy at boot time
-    * At boottime, if there is not yet sufficient entropy, the PRNG might fallback to hard-coded values
+2. Insufficient entropy at boot time
+    * At boot-time, if there is not yet sufficient entropy, the PRNG might fallback to hard-coded values
     * 2012 issue where SSH servers were generating the same keys
-1. Using a non-cryptographic PRNG
+3. Using a non-cryptographic PRNG
     * MediaWiki used Mersenne Twister to generate security tokens and temp passwords in the past
-1. Sampling bugs
-   * cryptocat wanted
-
-Generating a set of random digits in range 0-9
-
-You start with a stream of hopefully cryptographically secure bytes (0 -> 255)
-Naive approach would be to just modulo 10 but this won't give an uniform distribution of outputs
-You need to ignore any values from the PRNG above value 249 to ensure you get an even spread of outputs
-It's 249 not 250 because we assume 0 indexed array
+4. Sampling bugs
+   * cryptocat (now discontinued secure chat app) issue:
+        * Generating a set of random digits in range 0-9
+            * You start with a stream of hopefully cryptographically secure bytes (0 -> 255)
+            * Naive approach would be to just modulo 10 but this won't give an uniform distribution of outputs
+            * You need to ignore any values from the PRNG above value 249 to ensure you get an even spread of outputs
+            * It's 249 not 250 because we assume 0 indexed array. `cryptocat` got this wrong in an old version

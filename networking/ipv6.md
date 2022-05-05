@@ -316,3 +316,30 @@ There is a corresponding DHCPv6
 ## ICMPv6
 
 There is a corresponding ICMPv6
+
+## NAT64
+
+https://en.wikipedia.org/wiki/NAT64
+
+Allows hosts which only speak IPv6 to talk to IPv4 hosts via a NAT64 gateway
+
+A 32 bit chunk of ipv6 space reserved
+The "well-known prefix" reserved for this service is 64:ff9b::/96.
+
+IPv6 client only has the IPv4 address of the other side
+It embeds the IPv4 as an IPv6 in the reserved space
+The NAT64 gateway translates the received IPv6 into the corresponding IPv4
+
+
+## DNS64
+
+Intended as a temporary hack to help transition to IPv6 everywhere
+
+https://en.wikipedia.org/wiki/IPv6_transition_mechanism#DNS64
+
+DNS64 describes a DNS server that when asked for a domain's AAAA records, but
+only finds A records, synthesizes the AAAA records from the A records. The first
+part of the synthesized IPv6 address points to an IPv6/IPv4 translator and the
+second part embeds the IPv4 address from the A record. The translator in
+question is usually a NAT64 server. The standard-track specification of DNS64 is
+in RFC 6147.

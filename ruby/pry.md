@@ -1,5 +1,22 @@
 # Pry
 
+
+## tab complete
+
+Sometimes tab-complete is very slow in large Rails apps because pry has to
+iterate across all the loaded modules. To disable tab complete in Pry:
+
+```ruby
+# In ./.pryrc
+Pry.config.completer = nil
+```
+
+Or interactively for just your session:
+
+```ruby
+pry> _pry_.config.completer = nil
+```
+
 cheatsheet
 
 ```

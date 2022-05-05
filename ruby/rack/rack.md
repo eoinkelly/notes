@@ -17,7 +17,15 @@ Rails 6 uses the following middlewares (from rack itself) as part of its middlew
 6. use Rack::ETag
 7. use Rack::TempfileReaper
 
-Rails does not seem to use any middlewares from rack-contrib
+Rails app
+
+* does not seem to use any middleware from rack-contrib
+* does use the Rack DSL - it includes a `config.ru`
+* `config.ru` runs the following app (i.e. this app is the very last in the chain)
+    ```ruby
+    run MyApp::Application
+    ```
+
 
 ## Middlewares
 

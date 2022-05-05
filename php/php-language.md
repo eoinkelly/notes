@@ -1,21 +1,17 @@
-# PHP language cheatsheet
-
-Tip: Install `psysh` because the built-in PHP interactive shell is annoying e.g. it doesn't echo return values
+# PHP language
 
 ## General
 
 * All PHP files must have opening tag `<%php`
-    * if file is all PHP content then omit closing tag
+    * if file is all PHP content (i.e. no interleaved HTML) then you should omit closing tag
 * all statements (except last one in block) require `;` termination
 * comments
-    * examples
-        ```php
-        <?php
-        // single line
-        /* block style */
-
-        # also single line but these seem much less common in the PHP code I have seen
-        ```
+    ```php
+    <?php
+    // single line
+    /* block style */
+    # also single line but these seem much less common in the PHP code I have seen
+    ```
 * supports anonymous functions (via the Closure class) which are most useful as callback function
     ```php
     <?php
@@ -31,11 +27,36 @@ Tip: Install `psysh` because the built-in PHP interactive shell is annoying e.g.
         // $outside is available in here now
     }
     ```
-* PHP is dynamically typed not statically typed
+* PHP is dynamically typed (types checked at runtime)
+* recent versions (7+) have added more type declarations
 * It supports explicit type casting e.g. `(string)`, `(float)` etc.
 * It will do automatic type coercion if necessary
-    * These rules are not always obvious ...
+    * As ever, these rules are not always obvious or good
+    * Use `declare(strict_types=1)` at top of each file to opt that file out of coercions
 
+## Type declarations
+
+> To enable strict mode, a single declare directive must be placed at the top of
+> the file. This means that the strictness of typing for scalars is configured on
+> a per-file basis. This directive not only affects the type declarations of
+> parameters, but also a function's return type (see return type declarations,
+> built-in PHP functions, and functions from loaded extensions.
+
+> By default, PHP will coerce values of the wrong type into the expected scalar
+> type declaration if possible. For example, a function that is given an int for a
+> parameter that expects a string will get a variable of type string.
+
+> It is possible to enable strict mode on a per-file basis. In strict mode, only
+> a value corresponding exactly to the type declaration will be accepted,
+> otherwise a TypeError will be thrown. The only exception to this rule is that an
+> int value will pass a float type declaration.
+
+```php
+<?php
+declare(strict_types=1)
+
+
+```
 
 ## PHP has 10 primitive types
 
@@ -121,6 +142,7 @@ All type names are lowercase
     * PHP strings are not unicode safe by default!
     * The `intl` and `mbstring` extensions contain functions which work correctly with multi-byte strings
     * There doesn't seem to be a clean way to iterate over a multibyte string. TODO
+    * you can define the `__toString` method in your class to customise how it rendered as a string
 5. array
     * is an **ordered** **map**
     * more like `Hash` in Ruby where if you omit the keys it will fill in integers
@@ -311,7 +333,7 @@ Pseudo types used in documentation but cannot be used in code
 
     ```
 
-Namespaces
+## Namespaces
 
 * PHP Namespaces provide a way in which to group related classes, interfaces, functions and constants.
 * Only the following code cares about the namespace it was defined in
@@ -320,6 +342,11 @@ Namespaces
     1. functions
     1. constants
 * Namespace names are **not** case sensitive
+* PHP does not care what namespace names you use but devs follow PSR-4 convention
+    * https://www.php-fig.org/psr/psr-4/
+* PSR PHP Standards Recommendation
+    * Created by PHP Framework Interop Group PHP-FIG
+    * an attempt to make code more consistent between frameworks
 * A file declaring a namespace must put that declaration at the very top of the file
 * You can declare multiple namespaces in a file but this is strongly discouraged
 * The same namespace can be declared in multiple files (allowing you to build your namespace of code objects from multiple files
@@ -327,10 +354,10 @@ Namespaces
 * The `use` keyword (when used outside of a closure context) allows **aliasing**
     * PHP can alias many kinds of things:
         1. alias a namespace name
-        1. alias a class name
-        1. alias a interface name
-        1. alias a function name
-        1. alias a constnat name
+        2. alias a class name
+        3. alias a interface name
+        4. alias a function name
+        5. alias a constnat name
     * Full syntax: `use Some\Name\Space as MySpace;`
     * If you omit the `as ...` then it gets aliased as the last `\` chunk in the namespace name e.g.
         ```php
@@ -431,12 +458,143 @@ require __DIR__.'path/to/file.php`
 * The composer autoloader is most popular and found in `vendor/autoload.php` in your project
 * See https://getcomposer.org/doc/01-basic-usage.md
 
-## Questions
 
-    use
-        pulls in the given symbol
-        but how does it find it in files?
-    type hints
-    $this
-    namespace
-    how does loading code work in PHP?
+## Functional programming features
+
+    Callables, which are things that can be called as functions, of which there are a few:
+    PHP: Callbacks / Callables - Manual
+
+    https://www.php.net/manual/en/language.types.callable.php
+
+    Closures, a callable class with parameters and a scope bound to it:
+    PHP: Closure - Manual
+
+    https://www.php.net/manual/en/class.closure.php
+
+    Anonymous functions, functions that are not defined globally, but are more like values that can be passed and assigned to variables:
+    PHP: Anonymous functions - Manual
+
+    https://www.php.net/manual/en/functions.anonymous.php
+
+    Arrow functions, which are a shorthand way of creating anonymous functions:
+    PHP: Arrow Functions - Manual
+
+    https://www.php.net/manual/en/functions.arrow.php
+
+    Finally, the magic __invoke method, which allows you to create callable objects:
+    PHP: Magic Methods - Manual
+
+    https://www.php.net/manual/en/language.oop5.magic.php#object.invoke
+
+## Iteration
+
+1. `for`
+    * works like C
+    ```php
+
+    ```
+1. `foreach`
+    * works only on arrays and objects
+    ```php
+    // value is a copy
+    foreach ($things as $value) {
+        echo $value
+    }
+    unset($value); // required clean-up :-(
+
+    // value is a reference
+    foreach ($things as &$value) {
+        $value = $value * 2;
+    }
+    ```
+    * given a class instance (object) it will iterate through all the visible properties of that object
+        * i.e. if iterating from outside the class you only see `public` properties, from inside you see everything
+    ```php
+    ```
+    * you can implement the `Iterator` interface in your class to customise how it is iterated
+        * https://www.php.net/manual/en/class.iterator.php
+
+## Strings and encoding
+
+* Your `php.ini` should have set
+    ```php
+    default_charset = "utf-8";
+    ```
+    * This seems to be set by default on modern installs
+
+Many PHP functions are not unicode safe e.g. strlen is number of **bytes** in string, not characters. There are alternatives under the `iconv_*`, `grapheme_*` function name prefixes.
+
+grapheme_ functions are par fo the Intl extension
+
+```php
+strlen() // count bytes
+iconv_strlen() // count characters (I _think_ this is counting codepoints)
+grapheme_strlen() // count graphemes
+mb_strlen() // count ???
+```
+
+The `mbstring` extension provides a bunch of functions for working correctly with multi-byte encodings.
+
+Frameworks provide their own String classes e.g.
+
+* https://symfony.com/doc/current/components/string.html
+* https://laravel.com/api/5.5/Illuminate/Support/Str.html
+
+## Debugging
+
+PHP defaults to writing debug output into the other output the script generates
+
+```php
+// php.ini
+
+display_errors = 1 // should be 0 in production
+error_reporting = E_ALL
+//set to 32767 on my brew install
+error_log path/to/error.log
+
+```
+
+how do i write to the server's stdout? can I?
+how do i write to logs within frameworks?
+
+
+
+```php
+print_r($thing)
+// ++ smart enough to invoke the iterator on arrays to see contents
+// -- doesn't display boolean and NULL well
+// -- will choke on recursive structures
+
+var_dump($thing)
+// ++ similar to print_r but handles booleans and NULL better
+// ++ will stop after 3 levels on recursive structures
+
+
+assert($a == 12, "a should be 12"); // deliberately triggering errors
+```
+
+## Errors Exceptions
+
+Errors
+
+* historically PHP had errors but not exceptoins
+* Since PHP7 errors are reported by throwing `Error` exceptions.
+    * the Error exceptoins **do not inherit from `Exception`!
+    * `Throwable` is the common parent of `Error` and `Exception`
+* errors can be suppressed by wrapping the expression in `@()`
+    * You cannot otherwise recover from an error.
+    * I'm not sure how useful this is since PHP7
+* errors are procedural, exceptions are OO vibe
+* you can set a global error handler function but it cannot handle all kinds of error
+* exceptions are caught via the try-catch-finally syntax
+* you can set a global exception handler to catch all exceptions you don't explicitly catch
+
+## ::class syntax
+what is this ::class syntax
+
+     $app->make(Illuminate\Contracts\Console\Kernel::class);
+
+> SomeClass::class will return the fully qualified name of SomeClass including
+> the namespace. This feature was implemented in PHP 5.5.
+
+## Questions

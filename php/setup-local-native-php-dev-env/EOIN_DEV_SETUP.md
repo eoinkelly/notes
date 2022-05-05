@@ -171,6 +171,7 @@ Options:
 2. homebrew
     * has most recent stable version of PHP in the `php` package
     * lives in `/usr/local/bin/php`
+    * -- does not have xdebug enabled
 3. macOS built-in
    * currently 7.3.9 but will probably never be updated
    * lives in `/usr/bin/php`
