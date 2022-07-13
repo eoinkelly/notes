@@ -2,44 +2,142 @@
 
 - [Managing raw SQL in Rails](#managing-raw-sql-in-rails)
   - [This document assumes PostgreSQL](#this-document-assumes-postgresql)
-  - [When should I use raw SQL?](#when-should-i-use-raw-sql)
-  - [What do I give up by choosing raw SQL?](#what-do-i-give-up-by-choosing-raw-sql)
   - [What decisions do I need to make?](#what-decisions-do-i-need-to-make)
-  - [Essential background: Ways to run raw SQL](#essential-background-ways-to-run-raw-sql)
-  - [Essential background: Postgres wire protocol versions](#essential-background-postgres-wire-protocol-versions)
-  - [Essential background: Writing good raw SQL](#essential-background-writing-good-raw-sql)
-  - [How do I store my raw SQL?](#how-do-i-store-my-raw-sql)
+  - [Essential background knowledge](#essential-background-knowledge)
+    - [Essential background: Layers of APIs which can run SQL](#essential-background-layers-of-apis-which-can-run-sql)
+    - [Essential background: Postgres wire protocol versions](#essential-background-postgres-wire-protocol-versions)
+  - [Step: Verify I actually need need raw SQL](#step-verify-i-actually-need-need-raw-sql)
+    - [When should I use raw SQL?](#when-should-i-use-raw-sql)
+    - [What do I give up by choosing raw SQL?](#what-do-i-give-up-by-choosing-raw-sql)
+  - [Step: Write a good raw SQL query](#step-write-a-good-raw-sql-query)
+  - [Step: Interpolate data values safely](#step-interpolate-data-values-safely)
+  - [Step: Store the raw SQL query](#step-store-the-raw-sql-query)
     - [Option 1: Store as string in code](#option-1-store-as-string-in-code)
       - [1. ActiveRecord::Base.connection.execute --> PG::Result](#1-activerecordbaseconnectionexecute----pgresult)
       - [2. ActiveRecord::Base.connection.select_all --> ActiveRecord::Result](#2-activerecordbaseconnectionselect_all----activerecordresult)
       - [3. MyModel.find_by_sql --> Array\<MyModel\>](#3-mymodelfind_by_sql----arraymymodel)
       - [4. ActiveRecord::Base.connection.exec_query --> ActiveRecord::Result](#4-activerecordbaseconnectionexec_query----activerecordresult)
-      - [5. PG::Connection#exec --> PG::Result](#5-pgconnectionexec----pgresult)
+      - [5. PG::Connection#exec --> PG::Result (hint: don't use this)](#5-pgconnectionexec----pgresult-hint-dont-use-this)
       - [6. PG::Connection#exec_params --> PG::Result](#6-pgconnectionexec_params----pgresult)
-    - [Option 2: Send as database view](#option-2-send-as-database-view)
-    - [Option 3: Send as materialised views](#option-3-send-as-materialised-views)
+    - [Option 2: Save as database view](#option-2-save-as-database-view)
+    - [Option 3: Save as materialised views](#option-3-save-as-materialised-views)
   - [Appendices](#appendices)
     - [Appendix: Do I need to call PG::Result#clear?](#appendix-do-i-need-to-call-pgresultclear)
-    - [Appendix: What about MySQL?](#appendix-what-about-mysql)
+    - [Appendix: What about manually freeing MySQL result memory?](#appendix-what-about-manually-freeing-mysql-result-memory)
     - [Appendix: %q and %Q are handy when building large SQL strings](#appendix-q-and-q-are-handy-when-building-large-sql-strings)
-    - [Appendix: `?` confusion (hint: it's not bound parameters in ActiveRecord)](#appendix--confusion-hint-its-not-bound-parameters-in-activerecord)
+    - [Appendix: `?` confusing in ActiveRecord (hint: it is NOT bound parameters )](#appendix--confusing-in-activerecord-hint-it-is-not-bound-parameters-)
     - [Appendix: Debugging tips](#appendix-debugging-tips)
-    - [Appendix: Sanitizing SQL strings](#appendix-sanitizing-sql-strings)
     - [Appendix: Alternatives to ActiveRecord](#appendix-alternatives-to-activerecord)
-    - [Appendix: Suggested development workflow](#appendix-suggested-development-workflow)
-      - [Debugging with Wireshark](#debugging-with-wireshark)
-    - [Appendix: Avoiding SQL injection with prepared statements](#appendix-avoiding-sql-injection-with-prepared-statements)
+    - [Appendix: Suggested development workflow for writing raw SQL in Rails](#appendix-suggested-development-workflow-for-writing-raw-sql-in-rails)
+    - [Appendix: Debugging with Wireshark](#appendix-debugging-with-wireshark)
     - [Appendix: Avoiding excessive memory usage with a CURSOR](#appendix-avoiding-excessive-memory-usage-with-a-cursor)
-    - [Appendix: Bulk transfer data to/from the DB with SQL COPY](#appendix-bulk-transfer-data-tofrom-the-db-with-sql-copy)
+      - [PostgreSQL Cursors](#postgresql-cursors)
+      - [Pros/cons of SQL cursors vs Rails batches API:](#proscons-of-sql-cursors-vs-rails-batches-api)
+      - [Related gems](#related-gems)
+      - [Worked example of using a SQL cursor with Rails](#worked-example-of-using-a-sql-cursor-with-rails)
     - [Appendix: Rails 'binds' parameter](#appendix-rails-binds-parameter)
-    - [Appendix: Sanitizing a SQL string in Rails](#appendix-sanitizing-a-sql-string-in-rails)
+      - [Types](#types)
+      - [Examples in usage](#examples-in-usage)
+    - [Appendix: Sanitizing SQL strings in Rails](#appendix-sanitizing-sql-strings-in-rails)
     - [Appendix: Using PG::Result efficiently](#appendix-using-pgresult-efficiently)
+    - [Appendix: Bulk transfer data to/from the DB with SQL COPY](#appendix-bulk-transfer-data-tofrom-the-db-with-sql-copy)
 
 ## This document assumes PostgreSQL
 
-This document assumes PostgreSQL because that is what I know. A lot of this advice will also apply to MySQL but will differ in the lower level details.
+This document assumes PostgreSQL because that is what I know. Most of this advice will also apply to MySQL but will differ in the lower level details. MySQL is a feature rich database so it should be straightforward to find the MySQL equivalent of any Postgres specific functions mentioned below.
 
-## When should I use raw SQL?
+## What decisions do I need to make?
+
+Broadly speaking, these are the sequence of decisions and actions you will need. The rest of this document explains these in more detail.
+
+1. Verify that you cannot achieve the outcomes you need with just normal ActiveRecord queries and you do actually need to write raw SQL.
+1. Write the SQL query you want to use.
+1. Choose how to embed data values into your SQL (if required). Options are:
+    1. Escape the values yourself and interpolate them directly into the query string
+    2. Use SQL bound parameters by wrapping your SQL in PREPARE...EXECUTE
+    3. Use bound parameters using the separate PARSE and BIND steps in the Postgres wire protocol
+2. Decide where to store the query, one of:
+   1. _query object_ e.g. `app/queries/quarterly_report_query.rb` or `app/services/quarterly_report_query.rb`
+   2. A _database view_
+   3. A _materialised database view_
+3. If it should live in a query object, choose how much memory copying you are ok with. Options are:
+    * I **need** absolutely minimal memory copying so need lower level APIs
+        * Decide whether you need to use a CURSOR to manage memory usage of the results
+    * Some data copying is ok
+    * I don't care about memory usage because my dataset is small enough
+
+```mermaid
+graph TD
+    A[My Problem]
+    B[Can do easily in ActiveRecord?]
+    I[Where should query live?]
+    C[Use ActiveRecord]
+    D[Use Raw SQL]
+    E[Write the SQL]
+    M[Need CURSOR for mem management?]
+    P[How to run query?]
+
+    A --> B
+    B -->|Yes| C
+    B -->|No| D
+    D --> E
+    E --> I
+    I --> P
+    P --> M
+```
+
+## Essential background knowledge
+
+Before we get into these decisions in detail, there is some background knowledge we need.
+
+### Essential background: Layers of APIs which can run SQL
+
+There are a few layers available to interact with the DB in a Rails app. I have grouped these APIs into arbitrary high, middle, low "layers" to help understand them.
+
+* "High-level" API (Ignoring because we use them all the time)
+    1. Standard everyday `ActiveRecord` methods that we use all the time.
+* "Mid-level" API (**These are the APIs we are interested in**)
+    1. ActiveRecord methods which let you pass raw SQL
+    1.  `pg` gem methods
+* "Low-level" API layers (Ignoring because not accessible from Rails)
+    * There are layers below what is accessible from rails:
+        1. `libpq` (C layer, not accessible from Rails)
+            * Is a C lib, ships with Postgres itself
+            * Fully supports all Postgres features in V3 of the wire protocol
+            * Almost all clients use this except ODBC (I _think_ - not entirely sure if the ODBC driver compiles it in?)
+        1. Postgres wire protocol
+            * Describes the format of the messages exchanged between your app and the database
+            * Surprisingly human readable with Wireshark (more on this later)
+            * It's never practical to go this low for real work.
+            * I've found WireShark the best tool for actually seeing it in action
+
+### Essential background: Postgres wire protocol versions
+
+Your app can use one of 3 "sub-protocols" to exchange data with the PostgreSQL server. These sub-protocols are [well documented in the PostgreSQL manual](https://www.postgresql.org/docs/current/protocol-overview.html).
+
+The sub-protocols are:
+
+2. Extended query sub-protocol
+    * Query processing split into multiple steps. You app sends a separate message to the database for each step
+        1. Parsing (textual-query --> [Parser] --> prepared-statement)
+        2. Binding parameter values (prepared-statement --> [Binder] --> portal)
+        3. Execution (portal --> [Executor] --> results)
+    * This protocol is more complex than the _Simple query_ sub-protocol but also more flexible, more secure, and has better performance for repeated queries.
+    * **It completely eliminates SQLi if you bind all your data values!** The database receives the SQL string and the data values as different messages so it cannot get confused and treat a data value as part of the SQL string.
+1. Simple query sub-protocol
+    * Your app sends a single string (which already has all required data values interpolated into it). The string is parsed and immediately executed by the server.
+    * This is the older sub-protocol. It is simpler but less flexible and less secure than the _Extended query sub-protocol_
+3. `COPY` operations sub-protocol
+    * This is a special sub-protocol for copying large volumes of data to/from the database e.g. during import or export.
+    * We are not interested in this protocol in today's discussion
+
+ActiveRecord will try to use the _Extended query_ sub-protocol when it can and otherwise fall back to the _Simple query sub-protocol_. You can tell which sub-protocol is used by looking at the log output of the SQL query in your Rails log. Queries that use the _Extended query_ sub-protocol have the data binding markers visible in them e.g. `$1`, `$2` etc.
+
+You can force usage of the _Extended query sub-protocol_ by running your SQL via `PG::Connection#exec_params`. Sometimes that is desirable. More on this later.
+
+## Step: Verify I actually need need raw SQL
+
+### When should I use raw SQL?
 
 We want the following outcomes when we interact with a database:
 
@@ -49,9 +147,9 @@ We want the following outcomes when we interact with a database:
 
 Most of the time, we can all these outcomes from normal `ActiveRecord` methods. This document is about what to do when that doesn't work.
 
-You will notice that the goals above have some squishy language about _fast enough_ and _not too much_ memory because the exact meaning depends on your application - it's too slow if **your team** thinks it is too slow.
+You will notice that the goals above have some squishy language about _fast enough_ and _not too much_ memory because the exact meaning depends on your application. It's too slow if **your team** thinks it is too slow.
 
-## What do I give up by choosing raw SQL?
+### What do I give up by choosing raw SQL?
 
 All architectural decisions have trade-offs. Here are some of the costs of using raw SQL in Rails:
 
@@ -59,140 +157,53 @@ All architectural decisions have trade-offs. Here are some of the costs of using
 1. Sometimes ActiveRecord will be faster than raw SQL. ActiveRecord (or any ORM) implements some kinds of caching which can speed up SQL queries which you application uses a lot.
 1. Future maintainers have to know enough SQL to be able to maintain what you wrote. Who will maintain this if you aren't around?
 
-## What decisions do I need to make?
-
-Broadly speaking, these are the sequence of decisions and actions you will need. The rest of this document explains these in more detail.
-
-1. Verify that you cannot achieve the outcomes you need with just normal ActiveRecord queries and you do actually need to write raw SQL.
-1. Write the SQL query you want to use.
-1. If the query needs parameters then decide how to handle them
-    1. Escape them yourself and interpolate them into the query string
-    2. Use SQL bound parameters by wrapping your SQL in PREPARE...EXECUTE
-    2. Use SQL bound parameters via ActiveRecord API
-2. Decide whether that query should live in a
-   1. _query object_,
-   2. a _database view_
-   3. or a _materialised database view_.
-3. If it should live in a query object, choose which API to use to invoke it
-4. Decide whether you need to use a CURSOR to manage memory usage of the results
-
-```
-TODO: is this always available or depends on API choice?
-```
-
-
-```mermaid
-graph TD
-    A[My Problem] --> B{Can do easily in ActiveRecord?}
-    B -->|Yes| C[Use ActiveRecord]
-    B -->|No| D[Use Raw SQL]
-    D --> E[Write the SQL]
-    E --> F{Interpolate data?}
-    F --> G[Interpolate into SQL string]
-    F --> H[Use extended wire protocol]
-    G --> I{Where should query live?}
-    H --> I
-    I -----------> J[Query object]
-    I --> K[DB View]
-    I --> L[DB Materialised View]
-
-    P{How to run query?}
-    PA[ActiveRecord::Base.connection.execute]
-    PB[ActiveRecord::Base.connection.select_all]
-    PC[ MyModel.find_by_sql]
-    PD[ActiveRecord::Base.connection.exec_query]
-    PE[PG::Connection#exec]
-    PF[PG::Connection#exec_params]
-    J --> P
-    P --> PA
-    P --> PB
-    P --> PC
-    P --> PD
-    P --> PE
-    P --> PF
-    PA --> M
-    PB ---> M
-    PC ----> M
-    PD -----> M
-    PE ------> M
-    PF -------> M
-
-    M{Need CURSOR for mem management?}
-    J --> M
-    K --> M
-    L --> M
-    M --> N[Yes]
-    M --> O[No]
-```
-
-## Essential background: Ways to run raw SQL
-
-There are a few layers available to interact with the DB in a Rails app. I have grouped these APIs into arbitrary high, middle, low "layers" to help understand them.
-
-* "High-level" API (Ignoring because we use them all the time)
-    * Standard everyday `ActiveRecord` methods that we use all the time.
-* "Mid-level" API (**These are the APIs we are interested in**)
-    1. ActiveRecord methods which let you pass raw SQL
-    1.  `pg` gem methods
-* "Low-level" API layers (Ignoring because not accessible from Rails)
-    * There are layers below what is accessible from rails:
-        1. libpq (C layer, not accessible from Rails)
-            * C lib, ships with Postgres itself
-            * Fully supports all Postgres features in V3 of the wire protocol
-            * Almost all clients use this except:
-                * ODBC (I _think_ - not entirely sure if the ODBC driver compiles it in?)
-                * Javascript has a few packages which implement the wire protocol directly
-                    * https://github.com/panates/postgresql-client (Pure TS client)
-                    * https://github.com/brianc/node-postgres (optional libpq bindings)
-        1. Postgres wire protocol
-            * It's never practical to go this low for real work.
-            * I've found WireShark the best tool for actually seeing it in action
-
-## Essential background: Postgres wire protocol versions
-
-Your app can use one of 3 "sub-protocols" to exchange data with the PostgreSQL server. These sub-protocols are [well documented in the PostgreSQL manual](https://www.postgresql.org/docs/current/protocol-overview.html).
-
-The sub-protocols are:
-
-1. Simple query
-    * Your app sends a single string (which already has all required data vaules interpolated into it). The string is parsed and immediately executed by the server.
-    * This is simple, less secure, less flexible, and can have worse performance than the "extended query" sub-protocol
-2. Extended query
-    * Query processing split into multiple steps. You app sends a separate message to the database for each step
-        1. Parsing (textual-query --> [Parser] --> prepared-statement)
-        2. Binding parameter values (prepared-statement --> [Binder] --> portal)
-        3. Execution (portal --> [Executor] --> results)
-    * This protocol is more complex but also more flexible, more secure, and has better performance for repeated queries.
-3. `COPY` operations protocol
-    * This is a special sub-protocol for copying large volumes of data to/from the database e.g. during import or export.
-    * We are not interested in this protocol in today's discussion
-
-ActiveRecord and clients like `psql` exclusively use the _Simple query sub-protocol_. I'm not sure why.
-
-    TODO: WHY does AR always use the simple protocol? why does psql use it?
-
-You can use the _Extended query sub-protocol_ via `PG::Connection#exec_params` (see below).
-
-## Essential background: Writing good raw SQL
+## Step: Write a good raw SQL query
 
 A full discussion of writing good SQL is outside of scope of this doc. The following tips may be useful:
 
-* Write SQL for clarity first. Split large queries into smaller subqueries with `WITH` whenever possible
+* Think in terms of a pipeline of tables, starting with tables on disk flowing into temporary tables in memory and finally an in-memory table that gets sent to your app
+* Write SQL for clarity first. Split large queries into smaller subqueries with `WITH` whenever possible.
 * Use the [GitLab SQL style guide](https://about.gitlab.com/handbook/business-technology/data-team/platform/sql-style-guide/) directly or as a starting point for your in-house style  guide.
-* Think in terms of a pipeline of tables, starting with tables on disk flowing into tempoarary tables in memory and finally an in-memory table that gets sent to your app
-* Be familiar with some particularly useful PostgreSQL functions
+* Be familiar with some particularly useful PostgreSQL functions:
 	* [COALESCE()](https://www.postgresql.org/docs/14/functions-conditional.html#FUNCTIONS-COALESCE-NVL-IFNULL) (to set fallback values)
-	* [CASE](https://www.postgresql.org/docs/14/functions-conditional.html#FUNCTIONS-CASE) statements (to do if else logic)
+	* [CASE](https://www.postgresql.org/docs/14/functions-conditional.html#FUNCTIONS-CASE) statements (to do if-else logic)
 	* [TO_*() functions](https://www.postgresql.org/docs/14/functions-formatting.html) to cast between types
 
-## How do I store my raw SQL?
+
+## Step: Interpolate data values safely
+
+    TODO
+    this depends on how you choose to run the query
+    options
+        string interpolation
+            wrap query in PREPARE..EXECUTE
+            sanitize values before interpolate
+                use sanitize_sql_array method to operate on string directly
+        use extended query sub-protocol
+                use binds param with rails QueryAttribute objects
+                use PG::Connection#exec_query
+
+    ===========================
+    Appendix: Avoiding SQL injection
+
+    If possible, use methods which use the extended query sub-protocol to completely avoid SQLi. If that isn't feasible then you can wrap your raw SQL in a prepared statement.
+
+    Pros/cons of PREPARE...EXECUTE
+
+    * ?? How does it compare to sanitizing your SQL string? It seems safer because it eliminates the possibility of the sanitization failing
+    * ++ It gives you good protection against SQLi
+    * -- You have to clean up the prepared statement afterwards
+    * -- You have to use raw SQL to achieve this
+    * -- It's more fiddly than using the extended query sub-protocol
+
+## Step: Store the raw SQL query
 
 ```mermaid
 graph TD
     I{Where should my SQL live?}
     I --> J[Store as string in my code]
-    I --> K[Store asDB View]
-    I --> L[Store as DB Materialised View]
+    I --> K[Store as a DB View]
+    I --> L[Store as a DB Materialised View]
 ```
 
 You have some choices about how to have the database invoke your SQL:
@@ -402,7 +413,7 @@ Conclusion:
 * -- bound params handling is a faff, relies on undocumented Rails stuff
 
 
-#### 5. PG::Connection#exec --> PG::Result
+#### 5. PG::Connection#exec --> PG::Result (hint: don't use this)
 
 > **warning** I'm documenting this so you know to avoid it. Use #exec_params instead.
 
@@ -464,7 +475,7 @@ end
 Q: Should we still quote/sanitize values before using this method?
 
 
-### Option 2: Send as database view
+### Option 2: Save as database view
 
 Recommendation: Use https://github.com/scenic-views/scenic to manage your views
 
@@ -476,7 +487,7 @@ It lets you write raw SQL but then use normal activerecord methods to query it
 ++ view data is never out of date (compared to materialized view)
 ++ works great if query is fast enough for your need
 
-### Option 3: Send as materialised views
+### Option 3: Save as materialised views
 
 Recommendation: Use https://github.com/scenic-views/scenic to manage your views
 
@@ -502,13 +513,13 @@ TODO: is SQL COPY usefule for this? I have never tried
 >
 > https://deveiate.org/code/pg/PG/Result.html
 
-### Appendix: What about MySQL?
+### Appendix: What about manually freeing MySQL result memory?
 
 The equivalent of PG::Result#clear in MySQL is called `free`. See https://github.com/noahgibbs/mysql_bloat_test/blob/master/mb_test.rb
 
 ### Appendix: %q and %Q are handy when building large SQL strings
 
-Use %q or %Q to simplify quoting in long strings which contain single and double quotes e.g. SQL
+`%q` or `%Q` are handy to simplify quoting in long SQL strings which contain single and double quotes.
 
 ```
 %q = create a string using "single quote rules" but you can choose your own delimiter
@@ -528,16 +539,16 @@ Examples:
 "this is literally 34!"
 ```
 
-### Appendix: `?` confusion (hint: it's not bound parameters in ActiveRecord)
+### Appendix: `?` confusing in ActiveRecord (hint: it is NOT bound parameters )
 
-ActiveRecord can interpolate values into a SQL string for you via
+ActiveRecord can interpolate values into a SQL string for you via:
 
 1. Placeholder maker `?` which causes AR to match up its usage to the position of an arg within an array
-1. Named placeolder e.g. `:foo` which is used as the key in a hash to get the value to replace
+1. Named placeholder e.g. `:foo` which is used as the key in a hash to get the value to replace
 
-The `?` syntax **looks like MySQL bound parameters** but using it does not mean that the query will use bound parameters when sent to the DB.
+The `?` syntax **looks like MySQL bound parameters** but using it does not mean that the query will use bound parameters when sent to the DB!
 
-It does mean that you are telling AR to do escaping for you on the value which is probably safer than doing it yourself or (worst case) just interpolating it into the string yourself.
+It does mean that you are telling ActiveRecord to do escaping for you on the value which is probably safer than doing it yourself or (worst case) just interpolating it into the string yourself.
 
 ### Appendix: Debugging tips
 
@@ -545,6 +556,16 @@ Options
 
 * Rails log file
     * usually this is all you need
+    * The rails log will show you whether bound parameters where used or not
+        ```ruby
+        # This ruby ...
+        User.where(created_at: (1.year.ago)..(1.second.ago))
+        # ... generates the following log line. Notice the $1 and $2 and the nested
+        # arrays of bound params - these are only present if bound parameters are
+        # used
+        #
+        # User Load (1.1ms)  SELECT "users".* FROM "users" WHERE "users"."created_at" BETWEEN $1 AND $2  [["created_at", "2021-07-12 22:18:14.991108"], ["created_at", "2022-07-12 22:18:13.991346"]]
+        ```
     * ++ in development mode it's pretty good record of what queries are sent to DB
     * -- doesn't tell you whether Rails is using the simple or extended wire protocol for a particular method.
 * Use Wireshark to spy on the traffic to/from the DB
@@ -552,29 +573,6 @@ Options
     * ++ easy enough to understand the conversation between Rails and DB - messages are pretty sensible looking to human eyes
     * -- fiddly setup especially if you don't use Wireshark on the regular
 
-
-### Appendix: Sanitizing SQL strings
-
-You should try use methods which use the extended query sub-protocol (e.g. `PG::Connection#exec_params`) - these methods are safer because they don't try to interpolate data values into the SQL string
-
-If you can used a method which uses the _extended query subp-protocol_, then Rails has a number of helpers to make interpolating a data value into a SQL string safer.
-
-There are different helpers depending on which clause of the SQL query you are inserting your string.
-
-The helpers are documented in https://api.rubyonrails.org/classes/ActiveRecord/Sanitization/ClassMethods.html
-
-Examples (from the docs):
-
-```ruby
-sanitize_sql_array(["name=? and group_id=?", "foo'bar", 4])
-# => "name='foo''bar' and group_id=4"
-
-sanitize_sql_array(["name=:name and group_id=:group_id", name: "foo'bar", group_id: 4])
-# => "name='foo''bar' and group_id=4"
-
-sanitize_sql_array(["name='%s' and group_id='%s'", "foo'bar", 4])
-# => "name='foo''bar' and group_id='4'"
-```
 
 ### Appendix: Alternatives to ActiveRecord
 
@@ -585,11 +583,11 @@ sanitize_sql_array(["name='%s' and group_id='%s'", "foo'bar", 4])
     * unknowns
       * what it does at the wire protocol layer
 
-### Appendix: Suggested development workflow
+### Appendix: Suggested development workflow for writing raw SQL in Rails
 
 I use the following workflow to create raw SQL queries in a Rails app:
 
-1. I create a script which defines the SQL I need and runs it, then run that script in the Rails environment with [rails runner](https://guides.rubyonrails.org/command_line.html#bin-rails-runner)
+1. I create a script which defines the SQL I need and runs it, then run that script in the Rails environment with [rails runner](https://guides.rubyonrails.org/command_line.html#bin-rails-runner). I may start the script in an interactive SQL environment such as [pgAdmin]() or [psql]() depending on how complex it is.
 2. Once the basic SQL statement is working, I can move it into a query object or a Scenic view as required.
 
 ```ruby
@@ -632,32 +630,74 @@ $ bundle exec rails runner ./my_sql.rb
 $ tail -f log/development.log
 ```
 
-
-
-what about database views and materialised views
-    anything to do with this doc?
-
-#### Debugging with Wireshark
+### Appendix: Debugging with Wireshark
 
 ```bash
 # start rails server to not use SSL to local postgres so traffic can be inspected with Wireshark
 $ PGSSLMODE=disable bundle exec rails s
 ```
 
-In wireshark: capture on loopback (`lo0`) with the filter `port 5432` to capture all postgres traffic on your localhost
+In wireshark: capture on loopback (`lo0`) with the filter `port 5432` to capture all postgres traffic on your localhost.
 
-### Appendix: Avoiding SQL injection with prepared statements
-
-TODO
-this might be better covered elsewhere?
 
 ### Appendix: Avoiding excessive memory usage with a CURSOR
 
-TODO
+You might not need a SQL cursor. Use the [ActiveRecord batches API](https://api.rubyonrails.org/v7.0.3/classes/ActiveRecord/Batches.html) if it'll do the job. It's a bit more limited but a lot less faff.
 
-### Appendix: Bulk transfer data to/from the DB with SQL COPY
+    I think the best way would be to create a cursor in your raw SQL and use it to get rows if that's possible
+    can you do that, would you need a prepared statement because exec_params will only run one statement at a time?
+    TODO: try to do this and see if it's practical
 
-TODO
+#### PostgreSQL Cursors
+
+* DECLARE
+    * https://www.postgresql.org/docs/current/sql-declare.html
+    * `WITH HOLD` allows the cursor to be accessed by later transactions in the same session (after the creating transaction has ended)
+* OPEN
+    * Part of SQL standard but Postgres doesn't implement it - cursors are considered OPEN when they are DECLAREd
+* FETCH
+    * https://www.postgresql.org/docs/current/sql-fetch.html
+    * fetch results from the cursor
+* MOVE
+    * https://www.postgresql.org/docs/current/sql-move.html
+    * move cursor within the result set without returning records
+* CLOSE
+    * https://www.postgresql.org/docs/current/sql-close.html
+    * close the cursor and free all resources associated with it (open cursors copy their records to a tmp table in memory)
+
+Use the `pg_cursors` system view to see all open cursors
+
+```sql
+my_db=# select * from pg_cursors;
+ name | statement | is_holdable | is_binary | is_scrollable | creation_time
+------+-----------+-------------+-----------+---------------+---------------
+(0 rows)
+```
+
+#### Pros/cons of SQL cursors vs Rails batches API:
+
+* -- cursors are more work to implement
+* -- Use cursors only for large result sets. They have more overhead with the database than ActiveRecord selecting all matching records.
+* ++ give you fine grain control over how much data your rails app gets from the DB in each page
+* ++ you can get results in any order with cursors (unlike batches which are limited to id field order)
+* ++ cursors work with tables that don't use sequential integers as id values
+
+
+#### Related gems
+
+* https://github.com/afair/postgresql_cursor
+    * seems good but maybe a bit dead
+    * might be useful as a reference
+
+* https://github.com/xing/rails_cursor_pagination
+    * seems more maintained
+    * it still gets all the results from the db and puts them in memory, and then filters them for you
+        * => it isn't what we want here
+    * doesn't use SQL cursors, instead base64 encodes the record id and the record value of a chosen ordering field
+
+#### Worked example of using a SQL cursor with Rails
+
+    TODO
 
 ### Appendix: Rails 'binds' parameter
 
@@ -666,9 +706,8 @@ TODO
     SomeModel.find_by_sql(sql, binds = [], preparable: nil, &block)
     ActiveRecord::Base.connection.exec_query(sql, name = "SQL", binds = [], prepare: false)
     ```
-* You give it a ruby value and it will convert it into a database type before sending it to the DB
 * Is poorly documented, is probably somewhat private API
-* Alternatively you could add explicit type casts to your SQL and pass all params in a strings
+* Alternatively you could add explicit type casts to your SQL and pass all params in strings
 
 ```ruby
 # can be array of ActiveRecord::Relation::QueryAttribute instances
@@ -686,10 +725,9 @@ binds = [
 # ]
 ```
 
-Types:
+#### Types
 
-* The type seems to determine a set of transformations applied ot the raw value
-Q: are there "types" sent to the DB? does postgres accept types?
+* The type determines a set of transformations applied to the raw value
 
 ```ruby
 ActiveRecord::Type.constants.map { |c| "ActiveRecord::Type::#{c}" }
@@ -718,7 +756,7 @@ ActiveRecord::Type.constants.map { |c| "ActiveRecord::Type::#{c}" }
  "ActiveRecord::Type::ImmutableString"]
 ```
 
-Examples in usage:
+#### Examples in usage
 
 ```ruby
 [44] pry(main)> User.find_by_sql("select * from users where id = $1", [[nil, "11"]]) # broken
@@ -742,27 +780,28 @@ User.find_by_sql("select * from users where id = $1", ["11"])
 #   User Load (1.2ms)  select * from users where id = $1  [["eoinx", "11"]]
 ```
 
-Q: How to know which type to use?
-Can dodge the Q by just passing everything as string/text and using type casts in your sql
-
-
-Q: do you need to escape values if you are using them in binds?
+    Q: How to know which type to use?
+    Q: Can dodge choosign a type by just passing everything as string/text and using type casts in your sql?
+    Q: do you need to escape values if you are using them in binds?
 
 Conclusions
 
 * It **seems** like you could just use the string type for everything (but I haven't tested on stuff like JSON)
 
+### Appendix: Sanitizing SQL strings in Rails
 
-### Appendix: Sanitizing a SQL string in Rails
+If you can't used the Postgres extended query sub-protocol for some reason you will need to properly escape your data values before interpolating them into the SQL string.
+
+There are different helpers for sanitizing SQL depending on which clause of the
+SQL query you are inserting your string.  The helpers are documented in
 
 * https://api.rubyonrails.org/classes/ActiveRecord/Sanitization/ClassMethods.html
 * https://github.com/rails/rails/blob/main/activerecord/lib/active_record/sanitization.rb
 
+There are also a number of aliased method names. TL;DR I recommend `sanitize_sql_array` because:
 
-Conclusion: Use `sanitize_sql_array` because it is
-
-1. Part of Rails, not the PG gem so should also work with diff adapters
-2. is the most "honest", other sanitize_* methods just call it anyway with more confusing argument handling
+1. It is part of Rails itself, not the `pg` gem so should also work with MySQL too.
+2. It is the most "honest" method name, other `sanitize_*` methods just call it anyway and I find their argument syntax more confusing
 
 ```ruby
 # sanitize_sql(condition) # alias for:
@@ -784,14 +823,34 @@ connection.quote_column_name
     # just calls #to_s
 ```
 
+Examples (from the docs):
+
+```ruby
+sanitize_sql_array(["name=? and group_id=?", "foo'bar", 4])
+# => "name='foo''bar' and group_id=4"
+
+sanitize_sql_array(["name=:name and group_id=:group_id", name: "foo'bar", group_id: 4])
+# => "name='foo''bar' and group_id=4"
+
+sanitize_sql_array(["name='%s' and group_id='%s'", "foo'bar", 4])
+# => "name='foo''bar' and group_id='4'"
+```
+
+
 ### Appendix: Using PG::Result efficiently
 
-What is the most memory efficent way to use a pg result?
+    TODO
 
-```
+What is the most memory efficient way to use a pg result?
+
+```ruby
 pg_res = conn.exec_params(...)
 pg_res.values
 pg_res.to_a
 pg_res.clear
 
 ```
+
+### Appendix: Bulk transfer data to/from the DB with SQL COPY
+
+TODO
