@@ -1,4 +1,22 @@
-class SaferRawSQL
+require "active_record"
+
+##
+# A toolkit class to wrap the best bits of the Rails API for dealing with raw SQL
+class SaferRawSqlToolkit
+  include ActiveRecord::Sanitization
+  # adds
+  # .sanitize_raw_sql
+
+  def self.mk_binds(vals_ary)
+    vals_ary.map do |val|
+      #
+    end
+  end
+  # very WIP
+
+end
+
+class SaferRawSql
   # The formats refer to the format of message
   # There are two formats a client can use to exchange messages with a PostgreSQL server (text or binary).
   # TEXT_FORMAT = 0
@@ -94,11 +112,49 @@ class SaferRawSQL
 
     results
   end
+
+  ##
+  # A function for running raw SQL in a Rails app.
+  #
+  # Note that it may be much more memory efficent to directly use the
+  # `PG::Result` instance and then call `clear` rather than copying it into an
+  # array like we do here.
+  #
+  # The method shown here does **nothing** to prevent or mitigate SQLi - you need
+  # to manage it yourself.
+  #
+  # Use this function for inspriation not copy & paste :-)
+  #
+  # @param [String] my_sql String
+  def self.execute_sql(my_sql)
+    pg_result = ActiveRecord::Base.connection.execute(my_sql)
+
+    # In this example we are just calling #to_a to convert the PG::Result to an
+    # Array. PG::Result has a nice API for slicing and dicing itself so you may
+    # want to to something clever instead. See
+    # https://www.rubydoc.info/gems/pg/PG/Result for details.
+    #
+    # The important bit here is that we are copying all the data we care about
+    # out of the PG::Result in preparation for later clearing the PG::Result
+    results = pg_result.to_a
+
+    # Calling #clear on the PG::Result is the important bit of cleanup and the
+    # whole reason this method exists. See
+    # https://www.rubydoc.info/gems/pg/PG/Result#clear-instance_method
+    pg_result.clear
+
+    yield results if block_given?
+
+    results
+  end
 end
 
-def execute_sql(my_sql)
-  pg_result = ActiveRecord::Base.connection.execute(my_sql)
-  results = pg_result.to_a # or whatever you want to do to extract the values you are interested int
-  pg_result.clear
-  results
+
+def main
+  results = SaferRawSql.execute_sql("SELECT etc. etc.")
+  SaferRawSql.execute_sql("SELECT etc. etc.") do |results|
+    # ...
+  end
 end
+
+main
