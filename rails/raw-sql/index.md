@@ -20,7 +20,7 @@
       - [5. PG::Connection#exec --> PG::Result (hint: don't use this)](#5-pgconnectionexec----pgresult-hint-dont-use-this)
       - [6. PG::Connection#exec_params --> PG::Result](#6-pgconnectionexec_params----pgresult)
     - [Option 2: Save as database view](#option-2-save-as-database-view)
-    - [Option 3: Save as materialised views](#option-3-save-as-materialised-views)
+      - [Consider a materialized view](#consider-a-materialized-view)
   - [Appendices](#appendices)
     - [Appendix: Do I need to call PG::Result#clear?](#appendix-do-i-need-to-call-pgresultclear)
     - [Appendix: What about manually freeing MySQL result memory?](#appendix-what-about-manually-freeing-mysql-result-memory)
@@ -40,6 +40,8 @@
       - [Examples in usage](#examples-in-usage)
     - [Appendix: Sanitizing SQL strings in Rails](#appendix-sanitizing-sql-strings-in-rails)
     - [Appendix: Using PG::Result efficiently](#appendix-using-pgresult-efficiently)
+    - [Appendix: How much memory copying happens when converting PG::Result into ActiveRecord::Result?](#appendix-how-much-memory-copying-happens-when-converting-pgresult-into-activerecordresult)
+    - [Appendix: Do I need to use a prepared statement?](#appendix-do-i-need-to-use-a-prepared-statement)
     - [Appendix: Bulk transfer data to/from the DB with SQL COPY](#appendix-bulk-transfer-data-tofrom-the-db-with-sql-copy)
 
 ## This document assumes PostgreSQL
@@ -49,22 +51,6 @@ This document assumes PostgreSQL because that is what I know. Most of this advic
 ## What decisions do I need to make?
 
 Broadly speaking, these are the sequence of decisions and actions you will need. The rest of this document explains these in more detail.
-
-1. Verify that you cannot achieve the outcomes you need with just normal ActiveRecord queries and you do actually need to write raw SQL.
-1. Write the SQL query you want to use.
-1. Choose how to embed data values into your SQL (if required). Options are:
-    1. Escape the values yourself and interpolate them directly into the query string
-    2. Use SQL bound parameters by wrapping your SQL in PREPARE...EXECUTE
-    3. Use bound parameters using the separate PARSE and BIND steps in the Postgres wire protocol
-2. Decide where to store the query, one of:
-   1. _query object_ e.g. `app/queries/quarterly_report_query.rb` or `app/services/quarterly_report_query.rb`
-   2. A _database view_
-   3. A _materialised database view_
-3. If it should live in a query object, choose how much memory copying you are ok with. Options are:
-    * I **need** absolutely minimal memory copying so need lower level APIs
-        * Decide whether you need to use a CURSOR to manage memory usage of the results
-    * Some data copying is ok
-    * I don't care about memory usage because my dataset is small enough
 
 ```mermaid
 graph TD
@@ -86,30 +72,47 @@ graph TD
     P --> M
 ```
 
+1. Verify that you cannot achieve the outcomes you need with just normal ActiveRecord queries and you do actually need to write raw SQL.
+1. Write the SQL query you want to use.
+1. Choose how to embed data values into your SQL (if required). Options are:
+    1. Use bound parameters using the separate PARSE and BIND steps in the Postgres wire protocol
+    1. Escape the values yourself and interpolate them directly into the query string
+    1. Use SQL bound parameters by wrapping your SQL in PREPARE...EXECUTE
+2. Decide where to store the query, one of:
+   1. A _query object_ e.g. `app/queries/quarterly_report_query.rb` or `app/services/quarterly_report_query.rb`
+   2. A _database view_
+   3. A _materialised database view_
+3. If it should live in a query object, choose how much memory copying you are ok with. Options are:
+    * I **need** absolutely minimal memory copying so need lower level APIs
+        * Decide whether you need to use a CURSOR to manage memory usage of the results
+    * Some data copying is ok
+    * I don't care about memory usage because my dataset is small enough
+
 ## Essential background knowledge
 
 Before we get into these decisions in detail, there is some background knowledge we need.
 
 ### Essential background: Layers of APIs which can run SQL
 
-There are a few layers available to interact with the DB in a Rails app. I have grouped these APIs into arbitrary high, middle, low "layers" to help understand them.
+There are multiple APIs available to interact with the DB. I have grouped these APIs into arbitrary high, middle, low "layers".
 
-* "High-level" API (Ignoring because we use them all the time)
+API layers from highest to lowest:
+
+* _High-level_ API Layer (Ignoring because we use them all the time)
     1. Standard everyday `ActiveRecord` methods that we use all the time.
-* "Mid-level" API (**These are the APIs we are interested in**)
+* _Mid-level_ API Layer (**These are the APIs we are interested in**)
     1. ActiveRecord methods which let you pass raw SQL
     1.  `pg` gem methods
-* "Low-level" API layers (Ignoring because not accessible from Rails)
-    * There are layers below what is accessible from rails:
-        1. `libpq` (C layer, not accessible from Rails)
-            * Is a C lib, ships with Postgres itself
-            * Fully supports all Postgres features in V3 of the wire protocol
+* _Low-level_ API layer (Ignoring because not accessible from Rails)
+    * There are layers below what is accessible from Rails:
+        1. [libpq](https://www.postgresql.org/docs/current/libpq.html) (C layer, not accessible from Rails)
+            * Is the C library which `pg` gem uses
+            * ships with Postgres itself
             * Almost all clients use this except ODBC (I _think_ - not entirely sure if the ODBC driver compiles it in?)
-        1. Postgres wire protocol
-            * Describes the format of the messages exchanged between your app and the database
-            * Surprisingly human readable with Wireshark (more on this later)
-            * It's never practical to go this low for real work.
-            * I've found WireShark the best tool for actually seeing it in action
+        1. [Postgres wire protocol](https://www.postgresql.org/docs/current/protocol.html)
+            * Defines the format of the messages exchanged between your app and the database
+            * Surprisingly human readable with [Wireshark](https://www.wireshark.org/) (more on this later)
+            * It's never practical to code this low for real work but inspecting it can be useful for debugging what ActiveRecord is doing on your behalf.
 
 ### Essential background: Postgres wire protocol versions
 
@@ -117,17 +120,17 @@ Your app can use one of 3 "sub-protocols" to exchange data with the PostgreSQL s
 
 The sub-protocols are:
 
-2. Extended query sub-protocol
+1. Extended query sub-protocol
     * Query processing split into multiple steps. You app sends a separate message to the database for each step
         1. Parsing (textual-query --> [Parser] --> prepared-statement)
         2. Binding parameter values (prepared-statement --> [Binder] --> portal)
         3. Execution (portal --> [Executor] --> results)
-    * This protocol is more complex than the _Simple query_ sub-protocol but also more flexible, more secure, and has better performance for repeated queries.
+    * This protocol is more complex than the _Simple query_ sub-protocol (see below) but also more flexible, more secure, and has better performance for repeated queries.
     * **It completely eliminates SQLi if you bind all your data values!** The database receives the SQL string and the data values as different messages so it cannot get confused and treat a data value as part of the SQL string.
 1. Simple query sub-protocol
     * Your app sends a single string (which already has all required data values interpolated into it). The string is parsed and immediately executed by the server.
     * This is the older sub-protocol. It is simpler but less flexible and less secure than the _Extended query sub-protocol_
-3. `COPY` operations sub-protocol
+1. `COPY` operations sub-protocol
     * This is a special sub-protocol for copying large volumes of data to/from the database e.g. during import or export.
     * We are not interested in this protocol in today's discussion
 
@@ -174,6 +177,7 @@ A full discussion of writing good SQL is outside of scope of this doc. The follo
 
     TODO
     this depends on how you choose to run the query
+    if you make a db view, then you can use normal AR to interpolate data values in
     options
         string interpolation
             wrap query in PREPARE..EXECUTE
@@ -202,55 +206,32 @@ A full discussion of writing good SQL is outside of scope of this doc. The follo
 graph TD
     I{Where should my SQL live?}
     I --> J[Store as string in my code]
-    I --> K[Store as a DB View]
-    I --> L[Store as a DB Materialised View]
+    I --> K["Store as a DB View"]
+    K --> L["Use materialized view?"]
 ```
 
 You have some choices about how to have the database invoke your SQL:
 
 1. Store as a string constant in your code and send as regular SQL query
-2. Save as a database view
-3. Save as a materialised database view
+2. Save as a database view, optionally as a materialized view
 
 
 ### Option 1: Store as string in code
 
-```mermaid
-graph TD
-    J[Query stored as SQL string in my code]
-
-    J --> P
-    P{How to run query?}
-    PA[ActiveRecord::Base.connection.execute]
-    PB[ActiveRecord::Base.connection.select_all]
-    PC[ MyModel.find_by_sql]
-    PD[ActiveRecord::Base.connection.exec_query]
-    PE[PG::Connection#exec]
-    PF[PG::Connection#exec_params]
-    P --> PA
-    P ---> PB
-    P ----> PC
-    P -----> PD
-    P ------> PE
-    P -------> PF
-```
-
-    Things to cover for each option
-        perf pros/cons
-        how to sanitize values
-        security review
-        practicality review
 
 There are 6 main ways of sending a SQL string to a PostgreSQL database in Rails:
 
-* ActiveRecord API
-    1. `ActiveRecord::Base.connection.execute => PG::Result`
-    2. `ActiveRecord::Base.connection.select_all => ActiveRecord::Result`
-    3. `MyModel.find_by_sql => Array<MyModel>`
-    4. `ActiveRecord::Base.connection.exec_query => ActiveRecord::Result`
-* PG gem API:
-    1. `PG::Connection#exec => PG::Result`
-    2. `PG::Connection#exec_params => PG::Result`
+| Method name                              | Return type          | Allows bound params? | Allow prepared stmts? | Recommended?       | Mem efficient?      |
+| ---------------------------------------- | -------------------- | -------------------- | --------------------- | ------------------ | ------------------- |
+| MyModel.find_by_sql                      | Array\<MyModel\>     | :white_check_mark:   | :white_check_mark:    | :white_check_mark: | :warning: :warning: |
+| ActiveRecord::Base.connection.select_all | ActiveRecord::Result | :white_check_mark:   | :white_check_mark:    | :white_check_mark: | :warning:           |
+| ActiveRecord::Base.connection.exec_query | ActiveRecord::Result | :white_check_mark:   | :white_check_mark:    | :white_check_mark: | :warning:           |
+| ActiveRecord::Base.connection.execute    | PG::Result           | :x:                  | :x:                   | :x:                | :warning:           |
+| PG::Connection#exec_params               | PG::Result           | :white_check_mark:   | :x:                   | :white_check_mark: | :white_check_mark:  |
+| PG::Connection#exec                      | PG::Result           | :x:                  | :x:                   | :x:                | :white_check_mark:  |
+
+
+    TODO: the prepared statement flags are barely documented in Rails api, do they matter here?
 
 #### 1. ActiveRecord::Base.connection.execute --> PG::Result
 
@@ -477,6 +458,9 @@ Q: Should we still quote/sanitize values before using this method?
 
 ### Option 2: Save as database view
 
+    in some ways a view just moves your problem
+    you can choose whether you need raw SQL to access the view or standard AR
+
 Recommendation: Use https://github.com/scenic-views/scenic to manage your views
 
 Reasons to use a view
@@ -487,7 +471,8 @@ It lets you write raw SQL but then use normal activerecord methods to query it
 ++ view data is never out of date (compared to materialized view)
 ++ works great if query is fast enough for your need
 
-### Option 3: Save as materialised views
+#### Consider a materialized view
+
 
 Recommendation: Use https://github.com/scenic-views/scenic to manage your views
 
@@ -500,7 +485,7 @@ How to setup triggers in rails to update it when any of the tables involved are 
 
 Examples: spreadsheet import or export
 
-TODO: is SQL COPY usefule for this? I have never tried
+TODO: is SQL COPY useful for this? I have never tried
 
     Q: can views take params from code? Presume not? but you can do SQL queries on the view instead
 
@@ -836,21 +821,104 @@ sanitize_sql_array(["name='%s' and group_id='%s'", "foo'bar", 4])
 # => "name='foo''bar' and group_id='4'"
 ```
 
-
 ### Appendix: Using PG::Result efficiently
 
-    TODO
+https://deveiate.org/code/pg/PG/Result.html
 
-What is the most memory efficient way to use a pg result?
+* PG::Result stores the result tuples it gets from the DB as a single blob of "C" memory i.e. it's not on the Ruby heap.
+* When you read a tuple in Ruby, the data is **copied** from the blob of C memory, **converted to a Ruby object** (which inflates its size somewhat) and **saved** to the Ruby heap.
+* In a test in [./code/explore_pg_result.rb](./code/explore_pg_result.rb), 17.65 MB of tuples from the DB became 27.25 MB Ruby objects for a total memory allocation of 44.9 MB
+
+Tips
+
+*  Don't fetch data from the DB you won't use because everything we fetch from the DB gets stored **twice**!
+*  Don't access data within the PG::Result that you don't need - this will avoid copying it into Ruby memory unnecessarily.
+*  Clear the PG::Result as soon as you have got the values you need! This won't prevent allocations but will free up memory on your system.
 
 ```ruby
-pg_res = conn.exec_params(...)
-pg_res.values
-pg_res.to_a
-pg_res.clear
+require "pg"
+require "memory_profiler"
 
+db_name = ENV.fetch("DB_NAME")
+table_name = ENV.fetch("TABLE_NAME")
+
+conn = PG.connect(dbname: db_name)
+
+# res.inspect # => "#<PG::Result:0x0000000102a67040 status=PGRES_TUPLES_OK ntuples=10 nfields=15 cmd_tuples=10>"
+# res.clear
+# res.inspect # => "#<PG::Result:0x0000000102a67040 cleared>"
+
+# Testing PG::Result#values
+# #########################
+
+# Test 1:
+########
+# Allocates 44.9 MB total
+report = MemoryProfiler.report do
+	res  = conn.exec(%Q(select * from #{table_name})) # allocates 17.65 MB
+	xx = res.values # allocates 27.25 MB
+end
+report.pretty_print(scale_bytes: true)
+
+# Test 2:
+########
+# Allocates 17.65 MB total
+report = MemoryProfiler.report do
+	res  = conn.exec(%Q(select * from #{table_name)) # allocates 17.65 MB
+end
+report.pretty_print(scale_bytes: true)
+
+# Conclusion: PG::Result#values allocates significant memory, up to 1.5x the memory used by PG::Result to hold the tuples
+
+# Q: is there any way to get the data out of a PG::Result without paying that cost?
+# A: I don't think there is. You just have to be aware.
 ```
+
+### Appendix: How much memory copying happens when converting PG::Result into ActiveRecord::Result?
+
+* It gets initialized from a PG::Result
+* It doesn't seem to do much memory copying during init
+* If you call `#rows` then you are getting the return value of PG::Result#values which doesn't allocate extra memory
+* But any method which calls the private #hash_rows will create a Hash from the contents of PG::Result#values
+* public methods which call `#hash_rows`:
+    ```
+    #each
+    #to_a
+    #to_ary
+    #[](idx)
+    #last(n)
+    ```
+
+Creating `ActiveRecord::Result` from a `PG::Result` doesn't allocate significantly more memory **but** `ActiveRecord::Result` makes it easy to create yet another copy of your data if you are not careful.
+
+```ruby
+# worked example for ActiveRecord::Result
+require "active_record"
+require "pg"
+require "memory_profiler"
+
+db_name = ENV.fetch("DB_NAME")
+table_name = ENV.fetch("TABLE_NAME")
+conn = PG.connect(dbname: db_name)
+
+# Test 3:
+########
+# Allocates 70.15 MB total
+report = MemoryProfiler.report do
+	res  = conn.exec(%Q(select * from #{table_name})) # allocates 17.65 MB
+	ar_res = ActiveRecord::Result.new(res.fields, res.values) # allocates 27.25 MB (for the 2nd arg)
+	example_ary = ar_res.to_a # allocates  25.01 MB (because it builds a hash from the res.values we passed in
+end
+report.pretty_print(scale_bytes: true)
+```
+
+### Appendix: Do I need to use a prepared statement?
+
+Probably not.
+
+A prepared statement lets you send a query to the DB once and then re-run that saved (named) query multiple times with different bound parameters.
+This means the DB doesn't have to re-parse the query each time. Most of the time this is not an optimization you need to care about.
 
 ### Appendix: Bulk transfer data to/from the DB with SQL COPY
 
-TODO
+    TODO
