@@ -1,6 +1,8 @@
-# Managing raw SQL in Rails
+# An unofficial guide to raw SQL with PostgreSQL and Rails
 
-- [Managing raw SQL in Rails](#managing-raw-sql-in-rails)
+> *warning* This document is very WIP
+
+- [An unofficial guide to raw SQL with PostgreSQL and Rails](#an-unofficial-guide-to-raw-sql-with-postgresql-and-rails)
   - [This document assumes PostgreSQL](#this-document-assumes-postgresql)
   - [What decisions do I need to make?](#what-decisions-do-i-need-to-make)
   - [Essential background knowledge](#essential-background-knowledge)
@@ -31,10 +33,9 @@
     - [Appendix: Suggested development workflow for writing raw SQL in Rails](#appendix-suggested-development-workflow-for-writing-raw-sql-in-rails)
     - [Appendix: Debugging with Wireshark](#appendix-debugging-with-wireshark)
     - [Appendix: Avoiding excessive memory usage with a CURSOR](#appendix-avoiding-excessive-memory-usage-with-a-cursor)
-      - [PostgreSQL Cursors](#postgresql-cursors)
-      - [Pros/cons of SQL cursors vs Rails batches API:](#proscons-of-sql-cursors-vs-rails-batches-api)
-      - [Related gems](#related-gems)
-      - [Worked example of using a SQL cursor with Rails](#worked-example-of-using-a-sql-cursor-with-rails)
+      - [Background: PostgreSQL SQL-level Cursors](#background-postgresql-sql-level-cursors)
+      - [Implementing a cursor in raw SQL](#implementing-a-cursor-in-raw-sql)
+      - [Implementing a cursor using the protocol](#implementing-a-cursor-using-the-protocol)
     - [Appendix: Rails 'binds' parameter](#appendix-rails-binds-parameter)
       - [Types](#types)
       - [Examples in usage](#examples-in-usage)
@@ -218,20 +219,16 @@ You have some choices about how to have the database invoke your SQL:
 
 ### Option 1: Store as string in code
 
-
-There are 6 main ways of sending a SQL string to a PostgreSQL database in Rails:
+There are 6 common ways of sending a SQL string to a PostgreSQL database in Rails:
 
 | Method name                              | Return type          | Allows bound params? | Allow prepared stmts? | Recommended?       | Mem efficient?      |
 | ---------------------------------------- | -------------------- | -------------------- | --------------------- | ------------------ | ------------------- |
 | MyModel.find_by_sql                      | Array\<MyModel\>     | :white_check_mark:   | :white_check_mark:    | :white_check_mark: | :warning: :warning: |
 | ActiveRecord::Base.connection.select_all | ActiveRecord::Result | :white_check_mark:   | :white_check_mark:    | :white_check_mark: | :warning:           |
 | ActiveRecord::Base.connection.exec_query | ActiveRecord::Result | :white_check_mark:   | :white_check_mark:    | :white_check_mark: | :warning:           |
-| ActiveRecord::Base.connection.execute    | PG::Result           | :x:                  | :x:                   | :x:                | :warning:           |
+| ActiveRecord::Base.connection.execute    | PG::Result           | :x:                  | :x:                   | :x:                | :white_check_mark:  |
 | PG::Connection#exec_params               | PG::Result           | :white_check_mark:   | :x:                   | :white_check_mark: | :white_check_mark:  |
 | PG::Connection#exec                      | PG::Result           | :x:                  | :x:                   | :x:                | :white_check_mark:  |
-
-
-    TODO: the prepared statement flags are barely documented in Rails api, do they matter here?
 
 #### 1. ActiveRecord::Base.connection.execute --> PG::Result
 
@@ -627,13 +624,28 @@ In wireshark: capture on loopback (`lo0`) with the filter `port 5432` to capture
 
 ### Appendix: Avoiding excessive memory usage with a CURSOR
 
-You might not need a SQL cursor. Use the [ActiveRecord batches API](https://api.rubyonrails.org/v7.0.3/classes/ActiveRecord/Batches.html) if it'll do the job. It's a bit more limited but a lot less faff.
+Using a CURSOR to get the results of a query in pages lets us control Ruby memory usage at the cost of making more requests to the DB.
 
-    I think the best way would be to create a cursor in your raw SQL and use it to get rows if that's possible
-    can you do that, would you need a prepared statement because exec_params will only run one statement at a time?
-    TODO: try to do this and see if it's practical
+Aside: CURSOR is not suitable for rails pagination because it requires holding state open on the DB which isn't something you want between requests. A CURSOR is a way to "give me all the results for this query now but give them to me in batches"
 
-#### PostgreSQL Cursors
+You might not need a SQL cursor. The [ActiveRecord batches API](https://api.rubyonrails.org/v7.0.3/classes/ActiveRecord/Batches.html) is a better choice if it'll do the job.
+
+The limitations of the Batches API are:
+
+* You cannot specify the order, it will be ordered by the primary key (usually id)
+* The primary key must be numeric (uuid primary keys will not work with Batches API)
+* The query is rerun for each chunk (1000 rows), starting at the next id sequence. This _can_ be a problem if your query is slow. With a SQL CURSOR the query is run only once.
+
+Options for using a cursor
+
+1. Use https://github.com/afair/postgresql_cursor (:warning: this doesn't look super maintained)
+2. Implement it yourself with raw SQL
+
+We are going to discuss the second option here.
+
+>**info** Aside: https://github.com/xing/rails_cursor_pagination does not use SQL cursors so isn't suitable for this use-case
+
+#### Background: PostgreSQL SQL-level Cursors
 
 * DECLARE
     * https://www.postgresql.org/docs/current/sql-declare.html
@@ -659,30 +671,42 @@ my_db=# select * from pg_cursors;
 (0 rows)
 ```
 
-#### Pros/cons of SQL cursors vs Rails batches API:
+#### Implementing a cursor in raw SQL
 
-* -- cursors are more work to implement
-* -- Use cursors only for large result sets. They have more overhead with the database than ActiveRecord selecting all matching records.
-* ++ give you fine grain control over how much data your rails app gets from the DB in each page
-* ++ you can get results in any order with cursors (unlike batches which are limited to id field order)
-* ++ cursors work with tables that don't use sequential integers as id values
+    TODO actually implement a minimal version of this
+    Q: is there a protocol-level cursor?
+    WITH HOLD allows cursor to exist after transaction exits
+    can you do that, would you need a prepared statement because exec_params will only run one statement at a time?
+        maybe you can open a transaction
+    TODO: try to do this and see if it's practical
 
 
-#### Related gems
+```
+SET cursor_tuple_fraction TO 1.0;
+DECLARE cursor_1 CURSOR WITH HOLD FOR select * from widgets;
 
-* https://github.com/afair/postgresql_cursor
-    * seems good but maybe a bit dead
-    * might be useful as a reference
+loop
+    rows = FETCH 100 FROM cursor_1;
+    rows.each {|row| yield row}
+until rows.size < 100;
 
-* https://github.com/xing/rails_cursor_pagination
-    * seems more maintained
-    * it still gets all the results from the db and puts them in memory, and then filters them for you
-        * => it isn't what we want here
-    * doesn't use SQL cursors, instead base64 encodes the record id and the record value of a chosen ordering field
+CLOSE cursor_1;
+```
 
-#### Worked example of using a SQL cursor with Rails
+#### Implementing a cursor using the protocol
 
-    TODO
+What is the advantage of doing it at the protocol level vs the sql level?
+    I need to do both implementations and compare
+    i guess it's the escaping bind params thing?
+
+> If successfully created, a named prepared-statement object lasts till the end of the current session, unless explicitly destroyed. An unnamed prepared statement lasts only until the next Parse statement specifying the unnamed statement as destination is issued. (Note that a simple Query message also destroys the unnamed statement.) Named prepared statements must be explicitly closed before they can be redefined by another Parse message, but this is not required for the unnamed statement. Named prepared statements can also be created and accessed at the SQL command level, using PREPARE and EXECUTE.
+
+    conn.prepare and then conn.exec_prepared
+
+https://deveiate.org/code/pg/PG/Connection.html#method-i-prepare
+https://deveiate.org/code/pg/PG/Connection.html#method-i-exec_prepared
+
+
 
 ### Appendix: Rails 'binds' parameter
 
@@ -922,3 +946,5 @@ This means the DB doesn't have to re-parse the query each time. Most of the time
 ### Appendix: Bulk transfer data to/from the DB with SQL COPY
 
     TODO
+    copy example from old app
+    explain what needs to happen
