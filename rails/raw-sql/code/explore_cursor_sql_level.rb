@@ -1,7 +1,6 @@
-# require "active_record"
 require "pg"
 require "securerandom"
-require "memory_profiler"
+# require "memory_profiler"
 
 
 ##
@@ -13,6 +12,7 @@ require "memory_profiler"
 #
 # Q: should i use exex_params here or one of th eother APIs. justify my choice
 # 	if i used AR exec_query this would work for MySQL too maybe?
+#
 def fetch_w_cursor_attempt_1(conn, query_sql, binds: [], batch_size: 100)
 	cursor_name = "eoin_cursor_#{SecureRandom.hex(5)}"
 
@@ -20,6 +20,7 @@ def fetch_w_cursor_attempt_1(conn, query_sql, binds: [], batch_size: 100)
 	res_1 = conn.exec(setup_cursor_tuple_fraction_sql)
 	res_1.clear
 
+	# ON HOLD is what allows us to acccess this named cursor from future queries
 	declare_cursor_sql = "DECLARE #{cursor_name} CURSOR WITH HOLD FOR #{query_sql}"
 	res_2 = conn.exec(declare_cursor_sql)
 	res_2.clear
