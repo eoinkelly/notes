@@ -1,0 +1,24 @@
+# frozen_string_literal: true
+
+source "https://rubygems.org"
+
+# gem "rails"
+
+
+# Nice editing environment helpers
+gem "pry-byebug"
+gem "rubocop"
+gem "rubocop-performance"
+gem "rubocop-rails"
+gem "rubocop-rspec"
+gem "dead_end"
+gem "solargraph"
+
+# experimental formatting  ala go fmt
+# gem "syntax_tree", "~> 3.2"
+
+# Shopify LSP, not ready yet IMHO (Aug 2022)
+# gem "ruby-lsp", "~> 0.2.1", require: false
+
+# dead_end is turning into this for inclusing with Ruby 3.2 (hopefully)
+# gem "syntax_suggest", "~> 0.0.1"

@@ -1,5 +1,14 @@
 # SQLite
 
+## Interactive use
+
+```
+# approximate 'describe table users' or \dt users
+sqlite> .header on
+sqlite> .mode  column
+sqlite> pragma table_info('users')
+```
+
 ## Versions installed
 
 ```

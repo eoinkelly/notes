@@ -1,8 +1,29 @@
 
 
+# Cheatsheet of ccommands
 ```
 brew install awscli aws-elasticbeanstalk
+
+eb init
+eb list
+eb ssh ENVNAME
 ```
+
+## Environment
+
+When you update the environment variables for the instances on the Configure page of EB, it's not immediately avilable in the shell
+
+> environment properties are passed only to the application and can't be viewed by connecting an instance in your environment and running env
+
+?? how are they put in to the instance?
+?? will rails automatically pick them up?
+
+```bash
+# you can do this to get the env var from a script
+$ /opt/elasticbeanstalk/bin/get-config environment -k MY_ENV_VAR
+```
+
+## Overview
 
 * designed to run and manage **web** apps - it is quite tuned for this use-case (see the web server tier and worker tier)
 * no additional charge beyond what you use in infrastructure

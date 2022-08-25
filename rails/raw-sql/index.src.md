@@ -5,12 +5,12 @@
 
 - [An unofficial guide to raw SQL with PostgreSQL and Rails](#an-unofficial-guide-to-raw-sql-with-postgresql-and-rails)
   - [This document assumes PostgreSQL](#this-document-assumes-postgresql)
-  - [What decisions do I need to make?](#what-decisions-do-i-need-to-make)
+  - [What decisions do you need to make?](#what-decisions-do-you-need-to-make)
   - [Essential background knowledge](#essential-background-knowledge)
     - [Essential background: Layers of APIs which can run SQL](#essential-background-layers-of-apis-which-can-run-sql)
-    - [Essential background: Postgres wire protocol versions](#essential-background-postgres-wire-protocol-versions)
-  - [Step: Verify I actually need need raw SQL](#step-verify-i-actually-need-need-raw-sql)
-    - [When should I use raw SQL?](#when-should-i-use-raw-sql)
+    - [Essential background: Postgres wire protocol](#essential-background-postgres-wire-protocol)
+  - [Step: Verify you actually need need to use raw SQL](#step-verify-you-actually-need-need-to-use-raw-sql)
+    - [When should you use raw SQL?](#when-should-you-use-raw-sql)
     - [What do I give up by choosing raw SQL?](#what-do-i-give-up-by-choosing-raw-sql)
   - [Step: Write a good raw SQL query](#step-write-a-good-raw-sql-query)
   - [Step: Interpolate data values safely](#step-interpolate-data-values-safely)
@@ -30,7 +30,6 @@
     - [Appendix: %q and %Q are handy when building large SQL strings](#appendix-q-and-q-are-handy-when-building-large-sql-strings)
     - [Appendix: `?` confusing in ActiveRecord (hint: it is NOT bound parameters )](#appendix--confusing-in-activerecord-hint-it-is-not-bound-parameters-)
     - [Appendix: Debugging tips](#appendix-debugging-tips)
-    - [Appendix: Alternatives to ActiveRecord](#appendix-alternatives-to-activerecord)
     - [Appendix: Suggested development workflow for writing raw SQL in Rails](#appendix-suggested-development-workflow-for-writing-raw-sql-in-rails)
     - [Appendix: Debugging with Wireshark](#appendix-debugging-with-wireshark)
     - [Appendix: Avoiding excessive memory usage with a CURSOR](#appendix-avoiding-excessive-memory-usage-with-a-cursor)
@@ -49,7 +48,7 @@
 
 This document assumes PostgreSQL because that is what I know. Most of this advice will also apply to MySQL but will differ in the lower level details. MySQL is a feature rich database so it should be straightforward to find the MySQL equivalent of any Postgres specific functions mentioned below.
 
-## What decisions do I need to make?
+## What decisions do you need to make?
 
 Broadly speaking, these are the sequence of decisions and actions you will need. The rest of this document explains these in more detail.
 
@@ -75,15 +74,11 @@ graph TD
 
 1. Verify that you cannot achieve the outcomes you need with just normal ActiveRecord queries and you do actually need to write raw SQL.
 1. Write the SQL query you want to use.
-1. Choose how to embed data values into your SQL (if required). Options are:
-    1. Use bound parameters using the separate PARSE and BIND steps in the Postgres wire protocol
-    1. Escape the values yourself and interpolate them directly into the query string
-    1. Use SQL bound parameters by wrapping your SQL in PREPARE...EXECUTE
+1. Choose how to embed data values into your SQL (if required).
 2. Decide where to store the query, one of:
-   1. A _query object_ e.g. `app/queries/quarterly_report_query.rb` or `app/services/quarterly_report_query.rb`
-   2. A _database view_
-   3. A _materialised database view_
-3. If it should live in a query object, choose how much memory copying you are ok with. Options are:
+   1. A PORO _query object_ e.g. `app/queries/quarterly_report_query.rb` or `app/services/quarterly_report_query.rb`
+   2. A _database view_ (optionally a _materialised database view_)
+3. If the query will live in a query object, choose how much memory copying you are ok with. Options are:
     * I **need** absolutely minimal memory copying so need lower level APIs
         * Decide whether you need to use a CURSOR to manage memory usage of the results
     * Some data copying is ok
@@ -91,57 +86,64 @@ graph TD
 
 ## Essential background knowledge
 
-Before we get into these decisions in detail, there is some background knowledge we need.
+Before we can discuss these decisions in detail, there is some background knowledge we need.
 
 ### Essential background: Layers of APIs which can run SQL
 
-There are multiple APIs available to interact with the DB. I have grouped these APIs into arbitrary high, middle, low "layers".
+We need to be aware of all the APIs that let us interact with the database, especially the lower level layers which, while they are too low level for day to day use, can be very useful for debugging.
 
-API layers from highest to lowest:
+To help understand how the various APIs relate to each other, we will think of them in layers:
 
-* _High-level_ API Layer (Ignoring because we use them all the time)
+* _High-level_ API Layers
     1. Standard everyday `ActiveRecord` methods that we use all the time.
-* _Mid-level_ API Layer (**These are the APIs we are interested in**)
+* _Mid-level_ API Layers
     1. ActiveRecord methods which let you pass raw SQL
     1.  `pg` gem methods
-* _Low-level_ API layer (Ignoring because not accessible from Rails)
-    * There are layers below what is accessible from Rails:
-        1. [libpq](https://www.postgresql.org/docs/current/libpq.html) (C layer, not accessible from Rails)
-            * Is the C library which `pg` gem uses
-            * ships with Postgres itself
-            * Almost all clients use this except ODBC (I _think_ - not entirely sure if the ODBC driver compiles it in?)
-        1. [Postgres wire protocol](https://www.postgresql.org/docs/current/protocol.html)
-            * Defines the format of the messages exchanged between your app and the database
-            * Surprisingly human readable with [Wireshark](https://www.wireshark.org/) (more on this later)
-            * It's never practical to code this low for real work but inspecting it can be useful for debugging what ActiveRecord is doing on your behalf.
+* _Low-level_ API layers
+    1. [libpq](https://www.postgresql.org/docs/current/libpq.html)
+        * ships with Postgres itself
+        * The `pg` gem is a Ruby wrapper for libpq
+    1. [Postgres wire protocol](https://www.postgresql.org/docs/current/protocol.html)
+        * Defines the format of the messages exchanged between your app and the database
+        * It's never practical to code this low for real work but inspecting it with [Wireshark](https://www.wireshark.org/) can be useful for debugging what ActiveRecord is doing on your behalf (more on this later).
 
-### Essential background: Postgres wire protocol versions
+This guide is concerned with the "mid-level" API layer i.e.
 
-Your app can use one of 3 "sub-protocols" to exchange data with the PostgreSQL server. These sub-protocols are [well documented in the PostgreSQL manual](https://www.postgresql.org/docs/current/protocol-overview.html).
+1. ActiveRecord methods which let you run raw SQL queries
+1.  `pg` gem methods which let you run raw SQL queries
+
+We need to understand the Postgres wire protocol layer to make sense of the APIs so we will discuss that next.
+
+### Essential background: Postgres wire protocol
+
+Your Rails app can use one of 3 "sub-protocols" to exchange data with the PostgreSQL server. These sub-protocols are [well documented in the PostgreSQL manual](https://www.postgresql.org/docs/current/protocol-overview.html).
 
 The sub-protocols are:
 
 1. Extended query sub-protocol
-    * Query processing split into multiple steps. You app sends a separate message to the database for each step
+    * Query processing split into multiple steps. You app sends a **separate message** to the database for each step
         1. Parsing (textual-query --> [Parser] --> prepared-statement)
         2. Binding parameter values (prepared-statement --> [Binder] --> portal)
         3. Execution (portal --> [Executor] --> results)
     * This protocol is more complex than the _Simple query_ sub-protocol (see below) but also more flexible, more secure, and has better performance for repeated queries.
-    * **It completely eliminates SQLi if you bind all your data values!** The database receives the SQL string and the data values as different messages so it cannot get confused and treat a data value as part of the SQL string.
+    * **It completely eliminates SQLi if you bind all your data values!** The database receives the SQL string and the data values as **separate messages** so it cannot get confused and treat a data value as part of the SQL string.
 1. Simple query sub-protocol
     * Your app sends a single string (which already has all required data values interpolated into it). The string is parsed and immediately executed by the server.
     * This is the older sub-protocol. It is simpler but less flexible and less secure than the _Extended query sub-protocol_
 1. `COPY` operations sub-protocol
     * This is a special sub-protocol for copying large volumes of data to/from the database e.g. during import or export.
-    * We are not interested in this protocol in today's discussion
 
-ActiveRecord will try to use the _Extended query_ sub-protocol when it can and otherwise fall back to the _Simple query sub-protocol_. You can tell which sub-protocol is used by looking at the log output of the SQL query in your Rails log. Queries that use the _Extended query_ sub-protocol have the data binding markers visible in them e.g. `$1`, `$2` etc.
+ActiveRecord will try to use the _Extended query_ sub-protocol when it can and otherwise fall back to the _Simple query sub-protocol_.
 
-You can force usage of the _Extended query sub-protocol_ by running your SQL via `PG::Connection#exec_params`. Sometimes that is desirable. More on this later.
+You can tell which sub-protocol is used by looking at the log output of the SQL query in your Rails log. Queries that use the _Extended query_ sub-protocol have the data binding markers visible in them e.g. `$1`, `$2` etc.
 
-## Step: Verify I actually need need raw SQL
+Remember that using the _Extended query sub-protocol_ is more secure if, and only if, you pass your data values as bound parameters.
 
-### When should I use raw SQL?
+One of the criteria we will use to evaluate an API is whether it allows us to pass bound parameters as a separate step, thereby eliminating SQLi.
+
+## Step: Verify you actually need need to use raw SQL
+
+### When should you use raw SQL?
 
 We want the following outcomes when we interact with a database:
 
@@ -555,16 +557,6 @@ Options
     * ++ easy enough to understand the conversation between Rails and DB - messages are pretty sensible looking to human eyes
     * -- fiddly setup especially if you don't use Wireshark on the regular
 
-
-### Appendix: Alternatives to ActiveRecord
-
-* https://github.com/discourse/mini_sql
-    * wraps `pg` gem and provides some sugar
-    * a collection of raw SQL helpers that Discourse created for themselves
-    * does some statement caching so can be faster than `pg` in some cases
-    * unknowns
-      * what it does at the wire protocol layer
-
 ### Appendix: Suggested development workflow for writing raw SQL in Rails
 
 I use the following workflow to create raw SQL queries in a Rails app:
@@ -614,13 +606,24 @@ $ tail -f log/development.log
 
 ### Appendix: Debugging with Wireshark
 
+Wireshark will capture network packets on a given interface and present them in a UI for you to inspect the traffic.
+You can use it to see exactly what your app is sending to the database.
+
+First we need to run our Rails server but disable SSL (SSL would make it much more of a faff to see the contents of the network packets).
+
 ```bash
-# start rails server to not use SSL to local postgres so traffic can be inspected with Wireshark
+# Tell rails server to not use SSL to local postgres so traffic can be
+# inspected with Wireshark
 $ PGSSLMODE=disable bundle exec rails s
 ```
 
-In wireshark: capture on loopback (`lo0`) with the filter `port 5432` to capture all postgres traffic on your localhost.
+Assuming your PostgreSQL database is running on `localhost:5432`, you can set up
+Wireshark to capture this by capturing on the loopback interface (`lo0`) with
+the filter `port 5432` to capture just Postgres traffic on that interface.
 
+If you read the [Postgres protocol docs](https://www.postgresql.org/docs/current/protocol.html) you will be equipped to understand the various messages exchanged between database client (the Rails app) and database server.
+
+Explaining how to use [Wireshark](https://www.wireshark.org/) is beyond the scope of this guide but there is pretty good documentation on https://www.wireshark.org/.
 
 ### Appendix: Avoiding excessive memory usage with a CURSOR
 

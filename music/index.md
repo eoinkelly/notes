@@ -12,8 +12,7 @@ Sources
 
 1. Pitch (aka note or tone)
 	* the sound itself
-	* 12 pitches in western music
-		* ?? why is the octave included as a separate pitch? surely it would also be the "start pitch" of the next octave range?
+	* 12 pitches in western music (within each octave)
     * pitches are organised into scales (a family of notes)
     * scales are the usual birthplaces of melody and harmony
     * melody = the part of music we can sing
@@ -27,6 +26,7 @@ Sources
     * Building and releasing tension is an important facet of a musical piece
 
 Piano Tips
+
 * C is the white key to the left of two black keys, D is in the middle, E is on the right
 * F is on the left of three black keys cluster, then B, then G and A is on the right
 
@@ -64,11 +64,11 @@ There is only one major scale for each pitch.
 
 ### minor scales
 
-There is only one kind of major scale but many kinds of minor scale
+There is only one kind of major scale but many kinds of minor scale e.g. melodic minor
 
-          whole-half-half-whole-whole-whole-half
+    2 1 2 2 2 2 1
+    whole-half-whole-whole-whole-whole-half
     C     D     Eb    F     G     A     B     C
-
 
 ## Tuning
 
@@ -84,17 +84,18 @@ A 440hz
 
 So it's all about **intervals** and not much to do with absolute frequencies
 
-The octave is the most consonant interval and therefore the most important interval
-the interval of an octave is the most consonant (we percive them as so close that they are the deeper or higher versions of the "same note") so we give them the same name
-so the system starts by finding octave intervals
-the math relationship between octaves are also clean - the frequencies double/halve
+* The octave is the most consonant interval and therefore the most important interval
+* the interval of an octave is the most consonant (we perceive them as so close that they are the deeper or higher versions of the "same note") so we give them the same name
+* so the system starts by finding octave intervals
+* the math relationship between octaves are also clean - the frequencies double/halve
 
-so we have the octave interval
-now we need to divide the octave up into smaller intervals based on how it sounds to our ears
-these divisions have names based on their distance from the octave frequencies
-all these divisions are defined as jumps from the "base" octave frequency
+So we have the octave interval
 
-the more consonant an interval sounds ot human ears, the simpler the relationship between the two notes
+* now we need to divide the octave up into smaller intervals based on how it sounds to our ears
+* these divisions have names based on their distance from the octave frequencies
+* all these divisions are defined as jumps from the "base" octave frequency
+
+* the more consonant an interval sounds ot human ears, the simpler the relationship between the two notes
 
 Notation
 
@@ -116,6 +117,8 @@ Notation
 | m7       | ?                          | ?                     | Dissonant        | +17.6                   |
 | T        | ?                          | ?                     | Dissonant        | -17.49                  |
 
+![](./western-tuning-comparisons.png)
+
 ?? what is a cent?
 
 remember we are just naming **intervals** here, not naming notes!
@@ -128,7 +131,7 @@ Layout of our interval names within an octave
 
 Aside: Power chord = root + P5 or root + P5 + 8ve
 
-How human ears perceive intervals:
+How human ears perceive intervals, from most consonant to most dissonant:
 
     Octave (generally accepted) <most consonant>
     Perfect 5th/Perfect 4th (generally accepted)
@@ -137,7 +140,7 @@ How human ears perceive intervals:
     Major 3rd/Minor 6th
     Minor 3rd/Major 6th
 
-    (things below ehre are considered dissonant)
+    (things below here are considered dissonant)
     Major 2nd/Minor 7th
     Minor 2nd/Major 7th
     Tritone

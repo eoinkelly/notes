@@ -1,0 +1,420 @@
+$ pmap -x 28289
+28289:   puma 4.3.12 (unix:/var/run/myapp/puma.sock) [20220614232934]
+Address           Kbytes     RSS   Dirty Mode  Mapping
+0000000000400000       4       4       0 r-x-- ruby
+0000000000600000       4       4       4 r---- ruby
+0000000000601000       4       4       4 rw--- ruby
+00000000014c2000   82448   81380   81380 rw---   [ anon ]
+00007fb2b4000000    5376    5316    5316 rw---   [ anon ]
+00007fb2b4540000   60160       0       0 -----   [ anon ]
+00007fb2b8000000     132       4       4 rw---   [ anon ]
+00007fb2b8021000   65404       0       0 -----   [ anon ]
+00007fb2bc000000    8152    8052    8052 rw---   [ anon ]
+00007fb2bc7f6000   57384       0       0 -----   [ anon ]
+00007fb2c0000000     132      24      24 rw---   [ anon ]
+00007fb2c0021000   65404       0       0 -----   [ anon ]
+00007fb2c4000000    7896    7880    7880 rw---   [ anon ]
+00007fb2c47b6000   57640       0       0 -----   [ anon ]
+00007fb2c8000000   12900   12644   12644 rw---   [ anon ]
+00007fb2c8c99000   52636       0       0 -----   [ anon ]
+00007fb2cc000000    6888    6740    6740 rw---   [ anon ]
+00007fb2cc6ba000   58648       0       0 -----   [ anon ]
+00007fb2d0000000    3436    3420    3420 rw---   [ anon ]
+00007fb2d035b000   62100       0       0 -----   [ anon ]
+00007fb2d4000000     244     244     244 rw---   [ anon ]
+00007fb2d403d000   65292       0       0 -----   [ anon ]
+00007fb2d8000000     240     240     240 rw---   [ anon ]
+00007fb2d803c000   65296       0       0 -----   [ anon ]
+00007fb2dc000000     132       4       4 rw---   [ anon ]
+00007fb2dc021000   65404       0       0 -----   [ anon ]
+00007fb2e0000000     132       4       4 rw---   [ anon ]
+00007fb2e0021000   65404       0       0 -----   [ anon ]
+00007fb2e4000000     132      16      16 rw---   [ anon ]
+00007fb2e4021000   65404       0       0 -----   [ anon ]
+00007fb2e8245000      24      24       0 r-x-- bcrypt_ext.so
+00007fb2e824b000    2044       0       0 ----- bcrypt_ext.so
+00007fb2e844a000       4       4       4 r---- bcrypt_ext.so
+00007fb2e844b000       4       4       4 rw--- bcrypt_ext.so
+00007fb2e844c000    6240    6240    6240 rw---   [ anon ]
+00007fb2e8a65000       4       0       0 -----   [ anon ]
+00007fb2e8a66000    2048       8       8 rw---   [ anon ]
+00007fb2e8c66000      24      16       0 r-x-- libnss_dns-2.17.so
+00007fb2e8c6c000    2044       0       0 ----- libnss_dns-2.17.so
+00007fb2e8e6b000       4       4       4 r---- libnss_dns-2.17.so
+00007fb2e8e6c000       4       4       4 rw--- libnss_dns-2.17.so
+00007fb2e8e74000      16      16      16 rw---   [ anon ]
+00007fb2e8e78000       4       0       0 -----   [ anon ]
+00007fb2e8e79000    2048      40      40 rw---   [ anon ]
+00007fb2e9079000       4       0       0 -----   [ anon ]
+00007fb2e907a000    2048      20      20 rw---   [ anon ]
+00007fb2e927a000       4       0       0 -----   [ anon ]
+00007fb2e927b000    2048      20      20 rw---   [ anon ]
+00007fb2e947b000       4       0       0 -----   [ anon ]
+00007fb2e947c000    2048      16      16 rw---   [ anon ]
+00007fb2e967c000       4       0       0 -----   [ anon ]
+00007fb2e967d000    2048      16      16 rw---   [ anon ]
+00007fb2e987d000       4       0       0 -----   [ anon ]
+00007fb2e987e000    2048      16      16 rw---   [ anon ]
+00007fb2e9a7e000       4       0       0 -----   [ anon ]
+00007fb2e9a7f000    2048      64      64 rw---   [ anon ]
+00007fb2e9c7f000       4       0       0 -----   [ anon ]
+00007fb2e9c80000    2048      64      64 rw---   [ anon ]
+00007fb2e9e80000       4       0       0 -----   [ anon ]
+00007fb2e9e81000    2048      64      64 rw---   [ anon ]
+00007fb2ea081000       4       0       0 -----   [ anon ]
+00007fb2ea082000    2048      64      64 rw---   [ anon ]
+00007fb2ea282000       4       0       0 -----   [ anon ]
+00007fb2ea283000    2048      64      64 rw---   [ anon ]
+00007fb2ea483000       4       0       0 -----   [ anon ]
+00007fb2ea484000    4608    2572    2572 rw---   [ anon ]
+00007fb2ea907000    3252    1844    1844 rw---   [ anon ]
+00007fb2eac35000     244      52       0 r-x-- ripper.so
+00007fb2eac72000    2044       0       0 ----- ripper.so
+00007fb2eae71000       8       8       8 r---- ripper.so
+00007fb2eae73000       4       4       4 rw--- ripper.so
+00007fb2eae74000    1072    1072    1072 rw---   [ anon ]
+00007fb2eaf82000    4328    3572    3572 rw---   [ anon ]
+00007fb2eb3be000      28      16       0 r-x-- console.so
+00007fb2eb3c5000    2044       0       0 ----- console.so
+00007fb2eb5c4000       4       4       4 r---- console.so
+00007fb2eb5c5000       4       4       4 rw--- console.so
+00007fb2eb5c6000       4       4       0 r-x-- utf_16be.so
+00007fb2eb5c7000    2048       0       0 ----- utf_16be.so
+00007fb2eb7c7000       4       4       4 r---- utf_16be.so
+00007fb2eb7c8000       4       4       4 rw--- utf_16be.so
+00007fb2eb7c9000       4       4       0 r-x-- utf_16le.so
+00007fb2eb7ca000    2048       0       0 ----- utf_16le.so
+00007fb2eb9ca000       4       4       4 r---- utf_16le.so
+00007fb2eb9cb000       4       4       4 rw--- utf_16le.so
+00007fb2eb9cc000     608     608     608 rw---   [ anon ]
+00007fb2eba67000      16      12       0 r-x-- sha2.so
+00007fb2eba6b000    2044       0       0 ----- sha2.so
+00007fb2ebc6a000       4       4       4 r---- sha2.so
+00007fb2ebc6b000       4       4       4 rw--- sha2.so
+00007fb2ebc6c000    1968    1968    1968 rw---   [ anon ]
+00007fb2ebe5c000    1680    1680    1680 rw---   [ anon ]
+00007fb2ec000000     132       8       8 rw---   [ anon ]
+00007fb2ec021000   65404       0       0 -----   [ anon ]
+00007fb2f0004000      80      80      80 rw---   [ anon ]
+00007fb2f0018000      12       8       0 r-x-- sha1.so
+00007fb2f001b000    2044       0       0 ----- sha1.so
+00007fb2f021a000       4       4       4 r---- sha1.so
+00007fb2f021b000       4       4       4 rw--- sha1.so
+00007fb2f021c000     176     176     176 rw---   [ anon ]
+00007fb2f024b000      48      24       0 r-x-- libnss_files-2.17.so
+00007fb2f0257000    2044       0       0 ----- libnss_files-2.17.so
+00007fb2f0456000       4       4       4 r---- libnss_files-2.17.so
+00007fb2f0457000       4       4       4 rw--- libnss_files-2.17.so
+00007fb2f0458000      24       0       0 rw---   [ anon ]
+00007fb2f045e000       4       0       0 -----   [ anon ]
+00007fb2f045f000    8192      24      24 rw---   [ anon ]
+00007fb2f0c5f000      84      44       0 r-x-- libgcc_s-4.8.5-20150702.so.1
+00007fb2f0c74000    2044       0       0 ----- libgcc_s-4.8.5-20150702.so.1
+00007fb2f0e73000       4       4       4 r---- libgcc_s-4.8.5-20150702.so.1
+00007fb2f0e74000       4       4       4 rw--- libgcc_s-4.8.5-20150702.so.1
+00007fb2f0e75000     932     356       0 r-x-- libstdc++.so.6.0.19
+00007fb2f0f5e000    2048       0       0 ----- libstdc++.so.6.0.19
+00007fb2f115e000      32      32      32 r---- libstdc++.so.6.0.19
+00007fb2f1166000       8       8       8 rw--- libstdc++.so.6.0.19
+00007fb2f1168000      84      12      12 rw---   [ anon ]
+00007fb2f1184000      16      16      16 rw---   [ anon ]
+00007fb2f1188000    2936     464       0 r-x-- libmysqlclient.so.18.0.0
+00007fb2f1466000    2044       0       0 ----- libmysqlclient.so.18.0.0
+00007fb2f1665000      36      36      36 r---- libmysqlclient.so.18.0.0
+00007fb2f166e000      80      68      68 rw--- libmysqlclient.so.18.0.0
+00007fb2f1682000      24      24      24 rw---   [ anon ]
+00007fb2f1688000      72      64       0 r-x-- mysql2.so
+00007fb2f169a000    2044       0       0 ----- mysql2.so
+00007fb2f1899000       8       8       8 r---- mysql2.so
+00007fb2f189b000       4       4       4 rw--- mysql2.so
+00007fb2f189c000     608     608     608 rw---   [ anon ]
+00007fb2f1934000      92      12       0 r-x-- CP932.so
+00007fb2f194b000    2044       0       0 ----- CP932.so
+00007fb2f1b4a000       4       4       4 r---- CP932.so
+00007fb2f1b4b000       4       4       4 rw--- CP932.so
+00007fb2f1b4c000      32      32      32 rw---   [ anon ]
+00007fb2f1b57000     260     260       0 r---- nokogiri.so
+00007fb2f1b98000    1368     416       0 r-x-- nokogiri.so
+00007fb2f1cee000     656      92       0 r---- nokogiri.so
+00007fb2f1d92000       4       0       0 ----- nokogiri.so
+00007fb2f1d93000      44      44      44 r---- nokogiri.so
+00007fb2f1d9e000      16      16      16 rw--- nokogiri.so
+00007fb2f1da2000     152     152     152 rw---   [ anon ]
+00007fb2f1dcb000    2164    2164    2164 rw---   [ anon ]
+00007fb2f1fe9000       8       8       0 r-x-- md5.so
+00007fb2f1feb000    2044       0       0 ----- md5.so
+00007fb2f21ea000       4       4       4 r---- md5.so
+00007fb2f21eb000       4       4       4 rw--- md5.so
+00007fb2f21ec000     192     192     192 rw---   [ anon ]
+00007fb2f221d000      16      16       0 r-x-- cparse.so
+00007fb2f2221000    2044       0       0 ----- cparse.so
+00007fb2f2420000       4       4       4 r---- cparse.so
+00007fb2f2421000       4       4       4 rw--- cparse.so
+00007fb2f2428000    2128    2128    2128 rw---   [ anon ]
+00007fb2f263d000     104      44       0 r-x-- bigdecimal.so
+00007fb2f2657000    2044       0       0 ----- bigdecimal.so
+00007fb2f2856000       4       4       4 r---- bigdecimal.so
+00007fb2f2857000       4       4       4 rw--- bigdecimal.so
+00007fb2f2858000     832     832     832 rw---   [ anon ]
+00007fb2f2929000      12      12       0 r-x-- escape.so
+00007fb2f292c000    2048       0       0 ----- escape.so
+00007fb2f2b2c000       4       4       4 r---- escape.so
+00007fb2f2b2d000       4       4       4 rw--- escape.so
+00007fb2f2b2e000      40      36       0 r-x-- generator.so
+00007fb2f2b38000    2044       0       0 ----- generator.so
+00007fb2f2d37000       4       4       4 r---- generator.so
+00007fb2f2d38000       4       4       4 rw--- generator.so
+00007fb2f2d39000      24      24       0 r-x-- parser.so
+00007fb2f2d3f000    2044       0       0 ----- parser.so
+00007fb2f2f3e000       4       4       4 r---- parser.so
+00007fb2f2f3f000       4       4       4 rw--- parser.so
+00007fb2f2f40000      36      24       0 r-x-- strscan.so
+00007fb2f2f49000    2048       0       0 ----- strscan.so
+00007fb2f3149000       4       4       4 r---- strscan.so
+00007fb2f314a000       4       4       4 rw--- strscan.so
+00007fb2f314b000     152     100       0 r-x-- psych.so
+00007fb2f3171000    2044       0       0 ----- psych.so
+00007fb2f3370000       4       4       4 r---- psych.so
+00007fb2f3371000       4       4       4 rw--- psych.so
+00007fb2f3372000      72      32       0 r-x-- zlib.so
+00007fb2f3384000    2044       0       0 ----- zlib.so
+00007fb2f3583000       4       4       4 r---- zlib.so
+00007fb2f3584000       4       4       4 rw--- zlib.so
+00007fb2f3585000      16      12       0 r-x-- bootsnap.so
+00007fb2f3589000    2044       0       0 ----- bootsnap.so
+00007fb2f3788000       4       4       4 r---- bootsnap.so
+00007fb2f3789000       4       4       4 rw--- bootsnap.so
+00007fb2f378a000      88      80       0 r-x-- msgpack.so
+00007fb2f37a0000    2044       0       0 ----- msgpack.so
+00007fb2f399f000       4       4       4 r---- msgpack.so
+00007fb2f39a0000       4       4       4 rw--- msgpack.so
+00007fb2f39a1000      36      32       0 r-x-- puma_http11.so
+00007fb2f39aa000    2044       0       0 ----- puma_http11.so
+00007fb2f3ba9000       4       4       4 r---- puma_http11.so
+00007fb2f3baa000       4       4       4 rw--- puma_http11.so
+00007fb2f3bab000       4       4       0 r-x-- nonblock.so
+00007fb2f3bac000    2048       0       0 ----- nonblock.so
+00007fb2f3dac000       4       4       4 r---- nonblock.so
+00007fb2f3dad000       4       4       4 rw--- nonblock.so
+00007fb2f3dae000      12      12       0 r-x-- digest.so
+00007fb2f3db1000    2048       0       0 ----- digest.so
+00007fb2f3fb1000       4       4       4 r---- digest.so
+00007fb2f3fb2000       4       4       4 rw--- digest.so
+00007fb2f3fb3000     384       8       0 r-x-- libpcre.so.1.2.0
+00007fb2f4013000    2048       0       0 ----- libpcre.so.1.2.0
+00007fb2f4213000       4       4       4 r---- libpcre.so.1.2.0
+00007fb2f4214000       4       4       4 rw--- libpcre.so.1.2.0
+00007fb2f4215000     144      32       0 r-x-- libselinux.so.1
+00007fb2f4239000    2044       0       0 ----- libselinux.so.1
+00007fb2f4438000       4       4       4 r---- libselinux.so.1
+00007fb2f4439000       4       4       4 rw--- libselinux.so.1
+00007fb2f443a000       8       4       4 rw---   [ anon ]
+00007fb2f443c000      88      56       0 r-x-- libresolv-2.17.so
+00007fb2f4452000    2048       0       0 ----- libresolv-2.17.so
+00007fb2f4652000       4       4       4 r---- libresolv-2.17.so
+00007fb2f4653000       4       4       4 rw--- libresolv-2.17.so
+00007fb2f4654000       8       0       0 rw---   [ anon ]
+00007fb2f4656000      12       8       0 r-x-- libkeyutils.so.1.5
+00007fb2f4659000    2044       0       0 ----- libkeyutils.so.1.5
+00007fb2f4858000       4       4       4 r---- libkeyutils.so.1.5
+00007fb2f4859000       4       4       4 rw--- libkeyutils.so.1.5
+00007fb2f485a000      56      16       0 r-x-- libkrb5support.so.0.1
+00007fb2f4868000    2048       0       0 ----- libkrb5support.so.0.1
+00007fb2f4a68000       4       4       4 r---- libkrb5support.so.0.1
+00007fb2f4a69000       4       4       4 rw--- libkrb5support.so.0.1
+00007fb2f4a6a000     196      20       0 r-x-- libk5crypto.so.3.1
+00007fb2f4a9b000    2044       0       0 ----- libk5crypto.so.3.1
+00007fb2f4c9a000       8       8       8 r---- libk5crypto.so.3.1
+00007fb2f4c9c000       4       4       4 rw--- libk5crypto.so.3.1
+00007fb2f4c9d000      12       8       0 r-x-- libcom_err.so.2.1
+00007fb2f4ca0000    2044       0       0 ----- libcom_err.so.2.1
+00007fb2f4e9f000       4       4       4 r---- libcom_err.so.2.1
+00007fb2f4ea0000       4       4       4 rw--- libcom_err.so.2.1
+00007fb2f4ea1000     868     148       0 r-x-- libkrb5.so.3.3
+00007fb2f4f7a000    2044       0       0 ----- libkrb5.so.3.3
+00007fb2f5179000      56      56      56 r---- libkrb5.so.3.3
+00007fb2f5187000      12      12      12 rw--- libkrb5.so.3.3
+00007fb2f518a000     296      52       0 r-x-- libgssapi_krb5.so.2.2
+00007fb2f51d4000    2048       0       0 ----- libgssapi_krb5.so.2.2
+00007fb2f53d4000       4       4       4 r---- libgssapi_krb5.so.2.2
+00007fb2f53d5000       8       8       8 rw--- libgssapi_krb5.so.2.2
+00007fb2f53d7000    2268    1348       0 r-x-- libcrypto.so.1.0.2k
+00007fb2f560e000    2044       0       0 ----- libcrypto.so.1.0.2k
+00007fb2f580d000     112     112     112 r---- libcrypto.so.1.0.2k
+00007fb2f5829000      52      52      52 rw--- libcrypto.so.1.0.2k
+00007fb2f5836000      16      12      12 rw---   [ anon ]
+00007fb2f583a000     412     280       0 r-x-- libssl.so.1.0.2k
+00007fb2f58a1000    2048       0       0 ----- libssl.so.1.0.2k
+00007fb2f5aa1000      16      16      16 r---- libssl.so.1.0.2k
+00007fb2f5aa5000      28      28      28 rw--- libssl.so.1.0.2k
+00007fb2f5ab0000      16      16      16 rw---   [ anon ]
+00007fb2f5ab7000     368     292       0 r-x-- openssl.so
+00007fb2f5b13000    2044       0       0 ----- openssl.so
+00007fb2f5d12000       8       8       8 r---- openssl.so
+00007fb2f5d14000       8       8       8 rw--- openssl.so
+00007fb2f5d16000       4       4       4 rw---   [ anon ]
+00007fb2f5d17000      72      56       0 r-x-- nio4r_ext.so
+00007fb2f5d29000    2044       0       0 ----- nio4r_ext.so
+00007fb2f5f28000       4       4       4 r---- nio4r_ext.so
+00007fb2f5f29000       4       4       4 rw--- nio4r_ext.so
+00007fb2f5f2a000       4       4       4 rw---   [ anon ]
+00007fb2f5f2b000      36      28       0 r-x-- stringio.so
+00007fb2f5f34000    2044       0       0 ----- stringio.so
+00007fb2f6133000       4       4       4 r---- stringio.so
+00007fb2f6134000       4       4       4 rw--- stringio.so
+00007fb2f6135000     208     140       0 r-x-- date_core.so
+00007fb2f6169000    2044       0       0 ----- date_core.so
+00007fb2f6368000       4       4       4 r---- date_core.so
+00007fb2f6369000       4       4       4 rw--- date_core.so
+00007fb2f636a000       8       8       8 rw---   [ anon ]
+00007fb2f636c000      24      24       0 r-x-- etc.so
+00007fb2f6372000    2044       0       0 ----- etc.so
+00007fb2f6571000       4       4       4 r---- etc.so
+00007fb2f6572000       4       4       4 rw--- etc.so
+00007fb2f6573000       8       8       0 r-x-- wait.so
+00007fb2f6575000    2044       0       0 ----- wait.so
+00007fb2f6774000       4       4       4 r---- wait.so
+00007fb2f6775000       4       4       4 rw--- wait.so
+00007fb2f6776000     180     144       0 r-x-- socket.so
+00007fb2f67a3000    2044       0       0 ----- socket.so
+00007fb2f69a2000       4       4       4 r---- socket.so
+00007fb2f69a3000       4       4       4 rw--- socket.so
+00007fb2f69a4000     496     496     496 rw---   [ anon ]
+00007fb2f6a24000    1968    1968    1968 rw---   [ anon ]
+00007fb2f6c10000      28      24       0 r-x-- pathname.so
+00007fb2f6c17000    2044       0       0 ----- pathname.so
+00007fb2f6e16000       4       4       4 r---- pathname.so
+00007fb2f6e17000       4       4       4 rw--- pathname.so
+00007fb2f6e18000     352     352     352 rw---   [ anon ]
+00007fb2f6e71000       8       8       0 r-x-- monitor.so
+00007fb2f6e73000    2044       0       0 ----- monitor.so
+00007fb2f7072000       4       4       4 r---- monitor.so
+00007fb2f7073000       4       4       4 rw--- monitor.so
+00007fb2f7074000     304     304     304 rw---   [ anon ]
+00007fb2f70c1000      12      12       0 r-x-- transdb.so
+00007fb2f70c4000    2044       0       0 ----- transdb.so
+00007fb2f72c3000       4       4       4 r---- transdb.so
+00007fb2f72c4000       4       4       4 rw--- transdb.so
+00007fb2f72c5000       8       8       0 r-x-- encdb.so
+00007fb2f72c7000    2044       0       0 ----- encdb.so
+00007fb2f74c6000       4       4       4 r---- encdb.so
+00007fb2f74c7000       4       4       4 rw--- encdb.so
+00007fb2f74c8000       4       0       0 -----   [ anon ]
+00007fb2f74c9000     644       4       4 rw---   [ anon ]
+00007fb2f756a000       4       0       0 -----   [ anon ]
+00007fb2f756b000     644       4       4 rw---   [ anon ]
+00007fb2f760c000       4       0       0 -----   [ anon ]
+00007fb2f760d000     644       4       4 rw---   [ anon ]
+00007fb2f76ae000       4       0       0 -----   [ anon ]
+00007fb2f76af000     644       4       4 rw---   [ anon ]
+00007fb2f7750000       4       0       0 -----   [ anon ]
+00007fb2f7751000     644       4       4 rw---   [ anon ]
+00007fb2f77f2000       4       0       0 -----   [ anon ]
+00007fb2f77f3000     644       4       4 rw---   [ anon ]
+00007fb2f7894000       4       0       0 -----   [ anon ]
+00007fb2f7895000     644       4       4 rw---   [ anon ]
+00007fb2f7936000       4       0       0 -----   [ anon ]
+00007fb2f7937000     644       4       4 rw---   [ anon ]
+00007fb2f79d8000       4       0       0 -----   [ anon ]
+00007fb2f79d9000     644       4       4 rw---   [ anon ]
+00007fb2f7a7a000       4       0       0 -----   [ anon ]
+00007fb2f7a7b000     644       4       4 rw---   [ anon ]
+00007fb2f7b1c000       4       0       0 -----   [ anon ]
+00007fb2f7b1d000     644       4       4 rw---   [ anon ]
+00007fb2f7bbe000       4       0       0 -----   [ anon ]
+00007fb2f7bbf000     644       4       4 rw---   [ anon ]
+00007fb2f7c60000       4       0       0 -----   [ anon ]
+00007fb2f7c61000     644       4       4 rw---   [ anon ]
+00007fb2f7d02000       4       0       0 -----   [ anon ]
+00007fb2f7d03000     644       4       4 rw---   [ anon ]
+00007fb2f7da4000       4       0       0 -----   [ anon ]
+00007fb2f7da5000     644       4       4 rw---   [ anon ]
+00007fb2f7e46000       4       0       0 -----   [ anon ]
+00007fb2f7e47000     644       4       4 rw---   [ anon ]
+00007fb2f7ee8000       4       0       0 -----   [ anon ]
+00007fb2f7ee9000     644       4       4 rw---   [ anon ]
+00007fb2f7f8a000       4       0       0 -----   [ anon ]
+00007fb2f7f8b000     644       4       4 rw---   [ anon ]
+00007fb2f802c000       4       0       0 -----   [ anon ]
+00007fb2f802d000     644       4       4 rw---   [ anon ]
+00007fb2f80ce000       4       0       0 -----   [ anon ]
+00007fb2f80cf000     644       4       4 rw---   [ anon ]
+00007fb2f8170000       4       0       0 -----   [ anon ]
+00007fb2f8171000     644       4       4 rw---   [ anon ]
+00007fb2f8212000       4       0       0 -----   [ anon ]
+00007fb2f8213000     644       4       4 rw---   [ anon ]
+00007fb2f82b4000       4       0       0 -----   [ anon ]
+00007fb2f82b5000     644       4       4 rw---   [ anon ]
+00007fb2f8356000       4       0       0 -----   [ anon ]
+00007fb2f8357000     644       4       4 rw---   [ anon ]
+00007fb2f83f8000       4       0       0 -----   [ anon ]
+00007fb2f83f9000     644       4       4 rw---   [ anon ]
+00007fb2f849a000       4       0       0 -----   [ anon ]
+00007fb2f849b000     644       4       4 rw---   [ anon ]
+00007fb2f853c000       4       0       0 -----   [ anon ]
+00007fb2f853d000     644       4       4 rw---   [ anon ]
+00007fb2f85de000       4       0       0 -----   [ anon ]
+00007fb2f85df000     644       4       4 rw---   [ anon ]
+00007fb2f8680000       4       0       0 -----   [ anon ]
+00007fb2f8681000     644       4       4 rw---   [ anon ]
+00007fb2f8722000       4       0       0 -----   [ anon ]
+00007fb2f8723000     644       4       4 rw---   [ anon ]
+00007fb2f87c4000       4       0       0 -----   [ anon ]
+00007fb2f87c5000     644       4       4 rw---   [ anon ]
+00007fb2f8866000       4       0       0 -----   [ anon ]
+00007fb2f8867000   33412    8956    8956 rw---   [ anon ]
+00007fb2fa908000  103692      48       0 r---- locale-archive
+00007fb300e4b000       8       4       0 r-x-- libfreebl3.so
+00007fb300e4d000    2044       0       0 ----- libfreebl3.so
+00007fb30104c000       4       4       4 r---- libfreebl3.so
+00007fb30104d000       4       4       4 rw--- libfreebl3.so
+00007fb30104e000    1808     776       0 r-x-- libc-2.17.so
+00007fb301212000    2044       0       0 ----- libc-2.17.so
+00007fb301411000      16      16      16 r---- libc-2.17.so
+00007fb301415000       8       8       8 rw--- libc-2.17.so
+00007fb301417000      20      20      20 rw---   [ anon ]
+00007fb30141c000    1028      84       0 r-x-- libm-2.17.so
+00007fb30151d000    2044       0       0 ----- libm-2.17.so
+00007fb30171c000       4       4       4 r---- libm-2.17.so
+00007fb30171d000       4       4       4 rw--- libm-2.17.so
+00007fb30171e000      32       4       0 r-x-- libcrypt-2.17.so
+00007fb301726000    2044       0       0 ----- libcrypt-2.17.so
+00007fb301925000       4       4       4 r---- libcrypt-2.17.so
+00007fb301926000       4       4       4 rw--- libcrypt-2.17.so
+00007fb301927000     184       0       0 rw---   [ anon ]
+00007fb301955000       8       8       0 r-x-- libdl-2.17.so
+00007fb301957000    2048       0       0 ----- libdl-2.17.so
+00007fb301b57000       4       4       4 r---- libdl-2.17.so
+00007fb301b58000       4       4       4 rw--- libdl-2.17.so
+00007fb301b59000      28      20       0 r-x-- librt-2.17.so
+00007fb301b60000    2044       0       0 ----- librt-2.17.so
+00007fb301d5f000       4       4       4 r---- librt-2.17.so
+00007fb301d60000       4       4       4 rw--- librt-2.17.so
+00007fb301d61000      92      80       0 r-x-- libpthread-2.17.so
+00007fb301d78000    2044       0       0 ----- libpthread-2.17.so
+00007fb301f77000       4       4       4 r---- libpthread-2.17.so
+00007fb301f78000       4       4       4 rw--- libpthread-2.17.so
+00007fb301f79000      16       4       4 rw---   [ anon ]
+00007fb301f7d000      84      20       0 r-x-- libz.so.1.2.7
+00007fb301f92000    2044       0       0 ----- libz.so.1.2.7
+00007fb302191000       4       4       4 r---- libz.so.1.2.7
+00007fb302192000       4       4       4 rw--- libz.so.1.2.7
+00007fb302193000    4180    2908       0 r-x-- libruby.so.3.1.2
+00007fb3025a8000    2048       0       0 ----- libruby.so.3.1.2
+00007fb3027a8000      28      28      28 r---- libruby.so.3.1.2
+00007fb3027af000      16      16      16 rw--- libruby.so.3.1.2
+00007fb3027b3000      76      40      40 rw---   [ anon ]
+00007fb3027c6000     136     120       0 r-x-- ld-2.17.so
+00007fb3027ec000     144     144     144 rw---   [ anon ]
+00007fb302810000      28      28       0 r--s- gconv-modules.cache
+00007fb30281c000    1788     792     792 rw---   [ anon ]
+00007fb3029e0000      16      16      16 rw---   [ anon ]
+00007fb3029e6000       4       4       4 rw---   [ anon ]
+00007fb3029e7000       4       4       4 r---- ld-2.17.so
+00007fb3029e8000       4       4       4 rw--- ld-2.17.so
+00007fb3029e9000       4       4       4 rw---   [ anon ]
+00007fffaab3a000    8188      72      72 rw---   [ stack ]
+00007fffab35c000       8       4       0 r-x--   [ anon ]
+ffffffffff600000       4       0       0 r-x--   [ anon ]
+---------------- ------- ------- -------
+total kB         1376112  175924  166792
