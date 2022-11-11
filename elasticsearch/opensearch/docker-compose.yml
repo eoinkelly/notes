@@ -1,0 +1,54 @@
+# Docs: https://opensearch.org/docs/latest/opensearch/install/docker/
+#
+# Test commands (note the differences from ES defaults)
+#
+#     curl https://localhost:9200 -ku 'admin:admin'
+#
+# Dashboards:
+#     http://localhost:5601/
+#     username: admin, password: admin
+#
+version: "3"
+services:
+  opensearch:
+    image: opensearchproject/opensearch:latest
+    environment:
+      - discovery.type=single-node
+      - cluster.name=eoin-play-cluster # Name the cluster
+      - node.name=eoin-play-node-1 # Name the node that will run in this container
+      # - discovery.seed_hosts=opensearch-node1,opensearch-node2 # Nodes to look for when discovering the cluster
+      # - cluster.initial_cluster_manager_nodes=opensearch-node1,opensearch-node2 # Nodes eligibile to serve as cluster manager
+      - bootstrap.memory_lock=true # Disable JVM heap memory swapping
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m" # Set min and max JVM heap sizes to at least 50% of system RAM
+    ulimits:
+      memlock:
+        soft: -1 # Set memlock to unlimited (no soft or hard limit)
+        hard: -1
+      nofile:
+        soft: 65536 # Maximum number of open files for the opensearch user - set to at least 65536
+        hard: 65536
+    # mem_limit: 1G
+    # resources:
+    #   limits:
+    #     memory: 1G
+    # volumes:
+    #   - ./elasticsearch-7.6.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    #   - ./elasticsearch_data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200" # REST API
+      - "9600:9600" # Performacne Analyzer
+    networks:
+      - opensearch-net
+  dashboards:
+    image: opensearchproject/opensearch-dashboards:latest
+    ports:
+      - 5601:5601 # Map host port 5601 to container port 5601
+    expose:
+      - "5601" # Expose port 5601 for web access to OpenSearch Dashboards
+    environment:
+      OPENSEARCH_HOSTS: '["https://opensearch:9200"]' # Define the OpenSearch nodes that OpenSearch Dashboards will query
+    networks:
+      - opensearch-net
+
+networks:
+  opensearch-net:
