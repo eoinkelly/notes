@@ -4,7 +4,9 @@
   * OpenSearch forked at
     * ElasticSearch 7.10.2
     * Kibana 7.10.2
+  * Opensearch 1.0 was July 2021
   * They are drifting further apart especially Kibana vs Dashboards
+  * ES docs are still better but OS seem to be working on their docs
 * ElasticSearch
   * https://github.com/elastic/elasticsearch-ruby
   * `gem install elasticsearch`

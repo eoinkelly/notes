@@ -1,4 +1,10 @@
-# Getting started with a new Kibana instance
+# Kibana
+
+- [Kibana](#kibana)
+  - [Dev tools commands](#dev-tools-commands)
+  - [Kibana discover panel](#kibana-discover-panel)
+  - [Kibana saved objects](#kibana-saved-objects)
+  - [Other useful commands](#other-useful-commands)
 
 When faced with a new ES instance (via Kibana) and you want to figure out what is going on.
 
@@ -70,11 +76,27 @@ GET _cat/count?v
 #       1613762202 19:16:42  7956
 ```
 
-## Kibana saved index patterns
+## Kibana discover panel
 
-Not sure
-they seem to be what lets kibana interpret an index
-how diff from ES mapping?
+To see stuff in "Discover" you have to
+
+1. Create an _Index pattern_ under _Management > Stack Management_.
+  * When you create an Index pattern you are prompted to choose one timestamp field which will be used by Kibana for showing you the time graph and allowing time based filtering of results
+  * You can make one index pattern as default which will make it the default for the Discover panel.
+
+The search box can use:
+
+1. Kibana Query Language (KQL) which is the default
+    * https://www.elastic.co/guide/en/kibana/7.10/kuery-query.html
+1. Lucene query mini language
+    * This is the "legacy" option
+    * https://www.elastic.co/guide/en/kibana/7.10/lucene-query.html
+    * This option may eventually be removed from the GUI
+    * It doesn't support nested objects which KQL does
+    * When this option is selected you can also enter queries using the ElasticSearch query DSL
+
+Note: Neither KQL nor Lucene query mini-language is the same thing as the ElasticSearch query DSL!
+
 
 ## Kibana saved objects
 
@@ -105,7 +127,7 @@ GET /_cluster/health
 # Add `v` query param to get headings in plain text output
 
 # Get help on the query params you can pass to each command by adding the `help` query param
-# https://www.elastic.co/guide/en/elasticsearch/reference/current/cat-indices.html
+# https://www.elastic.co/guide/en/elasticsearch/reference/7.17/cat-indices.html
 # List indices (straight from Lucene, doc count includes hidden nested docs, use _count to get a better doc count)
 GET /_cat/indices?v
 GET /_cat/indices?format=json
@@ -169,12 +191,12 @@ POST /catalogue-development-contributor/_analyze
   "text": "example text"
 }
 
-GET catalogue-development-work/_count
-GET catalogue-development-work/_mapping
-GET catalogue-development-work/_settings
-GET catalogue-development-work/_search
+GET <your-index-name>/_count
+GET <your-index-name>/_mapping
+GET <your-index-name>/_settings
+GET <your-index-name>/_search
 # Turn on debug logging for index
-PUT /catalogue-development-work/_settings
+PUT /<your-index-name>/_settings
 {
   "index.indexing.slowlog.threshold.index.debug": "0s",
   "index.search.slowlog.threshold.fetch.debug": "0s",
@@ -182,22 +204,22 @@ PUT /catalogue-development-work/_settings
 }
 
 # test default analyzer for index
-POST /catalogue-development-work/_analyze
+POST /<your-index-name>/_analyze
 {"text":"hix! ;mex"}
 
 # test analyzer on specific field in index
-POST /catalogue-development-work/_analyze
+POST /<your-index-name>/_analyze
 {
   "field": "author_note",
   "text": "example text"
 }
 
-GET catalogue-development-resource/_count
-GET catalogue-development-resource/_mapping
-GET catalogue-development-resource/_settings
-GET catalogue-development-resource/_search
+GET <your-index-name>/_count
+GET <your-index-name>/_mapping
+GET <your-index-name>/_settings
+GET <your-index-name>/_search
 # Turn on debug logging for index
-PUT /catalogue-development-resource/_settings
+PUT /<your-index-name>/_settings
 {
   "index.indexing.slowlog.threshold.index.debug": "0s",
   "index.search.slowlog.threshold.fetch.debug": "0s",
@@ -205,23 +227,23 @@ PUT /catalogue-development-resource/_settings
 }
 
 # test default analyzer for index
-POST /catalogue-development-resource/_analyze
+POST /<your-index-name>/_analyze
 {"text":"hix! ;mex"}
 
 # test analyzer on specific field in index
-POST /catalogue-development-resource/_analyze
+POST /<your-index-name>/_analyze
 {
   "field": "author_note",
   "text": "example text"
 }
 
 
-GET catalogue-development-organisation/_count
-GET catalogue-development-organisation/_mapping
-GET catalogue-development-organisation/_settings
-GET catalogue-development-organisation/_search
+GET <your-index-name>/_count
+GET <your-index-name>/_mapping
+GET <your-index-name>/_settings
+GET <your-index-name>/_search
 # Turn on debug logging for index
-PUT /catalogue-development-organisation/_settings
+PUT /<your-index-name>/_settings
 {
   "index.indexing.slowlog.threshold.index.debug": "0s",
   "index.search.slowlog.threshold.fetch.debug": "0s",
@@ -229,11 +251,11 @@ PUT /catalogue-development-organisation/_settings
 }
 
 # test default analyzer for index
-POST /catalogue-development-organisation/_analyze
+POST /<your-index-name>/_analyze
 {"text":"hix! ;mex"}
 
 # test analyzer on specific field in index
-POST /catalogue-development-organisation/_analyze
+POST /<your-index-name>/_analyze
 {
   "field": "author_note",
   "text": "example text"

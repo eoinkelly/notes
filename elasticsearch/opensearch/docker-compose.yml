@@ -7,7 +7,7 @@
 # Dashboards:
 #     http://localhost:5601/
 #     username: admin, password: admin
-#
+# NB: I'm using different ports here to avoid having to stop my ES instance
 version: "3"
 services:
   opensearch:
@@ -34,17 +34,17 @@ services:
     # volumes:
     #   - ./elasticsearch-7.6.yml:/usr/share/elasticsearch/config/elasticsearch.yml
     #   - ./elasticsearch_data:/usr/share/elasticsearch/data
-    ports:
-      - "9200:9200" # REST API
-      - "9600:9600" # Performacne Analyzer
+    ports: # host:container
+      - "9201:9200" # REST API
+      - "9601:9600" # Performance Analyzer
     networks:
       - opensearch-net
   dashboards:
     image: opensearchproject/opensearch-dashboards:latest
     ports:
-      - 5601:5601 # Map host port 5601 to container port 5601
+      - 5602:5601 # Map host port 5601 to container port 5601
     expose:
-      - "5601" # Expose port 5601 for web access to OpenSearch Dashboards
+      - "5602" # Expose port 5601 for web access to OpenSearch Dashboards
     environment:
       OPENSEARCH_HOSTS: '["https://opensearch:9200"]' # Define the OpenSearch nodes that OpenSearch Dashboards will query
     networks:

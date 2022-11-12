@@ -1,8 +1,84 @@
 # Elasticsearch
 
+- [Elasticsearch](#elasticsearch)
+  - [Cheatsheet for Kibana dev tools](#cheatsheet-for-kibana-dev-tools)
+  - [Questions](#questions)
+  - [Sources](#sources)
+  - [Installing](#installing)
+  - [Designing a cluster](#designing-a-cluster)
+  - [Setup](#setup)
+    - [Logging](#logging)
+  - [Overview](#overview)
+    - [Default ports](#default-ports)
+    - [Things it isn't good at](#things-it-isnt-good-at)
+    - [Elasticstack](#elasticstack)
+  - [Cat APIs](#cat-apis)
+  - [JSON API Overview](#json-api-overview)
+    - [Searching and aggregating across indexes](#searching-and-aggregating-across-indexes)
+  - [Documents (CRUD)](#documents-crud)
+    - [C: Index a document](#c-index-a-document)
+    - [R: Read a document](#r-read-a-document)
+    - [U: Update a document](#u-update-a-document)
+    - [D: Delete](#d-delete)
+  - [Aggregation](#aggregation)
+  - [Searching](#searching)
+    - [Search query anatomy](#search-query-anatomy)
+      - [match_all](#match_all)
+      - [match](#match)
+      - [multi_match](#multi_match)
+      - [range](#range)
+      - [term](#term)
+      - [terms](#terms)
+      - [exists](#exists)
+      - [missing](#missing)
+      - [query_string](#query_string)
+      - [simple_query_string](#simple_query_string)
+      - [bool](#bool)
+    - [Relevancy](#relevancy)
+      - [Boosting](#boosting)
+    - [Fuzziness](#fuzziness)
+    - [Derivatives](#derivatives)
+    - [Highlighting](#highlighting)
+    - [Suggesters](#suggesters)
+  - [Indexing](#indexing)
+    - [Create index](#create-index)
+    - [Types](#types)
+    - [Analyzers](#analyzers)
+      - [Overview](#overview-1)
+      - [Built-in analyzers](#built-in-analyzers)
+        - [Standard analyzer (the default)](#standard-analyzer-the-default)
+      - [Built-in character filters](#built-in-character-filters)
+      - [Built-in Tokenizers](#built-in-tokenizers)
+      - [Built-in token filters](#built-in-token-filters)
+      - [Creating a custom analyzer](#creating-a-custom-analyzer)
+      - [Testing analyzers](#testing-analyzers)
+    - [Normalizers](#normalizers)
+    - [Mappings](#mappings)
+      - [Dynamic mapping](#dynamic-mapping)
+      - [other](#other)
+    - [Mapping: metadata](#mapping-metadata)
+      - [Mapping: Fields/Properties](#mapping-fieldsproperties)
+      - [Field data types](#field-data-types)
+      - [Limiting the number of mappings which can be created](#limiting-the-number-of-mappings-which-can-be-created)
+    - [Aliases](#aliases)
+  - [Physical layout](#physical-layout)
+    - [Decisions you make when you create an index](#decisions-you-make-when-you-create-an-index)
+    - [Index](#index)
+    - [Clusters](#clusters)
+    - [Nodes](#nodes)
+    - [Shards](#shards)
+      - [Primary shards](#primary-shards)
+      - [Replica shards](#replica-shards)
+    - [Get cluster info and health](#get-cluster-info-and-health)
+  - [ElasticSearch 6.x and older](#elasticsearch-6x-and-older)
+      - [ES6 and earlier](#es6-and-earlier)
+## Cheatsheet for Kibana dev tools
+
+See [kibana docs](./kibana.md)
+
 ## Questions
 
-* is it a good practice to disble dynamci fields on all indexes in most cases?
+* is it a good practice to disble dynamic fields on all indexes in most cases?
 
 ## Sources
 
@@ -12,6 +88,11 @@
 ## Installing
 
 * Install via Docker - it's easiest
+
+## Designing a cluster
+
+* Keep shard size in the 10-50 GB range for best performance
+  * => Don't shard for less than 10GB
 
 ## Setup
 
@@ -34,66 +115,27 @@ PUT /_all/_settings
 "index.search.slowlog.threshold.query.debug": "0s"}
 ```
 
-## Differences in 6.x
-
-* There were some significant changes in ES 6.x
-    * The concept of mapping types was removed
-        * https://www.elastic.co/guide/en/elasticsearch/reference/6.8/removal-of-types.html
-        * Summary: it was inefficient at the Lucene layer to have different types of document in the same index
-        * 6.x deprecated them
-        * Before 6.x you could have multiple types per index. Now the enforce one type per index.
-        * After 6.x the place in the APIs where you could specify a custom type is filled by `_doc` which roughly means "the one type in this index"
-* Breaking changes in 7.x
-  * The APIs were changed to no longer have space for the type name
-
-Pre 6.x:
-
-| Relational DB | Elasticsearch |
-| ------------- | ------------- |
-| Database      | Index         |
-| Table         | Type          |
-| Row           | Document      |
-| Column        | Field         |
-
-After 6.x:
-
-| Relational DB | Elasticsearch               |
-| ------------- | --------------------------- |
-| Database      | The whole cluster (I guess) |
-| Table         | Index                       |
-| Row           | Document                    |
-| Column        | Field                       |
-
-You can implement your own "type" field if you really do need to store multiple types of doc in same field because
-
-> there is a limit to how many primary shards can exist in a cluster so you
-> may not want to waste an entire shard for a collection of only a few thousand
-> documents.
-
-TODO: what is this about? how does a collection "use up" a primary shard
-
 ## Overview
+
+| Relational DB | Elasticsearch     |
+| ------------- | ----------------- |
+| Database      | The whole cluster |
+| Table         | Index             |
+| Row           | Document          |
+| Column        | Field             |
 
 * A node is an instance of ES
 * node exposes Restful JSON API on port 9200
-* nodes form a cluster on port 9300 (also what the java APIs use)
+* nodes form a cluster on port 9300
 * ES is a document database
     * documents have fields
 * by default every field in a document is indexed in an inverted index i.e. it is searchable
 * uses JSON as the serialization format for documents
 * storing a document in ES is called "indexing the document"
 * A cluster is a group of nodes with the same value of `cluster_name` (you can see this value by visiting in a browser http://localhost:9200/)
-* Provides a Java API which has two kinds of clients
-    1. Node client
-        * your client joins the cluster as a "non data" node
-        * it can forward requests to the node which does have the data
-        * uses port 9300 and the native ES transport protocol
-    2. Transport client
-        * lighter weight
-        * just forwards requests to the cluster
-        * uses port 9300 and the native ES transport protocol
-* ES supports YAML in request and response bodies - add `?format=yaml` to your request
-* You can configure your index settings to not store `_source`
+* Provides a **Java API** and a **HTTP API**
+* Supports YAML in request and response bodies - add `?format=yaml` to your request
+* You can configure your index settings to not store `_source` (the original indexed document)
     * Doing this in combination with using an external ID means you could use ES just for the searching of the index and get a list of database IDs as results.
     * You would then get those rows from the DB
     * Is this a good pattern?
@@ -102,14 +144,14 @@ TODO: what is this about? how does a collection "use up" a primary shard
 * A lot of the constraints of ES are actually constraints from Lucene
 * The part of ES that writes data to disk is called the "gateway"
 * ES is described as "schema free" or "schemaless"
-    * It's kinda bs
+    * It's kinda bullshit
     * That means the docs are not _bound_ by a schema, it doesn't mean there is no schema
 
 ### Default ports
 
 * TCP 9200 for Restful API queries
 * TCP 9300 for inter-node communication or "transport"
-    * They Java API connects to this port
+    * The Java API connects to this port
 * TCP 5601 for Kibana
   * Kibana connects to ES server over 9200
 
@@ -162,7 +204,7 @@ TODO: what is this about? how does a collection "use up" a primary shard
 
 ## Cat APIs
 
-https://www.elastic.co/guide/en/elasticsearch/reference/current/cat.html
+https://www.elastic.co/guide/en/elasticsearch/reference/7.17/cat.html
 
 * Intended for humans to consume
 * Returns tabular text not JSON
@@ -207,11 +249,6 @@ You can run search and aggregation queries against multiple indexes at the same 
     ```js
     // search all documents in just the myindex index
     GET /myindex/_search
-    ```
-3. Search all documents of one type in an index
-    ```js
-    // search all documents in just the _doc type in just the myindex index
-    GET /myindex/_doc/_search
     ```
 4. Search all documents in multiple indexes
     ```js
@@ -373,7 +410,7 @@ GET /megacorp/_doc/_search # "search lite" - return all documents of given index
 
 GET /megacorp/_doc/_search?q=last_name:Smith # filter those documents based on a field
 
-# exaclty same as line above (but using the query DSL)
+# exactly same as line above (but using the query DSL)
 # notice this is a GET request with a body. ES authors are fine with this.
 GET /megacorp/_doc/_search
 {
@@ -414,12 +451,19 @@ GET /_search
     * `bool`
 
 #### match_all
-{ "match_all": {}} # match all documents
-    * all results receive a neutral score of `1` because they are all equally relevant
+
+```jsonc
+{
+  "query": {
+    "match_all": {} //  match all documents
+  }
+}
+```
+* all results receive a neutral score of `1` because they are all equally relevant
 
 #### match
 
-https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-match-query.html
+https://www.elastic.co/guide/en/elasticsearch/reference/7.17/query-dsl-match-query.html
 
 ```js
 // short-hand version:
@@ -538,7 +582,7 @@ GET /eoin-test-1/_search
 
 #### query_string
 
-https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html
+https://www.elastic.co/guide/en/elasticsearch/reference/7.17/query-dsl-query-string-query.html
 
 * seems to overlap with the `match` query a lot
     * When should you use each?
@@ -599,7 +643,7 @@ https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-
 
 #### simple_query_string
 
-https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-simple-query-string-query.html
+https://www.elastic.co/guide/en/elasticsearch/reference/7.17/query-dsl-simple-query-string-query.html
 
 * more limited version of `query_string` but safer for it
 * doesn't return errors for invalid syntax
@@ -647,7 +691,7 @@ You can combine both kinds of query for best performnace. First filter out the d
 
 #### Boosting
 
-https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-boost.html
+https://www.elastic.co/guide/en/elasticsearch/reference/7.17/mapping-boost.html
 
 You can apply a boost parameter (many/most/all ???) queries
 
@@ -664,7 +708,7 @@ You can apply a boost parameter (many/most/all ???) queries
 
 Sources
 
-* https://www.elastic.co/guide/en/elasticsearch/reference/current/common-options.html#fuzziness
+* https://www.elastic.co/guide/en/elasticsearch/reference/7.17/common-options.html#fuzziness
 * https://en.wikipedia.org/wiki/Levenshtein_distance
 
 
@@ -710,18 +754,19 @@ Faster than normal queries for autocomplete use-cases
 
 ## Indexing
 
-A logical grouping of related types and documents
+An index is a logical grouping of related types and documents
 
-index ~= database
+| Relational DB | Elasticsearch     |
+| ------------- | ----------------- |
+| Database      | The whole cluster |
+| Table         | Index             |
+| Row           | Document          |
+| Column        | Field             |
 
-* Since 7.0 an index can only contain a single type
-  * i.e. the "database" can only contain one "table"
-  * so index and type are 1:1 in ES7+
+Since 7.0 an index can only contain a single type i.e. the "database" can only contain one "table"
 
-it seems in the examples they use `_doc` for the type e.g. `users/_doc` and `products/_doc`
-_doc is the "default type of an index in 6+
+Indexes are auto-created the first time you push a document into it.
 
-Indexes are auto-created the first time you push a document into it
 You can also create an index before-hand with an "index template" it lets you control the defaults of the index e.g. num shards, type mappings etc.
 
 ES creates an "inverted index" for FTS fields i.e. it stores (conceptually at least) tuples of the form:
@@ -749,47 +794,7 @@ PUT /eoin_test_1
   "shards_acknowledged": true,
   "index": "eoin_test_1"
 }
-```
 
-#### ES6 and earlier
-
-Create an index with a named mapping. This syntax only works in ES6 and older. ES7 only allows one type per index and the default type name is `_doc`
-```js
-// ES6 and earlier
-// create an index (eoin_test_2), a type (eoins_type) with two properties (f1, f2)
-PUT /eoin_test_2
-{
-  "settings": {
-    "index": {
-      "number_of_shards": 5,
-      "number_of_replicas": 2
-    }
-  },
-  "mappings": {
-    "eoins_type": {
-      "properties": {
-        "f1": {
-          "type": "text"
-        },
-        "f2": {
-          "type": "keyword"
-        }
-      }
-    }
-  }
-}
-// =>
-{
-  "acknowledged": true,
-  "shards_acknowledged": true,
-  "index": "eoin_test_2"
-}
-```
-
-#### ES7+
-
-In ES7+ you cannot name the type
-```js
 PUT /eoin_test_2
 {
   "settings": {
@@ -800,10 +805,10 @@ PUT /eoin_test_2
   },
   "mappings": {
     "properties": {
-        "f1": {
+        "field_1": {
           "type": "text"
         },
-        "f2": {
+        "field_2": {
           "type": "keyword"
         }
     }
@@ -827,28 +832,73 @@ A type consists of
 
 ### Analyzers
 
+#### Overview
+
+```mermaid
+flowchart LR
+  A["'text string value' (raw value to index or raw query)"]
+  B[Analyzer]
+  C["Array(Terms) a.k.a. index keys"]
+  D["Inverted index"]
+  A --> B
+  B --> C
+  C --> D
+```
+
 * The job of an analyzer is to take the value of a text field and break it into "terms".
 * These terms then become the keys of the inverted index.
+* You can see the analyzers for an index by
+    ```bash
+    GET /<index-name/_settings
+    # look at <index-name.settings.index.analysis
+    ```
 
-Analyzers run
-1. when you add a document to the index but they also run
-    * called _Index analyzer_
-2. on the query string(s) when you preform a query.
-    * called _Search analyzer_
+Analyzers run:
+
+1. When you add a document to the index (called _Index analyzer_)
+2. On the query string(s) when you preform a query (called _Search analyzer_)
+
+NB: Both the document and the query are run through analyzers.
 
 In most cases you want the same analyser at both index and search times but there are times when you want the flexibility to choose a different analyser at search time.
-    I'm assuming it would be slower than using the analyser which created the index???
 
-Different text fields in the same document can have different analysers
+Different text fields in the same document can have different analysers.
 
-An analyzer is the name given to a chain of 3 kinds of function:
+An analyzer is the name given to a **chain** of 3 kinds of function:
 
 1. Character filter (0 or more)
     * tidy up a string before it is tokenized
+    * custom character filters (which are named configurations of built-in filters) under `settings.index.analysys.char_filter` in mapping JSON
 2. Tokenizer (exactly 1)
     * tokenize the string
+    * you cannot create custom tokenizers
 3. Token filter (0 or more)
     * filters the tokens in various ways
+    * custom token filters (which are named configurations of built-in filters) under `settings.index.analysys.filter` in mapping JSON
+
+
+```mermaid
+flowchart TB
+  A["Raw document field or query"]
+  D["Inverted index"]
+  A -- string --> AA
+  subgraph Analyzer
+  AA["Char filter 1"]
+  AA2["..."]
+  AB["Char filter N"]
+  AC["Tokenizer"]
+  AD["Token filter 1"]
+  AD2["..."]
+  AE["Token filter N"]
+  AA --> AA2
+  AA2 --> AB
+  AB -- "array(char)" --> AC
+  AC -- "array((start-offset, token, end-offset))" --> AD
+  AD --> AD2
+  AD2 --> AE
+  end
+  AE -- "array(term)" --> D
+```
 
 ```
 {document-field-or-query-char-stream}
@@ -857,21 +907,73 @@ An analyzer is the name given to a chain of 3 kinds of function:
     |> [token-filter-1, ...] -> {[term1, term2, term3, ...]}
 ```
 
+#### Built-in analyzers
+
+* https://www.elastic.co/guide/en/elasticsearch/reference/7.17/analysis-analyzers.html
+* https://opensearch.org/docs/latest/opensearch/query-dsl/text-analyzers/
+
+1. Standard
+    * divides text into terms on word boundaries
+    * "word boundaries" are defined by _Unicode Text Segmentation_ algorithm
+    * removes most punctuation, lowercases terms and supports removing stop words
+2. Language specific analyzers
+    * e.g. `english`, `french`
+3. Whitespace
+    * just creates terms by splitting on whitespace
+4. Simple
+    * lowercases everything
+    * creates a new term whenever it encounters a character which is not a letter
+5. Stop
+    * Same as simple but allows you to remove stop words
+6. Keyword
+    * a noop analyzer, just returns it's input as a single term
+7. Pattern
+    * splits into terms based on regex
+    * supports lower-casing and stop words
+8. Fingerprint
+    * creates a fingerprint which can be used for duplicate detection
+
+If the analyzers above don't work for you, you can create your own "custom" analyzer.
+
+##### Standard analyzer (the default)
+
+The default analyzer for full-text fields is `standard` - it is good for western languages.
+
+The `standard` analyzer is
+
+1. Character filter
+    * none
+2. Tokenizer
+    1. `standard` tokenizer
+        * divides text into terms on word boundaries
+        * "word boundaries" are defined by _Unicode Text Segmentation_ algorithm
+        * removes most punctuation, lowercases terms and supports removing stop words
+3. Token filters
+    1. `standard` token filter
+        * in theory tidies up tokens emitted from the tokenizer but currently does nothing
+    2. `lowercase` token filter
+        * converts all tokens to lowercase
+    3. `stop` token filter
+        * removes "stop words" i.e. common words which have little impact on search relevance e.g. the, and, is, an
+        * by default the stopword list is set to `_none_` so this filter does nothing unless you configure it to do so.
+
 #### Built-in character filters
 
-* `mapping`
-    * replace substrings within the stream
-* `html_strip`
-    * remove html tags and decode HTML entities
-* `pattern_replace`
-    * replaces with regex
+https://www.elastic.co/guide/en/elasticsearch/reference/7.17/analysis-charfilters.html
 
-Can I create custom char filters?
-Note: the tokenizer will see the **output** of the character filter chain
+* Built-in character filters
+  * `mapping`
+      * replace substrings within the stream
+  * `html_strip`
+      * remove html tags and decode HTML entities
+  * `pattern_replace`
+      * replaces with regex
+* The tokenizer will see the **output** of the character filter chain
+* AFAIK you cannot create your own character filters.
 
 #### Built-in Tokenizers
 
-https://www.elastic.co/guide/en/elasticsearch/reference/current/analysis-tokenizers.html
+https://www.elastic.co/guide/en/elasticsearch/reference/7.17/analysis-tokenizers.html
 
 Tokens take a character stream and create tokens
 A token is roughly equivalent to a word
@@ -903,7 +1005,8 @@ There are a few categories of built-in tokenizers
     1. `edge_ngram`
 * Structured text tokenizers
     1. `keyword`
-        * outputs exactlty the string it received
+        * outputs exactly the string it received
+        * this is a very common tokenizer
     1. `pattern`
         * split text on a matching regex
     1. `char_group`
@@ -911,7 +1014,83 @@ There are a few categories of built-in tokenizers
     1. `simple_pattern_split`
     1. `path_heirarchy`
 
-You can test tokenizers pretty easily (this also lets you see their output quite directly)
+#### Built-in token filters
+
+https://www.elastic.co/guide/en/elasticsearch/reference/7.17/analysis-tokenfilters.html
+
+* Token filters can add, remove or change tokens
+* ES has approx. 48 built-in token filters - see [docs](https://www.elastic.co/guide/en/elasticsearch/reference/7.17/analysis-tokenfilters.html)
+
+Examples of built-in token filters:
+
+* `lowercase`
+    * convert token to lowercase
+* `stop`
+    * removes "stop words" i.e. common words which have little impact on search relevance e.g. the, and, is, an
+* `asciifolding`
+    * removes diacritics
+* `ngram`
+    * suitable for partial matching or autocomplete
+* `edge_ngram`
+    * suitable for partial matching or autocomplete
+    * similar to `ngram` but only outputs ngrams that start at the beginning of a token
+* `truncate`
+    * truncate long tokens
+
+#### Creating a custom analyzer
+
+https://www.elastic.co/guide/en/elasticsearch/reference/7.17/analysis-custom-analyzer.html
+
+You create a custom analyzer by adding it to the `settings` of your index.
+
+```js
+// a custom analyzer
+{
+  settings: {
+    analysis: {
+      eoin_ngram_search_analyzer: {
+        type: "custom" // tells ES we are creating a new kind of analyzer not configuring an existing one
+        char_filter: ["html_strip"] // char filters, can be omitted
+        tokenizer: "standard", // choose your tokenizer, required
+        filter: ["truncate_filter", "lowercase", "asciifolding"], // token filters, can be omitted
+      }
+    }
+  }
+}
+
+
+// Example of creating a custom analyzer
+PUT my-index-000001
+{
+  "settings": {
+    "analysis": {
+      "analyzer": {
+        "my_custom_analyzer": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "char_filter": [
+            "html_strip"
+          ],
+          "filter": [
+            "lowercase",
+            "asciifolding"
+          ]
+        }
+      }
+    }
+  }
+}
+
+POST my-index-000001/_analyze
+{
+  "analyzer": "my_custom_analyzer",
+  "text": "Is this <b>déjà vu</b>?"
+}
+```
+
+#### Testing analyzers
+
+You can see the output of the analyzers for a particular index
 
 ```js
 // Use this to invoke the analyzer configured as the default for this index
@@ -989,103 +1168,31 @@ POST _analyze
 }
 ```
 
-#### Built-in token filters
-
-Token filters can add, remove or change tokens
-* ES has approx. 48 built-in token filters - see the menu on https://www.elastic.co/guide/en/elasticsearch/reference/current/analysis-apostrophe-tokenfilter.html
-
-* `lowercase`
-    * convert token to lowercase
-* `stop`
-    * removes "stop words" i.e. common words which have little impact on search relevance e.g. the, and, is, an
-* `asciifolding`
-    * removes diacritics
-* `ngram`
-    * suitable for partial matching or autocomplete
-* `edge_ngram`
-    * suitable for partial matching or autocomplete
-    * similar to `ngram` but only outputs ngrams that start at the beginning of a token
-* `truncate`
-    * truncate long tokens
-
-#### Built-in analyzers
-
-1. Standard
-    * divides text into termss on word boundaries
-    * "word boundaries" are defined by _Unicode Text Segmentation_ algorithm
-    * removes most punctiation, lowercases terms and supports removing stop words
-2. Language specific analyzers
-    * e.g. `english`, `french`
-3. Whitespace
-    * just creates terms by splitting on whitespace
-4. Simple
-    * lowercases everything
-    * creates a new term whenever it encounters a character which is not a letter
-5. Stop
-    * Same as simple but allows you to remove stop words
-6. Keyword
-    * a noop analyzer, just returns it's input as a single term
-7. Pattern
-    * splits into terms based on regex
-    * supports lower-casing and stop words
-8. Fingerprint
-    * creates a fingerprint which can be used for duplicate detection
-
-If the analyzers above don't work for you, you can create your own "custom" analyzer.
-
-##### Standard analyzer (the default)
-
-The default analyzer for full-text fields is `standard` - it is good for western languages.
-
-The `standard` analyzer is
-
-1. Character filter
-    * none
-2. Tokenizer
-    1. `standard` tokenizer
-        * divides text into termss on word boundaries
-        * "word boundaries" are defined by _Unicode Text Segmentation_ algorithm
-        * removes most punctiation, lowercases terms and supports removing stop words
-3. Token filters
-    1. `standard` token filter
-        * in theory tidies up tokens emitted from the tokenizer but currently does nothing
-    2. `lowercase` token filter
-        * converts all tokens to lowercase
-    3. `stop` token filter
-        * removes "stop words" i.e. common words which have little impact on search relevance e.g. the, and, is, an
-        * by default the stopword list is set to `_none_` so this filter does nothing unless you configure it to do so.
-
-#### Creating a custom analyzer
-
-```js
-// Example of creating a custom analyzer
-ngram_search_analyzer: {
-    type: "custom" // tells ES we are creating a new kind of analyzer not configuring an existing one
-    char_filter: ["html_strip"] // char filters, can be omitted
-    tokenizer: "standard", // choose your tokenizer
-    filter: ["truncate_filter", "lowercase", "asciifolding"], // token filters, can be omitted
-}
-```
 
 ### Normalizers
 
-https://www.elastic.co/guide/en/elasticsearch/reference/current/analysis-normalizers.html
+https://www.elastic.co/guide/en/elasticsearch/reference/7.17/analysis-normalizers.html
 
+* Analyzers are used for `text` type fields and normalizers are used for `keyword` type fields
+* An analyzer with no tokenizer step
 * A chain of char filters into token filters
 * A normalizer is like an analyzer but it can only emit one token
-
-You canonly only use token filters that take one character at a time input
+* ES ships with just one built-in normalizer - `lowercase`
+* Elasticsearch applies no normalizer by default.
+* You can apply a normalizer to a `keyword` field by adding it to the mapping when you create your index
+* Constraint: You can only only use token filters that take one character at a time input (not all token filters are available for use in a normalizer)
 
 ```
 {document-field-or-query-char-stream}
     |> [char-filter-1, ...] -> {[char, char, char, ...]}
     |> [token-filter-1, ...] -> {[term1, term2, term3, ...]}
 ```
+
 ### Mappings
 
 #### Dynamic mapping
 
-https://www.elastic.co/guide/en/elasticsearch/reference/current/dynamic-field-mapping.html
+https://www.elastic.co/guide/en/elasticsearch/reference/7.17/dynamic-field-mapping.html
 
 * All ES indexes have a schema but it is dynamic.
 * ES is not really "schemaless" but it is capable of dynamically **creating** or **adding** to a schema as you add documents - it will not change or remove an existing field in a schema
@@ -1114,31 +1221,30 @@ PUT my_index
 }
 ```
 
-The rules for how JSON types are converted are what you would expect but "string" is a bit more complext:
+The rules for how JSON types are converted are what you would expect but "string" is a bit more complex:
 
-1. If the string looks like a date then save it as on
+1. If the string looks like a date then save it as one
 2. If the string looks numeric then save it as number
 3. Otherwise generate an `my_field` analysed field and a `my_field.keyword` keyword subfield.
 
 #### other
-```
+```bash
 # view the mapping of an index
 GET /indexname/_mapping
 GET /indexname/typename/_mapping
-
-? how to get mappings for multiple indexes?
 ```
 
-You should create types within an index to match the _common_ fields in your doucments e.g. log lines
+You should create types within an index to match the _common_ fields in your documents e.g. log lines
 
-https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping.html
+https://www.elastic.co/guide/en/elasticsearch/reference/7.17/mapping.html
 
 When defining a mapping we seem to need both an "analyzer" and a "search analyzer"
 
-This example creates two logical properties on the docment
+This example creates two logical properties on the document
 
 1. `my_field` - a FTS enabled chunk of text
 2. `my_field.keyword` an unparsed version of the raw string
+
 ```json
 // I think the shape of this is a default for ES when you give it a string value
 // in JSON and don't have a mapping defined
@@ -1156,14 +1262,15 @@ This example creates two logical properties on the docment
 }
 ```
 
-* `_all`
-    * is a catch all field
-    * is a meta-field on a **type**
-    * can be enabled or disabled
+The `_all` field:
 
-you can add dynamic fields to an index (which are calculated based on stored fields)
+* is a catch all field
+* is a meta-field on a **type**
+* can be enabled or disabled
 
-A mapping defines
+You can add dynamic fields to an index (which are calculated based on stored fields)
+
+A mapping defines:
 
 * whether string fields should be treated as "full text" or not
     * `text` type => full text
@@ -1171,31 +1278,28 @@ A mapping defines
 * the format of date values
 * rules creating dynamic fields
 
-Since ES 6.0 an index can contain only one type
+A mapping has 2 kinds of fields:
 
-A mapping has 2 kinds of fields
+### Mapping: metadata
 
-1. meta-fields on a _document_
-    * define some metadata about the document's metadata is treated
-    * examples
-        * `_index`
-            * the name of the index this document is in
-        * `_type`
-            * the type of this document
-        * `_id`
-            * the id of the document
-        * `_source`
-            * seems to be all the properties of the document i.e. most stuff is in here
-2. fields aka properties
+* define some metadata about the document's metadata is treated
+* examples
+    * `_index`
+        * the name of the index this document is in
+    * `_type`
+        * the type of this document
+    * `_id`
+        * the id of the document
+    * `_source`
+        * seems to be all the properties of the document i.e. most stuff is in here
 
+#### Mapping: Fields/Properties
 
-Fields
-
-* each field has a data type, one of
+* each field has a data type (see list of data types below)
 * the same field can be indexed multiple times for different purposes - this is called _multi-fields_
-    * the `fields` paramter to a property defines multi-fields
+    * the `fields` parameter to a property defines multi-fields
 
-Field data types
+#### Field data types
 
 * scalar
     * string
@@ -1238,11 +1342,9 @@ Field data types
         * store geometric shapes
     * `completion`
 
-? array, binary object,
+#### Limiting the number of mappings which can be created
 
-Limiting the number of mappings which can be created
-
-"Mapping explosion" can be caused if you insert a bunch of documents which have very different shapse. You can set some params to control this:
+"Mapping explosion" can be caused if you insert a bunch of documents which have very different shapes. You can set some params to control this:
 
 * `index.mapping.total_fields.limit`
     * The maximum number of fields in an index.
@@ -1255,8 +1357,10 @@ Limiting the number of mappings which can be created
     * Default is 50
 
 You don't need to define your fields before-hand but you can create an explicit mapping when you create your index
+
 You can add fields to an existing index too.
-Existing type and field mappings **cannot be changed** because it would invalidate existing documents in the index
+
+Existing type and field mappings **cannot be changed** because it would invalidate existing documents in the index.
 
 > Fields and mapping types do not need to be defined before being used.
 > Thanks to dynamic mapping, new mapping types and new field names will be
@@ -1264,9 +1368,13 @@ Existing type and field mappings **cannot be changed** because it would invalida
 
 ### Aliases
 
-* you can alias an index or indexs
+* you can alias an index or indexes
 * creates a level of indirection between your users and your indexes
-    * useful to allow you to reindex without breaking your users
+    * useful to allow you to re-index without breaking your users
+      * Re-index process with aliases:
+        1. You have `my_index_v123` which has alias `my_index`
+        1. You create `my_index_v_124`
+        1. Move the alias
 
 ## Physical layout
 
@@ -1284,7 +1392,6 @@ Overview
     * Choose number of replica shards for each primary shard
 * Decisions you cannot change later
     * Choose number of primary shards
-
 * Your first design will probably suck because you don't know what the workload will be
     * => you will have to iterate a few times
     * questions you won't yet know the answers to
@@ -1446,7 +1553,81 @@ curl -XGET "http://localhost:9200/_cluster/health"
 # }
 ```
 
+## ElasticSearch 6.x and older
+
+* There were some significant changes in ES 6.x
+    * The concept of mapping types was removed
+        * https://www.elastic.co/guide/en/elasticsearch/reference/6.8/removal-of-types.html
+        * Summary: it was inefficient at the Lucene layer to have different types of document in the same index
+        * 6.x deprecated them
+        * Before 6.x you could have multiple types per index. Now the enforce one type per index.
+        * After 6.x the place in the APIs where you could specify a custom type is filled by `_doc` which roughly means "the one type in this index"
+* Breaking changes in 7.x
+  * The APIs were changed to no longer have space for the type name
+
+Pre 6.x:
+
+| Relational DB | Elasticsearch |
+| ------------- | ------------- |
+| Database      | Index         |
+| Table         | Type          |
+| Row           | Document      |
+| Column        | Field         |
+
+After 6.x:
+
+| Relational DB | Elasticsearch               |
+| ------------- | --------------------------- |
+| Database      | The whole cluster (I guess) |
+| Table         | Index                       |
+| Row           | Document                    |
+| Column        | Field                       |
+
+You can implement your own "type" field if you really do need to store multiple types of doc in same field because
+
+> there is a limit to how many primary shards can exist in a cluster so you
+> may not want to waste an entire shard for a collection of only a few thousand
+> documents.
+
+TODO: what is this about? how does a collection "use up" a primary shard
+
+it seems in the examples they use `_doc` for the type e.g. `users/_doc` and `products/_doc`
+_doc is the "default type of an index in 6+
 
 
+#### ES6 and earlier
+
+Create an index with a named mapping. This syntax only works in ES6 and older. ES7 only allows one type per index and the default type name is `_doc`
+```js
+// ES6 and earlier
+// create an index (eoin_test_2), a type (eoins_type) with two properties (f1, f2)
+PUT /eoin_test_2
+{
+  "settings": {
+    "index": {
+      "number_of_shards": 5,
+      "number_of_replicas": 2
+    }
+  },
+  "mappings": {
+    "eoins_type": {
+      "properties": {
+        "f1": {
+          "type": "text"
+        },
+        "f2": {
+          "type": "keyword"
+        }
+      }
+    }
+  }
+}
+// =>
+{
+  "acknowledged": true,
+  "shards_acknowledged": true,
+  "index": "eoin_test_2"
+}
+```
 
 
