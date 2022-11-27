@@ -1,7 +1,6 @@
 # Elasticsearch
 
 - [Elasticsearch](#elasticsearch)
-  - [Cheatsheet for Kibana dev tools](#cheatsheet-for-kibana-dev-tools)
   - [Questions](#questions)
   - [Sources](#sources)
   - [Installing](#installing)
@@ -20,20 +19,25 @@
     - [R: Read a document](#r-read-a-document)
     - [U: Update a document](#u-update-a-document)
     - [D: Delete](#d-delete)
+    - [Relationships](#relationships)
+    - [Controlling expensive queries](#controlling-expensive-queries)
   - [Aggregation](#aggregation)
   - [Searching](#searching)
+    - [Query lite syntax aka URI search (discouraged)](#query-lite-syntax-aka-uri-search-discouraged)
+      - [simple\_query\_string](#simple_query_string)
     - [Search query anatomy](#search-query-anatomy)
-      - [match_all](#match_all)
+    - [Queries](#queries)
+      - [match\_all](#match_all)
       - [match](#match)
-      - [multi_match](#multi_match)
+      - [match\_phrase](#match_phrase)
+      - [multi\_match](#multi_match)
+    - [Filters](#filters)
       - [range](#range)
       - [term](#term)
       - [terms](#terms)
       - [exists](#exists)
       - [missing](#missing)
-      - [query_string](#query_string)
-      - [simple_query_string](#simple_query_string)
-      - [bool](#bool)
+    - [bool (both a Query and a Filter)](#bool-both-a-query-and-a-filter)
     - [Relevancy](#relevancy)
       - [Boosting](#boosting)
     - [Fuzziness](#fuzziness)
@@ -61,20 +65,17 @@
       - [Field data types](#field-data-types)
       - [Limiting the number of mappings which can be created](#limiting-the-number-of-mappings-which-can-be-created)
     - [Aliases](#aliases)
-  - [Physical layout](#physical-layout)
-    - [Decisions you make when you create an index](#decisions-you-make-when-you-create-an-index)
+  - [Physical layout of an ElasticSearch cluster](#physical-layout-of-an-elasticsearch-cluster)
     - [Index](#index)
     - [Clusters](#clusters)
     - [Nodes](#nodes)
     - [Shards](#shards)
       - [Primary shards](#primary-shards)
       - [Replica shards](#replica-shards)
-    - [Get cluster info and health](#get-cluster-info-and-health)
-  - [ElasticSearch 6.x and older](#elasticsearch-6x-and-older)
-      - [ES6 and earlier](#es6-and-earlier)
-## Cheatsheet for Kibana dev tools
-
-See [kibana docs](./kibana.md)
+  - [Decisions you make when you create an index](#decisions-you-make-when-you-create-an-index)
+  - [Diagnosing issues](#diagnosing-issues)
+  - [Recommendations](#recommendations)
+  - [Appendix: ElasticSearch 6.x and older](#appendix-elasticsearch-6x-and-older)
 
 ## Questions
 
@@ -382,6 +383,24 @@ You can delete documents by id
 DELETE /mythings/_doc/123
 ```
 
+### Relationships
+
+https://www.elastic.co/guide/en/elasticsearch/reference/7.17/joining-queries.html
+
+* ES has two ways to mimic joining tables
+1. `nested` query on `nested` field type
+  * if your doc has a `nested` field type you can use a `nested` query to query it
+  * this is an "expensive query"
+2. `has_child` and `has_parent` queries
+  * if your doc has a field of type `join` then you can use TODO
+
+### Controlling expensive queries
+
+https://www.elastic.co/guide/en/elasticsearch/reference/7.17/query-dsl.html#query-dsl-allow-expensive-queries
+
+"joining" queries and other expensive queries can be prevented by setting `search.allow_expensive_queries: false`
+
+
 ## Aggregation
 
 * As well as FTS, ES can be used for data analytics
@@ -390,9 +409,9 @@ DELETE /mythings/_doc/123
     * average popularity of a certain group of posts
     * average popularity of posts for each tag
 
-TODO
-
 ## Searching
+
+https://www.elastic.co/guide/en/elasticsearch/reference/7.17/query-dsl.html
 
 * returns 10 results by default
 * Sends GET requests with a body
@@ -400,14 +419,11 @@ TODO
     ```sh
     GET /_search
     GET /{index name}/_search
-    GET /{index name}/{type name}/_search # Pre 6.x only
+    GET /{index name}/_doc/_search # Pre 6.x you could use types other than _doc
     ```
 
 ```bash
-# Kibana console
-
 GET /megacorp/_doc/_search # "search lite" - return all documents of given index
-
 GET /megacorp/_doc/_search?q=last_name:Smith # filter those documents based on a field
 
 # exactly same as line above (but using the query DSL)
@@ -421,7 +437,7 @@ GET /megacorp/_doc/_search
     }
 }
 
-# short-hand get all records
+# short-hand get all records in all indexes
 GET /_search
 
 # this is the long-hand version of the '/_search' i.e. it finds all results
@@ -433,154 +449,23 @@ GET /_search
 }
 ```
 
-### Search query anatomy
-
-* Leaf clause
-  * used to compare a field against the query string
-  * examples:
-    * match
-    * match_all
-    * range
-    * term
-    * terms
-    * exists
-    * missing
-* Compound clause
-  * used to combine other query clauses (both leaf and other compound clauses)
-  * examples:
-    * `bool`
-
-#### match_all
+### Query lite syntax aka URI search (discouraged)
 
 ```jsonc
-{
-  "query": {
-    "match_all": {} //  match all documents
-  }
-}
-```
-* all results receive a neutral score of `1` because they are all equally relevant
+// title contains 'blah'
+GET /movies/_search?q=title:blah
 
-#### match
-
-https://www.elastic.co/guide/en/elasticsearch/reference/7.17/query-dsl-match-query.html
-
-```js
-// short-hand version:
-GET /eoin-test-1/_search
-{
-  "query": { // required wrapper for all queries
-    "match": { // open the "match query"
-      "description": "Enterprise" // the only require param to "match" is a field name and value
-    }
-  }
-}
-
-
-// long-hand version of the same query
-GET /eoin-test-1/_search
-{
-  "query": {
-    "match": {
-      "description": { // <-- name of field to query
-        "query": "Enterprise", // this text gets analysed
-        "analyzer": "blah", // defaults to the analyzer defined for this field at index time, falls back to the default analyzer for the index
-        "fuzziness": 0 // defaults to 0, increase value to be tolerant of misspellings and finding similar words
-        "operator": "and", // change default operator from OR to AND
-        "lenient" true, // ignore exceptions caused by data-type mismatches
-      }
-    }
-  }
-}
+// year is 2010 or later, and title contains 'trek'
+// this is fine but all those special chars need to be URL encoded (curl can handle this for you)
+GET /movies/_search?q=+year:>2010+title:trek
 ```
 
-* searches a single field - see `multi_match` for searching more than one field at once
-* The query will be analysed by
-    * The analyser setup for the field, falling back to the default analyser for the index.
-        * This helps ensure that your query will be analysed in the same way your indexed text was
-* Query text is analysed and the terms created by analysis are used to create a `boolean` query
-    * The default operator is `OR`
-    * Example:
-        * When you give it a query `Hello There boo boo` it will by default search for `hello OR there OR boo OR boo`
-* good for _full text search_ OR _exact value_ search
-* how it functions depends on they type of the field:
-    * full text field
-        * => use the defined _analyzer_ for that field
-        * it will find substrings
-    * exact field e.g. numger, date, boolean, _not_analyzed_ string => do an exact match
-        * NOTE: for exact matches you probably want a filter clause instead because it will be faster and cached
-
-```js
-// { "match": { "fieldName": "field value" }}
-{ "match": { "tweet": "About Search" }}
-{ "match": { "age":    26           }}
-{ "match": { "date":   "2014-09-01" }}
-{ "match": { "public": true         }}
-{ "match": { "tag":    "full_text"  }}
-```
-
-#### multi_match
-
-* run the same query on multiple fields
-
-{
-    "multi_match": {
-        "query":    "full text search",
-        "fields":   [ "title", "body" ]
-    }
-}
-
-#### range
-
-{
-    "range": {
-        "age": {
-            "gte":  20,
-            "lt":   30
-        }
-    }
-}
-
-#### term
-
-* search by exact value
-* `term` query does no analysis of text (does not run any analyzer) so will always find exact match
-
-    { "term": { "age":    26           }}
-    { "term": { "date":   "2014-09-01" }}
-    { "term": { "public": true         }}
-    { "term": { "tag":    "full_text"  }}
-
-#### terms
-
-* same as `term` but allows multiple exact match values
-* can be used to do searches for accented and unaccented values
-
-    { "terms": { "tag": [ "search", "full_text", "nosql" ] }}
-
-#### exists
-
-* roughly equivalent to SQL IS NOT NULL
-* matches if the given field is not `null` in the document
-
-    {
-        "exists":   {
-            "field":    "title"
-        }
-    }
-
-#### missing
-
-* roughly equivalent to SQL IS NULL
-* matches if the given field is `null` in the document
-
-    {
-        "missing":   {
-            "field":    "title"
-        }
-    }
-
-#### query_string
+* Handy for quick searches but don't use in prod
+* ++ it's short and concise
+* -- query params must be URL encoded - annoying for some params
+* -- queries can be cryptic
+* -- the query is in the URL so can be logged
+* -- don't ever ever allow end users to pass in the query string - equivalent of SQLi
 
 https://www.elastic.co/guide/en/elasticsearch/reference/7.17/query-dsl-query-string-query.html
 
@@ -590,7 +475,6 @@ https://www.elastic.co/guide/en/elasticsearch/reference/7.17/query-dsl-query-str
     * Your users are now tied to the query_string DSL and any changes which might happen to it
     * You cannot easily tune queries e.g. add boosting
     * Your users can DoS you pretty easily
-
 * `query`
     * uses a DSL to allow searches to be performed on one line because this is basically the JSON version of the putting the query inline in the URL via `q=...`
     * it gets a series of _terms_ (NB term doesn't mean exactly the same thing as the normal ES use of the word) and _operators_
@@ -623,7 +507,6 @@ https://www.elastic.co/guide/en/elasticsearch/reference/7.17/query-dsl-query-str
         # where the title field has any non-null value
         _exists_:title
         ```
-
 * fields = what fields to search
 * default operator
     * the default boolean operator to use to combine
@@ -650,7 +533,211 @@ https://www.elastic.co/guide/en/elasticsearch/reference/7.17/query-dsl-simple-qu
 * is designed for the use case where you want to provide and advanced query syntax for users with minimal work
     * Caution: this assumes you trust your users
 
-#### bool
+### Search query anatomy
+
+* Leaf clause
+  * used to compare a field against the query string
+  * Queries:
+    1. match_all
+    1. match
+    1. multi_match
+    1. query_string
+    1. simple_query_string
+  * Filters:
+    1. range
+    1. term
+    1. terms
+    1. exists
+    1. missing
+* Compound clause
+  * used to combine other query clauses (both leaf and other compound clauses)
+  * Queries:
+    1. bool
+  * Filters:
+    1. bool
+
+### Queries
+
+* Queries match with a relevance score (floating point between 0.0 -> 1.0)
+* Wrapped in a `"query": { ... }` block
+* You can nest filters inside queries and nest queries inside filters
+
+#### match_all
+
+```jsonc
+{
+  "query": {
+    "match_all": {} //  match all documents
+  }
+}
+```
+* all results receive a neutral score of `1` because they are all equally relevant
+
+#### match
+
+https://www.elastic.co/guide/en/elasticsearch/reference/7.17/query-dsl-match-query.html
+
+* searches a single field - see `multi_match` for searching more than one field at once
+* The query will be analysed by
+    * The analyser setup for the field, falling back to the default analyser for the index.
+        * This helps ensure that your query will be analysed in the same way your indexed text was
+* Query text is analysed and the terms created by analysis are used to create a `boolean` query
+    * The default operator is `OR`
+    * Example:
+        * When you give it a query `Hello There boo boo` it will by default search for `hello OR there OR boo OR boo`
+* good for _full text search_ OR _exact value_ search depending on the type of the field:
+    * full text field
+        * => use the defined _analyzer_ for that field
+        * it will find substrings
+    * exact field e.g. number, date, boolean, _not_analyzed_ string => do an exact match
+        * NOTE: for exact matches you probably want a filter clause (see instead because it will be faster and cached
+
+```js
+// { "match": { "fieldName": "field value" }}
+{ "match": { "tweet": "About Search" }}
+{ "match": { "age":    26           }}
+{ "match": { "date":   "2014-09-01" }}
+{ "match": { "public": true         }}
+{ "match": { "tag":    "full_text"  }}
+```
+
+```js
+// short-hand version:
+GET /eoin-test-1/_search
+{
+  "query": { // required wrapper for all queries
+    "match": { // open the "match query"
+      "description": "Enterprise" // the only required param to "match" is a field name and value
+    }
+  }
+}
+
+
+// long-hand version of the same query
+GET /eoin-test-1/_search
+{
+  "query": {
+    "match": {
+      "description": { // <-- name of field to query
+        "query": "Enterprise", // this text gets analysed
+        "analyzer": "blah", // defaults to the analyzer defined for this field at index time, falls back to the default analyzer for the index
+        "fuzziness": 0 // defaults to 0, increase value to be tolerant of misspellings and finding similar words
+        "operator": "and", // change default operator from OR to AND
+        "lenient" true, // ignore exceptions caused by data-type mismatches
+      }
+    }
+  }
+}
+```
+
+#### match_phrase
+
+https://www.elastic.co/guide/en/elasticsearch/reference/7.17/query-dsl-match-query-phrase.html
+
+* analyzes the given query text and creates a "phrase query"
+* the phrase query matches terms up to a configurable `slop` number (defaults to 0)
+  * transposed terms have a slop of 2
+  * you can use slop to control whether the phrase has to be in the exact order
+  * slop controls how far you are willing to let a term move from it's position and still be matched
+* you can configure which analyzer is used
+  * the default is to use whatever analyzer is set for the field and to fall back to the default search analyzer if not explicit field mapping set
+* if you set a high slop value you can use `match_phrase` to implement proximity search
+
+```json
+GET /_search
+{
+  "query": {
+    "match_phrase": {
+      "message": {
+        "query": "this is a test",
+        "analyzer": "my_analyzer",
+        // "slop": 0
+      }
+    }
+  }
+}
+```
+
+#### multi_match
+
+* run the same query on multiple fields
+
+```jsonc
+{
+    "multi_match": {
+        "query":    "full text search",
+        "fields":   [ "title", "body" ]
+    }
+}
+```
+
+### Filters
+
+* Filters match with a yes/no
+* Wrapped in a `"filter": { ... }` block
+* You can nest filters inside queries and nest queries inside filters
+
+#### range
+
+```jsonc
+{
+    "range": {
+        "age": {
+            "gte":  20,
+            "lt":   30
+        }
+    }
+}
+```
+
+#### term
+
+* search by exact value
+* `term` query does no analysis of text (does not run any analyzer) so will always find exact match
+
+```jsonc
+{ "term": { "age":    26           }}
+{ "term": { "date":   "2014-09-01" }}
+{ "term": { "public": true         }}
+{ "term": { "tag":    "full_text"  }}
+```
+
+#### terms
+
+* same as `term` but allows multiple exact match values
+* can be used to do searches for accented and unaccented values
+
+```jsonc
+{ "terms": { "tag": [ "search", "full_text", "nosql" ] }}
+```
+
+#### exists
+
+* roughly equivalent to SQL IS NOT NULL
+* matches if the given field is not `null` in the document
+
+```jsonc
+{
+    "exists":   {
+        "field":    "title"
+    }
+}
+```
+
+#### missing
+
+* roughly equivalent to SQL IS NULL
+* matches if the given field is `null` in the document
+
+```jsonc
+{
+    "missing":   {
+        "field":    "title"
+    }
+}
+```
+
+### bool (both a Query and a Filter)
 
 * combines other queries
 * takes the following arguments:
@@ -667,7 +754,7 @@ https://www.elastic.co/guide/en/elasticsearch/reference/7.17/query-dsl-simple-qu
 * a `bool` query can be nested within a `filter`, `should` of another `bool`
 * combines scores together to return a single score
 
-Queries can be used in two contexts
+Bool queries can be used in two contexts
 
 1. filtering context: does this query match yes/no
     * aka "non scoring" query
@@ -676,18 +763,23 @@ Queries can be used in two contexts
     * aka "scoring query"
     * calculates how relevant each document is to the given query and gives it a `_score` which is then used to sort the results by relevance
 
-You can combine both kinds of query for best performnace. First filter out the documents you don't want and then use scoring query to calculate relevance of that subset.
+You can combine both kinds of query for best performance. First filter out the documents you don't want and then use scoring query to calculate relevance of that subset.
 
 ### Relevancy
 
 * ES provides multiple algorithms for calculating relevancy
 * The default relevancy algorithm is _Term Frequency - Inverse Document Frequency_ (TF-IDF)
 * Term Frequency
-    * The more times a word you are looking for appears in a document the higher the score
+  * How often the term appears in a given document
+  * The more times a word you are looking for appears in a document the higher the score
+* Document Frequency
+  * How often a term appears in all documents in the index
 * Inverse Document Frequency
     * The weight of each word is higher if the word is uncommon across documents
 * You can manually "boost" the score of a particular field when searching
     * This lets you weight certain fields more than others when calculating relevancy
+
+$$Rel = TF \cdot \frac{1}{DF}$$
 
 #### Boosting
 
@@ -918,6 +1010,11 @@ flowchart TB
     * removes most punctuation, lowercases terms and supports removing stop words
 2. Language specific analyzers
     * e.g. `english`, `french`
+    * english seems to
+      * lowercase everything
+      * remove stop words
+      * remove non alphanumeric chars
+      * has quite diff output to `standard`
 3. Whitespace
     * just creates terms by splitting on whitespace
 4. Simple
@@ -1006,7 +1103,7 @@ There are a few categories of built-in tokenizers
 * Structured text tokenizers
     1. `keyword`
         * outputs exactly the string it received
-        * this is a very common tokenizer
+        * this is a very commonly used tokenizer
     1. `pattern`
         * split text on a matching regex
     1. `char_group`
@@ -1027,6 +1124,7 @@ Examples of built-in token filters:
     * convert token to lowercase
 * `stop`
     * removes "stop words" i.e. common words which have little impact on search relevance e.g. the, and, is, an
+    * TODO: where does it load its list of stop words?
 * `asciifolding`
     * removes diacritics
 * `ngram`
@@ -1049,10 +1147,11 @@ You create a custom analyzer by adding it to the `settings` of your index.
   settings: {
     analysis: {
       eoin_ngram_search_analyzer: {
+        // if type was an existing built-in analyzer you would be configuring it here not defining a new analyzer
         type: "custom" // tells ES we are creating a new kind of analyzer not configuring an existing one
         char_filter: ["html_strip"] // char filters, can be omitted
         tokenizer: "standard", // choose your tokenizer, required
-        filter: ["truncate_filter", "lowercase", "asciifolding"], // token filters, can be omitted
+        filter: ["truncate", "lowercase", "asciifolding"], // token filters, can be omitted
       }
     }
   }
@@ -1330,17 +1429,85 @@ A mapping has 2 kinds of fields:
 * Complex data types
     * `array`
         * all elements must be same type
+        * works as expected for arrays of scalar types (`bool`, `string`, `integer` etc.)
+        * array of objects will use `object` type for each object which has trade-offs (see below)
     * `object`
         * allows inner objects within the JSON document
+        * is the default dynamic type used if you supply a doc with a nested doc
+        * ES **does not store the documents as nested** - it flattens all nested docs into the outer doc
+          ```jsonc
+          // this document
+          {
+            "region": "US",
+            "manager": {
+              "age":     30,
+              "name": {
+                "first": "John",
+                "last":  "Smith"
+              }
+            }
+          }
+
+          // is stored flattened as:
+          {
+            "region":             "US",
+            "manager.age":        30,
+            "manager.name.first": "John",
+            "manager.name.last":  "Smith"
+          }
+          ```
+        * flattens the inner objects by grouping the values of each attr into a separate array so you cannot search for e.g
+          ```jsonc
+            // this nested array of users
+            "user" : [
+              {
+                "first" : "John",
+                "last" :  "Smith"
+              },
+              {
+                "first" : "Alice",
+                "last" :  "White"
+              }
+            ]
+
+            // is actually stored as
+            "user.first" : [ "alice", "john" ],
+            "user.last" :  [ "smith", "white" ]
+
+            // so you cannot search for first=John, last=Smith because the relationship is broken
+
+            // if you need to avoid this flattening, you should choose `nested` type
+          ```
     * `nested`
         * supports arrays of inner objects where each object needs to be independently queryable
-            * Question not sure what that means?
+        * Internally, nested objects index each object in the array as a separate hidden document, meaning that each nested object can be queried independently of the others with the `nested` query
+        * Use this when you want to retain the maximum amount searching capability of the nested doc and are ok doing expensive searches to achieve this
+    * `flattened`
+      * https://www.elastic.co/guide/en/elasticsearch/reference/7.17/flattened.html
+      * maps a nested object as a single field by parsing out the leaf values and indexing them as keywords
+        * -- the values are always `keyword` not `text` so you cannot do full text search on them
+        * -- the structure of the nested doc is thrown away
+        * roughly speaking, use `flattened` when you want to be able to keyword search the values but don't care about the structure of the nested doc
+        * the flattened data type restricts the query types you can run (values are keywords not text)
+        * use this to avoid "mapping explosion"
+        * mapping explosion
+          * where your docs have a large number of fields e.g. in log management where log lines might have different fields.
+          * every field mapping created (whether dynamic or explicitly created) is stored in the "cluster state" and triggers the node to send the updated cluster state to other nodes
+          * if your index is constantly creating new fields as documents are added, this can add a lot of compute and traffic overhead as the nodes try to keep cluster state in sync
+          * this can cause the cluster to go down - a so called "mapping explosion"
 * special
     * `geo_point`
         * stores lat and long
     * `geo_shape`
         * store geometric shapes
     * `completion`
+    * `join`
+      * ES actively recommends you fully denormalize your data instead of using the `join` type
+      * https://www.elastic.co/guide/en/elasticsearch/reference/7.17/parent-join.html
+      * creates a parent/child relation within documents of the **same index**
+      * the mapping defines a new field in the `_source` of a document
+      * on parent docs, it just adds the parent label
+      * on child docs it adds the child label along with the id (the id of the doc in the index) of the parent doc
 
 #### Limiting the number of mappings which can be created
 
@@ -1376,69 +1543,57 @@ Existing type and field mappings **cannot be changed** because it would invalida
         1. You create `my_index_v_124`
         1. Move the alias
 
-## Physical layout
+## Physical layout of an ElasticSearch cluster
 
-### Decisions you make when you create an index
-
-Sources
-
-* https://thoughts.t37.net/designing-the-perfect-elasticsearch-cluster-the-almost-definitive-guide-e614eabc1a87 (this is very good)
-* https://www.elastic.co/blog/how-many-shards-should-i-have-in-my-elasticsearch-cluster
-
-Overview
-
-* Decisions you can change later
-    * Choose number of nodes in cluster
-    * Choose number of replica shards for each primary shard
-* Decisions you cannot change later
-    * Choose number of primary shards
-* Your first design will probably suck because you don't know what the workload will be
-    * => you will have to iterate a few times
-    * questions you won't yet know the answers to
-        * how many queries/sec?
-        * does your cluster's workload need a lot of CPU, memory or both?
-            * influences whether to go with a few large hosts or more smaller hosts
-        * what kinds of queries?
-        * how fast do indexes grow?
-* You should have an odd number of master nodes to avoid split-brain
-* lucene creates lots of small files - choose a file system which can handle this - inodes etc.
-* during a merge lucene makes copies of all segments before changing them so your shard can't be more than 0.5 your free disk space
-    * a merge is when lucene consolidates two smaller segments into one
-* shard size
-    * 50GB shard should be your max (it's not an enforced max)
-    * don't make them too small because small shards have many small segment files
-    * aim for shards in the 20GB - 50GB range
-* ES can scale to many, many nodes
-
-Advice from the t37.net blog post
-
-> less 3M documents: 1 shard
-> between 3M and 5M documents with an expected growth over 5M: 2 shards.
-> More than 5M: int (number of expected documents / 5M +1)
-
-```js
-// recommended settings to get better logs from slower queries
-PUT /index/_settings
-{
-    "index.search.slowlog.threshold.query.warn: 1s",
-    "index.search.slowlog.threshold.query.info: 500ms",
-    "index.search.slowlog.threshold.query.debug: 1500ms",
-    "index.search.slowlog.threshold.query.trace: 300ms",
-    "index.search.slowlog.threshold.fetch.warn: 500ms",
-    "index.search.slowlog.threshold.fetch.info: 400ms",
-    "index.search.slowlog.threshold.fetch.debug: 300ms",
-    "index.search.slowlog.threshold.fetch.trace: 200ms"
-}
+```mermaid
+flowchart TB
+  subgraph c [Cluster]
+    subgraph n1 [Node 1]
+      direction TB
+      subgraph n1i1 [Index AAA]
+        direction TB
+        n1i1s1["AAA Shard 1"]
+        n1i1s3r["AAA Shard 3 Replica"]
+      end
+      subgraph n1i2 [Index BBB]
+        direction TB
+        n1i2s1["BBB Shard 1"]
+        n1i2s2r["BBB Shard 2 Replica"]
+      end
+    end
+    subgraph n2 [Node 2]
+      subgraph n2i1 [Index AAA]
+        direction TB
+        n2i1s1r["AAA Shard 1 Replica"]
+        n2i1s2["AAA Shard 2"]
+      end
+      subgraph n2i2 [Index BBB]
+        direction TB
+        n2i2s2["BBB Shard 2"]
+        n2i2s1r["BBB Shard 1 Replica"]
+      end
+    end
+    subgraph n3 [Node 3]
+      subgraph n3i3 [Index AAA]
+        direction TB
+        n3i1s2r["AAA Shard 2 Replica"]
+        n3si13["AAA Shard 3"]
+      end
+      subgraph n3i2 [Index BBB]
+        direction TB
+        n3i2s1r["BBB Shard 1 Replica"]
+        n3i2s2r["BBB Shard 2 Replica"]
+      end
+    end
+  end
 ```
 
 ### Index
 
-* each index is stored on disk as the a single set of files (fields, mapping, settings)
-* index refreshes are
-    * where ES checks for new documents to index in the index
-    * expensive so it happens once per second by default
-        * ES is _near real-time_ not _real-time_
-
+* An index is spread across 1-N shards
+* ES is _near real-time_ not _real-time_
+  * index refreshes are where ES checks for new documents to index in the index
+    * refreshes are expensive so it happens once per second by default (near real-time not real-time)
 
 ### Clusters
 
@@ -1446,9 +1601,17 @@ A cluster
 
 * hosts 1+ indexes
 * provides operations like searching and indexing
-* is 1+ nodes
+* is made up of 1+ nodes
 * nodes try to join a cluster called `elasticsearch` by default
-    * you should edit the cluster name to ensure your node doesn't accidentaly join another cluster
+    * you should edit the cluster name to ensure your node doesn't accidentally join another cluster
+* how nodes find each other:
+  1. You create a list of "seed hosts" in settings (or from a file - this is abstracted into a "seed hosts provider" idea
+  1. When the server starts, it contacts the nodes in the seed hosts list
+  1. These seed hosts tell the node about the other nodes that they know about
+* A cluster has one master node
+  * The master node can be a dedicated master or can be one of the nodes which stores shards
+  * The nodes in the cluster vote for the master - see https://www.elastic.co/guide/en/elasticsearch/reference/7.17/modules-discovery-quorums.html
+
 
 ### Nodes
 
@@ -1457,7 +1620,7 @@ A cluster
   * a unique ID
   * a unique name
       * can be assigned by the `config/elasticsearch.yml` config file
-* a node is a single instance of the elstic search process
+* a node is a single instance of the ElasticSearch process
 * a node is always part of a cluster, even if it is the only node in the cluster
 * nodes try to join a cluster called `elasticsearch` by default
     * you should edit the cluster name to ensure your node doesn't accidentally join another cluster
@@ -1498,62 +1661,93 @@ Question: how do nodes find other nodes? do they spam the network on 9200 or 930
 
 #### Replica shards
 
-* shards can be duplicated on other nodes (replica shards) to provide high availabilty
+* Replica shards provide redundant copies of your data to protect against hardware failure and increase capacity to serve read requests like searching or retrieving a document.
+* shards can be duplicated on other nodes (replica shards) to provide high availability
 * replica shards are extra copies of the "primary" shard
 * replica shards are promoted to primary shard when the node holding the primary shard fails
 * All read operations .e.g. query operations and aggregations can be executed on replica shards too!
     * Only write operations must go to the primary shard I guess?
-* Useful for both increasing search performance (searchs hit a mix of primary and replica shards) and fault tolerance
+* Useful for both increasing search performance (searches hit a mix of primary and replica shards) and fault tolerance
+* ES will never allocate a primary shard and a replica on the same node
+  * => If you have a single instance node, and a 1P,1R settings in your index then you cluster health will be yellow
 
-### Get cluster info and health
+## Decisions you make when you create an index
 
-What does `?pretty` arg do?
+Sources
 
+* https://thoughts.t37.net/designing-the-perfect-elasticsearch-cluster-the-almost-definitive-guide-e614eabc1a87 (this is very good)
+* https://www.elastic.co/blog/how-many-shards-should-i-have-in-my-elasticsearch-cluster
+
+Overview
+
+* Decisions you can change later
+    * Choose number of nodes in cluster
+    * Choose number of replica shards for each primary shard
+* Decisions you cannot change later
+    * Choose number of primary shards for an index based on your estimate of
+      1. index size
+      2. index usage
+* Your first design will probably suck because you don't know what the workload will be
+    * => you will have to iterate a few times
+    * questions you won't yet know the answers to
+        * how many queries/sec?
+        * does your cluster's workload need a lot of CPU, memory or both?
+            * influences whether to go with a few large hosts or more smaller hosts
+        * what kinds of queries?
+        * how fast do indexes grow?
+* You should have an odd number of nodes to avoid split-brain
+* lucene creates lots of small files - choose a file system which can handle this - inodes etc.
+* during a merge lucene makes copies of all segments before changing them so your shard can't be more than 0.5 your free disk space
+    * a merge is when lucene consolidates two smaller segments into one
+* shard size
+    * 50GB shard should be your max (it's not an enforced max)
+    * don't make them too small because small shards have many small segment files
+    * aim for shards in the 20GB - 50GB range
+* ES can scale to many, many nodes
+
+Advice from the t37.net blog post
+
+> less 3M documents: 1 shard
+> between 3M and 5M documents with an expected growth over 5M: 2 shards.
+> More than 5M: int (number of expected documents / 5M +1)
+
+## Diagnosing issues
+
+```js
+// recommended settings to get better logs from slower queries
+PUT /index/_settings
+{
+    "index.search.slowlog.threshold.query.warn: 1s",
+    "index.search.slowlog.threshold.query.info: 500ms",
+    "index.search.slowlog.threshold.query.debug: 1500ms",
+    "index.search.slowlog.threshold.query.trace: 300ms",
+    "index.search.slowlog.threshold.fetch.warn: 500ms",
+    "index.search.slowlog.threshold.fetch.info: 400ms",
+    "index.search.slowlog.threshold.fetch.debug: 300ms",
+    "index.search.slowlog.threshold.fetch.trace: 200ms"
+}
 ```
-# kibana developer console example queries
-GET /
-GET _cluster/health
-GET _count
-```
 
-```bash
-curl -XGET "http://localhost:9200/?pretty"
-# {
-#   "name": "FNAhp-l",
-#   "cluster_name": "elasticsearch_eoinkelly",
-#   "cluster_uuid": "5E5Aa-tVQxeMkb9SUQAtqA",
-#   "version": {
-#     "number": "5.5.0",
-#     "build_hash": "260387d",
-#     "build_date": "2017-06-30T23:16:05.735Z",
-#     "build_snapshot": false,
-#     "lucene_version": "6.6.0"
-#   },
-#   "tagline": "You Know, for Search"
-# }
+## Recommendations
 
+* Cluster should have odd number of nodes
+  * odd number avoids split-brain in some kinds of network downtime
+  * one node cluster is fine for pre-prod envs
+  * prod env should probably have 3 unless cost matters a lot and you can easily re-create the index
+  * You **can easily change** the number of nodes in cluster later on
+* Shards should be 20GB - 50GB
+  * You have to choose the number of shards your cluster will have
+  * If you don't have 20GB of data then one shard is fine
+  * You **cannot change** number of primary shards after index is created
+* Number of shard replicas depends on how busy the cluster is (varies by app)
+  * You **can easily change** the number of replica shards
 
-curl -XGET "http://localhost:9200/_cluster/health"
-# {
-#   "cluster_name": "elasticsearch_eoinkelly",
-#   "status": "yellow",
-#   "timed_out": false,
-#   "number_of_nodes": 1,
-#   "number_of_data_nodes": 1,
-#   "active_primary_shards": 30,
-#   "active_shards": 30,
-#   "relocating_shards": 0,
-#   "initializing_shards": 0,
-#   "unassigned_shards": 30,
-#   "delayed_unassigned_shards": 0,
-#   "number_of_pending_tasks": 0,
-#   "number_of_in_flight_fetch": 0,
-#   "task_max_waiting_in_queue_millis": 0,
-#   "active_shards_percent_as_number": 50
-# }
-```
+Q: Is there any point in having a replica shard in a single node cluster?
 
-## ElasticSearch 6.x and older
+## Appendix: ElasticSearch 6.x and older
+
+>*Info*
+> These are some old notes which only apply if you are trying to upgrade a very old ES
 
 * There were some significant changes in ES 6.x
     * The concept of mapping types was removed
@@ -1589,13 +1783,9 @@ You can implement your own "type" field if you really do need to store multiple 
 > may not want to waste an entire shard for a collection of only a few thousand
 > documents.
 
-TODO: what is this about? how does a collection "use up" a primary shard
-
 it seems in the examples they use `_doc` for the type e.g. `users/_doc` and `products/_doc`
 _doc is the "default type of an index in 6+
 
-
-#### ES6 and earlier
 
 Create an index with a named mapping. This syntax only works in ES6 and older. ES7 only allows one type per index and the default type name is `_doc`
 ```js
