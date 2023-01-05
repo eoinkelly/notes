@@ -8,17 +8,21 @@ An overview of using pgBouncer to improve the scalability of a Rails app.
     - [How many connections can my Postgres DB handle?](#how-many-connections-can-my-postgres-db-handle)
     - [Why is the practical maximum no. of connection not the same as max\_connections?](#why-is-the-practical-maximum-no-of-connection-not-the-same-as-max_connections)
     - [Why can't we just set the size of the ActiveRecord pools to match our available DB connections?](#why-cant-we-just-set-the-size-of-the-activerecord-pools-to-match-our-available-db-connections)
+    - [Doesn't ActiveRecord drop connections when they are not needed?](#doesnt-activerecord-drop-connections-when-they-are-not-needed)
     - [Deploys can temporarily spike the number of DB connections](#deploys-can-temporarily-spike-the-number-of-db-connections)
     - [What is max\_connections set to in RDS?](#what-is-max_connections-set-to-in-rds)
     - [What problems does pgBouncer fix?](#what-problems-does-pgbouncer-fix)
     - [What are the downsides of pgBouncer?](#what-are-the-downsides-of-pgbouncer)
-    - [Doesn't ActiveRecord drop connections when they are not needed?](#doesnt-activerecord-drop-connections-when-they-are-not-needed)
     - [pgBouncer alternative: RDS Proxy](#pgbouncer-alternative-rds-proxy)
     - [pgBouncer alternative: odyssey](#pgbouncer-alternative-odyssey)
     - [pgBouncer alternative: pgpool-II](#pgbouncer-alternative-pgpool-ii)
     - [pgBouncer alternative: pgcat](#pgbouncer-alternative-pgcat)
   - [pgBouncer](#pgbouncer)
     - [How to set up pgBouncer](#how-to-set-up-pgbouncer)
+      - [Using pgBouncer to do rudimentary read-write vs read routing](#using-pgbouncer-to-do-rudimentary-read-write-vs-read-routing)
+      - [Using pgBouncer as a rudimentary weighted load balancer](#using-pgbouncer-as-a-rudimentary-weighted-load-balancer)
+      - [pgBouncer failover](#pgbouncer-failover)
+      - [pgbconsole](#pgbconsole)
     - [Where should I run pgBouncer?](#where-should-i-run-pgbouncer)
     - [How do I choose the ratio of Rails connections to real connections (N:M)?](#how-do-i-choose-the-ratio-of-rails-connections-to-real-connections-nm)
     - [What is the optimal number of DB connections for a given RDS instance size?](#what-is-the-optimal-number-of-db-connections-for-a-given-rds-instance-size)
@@ -53,8 +57,8 @@ An overview of using pgBouncer to improve the scalability of a Rails app.
 
 > New rule of thumb: If you have to set postgres max_connections to above 512, don't.
 > https://hazelweakly.me/blog/scaling-mastodon/
-no evidence cited for the above
 
+No evidence cited for the above number.
 
 > While it is possible to have a few thousand established connections without
 > running into problems, there are some real and hard-to-avoid problems
@@ -90,6 +94,12 @@ to better handle large numbers of connections.
 
 The above article ran PG on a really beefy machine and still the optimal was in the 300-500 connection range.
 
+> our largest RDS postgres instance typically sits at around 1200-1300 open
+> connections at peak and it works ok day to day. It's definitely possible to have
+> > 500 connections with a beefy server
+> james.healy on Ruby AU slack
+
+There is evidence that over 500 can work fine.
 
 ### Why is the practical maximum no. of connection not the same as max_connections?
 
@@ -116,6 +126,13 @@ Running out of connections is bad. Load balancers can rarely distribute work in 
 This means that load balancing can never be fully fair. An individual instance might get an unfair allocation of requests which could cause it to run out of connections even when other Rails processes are idle. We solve this problem by allocating more connections that we have, assuming that all our instances will not use them at the same time. But if the system is fully loaded then that will happen.
 
 We created a "system at full load" problem by solving the "individual nodes run out of connections at sub full loads" problem.
+
+### Doesn't ActiveRecord drop connections when they are not needed?
+
+* Yes but it doesn't do it quickly enough to be any use in production environments.
+* From https://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/ConnectionPool.html
+  * The idle timeout defaults to 5m (300 sec)
+  * ActiveRecord does not release connections fast enough to be of any use in real production scenarios
 
 ### Deploys can temporarily spike the number of DB connections
 
@@ -194,13 +211,11 @@ Introducing pgBouncer does have a latency cost but it solves the following probl
 
 * You can't run SQL commands which would change the global state of the connection
   * In particular, you can't use prepared statements (when running in transaction mode which is almost certainly how you'll want to configure it)
-
-### Doesn't ActiveRecord drop connections when they are not needed?
-
-* Yes but it doesn't do it quickly enough to be any use in production environments.
-* From https://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/ConnectionPool.html
-  * The idle timeout defaults to 5m (300 sec)
-  * ActiveRecord does not release connections fast enough to be of any use in real production scenarios
+* Adds latency
+* Additional complexity
+* More stuff to maintain
+* Security implicaitons - the pooler needs to be secured too, creds need to be managed, https etc.
+* You may need server(s) to run the pooler(s) - servers cost money and need patching etc.
 
 ### pgBouncer alternative: RDS Proxy
 
@@ -221,6 +236,7 @@ As of End 2022, PG 15 is latest version, RDS supports PG 14 as does RDS Proxy so
 ### pgBouncer alternative: pgpool-II
 
 * https://www.pgpool.net/mediawiki/index.php/Main_Page
+* also handles replication and load balancing but has rep of being a bit more heavyweight than pgBouncer
 * https://www.enterprisedb.com/blog/pgpool-vs-pgbouncer
   > In typical scenarios, PgBouncer executes pooling correctly “out of the box,”
   > whereas Pgpool-II requires fine-tuning of certain parameters for ideal
@@ -271,6 +287,68 @@ Remember that pgBouncer is single threaded
 
 You can use systemd to run multiple instances of pgBouncer (one per vCPU on your box)  - see
 > https://www.crunchydata.com/blog/postgres-at-scale-running-multiple-pgbouncers
+This uses SO_REUSEPORT in linux kernel and systemd to run multiple pgBouncer processes.
+
+pgBouncer creates a virtual `pgbouncer` database which you access via `psql` just like any other DB
+
+* users in the admin users list can do everything
+* users in the stats users list can view stats
+
+pgBouncer has the notion of users which can have different limits applied.
+You can use this to lock down some apps more tightly than others if they are at risk of overwhelming the DB
+
+#### Using pgBouncer to do rudimentary read-write vs read routing
+
+You can use pgBouncer's aliasing of databases with a the SO_REUSEPORT trick of running multiple pgBouncer processes to achieve some advanced outcomes. Note that if you need these outcomes, one of the alternatives to pgBouncer might be better - these are somewhat clever hacks.
+
+* pgBouncer creates alias DB names which are mapped to real DBs on real PG servers
+* You can use this aliasing to have a "readwrite" (or similarly named) DB which only points at your read+write primary and an "readonly" db which points only at a follower DB
+  * From the app's POV there are two different databases.
+* systemd will invoke each pgBouncer process on a round-robin basis. You can use this to do load balancing if you configure each pgBouncer process to use different databases e.g.
+  ```
+  pgBouncer@1
+    readwrite: primary
+    readonly: standby1
+  pgBouncer@2
+    readwrite: primary
+    readonly: standby2
+  ```
+* Connections to pgBouncer will get either @1 or @2 on a round-robin basis
+* This means that the app connecting to `readonly` will get either standby1 or standby2 on a round-robin basis
+* Note that the linux kernel round-robin invoking of processes with SO_REUSEPORT is not perfect and can be a bit skewed
+
+#### Using pgBouncer as a rudimentary weighted load balancer
+
+You can tune the round-robin distribution of load by adding more pgBouncer processes.
+
+Imagine that standby2 is much beefier than standby1 - we can control how much load it gets by having more pgBouncer processes target it e.g.
+
+```
+pgBouncer@1
+  readwrite: primary
+  readonly: standby1
+pgBouncer@2
+  readwrite: primary
+  readonly: standby2
+pgBouncer@3
+  readwrite: primary
+  readonly: standby2
+```
+
+#### pgBouncer failover
+
+The app connects to pgBouncer. pgBouncer connects to the DB server(s).
+
+If a connection to the DB server goes down, pgBouncer will not terminate the app's connection but will try to find another available DB connection.
+
+This gives you failover if one of your DB servers goes down.
+
+#### pgbconsole
+
+* a `top` alike thing
+* a resource monitor for pgBouncer
+* can manage multiple pgBouncer instances
+
 
 ### Where should I run pgBouncer?
 
