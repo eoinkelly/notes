@@ -1,3 +1,8 @@
+---
+layout: post
+title:  "Rails and pgBouncer"
+---
+
 # Rails and pgBouncer
 
 An overview of using pgBouncer to improve the scalability of a Rails app.
@@ -26,6 +31,7 @@ An overview of using pgBouncer to improve the scalability of a Rails app.
     - [Where should I run pgBouncer?](#where-should-i-run-pgbouncer)
     - [How do I choose the ratio of Rails connections to real connections (N:M)?](#how-do-i-choose-the-ratio-of-rails-connections-to-real-connections-nm)
     - [What is the optimal number of DB connections for a given RDS instance size?](#what-is-the-optimal-number-of-db-connections-for-a-given-rds-instance-size)
+    - [How does RDS do routing of queries to multi-az DBs?](#how-does-rds-do-routing-of-queries-to-multi-az-dbs)
 
 ## Sources
 
@@ -40,7 +46,7 @@ An overview of using pgBouncer to improve the scalability of a Rails app.
     > contributor to db load, page 275 of the book mentions it briefly it as
     > "unpleasant effects". without multiplexing connections through pgbouncer we
     > couldn't run at all
-* https://techcommunity.microsoft.com/t5/azure-database-for-postgresql/analyzing-the-limits-of-connection-scalability-in-postgres/ba-p/1757266#wh[…]nt
+* https://techcommunity.microsoft.com/t5/azure-database-for-postgresql/analyzing-the-limits-of-connection-scalability-in-postgres/ba-p/1757266
 * https://brandur.org/postgres-connections
 * https://www.enterprisedb.com/postgres-tutorials/why-you-should-use-connection-pooling-when-setting-maxconnections-postgres
 * https://aws.amazon.com/blogs/database/performance-impact-of-idle-postgresql-connections/
@@ -54,14 +60,15 @@ An overview of using pgBouncer to improve the scalability of a Rails app.
 * In theory, you can set this number based on the available RAM.
 * In practice, Postgres performance degrades with very high numbers of connections so your practical limit may be lower than the `max_connections` limit.
 
-
 > New rule of thumb: If you have to set postgres max_connections to above 512, don't.
+>
 > https://hazelweakly.me/blog/scaling-mastodon/
 
 No evidence cited for the above number.
 
 > While it is possible to have a few thousand established connections without
 > running into problems, there are some real and hard-to-avoid problems
+>
 > https://techcommunity.microsoft.com/t5/azure-database-for-postgresql/analyzing-the-limits-of-connection-scalability-in-postgres/ba-p/1757266
 
 The article above is primarily an argument for PG improving snapshot scalability
@@ -71,14 +78,19 @@ to better handle large numbers of connections.
 
 
 > most users find PostgreSQL's default of max_connections = 100 to be too low
+>
 > ...
+>
 > Talk to any PostgreSQL expert out there, and they'll give you a range, "a few
 > hundred," or some will flat-out say, "not more than 500," and "definitely no
 > more than 1000."
+>
 > But where do these numbers come from? How do they know that, and how do we
 > calculate that? Ask these questions, and you'll only find yourself more
 > frustrated, because there isn't a formulaic way to determine that number.
+>
 > ...
+>
 > So it seems that for this server, the sweet spot was really somewhere between
 > 300-400 connections, and max_connections should not be set much higher than
 > that, lest we risk forfeiting performance.
@@ -96,7 +108,8 @@ The above article ran PG on a really beefy machine and still the optimal was in 
 
 > our largest RDS postgres instance typically sits at around 1200-1300 open
 > connections at peak and it works ok day to day. It's definitely possible to have
-> > 500 connections with a beefy server
+> 500+ connections with a beefy server
+>
 > james.healy on Ruby AU slack
 
 There is evidence that over 500 can work fine.
@@ -107,13 +120,30 @@ There is evidence that over 500 can work fine.
   * https://brandur.org/postgres-connections
 * You can create an instance with enough RAM that the memory ceiling isn't the limiting factor for Postgres
 * Each connection to Postgres spawns a process
-  * Process starts at ~5MB but may grow a lot larger
+  * Process starts at a few MB (I have read 1.5 - 5MB as a starting point) but may grow a lot larger
+  * I have observed each PG connection process taking 15-20MB on one project
 * the Postmaster and its backend processes use shared memory for communication, and parts of that shared space are global bottlenecks.
 * https://brandur.org/postgres-connections says that connection numbers above 500 are problematic.
 * The performance of even simple postgres tasks (simple INSERT, SELECT, DELETE) degrades the more backend processes Postgres has open
 * So even if it doesn't yet create "a problem", it does slow down your system even when everything is working well
+* https://aws.amazon.com/premiumsupport/knowledge-center/rds-mysql-max-connections/
+* has some best practices for Postgres as well as MySQL
+  * => they recommend increasing instance size first
+* Aside: https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/AuroraPostgreSQL.Managing.html is docs on how Aurora does this
+* https://aws.amazon.com/blogs/database/performance-impact-of-idle-postgresql-connections/
+* https://aws.amazon.com/blogs/database/resources-consumed-by-idle-postgresql-connections/
+  * notice that once a process takes memory it stays allocated to that process until the process is closed by killing the connection
+  * CPU utilisation does go up as the connection count goes up
+    > The utilization increased to 2% with 100 idle connections, increased to 3%
+    > with 500 idle connections, increased to 5% with 1,000 idle connections,
+    > increased to 6% with 1,500 idle connections and increased to 8% with 2,000
+    > idle. Note that this utilization is for an instance with 2 vCPUs
 
 ### Why can't we just set the size of the ActiveRecord pools to match our available DB connections?
+
+Short answer: load balancing is never completely fair.
+
+Long answer:
 
 * Rails connection pools are per individual process
   * which means you have a large number of small pools which grow with the number of processes you run.
@@ -181,23 +211,6 @@ If your deploy creates new Rails processes/instances before killing old ones the
     | db.m4.large   | 8        | 856             |
     | db.r4.large   | 15.25    | 1660            |
     ```
-* https://aws.amazon.com/premiumsupport/knowledge-center/rds-mysql-max-connections/
-* has some best practices for Postgres as well as MySQL
-  * => they recommend increasing instance size first
-
-Aside: https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/AuroraPostgreSQL.Managing.html is docs on how Aurora does this
-
-I have observed each PG connection process taking 15-20MB on one project
-
-* https://aws.amazon.com/blogs/database/performance-impact-of-idle-postgresql-connections/
-* https://aws.amazon.com/blogs/database/resources-consumed-by-idle-postgresql-connections/
-  * notice that once a process takes memory it stays allocated to that process until the process is closed by killing the connection
-  * CPU utilisation does go up as the connection count goes up
-    > The utilization increased to 2% with 100 idle connections, increased to 3%
-    > with 500 idle connections, increased to 5% with 1,000 idle connections,
-    > increased to 6% with 1,500 idle connections and increased to 8% with 2,000
-    > idle. Note that this utilization is for an instance with 2 vCPUs
-
 
 ### What problems does pgBouncer fix?
 
@@ -214,7 +227,7 @@ Introducing pgBouncer does have a latency cost but it solves the following probl
 * Adds latency
 * Additional complexity
 * More stuff to maintain
-* Security implicaitons - the pooler needs to be secured too, creds need to be managed, https etc.
+* Security implications - the pooler needs to be secured too, creds need to be managed, https etc.
 * You may need server(s) to run the pooler(s) - servers cost money and need patching etc.
 
 ### pgBouncer alternative: RDS Proxy
@@ -241,7 +254,9 @@ As of End 2022, PG 15 is latest version, RDS supports PG 14 as does RDS Proxy so
   > In typical scenarios, PgBouncer executes pooling correctly “out of the box,”
   > whereas Pgpool-II requires fine-tuning of certain parameters for ideal
   > performance and functionality
+  >
   > ...
+  >
   > Pgpool-II is often implemented by organizations because of its added
   > capabilities, but that doesn’t necessarily make Pgpool-II the ideal choice for
   > all use cases. Many perceive Pgpool-II as an end-all solution, but in reality,
@@ -250,6 +265,7 @@ As of End 2022, PG 15 is latest version, RDS supports PG 14 as does RDS Proxy so
 
 ### pgBouncer alternative: pgcat
 
+* https://github.com/levkk/pgcat
 * new, not battle tested yet
 * written in rust
 * does sharding too so you can grow into sharding if need be
@@ -258,44 +274,41 @@ As of End 2022, PG 15 is latest version, RDS supports PG 14 as does RDS Proxy so
 
 ### How to set up pgBouncer
 
-You have 3 possible options:
-
-1. Session pooling
-  * Real DB connections are assigned when the client opens a session and closed when the session is closed
-  * This is not very effective with a Rails app
-1. Transaction pooling
-  * A real DB connection is assigned for the duration of a transaction
-  * Best choice for Rails
-  * You cannot make "global" changes to the connection e.g. prepared statements, pub/sub
-    * Does this mean that PG based background job managers would be a problem?
-  * **You cannot use prepared statements with this** - watch out if you are writing your own raw SQL
-1. Statement pooling (not viable)
-   * you have to avoid using transactions to do this which means it's not really viable
-
-Heroku has a buildpack which implements a node level pgBouncer by default
-
-This is good but not as good as a single shared pgBouncer
-
-> https://www.crunchydata.com/blog/postgres-at-scale-running-multiple-pgbouncers
-Remember that pgBouncer is single threaded
+* Remember that pgBouncer is single threaded
+* You have 3 possible options:
+  1. Session pooling
+      * Real DB connections are assigned when the client opens a session and closed when the session is closed
+      * This is not very effective with a Rails app
+  1. Transaction pooling
+      * A real DB connection is assigned for the duration of a transaction
+      * Best choice for Rails
+      * You cannot make "global" changes to the connection e.g. prepared statements, pub/sub
+          * Does this mean that PG based background job managers would be a problem?
+      * **You cannot use prepared statements with this** - watch out if you are writing your own raw SQL
+  1. Statement pooling (not viable)
+      * you have to avoid using transactions to do this which means it's not really viable
+* Heroku has a buildpack which implements a node level pgBouncer by default
+    * pgBouncer on each node is good but not as good as a single shared pgBouncer.
 
 > In general, a single PgBouncer can process up to 10,000 connections. 1,000 or
 > so can be active at one time. The exact numbers will depend on your
 > configuration and the amount of data you it is copying between the database and
 > the application.
-
+>
+> https://www.crunchydata.com/blog/postgres-at-scale-running-multiple-pgbouncers
 
 You can use systemd to run multiple instances of pgBouncer (one per vCPU on your box)  - see
-> https://www.crunchydata.com/blog/postgres-at-scale-running-multiple-pgbouncers
-This uses SO_REUSEPORT in linux kernel and systemd to run multiple pgBouncer processes.
+https://www.crunchydata.com/blog/postgres-at-scale-running-multiple-pgbouncers
+This uses `SO_REUSEPORT` in linux kernel and systemd to run multiple pgBouncer processes.
 
-pgBouncer creates a virtual `pgbouncer` database which you access via `psql` just like any other DB
+pgBouncer creates a virtual `pgbouncer` database which you access via `psql` just like any other DB.
+
+pgBouncer has the notion of users which can have different limits applied.
 
 * users in the admin users list can do everything
 * users in the stats users list can view stats
 
-pgBouncer has the notion of users which can have different limits applied.
-You can use this to lock down some apps more tightly than others if they are at risk of overwhelming the DB
+You can use this to lock down some apps more tightly than others if they are at risk of overwhelming the DB.
 
 #### Using pgBouncer to do rudimentary read-write vs read routing
 
@@ -338,32 +351,30 @@ pgBouncer@3
 #### pgBouncer failover
 
 The app connects to pgBouncer. pgBouncer connects to the DB server(s).
-
 If a connection to the DB server goes down, pgBouncer will not terminate the app's connection but will try to find another available DB connection.
-
 This gives you failover if one of your DB servers goes down.
 
 #### pgbconsole
 
+* separate to pgBouncer
 * a `top` alike thing
 * a resource monitor for pgBouncer
 * can manage multiple pgBouncer instances
 
-
 ### Where should I run pgBouncer?
 
-Options
+Options are:
 
 1. Run pgBouncer on the same instance as the Rails app
-  * it seems common to start here
-  * ++ you get to multiplex N Rails connections to M real DB connections
-  * ++ this works well if the DB is on the same instance as the Rails app because in that case you do care about running out of memory (normally you will hit other PG perf issues before running out of memory on well configured DB hosts)
-  * -- the no. of real DB connections scales with the number of instances
+    * it seems common to start here
+    * ++ you get to multiplex N Rails connections to M real DB connections
+    * ++ this works well if the DB is on the same instance as the Rails app because in that case you do care about running out of memory (normally you will hit other PG perf issues before running out of memory on well configured DB hosts)
+    * -- the no. of real DB connections scales with the number of instances
 1. Run pgBouncer on dedicated instances
-  * can be a single pgBouncer cluster or multiple clusters for different workloads with different N:M ratios
-  * but eventually teams move to dedicated pgBouncer instance(s)
+    * can be a single pgBouncer cluster or multiple clusters for different workloads with different N:M ratios
+    * but eventually teams move to dedicated pgBouncer instance(s)
 1. run multiple pgBouncers for different parts of your load (e.g. background jobs, puma etc.)
-  * lets you tailor how you allocate real DB connections
+    * lets you tailor how you allocate real DB connections
 
 ### How do I choose the ratio of Rails connections to real connections (N:M)?
 
@@ -373,24 +384,35 @@ Teams use pgBouncer when they need to increase the number of Rails processes/thr
 * They hit the limits of scaling without pgBouncer and then start using it.
 * They seem to push the ratio as far as possible for their workload
 * Some examples
-  * pgBouncer on instance with Rails app. Turns > 50 Puma threads into < 10 real DB connections (approx. 5:1 ratio)
-  * pgBouncer on a dedicated instance: Turning 30k Rails connections into 1500 real DB connections (approx. 20:1 ratio)
+    * pgBouncer on instance with Rails app. Turns > 50 Puma threads into < 10 real DB connections (approx. 5:1 ratio)
+    * pgBouncer on a dedicated instance: Turning 30k Rails connections into 1500 real DB connections (approx. 20:1 ratio)
 
 ### What is the optimal number of DB connections for a given RDS instance size?
 
-Obviously this is workload dependent but are there any useful heuristics?
+* Alternative wording: At what number of DB connections does a connection pooler like pgBouncer become useful?
+* Alternative wording: Does pgBouncer make any sense for apps with <100 DB connections?
+    * (my instinct here is probably not but I can't find any evidence either way)
+* Obviously this is workload dependent but are there any useful heuristics?
+* In theory, your instance can only run as many parallel processes as it has CPU cores.
+* If an app is making 50-100 DB connections, is there benefit to adding pgBouncer?
+* https://docs.joinmastodon.org/admin/scaling/#pgbouncer-why
+    * configures it's PG to top out at 100 connections and suggests you use pgBouncer after that?
+* https://aws.amazon.com/blogs/database/resources-consumed-by-idle-postgresql-connections/
+  * hints that for long running queries dropping from 100 concurrent connections to 20 can make the 2vCPU DB faster
 
-    TODO
-
-In theory, your instance can only run as many parallel processes as it has CPU cores.
-
-https://docs.joinmastodon.org/admin/scaling/#pgbouncer-why
-  configures it's PG to top out at 100 connections and suggests you use pgBouncer after that?
-
-https://aws.amazon.com/blogs/database/resources-consumed-by-idle-postgresql-connections/
-  hints that for long runninq queries dropping from 100 concurrent connections to 20 can make the 2vCPU DB faster
+    TODO this will require some experimentation
 
 
+### How does RDS do routing of queries to multi-az DBs?
 
+It depends on how many standby instances you have.
+
+* 1 standby instance: all queries go to the primary.
+    * The standby is a "hidden" replica
+* 2 standby instances: separate read-only and read-write endpoints
+    * read-write hits your primary
+    * read-only hits the standby instances
+
+Source: https://aws.amazon.com/rds/features/multi-az/
 
 
