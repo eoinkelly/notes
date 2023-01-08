@@ -1,0 +1,153 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<map name="web analytics" document_type="BLUMIND" editor_version="1.2.0.26864">
+  <!--Create by Blumind, you can download it free from http://www.hyfree.net/download-->
+  <info />
+  <layout>MIND_MAP</layout>
+  <style>
+    <back_color>White</back_color>
+    <fore_color>Black</fore_color>
+    <line_color>LightSlateGray</line_color>
+    <border_color>SlateGray</border_color>
+    <node_back_color>White</node_back_color>
+    <node_fore_color>Black</node_fore_color>
+    <select_color>RoyalBlue</select_color>
+    <hover_color>MediumSlateBlue</hover_color>
+    <link_line_color>Green</link_line_color>
+  </style>
+  <nodes>
+    <node text="what is a &quot;successful&quot; online presence?">
+      <style>
+        <back_color>White</back_color>
+        <fore_color>Black</fore_color>
+        <border_color>Black</border_color>
+        <padding>12</padding>
+      </style>
+      <nodes>
+        <node text="how does tradtional marketing determine ROI?" />
+        <node text="how successful is our online presence" />
+        <node text="website">
+          <nodes>
+            <node text="analytics">
+              <nodes>
+                <node text="website analytics options">
+                  <nodes>
+                    <node text="google analytics" />
+                    <node text="provided by hosting">
+                      <nodes>
+                        <node text="what are these like?" />
+                      </nodes>
+                    </node>
+                    <node text="others?" />
+                  </nodes>
+                </node>
+              </nodes>
+            </node>
+          </nodes>
+        </node>
+        <node text="twitter">
+          <nodes>
+            <node text="twitter analytics" />
+          </nodes>
+        </node>
+        <node text="facebook">
+          <nodes>
+            <node text="facebook analytics?" />
+          </nodes>
+        </node>
+        <node text="goals">
+          <nodes>
+            <node text="need to define them individually for each business">
+              <nodes>
+                <node text="examples">
+                  <nodes>
+                    <node text="take purchases" />
+                    <node text="re-inforce brand" />
+                    <node text="re-inforce choice to purchase" />
+                    <node text="support customer after purchase" />
+                    <node text="get more brand recognition" />
+                    <node text="reputation building" />
+                  </nodes>
+                </node>
+              </nodes>
+            </node>
+            <node text="why have stakeholders invested in creating a web presence" />
+            <node text="determine success criteria">
+              <nodes>
+                <node text="find the right metrics to measure them" />
+              </nodes>
+            </node>
+            <node text="roi">
+              <nodes>
+                <node text="calculating investment">
+                  <nodes>
+                    <node text="time">
+                      <nodes>
+                        <node text="updating/generating content" />
+                      </nodes>
+                    </node>
+                    <node text="money">
+                      <nodes>
+                        <node text="website design and development" />
+                      </nodes>
+                    </node>
+                  </nodes>
+                </node>
+                <node text="calculating return">
+                  <nodes>
+                    <node text="how?" />
+                    <node text="measure online sales" />
+                    <node text="measure leads">
+                      <nodes>
+                        <node text="how?">
+                          <nodes>
+                            <node text="ask custys how they found you" />
+                          </nodes>
+                        </node>
+                      </nodes>
+                    </node>
+                    <node text="measure &quot;conversions&quot;">
+                      <nodes>
+                        <node text="facebook likes?" />
+                      </nodes>
+                    </node>
+                    <node text="measure subscribers">
+                      <nodes>
+                        <node text="email newsletters" />
+                        <node text="blogs" />
+                      </nodes>
+                    </node>
+                  </nodes>
+                </node>
+              </nodes>
+            </node>
+            <node text="measure usability">
+              <nodes>
+                <node text="returning visitors" />
+                <node text="pageviews per visit" />
+                <node text="time on page" />
+                <node text="time on site" />
+                <node text="bounce rate" />
+                <node text="form/shopping cart abondonment rate" />
+                <node text="next pages" />
+                <node text="links clicked (heat maps)" />
+                <node text="internal searches" />
+              </nodes>
+            </node>
+            <node text="seo metrics">
+              <nodes>
+                <node text="num backlinks" />
+                <node text="quality of backlinks" />
+                <node text="google cache date" />
+              </nodes>
+            </node>
+            <node text="social media metrics">
+              <nodes>
+                <node text="twitter mentions/retweets" />
+              </nodes>
+            </node>
+          </nodes>
+        </node>
+      </nodes>
+    </node>
+  </nodes>
+</map>

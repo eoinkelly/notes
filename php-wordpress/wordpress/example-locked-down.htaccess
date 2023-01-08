@@ -1,0 +1,278 @@
+#add hotlinking prevention bit to this
+
+
+
+
+
+
+
+
+
+# taken from http://journalxtra.com/websiteadvice/wordpress-security-hardening-htaccess-rules-4025/
+
+## Deny directory browsing
+Options +FollowSymLinks All -Indexes
+## Enable the rewrite engine
+RewriteEngine on
+## Disable the server signature
+ServerSignature Off
+
+## Block known malicious hostnames and IP addresses
+## Full blacklist available from http://journalxtra.com/blacklists/
+order allow,deny
+deny from 107.20.5.217
+deny from 108.60.0.1
+deny from 109.230.217.94
+deny from example.com
+allow from all
+
+## Block known bad user agents, bots and potentially malicious request methods
+## The following list may include bots that no longer exist or that are not a problem for your site.
+## The list will always be incomplete and it is therefore wise to
+## follow discussions on one of the many "security" mailing lists or on a forum
+## such as http://www.webmasterworld.com/search_engine_spiders/
+## It is also unwise to rely on this list as your ONLY security mechanism.
+
+## White-list allowed sites
+## Better to use IP addresses than {REMOTE_HOST} name
+## RewriteCond %{REMOTE_HOST} !wordpress\.org$ [NC]
+## White-list WordPress servers
+RewriteCond %{REMOTE_ADDR} !72\.233\.56\.138
+RewriteCond %{REMOTE_ADDR} !72\.233\.56\.139
+RewriteCond %{REMOTE_ADDR} !72\.233\.104\.124
+RewriteCond %{REMOTE_ADDR} !74\.200\.244\.
+RewriteCond %{REMOTE_ADDR} !74\.200\.247\.188
+RewriteCond %{REMOTE_ADDR} !76\.74\.248\.
+RewriteCond %{REMOTE_ADDR} !76\.74\.254\.126
+RewriteCond %{REMOTE_ADDR} !66\.135\.48\.
+RewriteCond %{REMOTE_ADDR} !69\.170\.134\.
+## White list Disqus
+RewriteCond %{REMOTE_ADDR} !75\.126\.109\.204
+RewriteCond %{REMOTE_ADDR} !74\.86\.190\.242
+RewriteCond %{REMOTE_ADDR} !173\.192\.61\.226
+## White-list Livefye
+RewriteCond %{REMOTE_ADDR} !50.19.5.163
+# White-list localhost
+RewriteCond %{HTTP_HOST} !^(127\.0\.0\.1|localhost) [NC]
+## Block bad user agents
+RewriteCond %{HTTP_USER_AGENT} BlackWidow [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} Bot\ mailto:craftbot@yahoo.com [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} ChinaClaw [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} Custo [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} DISCo [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} Download\ Demon [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} EirGrabber [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} EmailSiphon [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} EmailWolf [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} Express\ WebPictures [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} ExtractorPro [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} EyeNetIE [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} FlashGet [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} GetRight [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} GetWeb! [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} Go!Zilla [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} Go-Ahead-Got-It [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} GrabNet [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} Grafula [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} HMView [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} HTTrack [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} HTTrack [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} Image\ Stripper [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} Image\ Sucker [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} Indy\ Library [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} Indy\ Library [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} InterGET [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} Internet\ Ninja [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} JOC\ Web\ Spider [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} JetCar [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} LeechFTP [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} MIDown\ tool [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} Mass\ Downloader [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} Mister\ PiX [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} Navroad [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} NearSite [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} NetAnts [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} NetSpider [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} NetZIP [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} Net\ Vampire [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} Octopus [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} Offline\ Explorer [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} Offline\ Navigator [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} PageGrabber [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} Papa\ Foto [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} ReGet [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} RealDownload [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} SiteSnagger [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} SmartDownload [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} SuperBot [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} SuperHTTP [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} Surfbot [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} Teleport\ Pro [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} TurnitinBot [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} VoidEYE [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} WWWOFFLE [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} WebAuto [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} WebCopier [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} WebFetch [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} WebGo\ IS [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} WebLeacher [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} WebReaper [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} WebSauger [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} WebStripper [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} WebWhacker [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} WebZIP [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} Web\ Image\ Collector [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} Web\ Sucker [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} Website\ Quester [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} Website\ eXtractor [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} Widow [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} Xaldon\ WebSpider [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} Zeus [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} archiverloader [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} casper [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} clshttp [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} cmsworldmap [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} curl [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} diavol [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} dotbot [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} eCatch [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} email [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} extract [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} flicky [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} grab [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} harvest [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} jakarta [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} java [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} kmccrew [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} larbin [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} libwww [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} miner [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} nikto [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} pavuk [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} pcBrowser [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} planetwork [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} pycurl [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} python [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} scan [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} skygrid [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} tAkeOut [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} wget [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} winhttp [NC]
+## Note: The final RewriteCond must NOT use the [OR] flag.
+## Return 403 Forbidden error.
+RewriteRule .* - [F]
+
+## Protect sensitive files from client-side viewing.
+<FilesMatch "^(wp-config\.php|php\.ini|php5\.ini|install\.php|php\.info|readme\.html|bb-config\.php|\.htaccess|readme\.txt|timthumb\.php|error_log|error\.log|PHP_errors\.log|\.svn)">
+ Deny from all
+</FilesMatch>
+
+# Wordpress needs install.php to install itself so add this section or comment out the section above during installation
+<files install.php>
+Order allow,deny
+Allow from all
+</files>
+
+
+
+# this section to reduce 404 errors
+
+DirectoryIndex index.php
+
+## These two are not always needed.
+Options +FollowSymlinks
+RewriteEngine on
+
+## Standardize URLs - Remove www hostname.
+## Uncomment these three lines if you wish to remove the www
+## WordPress should do this automatically.
+## Can cause images to vanish on old sites.
+# RewriteCond %{HTTP_HOST} ^http://www\.(.*)$ [NC,OR]
+# RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
+# RewriteRule (.*) http://%1 [R=301,L]
+
+## GENERAL 404 PREVENTION AND IDIOT REDIRECTION
+
+## Remove the trailing slash from all file requests (otherwise Apache serves a 404)
+## Directories should have a trailing slash, files should not.
+## If you use a content management system that produces dynamic pages, comment out the third line and uncomment the 4th line.
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} /$ [NC]
+## Remove slash from all files
+# RewriteCond %{REQUEST_FILENAME} \.(\w+)$ [NC]
+## Remove slash from image files only
+RewriteCond %{REQUEST_FILENAME} \.(gif|jpe?g|png|bmp|tiff|xcf|psd)$ [NC]
+RewriteRule ^(.*)/$ $1 [R=301,L]
+
+## Redirect requests ending with bad characters as caused by poor backlinks and rogue bots.
+## Whitelist Site Search Requests
+RewriteCond %{QUERY_STRING} !s\= [NC]
+RewriteCond %{QUERY_STRING} !cx\= [NC]
+## Do Redirect
+RewriteCond %{QUERY_STRING} (.*)('|%27|"|%22|\\|%5C|\ |%20)$ [NC,OR]
+RewriteCond %{REQUEST_URI} (.*)('|%27|"|%22|\\|%5C|\ |%20)$ [NC,OR]
+RewriteCond %{QUERY_STRING} (.*)/(\+)/$ [NC,OR]
+RewriteCond %{REQUEST_URI} (.*)/(\+)/$ [NC]
+RewriteRule .* %1 [R=301,L]
+
+## Fix missing image requests
+## Change the bottom line to specify the replacement image and its location
+
+RewriteCond %{REQUEST_URI} !/files/
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_URI} \.(gif|jpe?g|png|bmp|tiff|xcf|psd)$ [NC]
+RewriteRule .* example/image.jpg [L]
+
+
+## Deny Access to All But the Active Theme
+## Whitelist the active theme. Change "active-theme" to the name of your active theme's directory
+RewriteCond %{REQUEST_URI} !.*/wp-content/themes/active-theme/.* [NC]
+RewriteCond %{THE_REQUEST} !.*/wp-content/themes/active-theme/.* [NC]
+## Block access to any directory or document not in the active-theme's directory.
+RewriteCond %{REQUEST_URI} ^.*/wp-content/themes/.* [NC,OR]
+RewriteCond %{THE_REQUEST} ^.*/wp-content/themes/.* [NC]
+RewriteRule .* - [F,L]
+
+## Deny Access to All But Active Plugins
+## Whitelist the active plugins.
+## Change "active-plugin" in the next two lines to the name of the directory used by one of your active plugins.
+## Copy the two lines, paste them below the first two lines and use them to whitelist another plugin. Repeat until all active plugins have been white-listed.
+
+RewriteCond %{REQUEST_URI} !.*/wp-content/plugins/active-plugin/.* [NC]
+RewriteCond %{THE_REQUEST} !.*/wp-content/plugins/active-plugin/.* [NC]
+
+## Block access to any directory or document not in the active-theme's directory.
+RewriteCond %{REQUEST_URI} ^.*/wp-content/plugins/.* [NC,OR]
+RewriteCond %{THE_REQUEST} ^.*/wp-content/plugins/.* [NC]
+RewriteRule .* - [F,L]
+
+
+## Remove anything after a question mark (including the question mark) in a query string sent to scripts in wp-content/
+## IMPORTANT!!! Plug-in and theme whitelist essential.
+
+## Whitelist plugins that use query strings in their functioning
+## You will need to experiment to discover which ones use query-strings
+## Change "active-plugin" in the next two lines to the name of the directory used by an active plugin that uses query strings
+## Copy the two lines, paste them below the first two lines and use them to whitelist another plugin. Repeat until all query string using plugins have been white-listed.
+
+RewriteCond %{REQUEST_URI} !.*/wp-content/plugins/active-plugin/.* [NC]
+RewriteCond %{THE_REQUEST} !.*/wp-content/plugins/active-plugin/.* [NC]
+
+## Run Filter strip query strings
+RewriteCond %{QUERY_STRING} .*/wp-content/.* [NC]
+RewriteRule ^(.*)$ /$1? [R,L]
+
+## Remove anything after a question mark (including the question mark) anywhere in a URL request sent to scripts in wp-content/
+## IMPORTANT!!! Plug-in and theme whitelist essential.
+
+## Whitelist plugins that use query strings in their functioning
+## You will need to experiment to discover which ones use query-strings.
+## Change "active-plugin" in the next two lines to the name of the directory used by an active plugin that uses query strings
+## Copy the two lines, paste them below the first two lines and use them to whitelist another plugin. Repeat until all query string using plugins have been white-listed.
+
+RewriteCond %{REQUEST_URI} !.*/wp-content/plugins/active-plugin/.* [NC]
+RewriteCond %{THE_REQUEST} !.*/wp-content/plugins/active-plugin/.* [NC]
+
+## Run Filter strip anything after a question mark in the URL
+RewriteCond %{THE_REQUEST} ^.*/wp-content.*[a-z0-9]+\ /([^?#\ ]*)\?[^\ ]*\ HTTP/ [NC]
+RewriteRule ^(.*)$ /$1? [R,L]
