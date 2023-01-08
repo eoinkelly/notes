@@ -142,3 +142,82 @@ GET /movies/_search
     }
   }
 }
+
+GET /movies/_search
+{
+  "sort": "title.keyword",
+  "query": {
+    "bool": {
+      "must": {
+        "match": {
+          "genre": "Sci-Fi"
+        }
+      },
+      "filter": {
+        "range": {
+          "year": {
+            "lt": 1960
+          }
+        }
+      }
+    }
+  }
+}
+
+GET /movies/_search
+{
+  "query": {
+    "fuzzy": {
+      "title": {
+        "value": "intrsteller", // 2 edits required to get to correct term
+        "fuzziness": "auto"
+      }
+    }
+  }
+}
+
+GET /movies/_search
+{
+  "query": {
+    "prefix": {
+      "title": {
+        "value": "interstellar"
+      }
+    }
+  }
+}
+
+GET /movies/_search
+{
+  "query": {
+    "wildcard": {
+      "title": "Int*"
+    }
+  }
+}
+
+GET /movies/_search
+{
+  "query": {
+    "regexp": {
+      "title.keyword": {
+        "value": "Int.*r",
+        "flags": "ALL"
+      }
+    }
+  }
+}
+
+
+GET /movies/_analyze
+{
+  "tokenizer": "standard",
+  "filter": [
+    {
+      "type": "edge_ngram",
+      "min_gram": 1,
+      "max_gram": 4
+    }
+  ],
+  "text": "Star Wars"
+}

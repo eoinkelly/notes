@@ -1,4 +1,4 @@
-# Debugging ElasticSearch
+# Debugging Elasticsearch
 
 * If you are using the searchkick gem then then Rails server log is a better place to get query logs because:
   * You don't have to mess with the ES index settings

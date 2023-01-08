@@ -1,6 +1,6 @@
 # Alternatives to the Query DSL
 
-* There are *so many* DSLs built in to and on top of ElasticSearch.
+* There are *so many* DSLs built in to and on top of Elasticsearch.
   * They seem to be aimed at analysts
   * Developers can ignore almost all of them
 
@@ -20,7 +20,7 @@ POST _plugins/_sql
 }
 ```
 
-## SQL In ElasticSearch
+## SQL In Elasticsearch
 
 https://www.elastic.co/guide/en/elasticsearch/reference/7.17/xpack-sql.html
 
@@ -29,7 +29,7 @@ https://www.elastic.co/guide/en/elasticsearch/reference/7.17/xpack-sql.html
 * Get SQL EXPLAIN from `/_explain`
 
 ```js
-// ElasticSearch
+// Elasticsearch
 POST /_sql?format=txt
 {
   "query": "SELECT * FROM library WHERE release_date < '2000-01-01'"

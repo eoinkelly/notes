@@ -15,9 +15,9 @@ The search box can use:
     * https://www.elastic.co/guide/en/kibana/7.10/lucene-query.html
     * This option may eventually be removed from the GUI
     * It doesn't support nested objects which KQL does
-    * When this option is selected you can also enter queries using the ElasticSearch query DSL
+    * When this option is selected you can also enter queries using the Elasticsearch query DSL
 
-Note: Neither KQL nor Lucene query mini-language is the same thing as the ElasticSearch query DSL!
+Note: Neither KQL nor Lucene query mini-language is the same thing as the Elasticsearch query DSL!
 
 
 ## Kibana saved objects

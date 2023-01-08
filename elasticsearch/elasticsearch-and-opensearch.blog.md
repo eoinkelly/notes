@@ -1,6 +1,12 @@
-# Elasticsearch
+---
+layout: post
+title:  "Elasticsearch and OpenSearch Notes"
+blog_path: 2023-01-07-elasticsearch-and-opensearch-notes.md
+---
 
-- [Elasticsearch](#elasticsearch)
+# Elasticsearch and OpenSearch
+
+- [Elasticsearch and OpenSearch](#elasticsearch-and-opensearch)
   - [Questions](#questions)
   - [Sources](#sources)
   - [Installing](#installing)
@@ -31,6 +37,10 @@
       - [match](#match)
       - [match\_phrase](#match_phrase)
       - [multi\_match](#multi_match)
+      - [fuzzy](#fuzzy)
+      - [prefix](#prefix)
+      - [wildcard](#wildcard)
+      - [regexp](#regexp)
     - [Filters](#filters)
       - [range](#range)
       - [term](#term)
@@ -44,6 +54,11 @@
     - [Derivatives](#derivatives)
     - [Highlighting](#highlighting)
     - [Suggesters](#suggesters)
+    - [Pagination](#pagination)
+    - [Sorting](#sorting)
+    - [Search as you type](#search-as-you-type)
+      - [Query-time search as you type](#query-time-search-as-you-type)
+      - [Index-time search as you type](#index-time-search-as-you-type)
   - [Indexing](#indexing)
     - [Create index](#create-index)
     - [Types](#types)
@@ -65,7 +80,8 @@
       - [Field data types](#field-data-types)
       - [Limiting the number of mappings which can be created](#limiting-the-number-of-mappings-which-can-be-created)
     - [Aliases](#aliases)
-  - [Physical layout of an ElasticSearch cluster](#physical-layout-of-an-elasticsearch-cluster)
+    - [Cloning indexes (with potentially new mappings)](#cloning-indexes-with-potentially-new-mappings)
+  - [Physical layout of an Elasticsearch cluster](#physical-layout-of-an-elasticsearch-cluster)
     - [Index](#index)
     - [Clusters](#clusters)
     - [Nodes](#nodes)
@@ -74,8 +90,12 @@
       - [Replica shards](#replica-shards)
   - [Decisions you make when you create an index](#decisions-you-make-when-you-create-an-index)
   - [Diagnosing issues](#diagnosing-issues)
-  - [Recommendations](#recommendations)
-  - [Appendix: ElasticSearch 6.x and older](#appendix-elasticsearch-6x-and-older)
+  - [Index templates](#index-templates)
+  - [Index lifecycle management](#index-lifecycle-management)
+  - [Operations Recommendations](#operations-recommendations)
+  - [Monitoring](#monitoring)
+  - [Snapshots](#snapshots)
+  - [Appendix: Elasticsearch 6.x and older](#appendix-elasticsearch-6x-and-older)
 
 ## Questions
 
@@ -417,9 +437,9 @@ https://www.elastic.co/guide/en/elasticsearch/reference/7.17/query-dsl.html
 * Sends GET requests with a body
 * Form is
     ```sh
-    GET /_search
+    GET /_search # search all indexes in the cluster
     GET /{index name}/_search
-    GET /{index name}/_doc/_search # Pre 6.x you could use types other than _doc
+    GET /{index name}/_doc/_search # same as above in 6+. Pre 6.x you could use types other than _doc
     ```
 
 ```bash
@@ -671,6 +691,74 @@ GET /_search
 }
 ```
 
+#### fuzzy
+
+TODO: more about this
+
+```jsonc
+GET /movies/_search
+{
+  "query": {
+    "fuzzy": {
+      "title": {
+        "value": "intrsteller", // 2 edits required to get to correct term
+        "fuzziness": "auto"
+      }
+    }
+  }
+}
+```
+
+#### prefix
+
+* https://www.elastic.co/guide/en/elasticsearch/reference/7.17/query-dsl-prefix-query.html
+
+```jsonc
+GET /movies/_search
+{
+  "query": {
+    "prefix": {
+      "title": {
+        // searching for Interstellar, "int" works but "Int" does not - why?
+        "value": "int"
+      }
+    }
+  }
+}
+```
+
+#### wildcard
+
+```jsonc
+// search for Interstellar
+GET /movies/_search
+{
+  "query": {
+    "wildcard": {
+      "title": "Int*"
+    }
+  }
+}
+```
+
+#### regexp
+
+* https://www.elastic.co/guide/en/elasticsearch/reference/7.17/query-dsl-regexp-query.html
+
+```jsonc
+GET /movies/_search
+{
+  "query": {
+    "regexp": {
+      "title.keyword": {
+        "value": "Int.*r",
+        "flags": "ALL"
+      }
+    }
+  }
+}
+```
+
 ### Filters
 
 * Filters match with a yes/no
@@ -747,7 +835,7 @@ GET /_search
         * clauses which must not match for the document to be included
     * should
         * if these queries matches we increase the score
-        * If there are no must clauses, at least one should clause has to match. However, if there is at least one must clause, no should clauses are required to match.
+        * If there are no `must` clauses, at least one `should` clause has to match. However, if there is at least one `must` clause, no `should` clauses are required to match.
     * filter
         * these clauses **must** match but don't contribute to the score
         * useful when you don't want a particular criteria to contribute to the score
@@ -764,6 +852,29 @@ Bool queries can be used in two contexts
     * calculates how relevant each document is to the given query and gives it a `_score` which is then used to sort the results by relevance
 
 You can combine both kinds of query for best performance. First filter out the documents you don't want and then use scoring query to calculate relevance of that subset.
+
+```jsonc
+GET /movies/_search
+{
+  "sort": "title.keyword",
+  "query": {
+    "bool": {
+      "must": {
+        "match": {
+          "genre": "Sci-Fi"
+        }
+      },
+      "filter": {
+        "range": {
+          "year": {
+            "lt": 1960
+          }
+        }
+      }
+    }
+  }
+}
+```
 
 ### Relevancy
 
@@ -798,39 +909,49 @@ You can apply a boost parameter (many/most/all ???) queries
 
 ### Fuzziness
 
-Sources
-
-* https://www.elastic.co/guide/en/elasticsearch/reference/7.17/common-options.html#fuzziness
-* https://en.wikipedia.org/wiki/Levenshtein_distance
-
-
-Use-cases:
-
-* handling typos and misspellings in search queries
-
-Querys which support fuzziness:
-
-1. match
-2. ???
-
-Overview
-
-* interpreted as the _Lenvenshtein edit distance_ i.e. the number of one character changes needed to make one string be the same as another string
+* The _Lenvenshtein edit distance_ i.e. the number of **one character changes** (where a change is a substitution, insertion or deletion) needed to make one string be the same as another string
+* Levenshtein distance accounts for (each has an edit distance of 1):
+  * Substitutions of characters: `interstallar` -> `intersteller`
+  * Insertions of character: `interstellar` -> `intersterllar`
+  * Deletion of characters:  `interstellar` -> `interstelar`
 * defaults to 0
-* increasing fuzziness increases the number of results you get but can decrease how relevant those results are e.g. if I set fuzziness to 2 and search for a 2 character query then it will always match every record (because 2 edits can turn it into any other 2 character string)
-    * => you should probably use `"AUTO"` as the value for fuzziness
+* increasing fuzziness increases the number of results you get but can decrease how relevant those results are
+  * e.g. if I set fuzziness to 2 and search for a 2 character query then it will always match every record (because 2 edits can turn it into any other 2 character string)
+  * => you should probably use `"AUTO"` as the value for fuzziness
+* Sources
+  * https://www.elastic.co/guide/en/elasticsearch/reference/7.17/common-options.html#fuzziness
+  * https://en.wikipedia.org/wiki/Levenshtein_distance
+* Use-cases:
+  * handling typos and misspellings in search queries
+* Queries which support fuzziness:
+  1. match
+  2. ???
+* Possible values of `fuzziness`:
+  * A number between 0-2 (inclusive)
+  * `"auto"` (which is shorthand for `"auto:3,6")
+      * is the preferred value
+  * `"auto:low,high"`
+      * Generates an edit distance based on the length of the term
+      * value "AUTO" is shorthand for "AUTO:3,6"
+      * When the value is AUTO then for lengths
+          * 0..2 must match exactly
+          * 3..5 one edit allowed
+          * >5 two edits allowed
 
-Values
-
-* A number between 0-2 (inclusive)
-* `"AUTO"`, `"AUTO:low,high"`
-    * is the preferred value
-    * Generates an edit distance based on the length of the term
-    * value "AUTO" is shorthand for "AUTO:3,6"
-    * When the value is AUTO then for lengths
-        * 0..2 must match exactly
-        * 3..5 one edit allowed
-        * >5 two edits allowed
+```jsonc
+GET /movies/_search
+{
+  "query": {
+    "fuzzy": {
+      "title": {
+        "value": "intrsteller", // 2 edits required to get to correct term
+        "fuzziness": 2
+        // "fuzziness": "auto"
+      }
+    }
+  }
+}
+```
 
 ### Derivatives
 
@@ -843,6 +964,72 @@ If I search for bicycle" I want results from "cycling" "bicyclist", "bicyclists"
 ### Suggesters
 
 Faster than normal queries for autocomplete use-cases
+
+### Pagination
+
+* The `from` query param controls where the results returned should start from. `from` counts from 0
+* The `size` query param controls how big the returned page of results is
+* Deep pagination can **kill performance** because to get page 500 ES has to find collect and sort the first 499 pages before it can return the result.
+* You can work around this by setting an upper bound on the number of returned results
+
+```jsonc
+GET /movies/_search
+{
+  "from": 2,
+  "size": 10,
+  "query": {
+    "match": {
+      "name": "joe"
+    }
+  }
+}
+
+// Alternatively you can put from and size as query params in the URL
+GET /movies/_search?from=2&size=10
+{
+  // ...
+}
+```
+
+### Sorting
+
+* sorting on keyword fields is straightforward
+* sorting on an analyzed string field
+* y ou cannot sort on an analyzed text field because the whole field is not stored (it is stored as terms)
+  * you can create an unanalyzed sub-field which you can use for sorting
+    * common subfield names: `raw`, `keyword`
+    * I have also seen this the other way around where the keyword field has an analyzed sub-field called `analyzed`
+  * remember that you cannot change a mapping after an index has been created
+* sorting is just one reason to have an unanalyzed copy of an analyzed field
+  * TODO: examples?
+
+
+
+```jsonc
+GET /movies/_search?sort=age
+
+{
+  "mappings": {
+    "properties": {
+      "title": {
+        "type": "text", // title is analyzed
+        "fields": { // define sub-fields
+          "raw": {
+            "type": "keyword" // title.raw is not analyzed
+          }
+        }
+      }
+    }
+  }
+```
+
+### Search as you type
+
+#### Query-time search as you type
+
+Implement search as you type using the query syntax e.g. create a  `match_phase_prefix` query with a high `slop` value (e.g. 10)
+
+#### Index-time search as you type
 
 ## Indexing
 
@@ -1053,6 +1240,8 @@ The `standard` analyzer is
     3. `stop` token filter
         * removes "stop words" i.e. common words which have little impact on search relevance e.g. the, and, is, an
         * by default the stopword list is set to `_none_` so this filter does nothing unless you configure it to do so.
+    4. `edge_ngram`
+       * Usually applied as a customised filter
 
 #### Built-in character filters
 
@@ -1404,6 +1593,16 @@ A mapping has 2 kinds of fields:
     * string
         * `text` (analysed for full text search)
         * `keyword` (not FTS analysed, supports sorting, filtering, aggregations)
+        * `search_as_you_type`
+          * https://www.elastic.co/guide/en/elasticsearch/reference/7.17/search-as-you-type.html
+          * text-like field optimized for as-you-type queries
+          * creates a series of subfields
+            ```
+            my_field # uses default analyzer but you can customise
+            my_field._2gram # analyser into shingle token filter of shingle size 2
+            my_field._3gram # analyser into shingle token filter of shingle size 3
+            my_field._index_prefix # analyzer into an edge n-gram token filter
+            ```
     * Numeric
         * `byte`
         * `short`
@@ -1536,6 +1735,9 @@ Existing type and field mappings **cannot be changed** because it would invalida
 ### Aliases
 
 * you can alias an index or indexes
+* An alias can have more than one index in it
+  * it's not just a pattern which matches index names
+  * it is more a collection of indexes
 * creates a level of indirection between your users and your indexes
     * useful to allow you to re-index without breaking your users
       * Re-index process with aliases:
@@ -1543,7 +1745,25 @@ Existing type and field mappings **cannot be changed** because it would invalida
         1. You create `my_index_v_124`
         1. Move the alias
 
-## Physical layout of an ElasticSearch cluster
+### Cloning indexes (with potentially new mappings)
+
+* You can copy the data from one index to another
+* Good if you want to migrate your data to an index with a new mapping
+
+```jsonc
+// Note it's a cluster level URL
+POST /_reindex
+{
+ "source": {
+   "index": "movies"
+ },
+ "dest": {
+   "index": "autocomplete"
+ }
+}
+```
+
+## Physical layout of an Elasticsearch cluster
 
 ```mermaid
 flowchart TB
@@ -1620,7 +1840,7 @@ A cluster
   * a unique ID
   * a unique name
       * can be assigned by the `config/elasticsearch.yml` config file
-* a node is a single instance of the ElasticSearch process
+* a node is a single instance of the Elasticsearch process
 * a node is always part of a cluster, even if it is the only node in the cluster
 * nodes try to join a cluster called `elasticsearch` by default
     * you should edit the cluster name to ensure your node doesn't accidentally join another cluster
@@ -1728,7 +1948,34 @@ PUT /index/_settings
 }
 ```
 
-## Recommendations
+## Index templates
+
+You can create a template for creating new indices
+
+
+## Index lifecycle management
+
+https://docs.aws.amazon.com/opensearch-service/latest/developerguide/ism.html
+
+ES defines some lifecycle stages
+
+```
+Hot: queried and updated
+Warm: queried but not updated
+Cold: queried infrequently
+Frozen: queried really infrequently
+Delete: index should be deleted
+```
+
+```bash
+# Lifecycle:
+Hot -> Warm -> Cold -> Frozen -> Delete
+```
+
+You define policies which define when an index should enter each staging in the chain
+Use index template to add a lifecycle policy for the index
+
+## Operations Recommendations
 
 * Cluster should have odd number of nodes
   * odd number avoids split-brain in some kinds of network downtime
@@ -1741,10 +1988,80 @@ PUT /index/_settings
   * You **cannot change** number of primary shards after index is created
 * Number of shard replicas depends on how busy the cluster is (varies by app)
   * You **can easily change** the number of replica shards
+* Do your scaling out in phases so you have time to re-index before you hit the next phase
+* You can use new indices as a scaling strategy
+  * You can use aliases to select the subsets of indexes you care about searching
+  * e.g. have an index for each day and an alias which will search across the last 30 days
+  * an ali
+* According to ES the sweet spot for RAM on an ES instance is
+  * 64 GB per machine
+    * 32 GB for elasticsearch (this is a max because of pointer length - more than 32GB and "pointers will blow up")
+    * 32 GB to the OS disk cache (which Lucene will use extensively)
+  * Under 8GB RAM is not recommended
+  * IO speed matters
+    * deadline and noop io scheduler is better
+  * Use RAID0 - your cluster is already redundant
+  * CPU not that important
+  * Use medium to large configurations - too big is bad, too many boxes is bad too
+* Setting heap size
+  * default heap size is 1GB which is almost certainly not suitable for production workloads
+  * allocate half of physical RAM to elasticsearch, the other half to the OS for lucene
+  * if you are not aggregating on analyzed string fields, consider using less than half for elasticsearch
+  * you want to give ES enough but no more than it needs - having more memory available for disk cache is better
+  * Do NOT allocate more than 32GB as your ES_HEAP_SIZE
+    * "above 32GB pointers no longer fit in a 32bit value so everything gets slower"
+      * Is this true on modern 64bit systems?
+  * smaller heaps result in faster GC and more memory for caching
+  ```bash
+  ES_HEAP_SIZE=10g
+  # or
+  ES_JAVA_OPTS="-Xms10g -Xmx10g" ./bin/elasticsearch
+  ```
+* ES does "bootstrap" checks when you start the service in production mode
+  * Production mode is determined by whether you are binding to 127.0.0.1 (dev mode) or anything else (prod mode)
+* `bootstrap.memory_lock`
+  * https://www.elastic.co/guide/en/elasticsearch/reference/7.17/_memory_lock_check.html
+  * controls whether ES will lock all its pages in memory (prevent them from being swapped to disk)
+  * THe ES process must have the "memlock unlimited" capability
+    * In systemd service file this is `LimitMEMLOCK=Infinity`
 
-Q: Is there any point in having a replica shard in a single node cluster?
+## Monitoring
 
-## Appendix: ElasticSearch 6.x and older
+Metricbeat
+
+## Snapshots
+
+> For domains running OpenSearch or Elasticsearch 5.3 and later, OpenSearch Service takes hourly automated snapshots and retains up to 336 of them for 14 days. Hourly snapshots are less disruptive because of their incremental nature. They also provide a more recent recovery point in case of domain problems.
+
+You backup a whole cluster at a time
+
+Steps:
+
+1. You define a "repo" (S3 or local folder depending on your setup)
+1. Then save a snapshot to that directory:
+  ```jsonc
+  GET /_snapshot/my-repo-name/my-snapshot-name
+  ```
+
+Restore steps
+
+1. Check that the snapshot exists (based on the repo definition in config)
+  ```jsonc
+  GET /_cat/snapshots/my-snapshot-name
+  ```
+1. Set `action.destructive.requires_name: false` in config if on ES 8+ (this is a security feature of ES 8+)
+1. CLose all indices to prevent writes
+  ```jsonc
+  POST /_all/_close
+  ```
+1. Restore the snapshot
+  ```jsonc
+  POST /_snapshot/my-repo-name/my-snapshot-name/_restore
+  ```
+
+
+
+## Appendix: Elasticsearch 6.x and older
 
 >*Info*
 > These are some old notes which only apply if you are trying to upgrade a very old ES
