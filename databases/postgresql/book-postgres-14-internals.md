@@ -43,28 +43,27 @@
     * each schema is confined to a single database
     * all database objects must belong to a schema
   * can be user defined
-  * predefined schemas
-    * public
-      * default
-      * used for all objects unless another schema is specified
-    * pg_catalog
+  * the predefined schemas are:
+    1. public
+      * default schema - used for all objects unless another schema is specified
+    1. pg_catalog
       * the schema which olds the system catalog tables and views
-    * information_scheme
+    1. information_schema
       * an alternate view of `pg_catalog` which complies with the SQL standard
-    * pg_toast
+    1. pg_toast
       * used for objects related to TOAST
-    * pg_temp
+    1. pg_temp
       * used for temp tables
       * is actually an alias for pg_temp_N schemas which are created and limited to different users
-    * posgres has a search path with is used to search for objects when no schema is specified
-      * pg_catalog and pg_temp are implicitly added to this path
-      ```sql
-      postgres=# show search_path;
-        search_path
-        -----------------
-        "$user", public
-        (1 row)
-      ```
+  * posgres has a search path with is used to search for objects when no schema is specified
+    * pg_catalog and pg_temp are implicitly added to this path
+    ```sql
+    postgres=# show search_path;
+      search_path
+      -----------------
+      "$user", public
+      (1 row)
+    ```
 * Sequences
   * are basically a one row table
 * "Relation"
@@ -75,8 +74,7 @@
     * sequence
     * index
   * These aren't an exact mapping to the mathematical idea of a "relation" - see my CJ Date notes for more detail than you want on that.
-    * are stored in the `pg_class` system catalog (it used to be called `pg_relation`)
-      * the columns still have the `rel` prefix because of that history
+    * are stored in the `pg_class` system catalog (it used to be called `pg_relation` - the columns still have the `rel` prefix because of that history)
 
 ```bash
 # Logical organisation
@@ -101,7 +99,7 @@ PGDATA
 
 * a directory on a filesystem
 * a cluster can have multiple table spaces
-  * you can manually distrubute your data between tablespaces
+  * you can manually distribute your data between tablespaces
   * **the logical and physical layout of data are separate in postgres**
 
 * during cluster init, two tablespaces are created:
@@ -192,7 +190,7 @@ select pg_relation_filepath('memberships');
   * there are some headers etc. so 2000 bytes is approximate and can vary a bit between versions
   * i.e. the sum total of the storage requirements for all the attributes in the row must be less than 2kB
 * You can adjust the limit at the table level via the `toast_tuple_target` storage parameter
-* TOAST is a collection of strategies for handling rows longer than the `toast_tuple_target (2kiB by default)
+* TOAST is a collection of strategies for handling rows longer than the `toast_tuple_target` (2kiB by default)
 * When faced with a value longer than `toast_tuple_target` Postgres will use the _storage strategies_ of each of the columns to decide what to do.
 * The available strategies for a column are:
     * `plain`
@@ -229,7 +227,9 @@ select pg_relation_filepath('memberships');
     -- Access method: heap
     ```
 
-??? toast and indexes
+How does postgres index a very long value?
+* You can use the hash index type if you column is very long
+  * -- it only supports `=` operator whereas b-tree supports many more comparison operators
 
 ```sql
 -- show the namespace and relation name of the toast table which corresponds to the given table name

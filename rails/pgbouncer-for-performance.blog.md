@@ -1,6 +1,7 @@
 ---
 layout: post
-title:  "Rails and pgBouncer"
+title:  "Rails and pgBouncer Notes"
+blog_path: 2023-01-06-rails-and-pgbouncer-notes.md
 ---
 
 # Rails and pgBouncer

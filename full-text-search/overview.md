@@ -43,7 +43,7 @@
 ## Key features of "do what I mean" full-text search
 
 1. Return results quickly
-2. Return results in the order of most releveant to least relevant (Ranking)
+2. Return results in the order of most relevant to least relevant (Ranking)
     * Boost: Allow users to add weight to certain query terms at query time
     * SQL allows you to sort results based on some value in the dataset but it doesn't support the abstract notion of "relevance" out of the box
 3. Correct common misspellings of query terms
@@ -57,7 +57,7 @@
 8. Remove common words such as "a", "an", "of" (in English) (Stop words)
 9. Support pagination of results
 10. Support multiple languages
-11. Support searching within search results i.e. narrowing down a search interatively
+11. Support searching within search results i.e. narrowing down a search interactively
     * Also called "faceted search"
     * Allows users to find things even when they don't know exactly what they are looking for
 
