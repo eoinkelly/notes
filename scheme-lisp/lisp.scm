@@ -2,10 +2,6 @@
 ; * http://www.schemers.org/
 ; * https://leanpub.com/fp-oo
 
-
-
-
-
 ; Chicken Scheme
 ; ;;;;;;;;;;;;;;
 
@@ -31,11 +27,10 @@
 (print "hello")
 (exit) ; exits the REPL
 
-
-; Scheme code is not meant to be written by humans, it is intended to be written
-; automatically by macros.Only after having understood this point you will
-; realize that the parentheses are a Good Thing (TM). I needed a few months to
-; understand it, others never understand it and they quit Scheme with disgust.
+; > Scheme code is not meant to be written by humans, it is intended to be written
+; > automatically by macros. Only after having understood this point you will
+; > realize that the parentheses are a Good Thing (TM). I needed a few months to
+; > understand it, others never understand it and they quit Scheme with disgust.
 
 ; form is (operator arg1 arg2)
 (+ 1 3)

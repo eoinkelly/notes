@@ -126,7 +126,19 @@ THe common tools are:
 
 ### Tool: smem
 
+* homepage: https://www.selenic.com/smem/
+* download https://www.selenic.com/smem/download/
+* man page https://linux.die.net/man/8/smem
 * you can run filter it to a user or a process (handy when you use -t to get totals)
+
+```bash
+# You need python
+# install smem on a box that doesn't have it
+curl -O https://www.selenic.com/smem/download/smem-1.4.tar.gz
+tar xzvf smem-1.4.tar.gz
+# it needs to run as root to see processes not owned by your users
+sudo ./smem-1.4/smem -kt
+```
 
 ```bash
 root@1fc95720de18:/# smem -kt

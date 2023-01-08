@@ -1,37 +1,15 @@
 # Guitar Maintenance
 
-
-## Guitar anatomy
-
-* Scale length
-    * Fender longer, Gibson shorter, PRS in between
-        * PRS 594 = 24.594" scale
-    * TODO: What are my preferences here?
-* Fret wire - height and thickness
-    * neck finish changes how tall you perceive the frets to be
-    * TODO: what are my preferences here?
-* Wood
-    * Body
-    * Neck
-        * Mahogany (PRS guitars)
-        * Maple (bolt-on PRS, Fender?)
-    * Fretboard
-        * Ebony
-        * Rosewood
-        * Maple
-* Pickups
-    * measure output with multi-meter
-        * TODO: learn how to do this
-* Tuning
-    * Pickup height
-    * Intonation
-    * Height at 12th fret
-    * Height at 1st fret
-        * Nut height
-    * Truss rod
-        * backbow (bad)
-        * straight
-        * forward bow (relief)
+- [Guitar Maintenance](#guitar-maintenance)
+  - [Factory measurements](#factory-measurements)
+    - [PRS](#prs)
+      - [PRS neck relief factory spec](#prs-neck-relief-factory-spec)
+      - [PRS string height factory spec](#prs-string-height-factory-spec)
+      - [PRS pickup height](#prs-pickup-height)
+- [Misc](#misc)
+  - [Shop checklist](#shop-checklist)
+  - [Cleaning a rosewood fretboard](#cleaning-a-rosewood-fretboard)
+  - [Polish frets](#polish-frets)
 
 
 ## Factory measurements
