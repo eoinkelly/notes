@@ -7,7 +7,7 @@
     * each unique note in the scale is called a "degree" (I think)
     * The numbering starts at 1.
     * Degree 8 is the same as the octave
-    * the distance in semitones between each degree varies and is what gives the scale it's character
+    * The distance in semitones between each degree varies and is what gives the scale it's character
 
 ### Interval names within a major scale (true any major scale)
 
@@ -119,7 +119,6 @@ Q: were scales invented or discovered?
     whole half whole whole whole whole half
 
 * Some (but not all) music theorists use melodic minor when going up a scale but use the natural minor notes when going down.
-
 
 ## Modes
 

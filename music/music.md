@@ -56,11 +56,18 @@ In C major this looks like:
           whole-whole-half-whole-whole-whole-half
     C     D     E    F     G     A     B     C
 
-There is a major scale starting on each of the 12 pitches => 24 major scales
-but 4 of the pitches have two names (# and b) so you could => 30 major scales
+There is a major scale starting on each of the 12 pitches => 12 major scales
+but 4 of the pitches have two names (# and b) so you could => 16 major scales
 but 24 is the more usual way of counting
 
 There is only one major scale for each pitch.
+There are many minor scales but 3 are common:
+
+1. Natural minor
+2. Enharmonic minor
+3. Melodic minor
+
+So you could say there are 48 commonly used scales in music.
 
 ### minor scales
 
@@ -94,8 +101,7 @@ So we have the octave interval
 * now we need to divide the octave up into smaller intervals based on how it sounds to our ears
 * these divisions have names based on their distance from the octave frequencies
 * all these divisions are defined as jumps from the "base" octave frequency
-
-* the more consonant an interval sounds ot human ears, the simpler the relationship between the two notes
+* the more consonant an interval sounds to human ears, the simpler the relationship between the two notes
 
 Notation
 
@@ -117,13 +123,13 @@ Notation
 | m7       | ?                          | ?                     | Dissonant        | +17.6                   |
 | T        | ?                          | ?                     | Dissonant        | -17.49                  |
 
-![](./western-tuning-comparisons.png)
+![Western tuning comparisons](./western-tuning-comparisons.png)
 
 ?? what is a cent?
 
-remember we are just naming **intervals** here, not naming notes!
+Remember we are just naming **intervals** here, not naming notes!
 
-we want the intervals within the octave to be _more or less_ evenly spaced because it makes it much easier to move music up/down the frequency range (i.e. change key)
+We want the intervals within the octave to be _more or less_ evenly spaced because it makes it much easier to move music up/down the frequency range (i.e. change key)
 
 Layout of our interval names within an octave
 
@@ -166,7 +172,7 @@ Above we have shown "Just intonation" which tunes the instrument based on ratios
 * if you use ratios to tune your instrument it works fine for one octave root but the ratios do not hold if you use one of your other intervals as the root
 * => your music will sound good with one root but not in others
 * => you cannot move your composition around
-* you would have to re-tune your instrument
+* you would have to re-tune your instrument to play in a different key
 
 We fix this with "temperament" - we have to "temper" the intervals to make the tuning more versatile
 
@@ -188,8 +194,7 @@ The (almost) universally adopted modern system is _12 tone equal temperament_
 1. tune the octave with the perfect mathematical ratio
 2. divide the octave into 12 equal intervals
 
-12ET is technical slightly out of tune but we are so used to it that we don't really notice
-
+12ET is technical slightly out of tune but we are so used to it that we don't really notice.
 
 ## FAQ
 
@@ -199,9 +204,9 @@ Using the 7 letters mean the same 7 **letters** are used in every key - this is 
 
 Ancient greeks noticed:
 
-Doubling the length of a string gives a very harmonious outcome
-Tripling the length of a string gives a harmonious outcome
-Quadrupling the length of a string gives a very harmonious outcome
+* Doubling the length of a string gives a very harmonious outcome
+* Tripling the length of a string gives a harmonious outcome
+* Quadrupling the length of a string gives a very harmonious outcome
 
 They thought in terms of string lengths, we know this maps directly to frequencies now.
 They experimented with different length strings to produce different outcomes

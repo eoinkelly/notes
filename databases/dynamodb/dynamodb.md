@@ -1,10 +1,32 @@
 # DynamoDB book
 
-(500ish pages)
+- [DynamoDB book](#dynamodb-book)
+  - [Foreword](#foreword)
+  - [What is DynamoDB?](#what-is-dynamodb)
+  - [Core concepts](#core-concepts)
+    - [Streams](#streams)
+    - [TTL](#ttl)
+    - [Partitions](#partitions)
+    - [Write Request lifecycle](#write-request-lifecycle)
+    - [Limits](#limits)
+    - [Overloading keys and indexes](#overloading-keys-and-indexes)
+  - [The three api action types](#the-three-api-action-types)
+    - [Migrations](#migrations)
+  - [Querying](#querying)
+    - [PartiQL](#partiql)
+  - [creating a table](#creating-a-table)
+  - [ORM](#orm)
+  - ['aws dynamodb' CLI](#aws-dynamodb-cli)
+  - [Modeling](#modeling)
+    - [Option: one table per model](#option-one-table-per-model)
+    - [Option: single table design](#option-single-table-design)
+    - [Designing primary key and secondary sort keys](#designing-primary-key-and-secondary-sort-keys)
+        - [Option: `PK` and `SK`](#option-pk-and-sk)
+        - [Option: choose a field](#option-choose-a-field)
 
 ## Foreword
 
-> ia talk on Advanced Design Patterns with DynamoDB by some guy named Rick Houlihan.
+> is talk on Advanced Design Patterns with DynamoDB by some guy named Rick Houlihan.
 
 Good links on https://www.dynamodbguide.com/additional-reading/
 
@@ -23,7 +45,7 @@ Author seems to equate NoSQL with DynamoDB
 > effectively achieves the same result by storing everything in one table and
 > using indexes to group items.
 
-Takeaways
+My takeaways
 
 * The DynamoDB constraint is to put everything in one table
 * Author believes this is actually better once you get over the "how do I model with this" hump because it requires much less compute so can scale much better than RDBMS
@@ -61,7 +83,6 @@ DynamoDB is
 * Connections are not persistent unlike in SQL DBs
     * This makes DynamoDB slower than RDBMS for some use-cases because you have to setup the connection every time
     * But it does enable the huge scaling
-
 * Uses IAM for authentication and authorization - no usernames and passwords
     * You can use roles if your compute is also in AWS
     * Can get quite granular in IAM about what actions a user can perform on a table and
@@ -93,27 +114,26 @@ Q: how is to use from things outside AWS?
 
 2012 AWS publish a paper on Dynamo https://www.dynamodbguide.com/the-dynamo-paper/
 
-
-Indexing in Dynamo is much more limited than other DBs
+Indexing in DynamoDB is much more limited than other DBs
 
 * no geospatial
 * no full text search
 * no location based
 * multi-key indexes
 
-
 > One benefit of DynamoDB is that its rigidity limits you in a good way. As
 > long as you aren't using full-table scans, it's tough to write an inefficient
 > query in DynamoDB. The data model and API restrict you into best practices
 > upfront and ensure your database will scale with your application.
 
-Eat your vegetables ...
+Cassandra is the closest in data model to DynamoDB - it is also a wide column store.
 
-Cassandra is the closest in data model to DynamoDB - it is also a wide column store
-
-DynamoDB doesn't have any feature that would stop it scaling so it is missing features but what is there is guaranteed to scale.
+DynamoDB doesn't have any feature that would stop it scaling so it is missing
+features but what is there is guaranteed to scale.
 
 Unless you do full table scans, it is hard to write a slow query.
+
+Eat your vegetables ...
 
 ## Core concepts
 
@@ -141,8 +161,8 @@ Unless you do full table scans, it is hard to write a slow query.
             * compound types
             * represent groupings with arbitrarily nested attributes
             * types
-            1. list
-            2. map
+                1. list
+                2. map
         * Sets
             * compound type
             * every element must be same type
@@ -181,7 +201,7 @@ Unless you do full table scans, it is hard to write a slow query.
       2. global secondary index (**preferred option in most cases**)
         * you choose any attributes you want for partition key and sort key
         * used much more frequently because they are more flexible than local secondary indexes
-        * requires you to provision additional throughput which is separate fro the read/write throughput ofr the core table
+        * requires you to provision additional throughput which is separate fro the read/write throughput for the core table
         * only offers eventual consistency (data is replicated from the core table to global secondary indexes in an async manner)
         * ++ you don't need to add them at table creation time
         * ++ you can delete them if you need to
@@ -199,7 +219,7 @@ Unless you do full table scans, it is hard to write a slow query.
 
 * a stream is an immutable sequence of records which can be processed by multiple independent consumers
 * you get a transactional log of each write transaction to the table
-    * so you can observe all writes and process them (how???)
+    * so you can observe all writes and process them with lambda functions
 * use cases
     * update record in another DynamoDB table
     * update record in another data store
@@ -300,13 +320,254 @@ Model a 1-many
 
 ### Migrations
 
+    TODO: read chaps 15,22 which are about migrations
+
+Because it is schemaless, some kinds of migrations are really easy
+    You can just add/omit fields from an existing records
+
 You can evolve your data model over time - I wonder how easy that is compared to SQL?
     It's gotta be scans of the whole table and update each relevant record?
     Or maybe migrate to a whole new table if that's feasible
     Do I need to keep some sort of "version" string on each table? or implement migrations somehow?
+
+Should table names include a version e.g. `users_123`, `users_124` to aid migrations?
 
 I could mimic rails migrations by
 
 * have a bunch of ruby scripts which perform a migration action as code - no DSL, just making changes
 * keep a table in the DB to keep track of which scripts have run
 * have a runner rake task which coordinates running them
+
+What is a "migration" in Dynamo?
+
+1. Scan the table, editing every row which needs editing (only the rows which correspond to the model you are migrating will need editing)
+1. Create any new GSIs as required
+1. Destroy any GSIs no longer required
+
+Unless your code is able to work in the before, middle and after states of the migration then you will need downtime to achieve this
+
+## Querying
+
+> You must provide the name of the partition key attribute and a single value
+> for that attribute. Query returns all items with that partition key value.
+> Optionally, you can provide a sort key attribute and use a comparison operator
+> to refine the search results.
+
+The query takes a partition key and returns all records matching.
+If you provide a sort key, it is applied as a filter expression to the matched records (you still read all the records matching partition key)
+
+```sh
+# pseudocode
+query(part_key, sort_key=nil) => all records matching part_key and sort_key constraint
+```
+
+> Query results are always sorted by the sort key value. If the data type of the
+> sort key is Number, the results are returned in numeric order; otherwise, the
+> results are returned in order of UTF-8 bytes. By default, the sort order is
+> ascending. To reverse the order, set the ScanIndexForward parameter to false.
+
+> You can query a table, a local secondary index, or a global secondary index.
+
+If the value is not in your partition key, sort key, local secondary index or global secondary index then you can't search for it!
+
+Conceptually a DynamoDB query is much closer to a hash lookup than anything SQL ish.
+
+I guess it's a bit like if SQL db didn't drop back to table scanning in the absence of an index
+
+Q: can i scan for arbitrary values?
+
+so when you query you have a "condition expression" where you put the partition and sort key stuff
+and a "filter expression" where you put conditions targetting other fields in the record
+so when you scan you have a "filter expression" where you put conditions targetting other fields in the record
+> A filter expression cannot contain partition key or sort key attributes. You need to specify those attributes in the key condition expression, not the filter expression.
+
+### PartiQL
+
+A SQL like syntax but it still has all the constraints of DynamoDB
+
+```sql
+insert into eoin_1 value {'PK': '001', 'SK': '001', 'Artist' : 'Acme Band','SongTitle' : 'PartiQL Rocks'}
+```
+
+## creating a table
+
+* table names must be unique in each region of your account
+
+Q: can you create tables via the HTTP API or do you need to use the AWS API (via an SDK or Terraform)?
+
+## ORM
+
+* Presumably ORMs bake in some good data modelling ideas so they might be good as inspiration even if we don't use the code
+* Book recommends against. But maybe it's ok for usages where you don't need mega scale?
+
+## 'aws dynamodb' CLI
+
+```bash
+aws dynamodb
+        batch-execute-statement
+        batch-get-item
+        batch-write-item
+        create-backup
+        create-global-table
+        create-table
+        delete-backup
+        delete-item
+        delete-table
+        describe-backup
+        describe-continuous-backups
+        describe-contributor-insights
+        describe-endpoints
+        describe-export
+        describe-global-table
+        describe-global-table-settings
+        describe-kinesis-streaming-destination
+        describe-limits
+        describe-table
+        describe-table-replica-auto-scaling
+        describe-time-to-live
+        disable-kinesis-streaming-destination
+        enable-kinesis-streaming-destination
+        execute-statement
+        execute-transaction
+        export-table-to-point-in-time
+        get-item
+        help
+        list-backups
+        list-contributor-insights
+        list-exports
+        list-global-tables
+        list-tables
+        list-tags-of-resource
+        put-item
+        query
+        restore-table-from-backup
+        restore-table-to-point-in-time
+        scan
+        tag-resource
+        transact-get-items
+        transact-write-items
+        untag-resource
+        update-continuous-backups
+        update-contributor-insights
+        update-global-table
+        update-global-table-settings
+        update-item
+        update-table
+        update-table-replica-auto-scaling
+        update-time-to-live
+        wait
+        wizard
+```
+
+## Modeling
+
+This book strongly recommends using as few tables as possible.
+ideally only a **single table per application/microservice**
+
+The book supports the "Don't start on DynamoDB" idea and even suggests doing a
+more normalised data approach (you still don't have joins tho)
+
+> DynamoDB was built for large-scale, high-velocity applications that were
+> outscaling the capabilities of relational databases. And relational databases
+> can scale pretty darn far! If you're in the situation where you're out-scaling a
+> relational database, you probably have a good sense of the access patterns you
+> need. But if you're making a greenfield application at a startup, it's unlikely
+> you absolutely require the scaling capabilities of DynamoDB to start, and you
+> may not know how your application will evolve over time.
+>
+> In this situation, you may decide that the performance characteristics of a
+> single-table design are not worth the loss of flexibility and more difficult
+> analytics. You may opt for a Faux-SQL approach where you use DynamoDB but in a
+> relational way by normalizing your data across multiple tables.
+>
+> This means you may need to make multiple, serial calls to DynamoDB to satisfy
+> your access patterns.
+
+1. Create an ERD diagram (or similar understanding) of your app
+1. Write down all your access patterns, both primary and secondary
+1. Model your primary key structure to satisfy your primary access patterns
+1. Satisfy additional access patterns with secondary indexes and global secondary indexes
+2. Expect to have to iterate on this.
+
+Principles
+
+1. Consider what your client will know at read time
+   * The client must know the primary (and secondary if exists) keys
+2. Use primary prefixes to distinguish between entity types in the same table
+   * For example, a single table might have keys fo the form:
+        ```
+        PK              SK
+        ----------------------------
+        USER#213        METADATA#213
+        GROUP#123       METADATA#123
+        ROLE#123        METADATA#123
+        BOOKING#123     METADATA#123
+        ```
+3. Handle additional access patterns with secondary and global secondary indexes
+    * ideally your primary+secondary key will cover most of your use cases
+    * additional indexes do cost more
+
+Q: How do I iterate on the design of an in-use DynamoDB table?
+    Hope it's not so big that I can't just create a new table and copy all the data across
+
+Q: Would it make sense to have my own model layer which captures each access pattern
+    this could then call down into a lower layer which actually fetches the data
+
+* DynamoDB requires more design up front than a SQL DB.
+* You need to know your access patterns **at design time** unlike with a SQL DB
+    * Because that's always possible ...
+
+Workbench facets
+
+* a facet is a way of looking at just a single type of object within a single table design
+    * they aren't called "views" because that overlaps with the meaning in a SQL DB
+
+### Option: one table per model
+
+you can use one table per model
+* -- less optimized than the denormalised
+* -- you have to do the joins in application memory (no RDBMS to join for you)
+    -- more network requests than with a SQL DB
+* ?? Could this be better if you don't yet understand your traffic patterns?
+
+### Option: single table design
+
+* ++ more optimized
+* recommended by this book
+* -- harder to evolve the design as requirements change
+* Keep data attributes and indexing attributes separate
+* be ok with seeming duplication between data attributes and indexing attributes
+* remember that you can query on indexed attributes but not data attributes
+    * caveat: you can scan for anything but it's very slow
+
+> “For each global secondary index you use, give it a generic name of
+> GSI<Number>. Then, use GSI<Number>PK and GSI<Number>SK for your attribute types”
+
+Add a `Type` field to your data attributes to help map back to a model in your code
+    * lets you filter your scans
+
+> DynamoDB is not great at performing ad-hoc OLAP-style queries, so you will
+> probably import your data to Amazon Redshift or export it to Amazon S3 to query
+> with Amazon Athena
+
+Well that sentence does a lot of heavy lifting.
+
+It seems likely that an app would need a solution outside of DynamoDB to handle reporting, support etc. (the stuff a SQL DB is good at)
+
+Common options are to stream DynamoDB into
+
+* RDS
+* S3 + Athena
+* Redshift
+
+
+### Designing primary key and secondary sort keys
+
+##### Option: `PK` and `SK`
+
+* Name the primary key `PK` and the secondary sort key `SK`
+  * the most abstract
+  * whatever bits of data make up your PK and SK will be be duplicated in your data record
+*
+
+##### Option: choose a field

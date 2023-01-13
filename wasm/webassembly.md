@@ -19,6 +19,8 @@
     - [Are dynamic langs realistic in wasm? if yes, then which ones](#are-dynamic-langs-realistic-in-wasm-if-yes-then-which-ones)
     - [it seems like networking in WASI is not implemented yet so current network access is a bit of hack](#it-seems-like-networking-in-wasi-is-not-implemented-yet-so-current-network-access-is-a-bit-of-hack)
     - [What is the state of using wasm from JS?](#what-is-the-state-of-using-wasm-from-js)
+      - [Option: QuickJS](#option-quickjs)
+      - [Option: SpiderMonkey](#option-spidermonkey)
     - [Misc questions](#misc-questions)
 
 ## Overview
@@ -239,18 +241,23 @@ There  are 20+ wasm runtimes but the key ones are:
 
 ## Reasons why wasm could be great
 
-* being able to call seamlessly between modules written in different languages would be an amazing step forward
+* Being able to call seamlessly between modules written in different languages would be an amazing step forward
+    * Is this going to be seamless in practice? Rust and C will likely work well but will a golang GC in one module play nicely with a python GC in a another module?
 * ++ if a platform supports wasm, you can write the code in anything which supports it
   * -- realistically for near future that will be a compiled lang (Rust, C, C++ ?go)
   * ++ they are working on making JS run well as wasm but it will always probably be slower than straight node but might be worth it for the security benefits
 * wasm code is the most sandboxed you can make 3rd party code
 * if the container ecosystem can use wasm processes as a drop in replacement for containers (keeping the config the same for both e.g. similar yaml in k8s and docker desktop) then wasm "containers" just become a 1)more sandboxed, 2) faster startup (depends), 3) cross-platform alternative to a natively compiled workload
 * "serverless without a cold boot problem"
-* the granular security & sandboxing could be great
-* it could be the "the last plugin language you will ever need"
-* because wasm code is so much more dependent on the host, you can think of it as being a "business logic" plugin to the wasm runtime
-* the capabilities of a module are in a cryptographically signed header so can be checked even if there is no network
-  * no calling home to a central server
+    * because wasm code is so much more dependent on the host, you can think of it as being a "business logic" plugin to the wasm runtime
+* Use cases
+    * Plugins
+        * it could be the "the last plugin language you will ever need"
+* Security
+    * the granular security & sandboxing could be be a big security win
+    * ??
+    * the capabilities of a module are in a cryptographically signed header so can be checked even if there is no network
+    * no calling home to a central server required
 
 ## WASI
 
@@ -342,6 +349,24 @@ wasm modules cannot connect to each other yet (waiting on the component model)
   so all your wasm modules a little islands that can only talk to JS and not
   directly to each other
 ```
+
+#### Option: QuickJS
+
+https://bellard.org/quickjs/
+
+> QuickJS has many virtues, the foremost being that it is fully compliant to the latest JavaScript standard. But it is not designed to be the fastest or most robust JavaScript engine. It is so easy to embed that many early Wasm projects have figured out ways to compile the interpreter to Wasm and then run JavaScript inside of a Wasm runtime.
+>
+> https://thenewstack.io/webassembly-5-predictions-for-2023/
+
+#### Option: SpiderMonkey
+
+> we’ve added full support to Mozilla’s build system for compiling SpiderMonkey to WASI. And Mozilla is about to add WASI builds for SpiderMonkey to the same CI setup that is used to build and test Firefox. This makes WASI a production quality target for SpiderMonkey and ensures that the WASI build continues working over time.
+>
+> https://bytecodealliance.org/articles/making-javascript-run-fast-on-webassembly
+
+* -- you need to pre-initialize your JS with wizer to run it in this spidermonkey
+  * https://github.com/bytecodealliance/wizer
+
 ### Misc questions
 
 * Is the future of server side software us writing plugins for runtimes and managed services?
