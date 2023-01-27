@@ -22,6 +22,7 @@
       - [Option: QuickJS](#option-quickjs)
       - [Option: SpiderMonkey](#option-spidermonkey)
     - [Misc questions](#misc-questions)
+  - [Update 2023-01-23](#update-2023-01-23)
 
 ## Overview
 
@@ -377,3 +378,15 @@ https://bellard.org/quickjs/
 	* you don't need to provide a full OS underneath it because the compiled wasm doesn't care about it
 	* it could be a smaller more secure container
 * I think my conclusion is that for 2023 at least, wasm is in the interesting but not useful category
+
+## Update 2023-01-23
+
+* https://github.com/wasmerio/kernel-wasm
+    * definitely potentially faster
+    * but also scary. Any bug in the wasm runtime is presumably now kernel pwnage?
+    * my take:
+      * interesting for niche cases but the security trade-offs likely too scary for general purpose use
+      * no hosting provider will want to run my wasm in their kernel
+      * might be useful for "more expressive eBPF"? (low confidence, lots I don't understand about the details there)
+        * but eBPF exists so what does this add?
+      * will only be of interest where the entity who runs the kernel also supplies the wasm
