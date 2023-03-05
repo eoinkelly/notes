@@ -1,0 +1,22 @@
+# Core web vitals
+
+-   Lab testing
+    -   Lighthouse in dev tools
+        -   reports on web vitals in a "lab setting" (my laptop artificially set up to mimic other users bandwidth, CPU etc.)
+-   Field testing
+    -   Chrome web vitals extension
+        -   technically field testing but only testing my setup
+        -   Reports on web vitals using my CPU and network and browser (not necessarily matching other users)
+-   Field & Lab
+    -   page speed insights
+        -   https://pagespeed.web.dev/
+        -   you plug in a URL and it creates a report similar to what lighthouse dev tools does
+        -   shows a mix of lab and field data
+            -   field data
+                -   28 day sampel from CRUX report of the core web vital metrics
+                -   PSI gets CRUX data daily. if you use bigquery on CRUX you get data monthly
+            -   lab data
+                -   it runs a lighthouse report for you (seems similar to what dev tools would do
+                -   > simulates the page load conditions of a mid-tier device (Moto G4) device on a mobile network for mobile, and an emulated-desktop with a wired connection for desktop.
+-   TODO
+    -   Core web vitals report in search console

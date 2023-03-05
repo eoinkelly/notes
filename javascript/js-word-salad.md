@@ -1,0 +1,75 @@
+# Word salad
+
+-   esbuild
+    -   an asset bundler
+    -   written in go-lang, aims to be very fast
+-   Eleventy
+    -   A static site generator (another Jekyll in JS thing)
+-   Hugo
+    -   A static site generator written in go-lang
+-   Astro
+    - https://docs.astro.build/en/concepts/why-astro/
+    -   Aimed primarily for content sites
+    - is a static site builder out of the box but you can add dapters to do SSR
+      - https://docs.astro.build/en/guides/integrations-guide/node/
+      - astro can be a standalone server or a middleware for things like Express
+    -   Does have SSR
+    -   Uses file based routing (precompiles components into static HTML)
+    -   Firmly a MPA approach - out of the box there is no client side rendering
+        -   it seems like it's mostly precompiled into static HTML and CSS
+        -   not sure how you add client side JS yet
+    -   Netlify is their offical hosting partner
+    -   > Astro is an MPA framework. Traditional MPA frameworks also include
+        > Ruby on Rails, Python Django, PHP Laravel, WordPress, Joomla, Drupal and
+        > static site builders like Eleventy or Hugo
+    -   Storyblok is their official CMS partner
+    -   can pull data from many CMSes and sources
+    -   serves 0 js to the client by default
+        -   it builds static pages by default I think. you have to explicitly enable SSR via an adapter for your platform
+    -   you create `.astro` file components which are HTML and JS separated by `---` line
+        -   has sugar for referencing JS vars from HTML using JSX alike syntax
+    -   uses vite
+-   Nuxt JS
+    -   A framework built on Vue
+    -   seems to be a "NextJS for Vue" (or perhaps this came first)
+-   Gatsby
+    -   A react based framework
+    -   owned by Netlify
+    -   uses a graphql for the data layer which can be backed by many kinds of CMS and data sources
+    -   has a "Gatsby cloud" offering
+-   Next JS
+    -   By Vercel
+    -   A framework for React
+    -   "rust based tooling "
+    -   v13 is latest
+    -   has a CLI
+-   Vite
+    -   a dev server which does HMR
+    -   a bundler which uses rollup
+    -   aims to be fast
+-   Remix
+    -   a full-stack web framework
+    -   uses TSX which presumably is JSX but typescript
+-   Svelte
+    -   competes with React
+    -   doesn't do DOM diffing
+-   SvelteKit
+    -   A framework built on Svelte and Vite
+    -   does both server and client rendering
+-   Qwik
+    -   Uses vite
+    -   Created by the AngularJS guy
+    -   components use JSX but are not React
+    -   builds into a static site I think
+    -   markets as being able to do SPA or MPA
+    -   can run react components natively
+    -   Seems heavily supported/sponsored by https://www.builder.io/
+-   SolidJS
+    -   https://www.solidjs.com/
+    -   small
+    -   provides reactivity
+    -   a react competitor
+- Marko
+    - TODO
+- Fresh
+    - TODO

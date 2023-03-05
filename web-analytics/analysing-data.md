@@ -1,4 +1,5 @@
 # Reading List
+
 http://webmasters.stackexchange.com/questions/21772/google-analytics-what-to-feed-back-to-clients?newsletter=1&nlcode=23596%7c7cdb
 http://blog.kissmetrics.com/make-web-analytics-work/
 how to figure out which channels caused the sale http://www.kaushik.net/avinash/multi-channel-attribution-definitions-models/?utm_source=social-media&utm_medium=twitterfbgp&utm_campaign=aktw
