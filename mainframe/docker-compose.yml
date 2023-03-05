@@ -1,0 +1,8 @@
+version: "3"
+services:
+    mainframe:
+        platform: linux/amd64
+        image: skunklabz/tk4-hercules
+        ports: # host:container
+            - "3270:3270"
+            - "8038:8038"
