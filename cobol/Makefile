@@ -10,3 +10,6 @@ build_2:
 
 build_3:
 	cobc -x -Wall -debug -o ./bin/HelloWorld ./HelloWorld.cbl
+
+cobol_tutorial:
+	cobc -x -Wall -debug -o ./bin/cobol_tutorial ./cobol_tutorial.cbl
