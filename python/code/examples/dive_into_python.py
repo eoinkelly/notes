@@ -1,7 +1,7 @@
-'''
+"""
 If the first thing in a module is a multi-line string it is treated as a doc
 string.
-'''
+"""
 
 # print out our own doc string
 # print(self.__doc__) # not working
@@ -9,40 +9,42 @@ string.
 
 # pylint considers any variable declared outside a function should be either a
 # class name or a constant so will complain about this:
-blah = 'hello'
+blah = "hello"
 
-if blah == 'hello':
-    print('do stuff')
+if blah == "hello":
+    print("do stuff")
 
-if blah != 'hello':
-    print('other stuff')
+if blah != "hello":
+    print("other stuff")
 
 # None is the python null value
 # functions return None if you don't explicitly return something
 
+
 # default args look like ruby
-def do_things(a_thing, other='hello'):
-    '''I am the do_things function
+def do_things(a_thing, other="hello"):
+    """I am the do_things function
     hear me roar!
-    '''
-    if other == 'hello':
-        print('we used default b')
+    """
+    if other == "hello":
+        print("we used default b")
     else:
-        print('we passed a b')
+        print("we passed a b")
 
     print(a_thing)
 
-    if a_thing == 'die':
+    if a_thing == "die":
         # exceptions look like ruby
         # what is the exception heirarchy?
-        raise ValueError('bad thing')
+        raise ValueError("bad thing")
+
 
 # docstring is available as the __doc__ attribute of a function object
 print(do_things.__doc__)
 
 # invoking function that has default args
-do_things('i am a')
-do_things('i am a', 'i am b')
+do_things("i am a")
+do_things("i am a", "i am b")
 # do_things('die') # will raise exceptoin
 
 # when you import a module you get its *public*
@@ -73,7 +75,7 @@ print(sys.path)
 # all start code blocks and all end in `:`
 
 # python arrays look like ruby
-things = ['a', 'b', 'd', 'e', 'g']
+things = ["a", "b", "d", "e", "g"]
 
 for x in things:
     print(x)
@@ -81,9 +83,9 @@ for x in things:
 # python loves exceptions
 
 try:
-    raise ValueError('bad')
+    raise ValueError("bad")
 except ValueError:
-    print('got bad value')
+    print("got bad value")
 
 # python will not let you reference a variable that has not been assigned a
 # value! Nice!
@@ -108,8 +110,8 @@ except ValueError:
 # so you can use __name__ to decide whether we are being imported or run
 # directly
 # This can be handy for running unit tests on the module (used in practice???)
-if __name__ == '__main__':
-    print('we are main')
+if __name__ == "__main__":
+    print("we are main")
 
 # Python datatypes
 #
@@ -140,7 +142,7 @@ if __name__ == '__main__':
 #     * unordered
 #     * hetreogenous
 #     * defined with {} e.g. {1, 4, 45, True, 'hi'}
-my_set = {1, 23, 'hi', True, False}
+my_set = {1, 23, "hi", True, False}
 
 # * Dictionaries
 #     * unordered, key value pairs
@@ -148,8 +150,8 @@ my_set = {1, 23, 'hi', True, False}
 #     * keys can be strings, numbers, tuples, others???
 #     * keys can have different types
 
-my_dict = {'name': 'dictionary value Eoin', 'age': 33}
-print(my_dict['name'])
+my_dict = {"name": "dictionary value Eoin", "age": 33}
+print(my_dict["name"])
 
 # * None
 #     * the only instance of NoneType
@@ -176,33 +178,32 @@ else:
 # up to http://www.diveintopython3.net/comprehensions.html
 
 
-
 # classes
+
 
 class FooBar:
     pass
     # pass is a noop statement handy when stubbing out stuff, probably required
     # so that you can have empty code block
 
+
 class Car:
-    '''I am a car factory class
-    '''
+    """I am a car factory class"""
+
     # init works same as ruby, is called after memory allocation
     def __init__(self, make, model):
-        '''
-        '''
+        """ """
         self.make = make
         self.model = model
 
     def drive(self):
-        '''I drive
-        '''
-        print('bee beep from {make} {model}'.format(make=self.make, model=self.model))
+        """I drive"""
+        print("bee beep from {make} {model}".format(make=self.make, model=self.model))
 
 
 # instantiate by calling the class name as a constructor passing whatever
 # __init__ requires
-my_car = Car('toyota', 'yaris')
+my_car = Car("toyota", "yaris")
 my_car.drive()
 print(my_car.__class__)
 print(my_car.__doc__)
@@ -225,11 +226,11 @@ print(my_car.model)
 # os contains all the "operating stuff"
 import os
 
-print(os.getcwd()) # cwd of python process
+print(os.getcwd())  # cwd of python process
 
 os.path
 # a bunch of functions for manipulating paths and dirs
-new_path = os.path.join('/some/bar', 'foo.py')
+new_path = os.path.join("/some/bar", "foo.py")
 print(new_path)
 
 # glob does shell glob expansion
@@ -252,7 +253,7 @@ print([el * 3 for el in a_list if el > 2])
 
 # A dictionary comprehension is like a list comprehension, but it constructs a dictionary instead of a list.
 
-maybe_dict = {el:el * 3 for el in a_list if el > 2}
+maybe_dict = {el: el * 3 for el in a_list if el > 2}
 # {8: 24, 9: 27, 4: 12}
 
 print(type(maybe_dict))
@@ -274,10 +275,11 @@ print({x * 3 for x in a_set})
 
 # You can turn any class into a "callable" (a lambda) by implementing __call__()
 class Funky:
-    '''my instances can be used just like a function
-    '''
+    """my instances can be used just like a function"""
+
     def __call__(self):
         print("hi there from funky the callable")
+
 
 fun = Funky()
 fun()
@@ -289,7 +291,7 @@ fun()
 # * creates a "runtime context"
 # * allows python to implement before and after setup and cleanup
 # * similar to blocks in ruby
-with open('/path/some/file.txt') as some_file:
+with open("/path/some/file.txt") as some_file:
     some_file.seek(4)
     char = some_file.read(1)
 
@@ -303,7 +305,6 @@ with open('/path/some/file.txt') as some_file:
 # methods that begin with test_* are run as tests
 # has a number of assert methods available
 import unittest
-
 
 # decorators
 

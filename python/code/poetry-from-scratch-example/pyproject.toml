@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "poetry-from-scratch-example"
+version = "0.1.0"
+description = ""
+authors = ["Eoin Kelly <eoin@eoinkelly.info>"]
+readme = "README.md"
+packages = [{include = "poetry_from_scratch_example"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

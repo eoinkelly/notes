@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "eoin's toy python code"
+version = "0.1.0"
+description = ""
+authors = ["Eoin Kelly <eoin@eoinkelly.info>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+black = "^23.3.0"
+isort = "^5.12.0"
+pylint = "^2.17.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
