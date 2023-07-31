@@ -1,0 +1,31 @@
+at 14:52:40 ❯ python gpt.py
+10.788929 M parameters
+step 0: train loss 4.2221, val loss 4.2306
+step 500: train loss 1.7447, val loss 1.8920
+step 1000: train loss 1.4008, val loss 1.6214
+step 1500: train loss 1.2709, val loss 1.5407
+step 2000: train loss 1.1934, val loss 1.5040
+step 2500: train loss 1.1297, val loss 1.4878
+step 3000: train loss 1.0694, val loss 1.4778
+step 3500: train loss 1.0197, val loss 1.5020
+step 4000: train loss 0.9625, val loss 1.5154
+step 4500: train loss 0.9124, val loss 1.5460
+step 4999: train loss 0.8585, val loss 1.5693
+
+Our fair, or fell ,-sick.
+
+Clown:
+Dream'd you upon the drooping, gross knightly,
+Can changed thee from alone, steel the crown!
+Come, amazord; for all sear sends,
+More cuch a thousand above, more length,
+Nor delicat depulate thee.
+
+HENRY BOLINGBROKE:
+It is dead; and to breathe unflike it no seallow.
+I much false, till thou behelp in deep.
+
+DUKE OF AUMERLE:
+Methinks I would tell me these wanest against
+Against Mariana keple his pleasing and yourself:
+Then, from they come to Ludio, to straign lock

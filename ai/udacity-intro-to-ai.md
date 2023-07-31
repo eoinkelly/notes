@@ -23,7 +23,7 @@ is called the _Perception action cycle_
 
 There are four key attributes of intelligent agents
 
-### 1. Fully observable vs Paritial observable
+### 1. Fully observable vs Partial observable
 
 * Fully observable
     * what the agent can sense *any any point in time* is completely sufficient to make the best possible decision

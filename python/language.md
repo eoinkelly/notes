@@ -1,3 +1,17 @@
+## with statements
+
+The Python with statement creates a runtime context that allows you to run a
+group of statements under the control of a context manager.
+
+The context manager object results from evaluating the expression after with. In
+other words, expression must return an object that implements the context
+management protocol. This protocol consists of two special methods:
+
+    .__enter__() is called by the with statement to enter the runtime context.
+    .__exit__() is called when the execution leaves the with code block.
+
+
+# Misc unsorted
 
 * `(a, b, c)` creates a tuple in python (tuples are immutable, value objects, efficent because they aren't copied around)
 * `[a, b, c]` creates a list in python (lists are mutable)

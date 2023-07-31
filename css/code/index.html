@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Grid test</title>
+	<style>
+		body {
+			margin: 1rem;
+		}
+
+		.container {
+			display: grid;
+			grid-gap: 10px;
+			/* grid-template-columns: [nav-start] 1fr [nav-end content-start] 1fr; */
+			grid-template-columns: 100px 100px;
+			/* grid-template-areas: "navigation content" "footer-shit"; */
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+
+		<div class="item">item 1
+			<span>hello there</span>
+
+		</div>
+		<div class="item">item 2
+
+		</div>
+		<div class="item">item 3
+
+		</div>
+	</div>
+</body>
+</html>

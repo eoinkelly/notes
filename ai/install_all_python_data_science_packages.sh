@@ -22,4 +22,5 @@ pip install scikit-learn  --upgrade
 pip install scipy  --upgrade
 pip install plotly  --upgrade
 
+# pytorch
 pip install torch torchvision --upgrade

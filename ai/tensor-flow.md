@@ -1,26 +1,19 @@
 # Tensor flow
 
-* https://www.tensorflow.org/get_started/get_started
-* provides multiple apis
-
+-   https://www.tensorflow.org/get_started/get_started
+-   provides multiple apis
     1. Tensorflow Core
-        * recommended for ML researchers
-        * gives fine grain control
+        - recommended for ML researchers
+        - gives fine grain control
     2. Higher level APIs
-        * ++ easier to learn
-        * high level APIs with `contrib` in name are still in development
+        - ++ easier to learn
+        - high level APIs with `contrib` in name are still in development
             > A high-level API like tf.contrib.learn helps you manage data sets, estimators, training and inference
-
-A "tensor" is
-
-* an array of any number of dimensions
-* "rank" = no. of dimensions
-    * rank 0 is just a scalar
-* "shape" = an array which describes the dimensionality of the tensor
-
-Aside: append `.` to a number to make it a float in python
+    3. Keras
 
 ```py
+# Aside: append `.` to a number to make it a float in python
+
 3. # rank: 0, shape []
 [1., 3., 5.] # rank: 1, shape [3]
 [[1., 3., 5.], [2., 4., 6.]] # rank: 2, shape [2, 3]
@@ -34,18 +27,17 @@ d = [b]
 [c, d]
 ```
 
-Tensorflow programs contain 2 specializations
+-   Tensorflow programs contain 2 specializations
+    1. build a computational graph of tensors
+    2. run that graph
 
-1. build a computational graph of tensors
-2. run that graph
-
-each node takes 0 or more tensors as inputs and products 1 tensor as output
-the graph has "operations" which are also nodes (i.e. they take in tensors and product one tensor)
+*   Each node takes 0 or more tensors as inputs and products 1 tensor as output
+*   the graph has "operations" which are also nodes (i.e. they take in tensors and product one tensor)
 
 > TensorFlow provides optimizers that slowly change each variable in order to minimize the loss function. The simplest optimizer is gradient descent.
 
-https://www.tensorflow.org/get_started/mnist/beginners
+## MNIST
 
-MNIST is the "hello world" of ML
-
-http://yann.lecun.com/exdb/mnist/
+-   https://www.tensorflow.org/get_started/mnist/beginners
+-   MNIST is the "hello world" of ML
+-   http://yann.lecun.com/exdb/mnist/

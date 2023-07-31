@@ -1,4 +1,4 @@
-# Word salad
+# Javascript Word salad
 
 -   esbuild
     -   an asset bundler
@@ -70,6 +70,16 @@
     -   provides reactivity
     -   a react competitor
 - Marko
-    - TODO
+    - https://markojs.com/
+    - extends HTML to have JS and CSS
 - Fresh
-    - TODO
+    - https://fresh.deno.dev/
+    - Deno based web framework
+    - SSR, uses islands approach like Astro
+    - seems to be similar in approach to Astro
+- SolidJS
+    - https://www.solidjs.com/
+    - competes with React
+    - uses reactivity
+      - component lifetime is while it is on page vs react's "alive for a single render" approach
+      -  uses signals for reactivity

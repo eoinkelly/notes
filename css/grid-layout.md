@@ -77,7 +77,7 @@ The following units are available to define a track width in `grid-template-colu
 
 ## Functions
 
-* the `repeat(n, thing)` function is defined as part of the grid layout spec
+* the `repeat(count, width)` function is defined as part of the grid layout spec
 * `minmax(min_width, max_width)`
     * a function
     * can be used in `grid-template-columns` and `grid-template-rows`
@@ -242,32 +242,33 @@ The following units are available to define a track width in `grid-template-colu
 * there are 6 relevant properties
 * `justify-*` are along the row axis
 * `align-*` are along the colum axis
-* unlike flexbox they don't swtich around
+* unlike flexbox they don't switch around
 
 ```scss
-.container-i-think {
+.container {
     // applied on the container, effects **width** of items within the container
     justify-items: stretch; // stretch (default) |center|start|end
 
     // applied on the container, effects **height** of items within the container
     align-items: stretch; // stretch(default)|center|start|end
 
-    // shorthand that sets both justify-items and align-items (WARNING: is newer, might not have browser support)
+    // shorthand that sets both justify-items and align-items
     place-items: JUSTIFY_ITEMS_VALUE ALIGN__ITEMS_VALUE
     // examples
     place-items: center center; // center both ways
     place-items: start end; // put item in bottom left corner of the grid item
 
+    // *-content controls the grid itself within its container i.e. what if your grid does not fill its container
+    // it lets you control where to place the grid itself within its container
+    // it essentially dynamically sizes 'grid-gap' to achieve what you want
+    justify-content: stretch; // stretch|start|end|center|space-around|space-between
+    align-content: stretch; // stretch|start|end|center|space-around|space-between
+}
+
+.item {
     // does the same as *-items except it is applied to an item not the container and it targets that item
     justify-self: stretch; // stretch(default)|center|start|end
     align-self: stretch; // stretch(default)|center|start|end
-
-    // *-content controls the grid itself within its container i.e. what if your grid does not fill its container
-    // it lets you control where to place the grid itself within its container
-    // it essentially dynamically sizes 'grid-gap' to achive what you want
-    justify-content: stretch; // stretch|start|end|center|space-around|space-between
-    align-content: stretch; // stretch|start|end|center|space-around|space-between
-
 }
 ```
 
@@ -277,9 +278,11 @@ The following units are available to define a track width in `grid-template-colu
 * default order of everything is 0 so any number higher than that will be pushed to the end
 * to meaningfully use it you have to add `order` to every item to control it properly
 * it can be handy to change this property in media queries
-* be aware that screenreaders will not use this new order and that it makes selecting text across the items with your mouse a bit odd
+* be aware that screen readers will not use this new order and that it makes selecting text across the items with your mouse a bit odd
 
-```
-order: 1 // default is 0, can be any number
+```scss
+.item {
+    order: 1 // default is 0, can be any number
+}
 ```
 
