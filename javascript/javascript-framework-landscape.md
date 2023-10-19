@@ -27,6 +27,9 @@
     - https://github.com/adonisjs/core
     - Stars: 13.4k
     - Looks very Rails like
+1. RedwoodJS
+    - https://redwoodjs.com/
+    - seems rails like
 
 ## Sinatra alike/api focus
 
