@@ -18,10 +18,9 @@
   - [Apache spark (A data analytics framework)](#apache-spark-a-data-analytics-framework)
   - [Apache Hive (A SQL DB running on HDFS)](#apache-hive-a-sql-db-running-on-hdfs)
   - [Trino](#trino)
-  - [Flink](#flink)
+  - [Apache Flink](#apache-flink)
   - [Presto](#presto)
-  - [Hive](#hive)
-  - [Impala](#impala)
+  - [Apache Impala](#apache-impala)
   - [Apache Hadoop](#apache-hadoop)
   - [AWS EMR](#aws-emr)
   - [AWS Lake formation](#aws-lake-formation)
@@ -238,7 +237,12 @@ Q: How does iceberg compare to governed table
 > Ruby, Rust, JavaScript, and even Perl.
 
 ### Apache Hudi
-TODO
+
+https://hudi.apache.org/
+
+> Apache Hudi is a transactional data lake platform that brings database and data warehouse capabilities to the data lake. Hudi reimagines slow old-school batch data processing with a powerful new incremental processing framework for low latency minute-level analytics.
+
+- ??? A competitor AWS EMR? It seems to have similar scope
 
 ### Comparing file formats
 
@@ -296,15 +300,36 @@ https://cwiki.apache.org/confluence/display/hive/design
 > Both these tools are open-source and the products of Apache. However, it is incorrect to consider either of the tools as the replacement of the other. The selection of the tool must be as per the specifications and requirements considering the operating systems, database models, languages, and likewise.
 
 ## Trino
-TODO
-## Flink
-TODO
+
+https://trino.io/
+
+> Fast distributed SQL query engine for big data analytics that helps you explore your data universe.
+
+- A java jar file
+
+
+## Apache Flink
+
+https://flink.apache.org/
+
+> Stateful Computations over Data Streams
+> Apache Flink is a framework and distributed processing engine for stateful
+> computations over unbounded and bounded data streams. Flink has been designed to
+> run in all common cluster environments, perform computations at in-memory speed
+> and at any scale.
+
 ## Presto
-TODO
-## Hive
-TODO
-## Impala
-TODO
+
+https://prestodb.io/
+
+> Presto is an open source SQL query engine that’s fast, reliable, and efficient at scale. Use Presto to run interactive/ad hoc queries at sub-second performance for your high volume apps.
+
+## Apache Impala
+
+https://impala.apache.org/
+
+> Apache Impala is the open source, native analytic database for open data and table formats.
+
 ## Apache Hadoop
 
 A distributed compute thing similar idea to Spark
