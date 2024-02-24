@@ -1,3 +1,4 @@
+# Music Theory
 
 ## Jargon
 

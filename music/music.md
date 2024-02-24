@@ -1,9 +1,5 @@
 # Music
 
-Graphs
-
-https://docs.google.com/spreadsheets/d/1jeIa2PHvUnrhHvyD5D9zVmV7eO89LbLETm-np8UuNwY/edit#gid=168383079
-
 Sources
 
 * https://www.youtube.com/watch?v=lvmzgVtZtUQ
@@ -17,12 +13,18 @@ Sources
     * scales are the usual birthplaces of melody and harmony
     * melody = the part of music we can sing
     * harmony = two or more pitches at the same time
-1. Rhythm
+    * the Hz distance between notes is not constant - the higher the note the bigger the gap to the next note
+        * seems to be roughly exponential looking
+        * see https://docs.google.com/spreadsheets/d/1jeIa2PHvUnrhHvyD5D9zVmV7eO89LbLETm-np8UuNwY/edit#gid=168383079
+        * ![Hz graph](<CleanShot 2024-02-06 at 12.00.50@2x.png>)
+        * Guitar open low E -> F is ~10 Hz
+        * Guitar high E string 12th fret E -> is ~78 Hz
+2. Rhythm
 	* Palpably organised time
 	* motion
-1. Form
+4. Form
     * most music follows an A-B-A  form e.g. verse-chorus-verse, statement-departure-return
-1. Tension and release
+5. Tension and release
     * Building and releasing tension is an important facet of a musical piece
 
 Piano Tips
@@ -53,14 +55,17 @@ This form is what makes a major scale
 
 In C major this looks like:
 
-          whole-whole-half-whole-whole-whole-half
-    C     D     E    F     G     A     B     C
+```
+     whole whole half whole whole whole half
+    C     D     E    F     G     A     B    C
+       2     2    1     2     2     2    1
+```
 
-There is a major scale starting on each of the 12 pitches => 12 major scales
-but 4 of the pitches have two names (# and b) so you could => 16 major scales
-but 24 is the more usual way of counting
+There is a major scale starting on each of the 12 pitches which means there are 12 major scales.
+4 of the pitches have two names (# and b) so there are 16 ways to write the 12 scales.
 
 There is only one major scale for each pitch.
+
 There are many minor scales but 3 are common:
 
 1. Natural minor
@@ -71,11 +76,29 @@ So you could say there are 48 commonly used scales in music.
 
 ### minor scales
 
-There is only one kind of major scale but many kinds of minor scale e.g. melodic minor
+There is only one kind of major scale but many kinds of minor scale
 
-    2 1 2 2 2 2 1
-    whole-half-whole-whole-whole-whole-half
-    C     D     Eb    F     G     A     B     C
+#### Natural minor
+
+```
+root 2 1 2 2 1 2 2
+
+C     D     Eb    F     G     Ab    Bb     C
+```
+
+#### melodic minor
+
+```
+root 2 1 2 2 2 2 1
+C     D     Eb    F     G     A     B     C
+```
+
+#### Harmonic minor
+
+```
+root  2 1 2 2 1 2 2
+C     D     Eb    F     G     Ab    B     C
+```
 
 ## Tuning
 
@@ -85,7 +108,8 @@ A 440hz
 	* 7 with one name
 	* 4 with two possible names (flat or sharp)
 * 12 pitches in an octave
-* it is not the absolute frequencies tht matter - it is the intervals between the frequencies
+    * so the root must be shared between the octave above and below it
+* it is not the absolute frequencies that matter - it is the intervals between the frequencies (the interval distance in Hz gets larger as notes get higher
 * a melody is a sequence of **intervals**
 * the intervals are subjective
 
@@ -125,7 +149,6 @@ Notation
 
 ![Western tuning comparisons](./western-tuning-comparisons.png)
 
-?? what is a cent?
 
 Remember we are just naming **intervals** here, not naming notes!
 
@@ -143,14 +166,20 @@ How human ears perceive intervals, from most consonant to most dissonant:
     Perfect 5th/Perfect 4th (generally accepted)
 
     (people disagree with the order from here on)
-    Major 3rd/Minor 6th
-    Minor 3rd/Major 6th
+    Major 3rd and Minor 6th
+    Minor 3rd and Major 6th
 
     (things below here are considered dissonant)
-    Major 2nd/Minor 7th
-    Minor 2nd/Major 7th
+    Major 2nd and Minor 7th
+    Minor 2nd and Major 7th
     Tritone
     Microtonal intervals (quarter tone etc.) <most dissonant>
+
+## Aside: A Cent
+
+* A unit of measure for the **ratio** between two frequencies
+* An equally tempered semitone is 100 cents **by definition**
+* An octave is 1200 cents by definition
 
 ## Alternatives to 12 notes in octave
 
@@ -201,6 +230,9 @@ The (almost) universally adopted modern system is _12 tone equal temperament_
 ### Why 7 notes in a scale/key? why not a diff number?
 
 Using the 7 letters mean the same 7 **letters** are used in every key - this is supposedly easier to understand than having to memorize which letters are skipped
+
+=> In western music, scale/key do not have (for .e.g.) both F and F#
+    ??? is that right ???
 
 Ancient greeks noticed:
 

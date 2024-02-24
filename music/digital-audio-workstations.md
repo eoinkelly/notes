@@ -1,6 +1,6 @@
 # DAWs
 
-Options
+## Options
 
 1. Garage band
 2. Reaper
@@ -11,9 +11,7 @@ Options
 	* 90 day trial
 	* standard is USD 519
 
-
-
-Plugins
+## Plugins
 
 Amp and effects modeling plugins such as
 
@@ -34,7 +32,6 @@ RTAS: Pro Tools 10 and earlier
 Each of these plugin formats can come in different versions, so you may see mentions of VST2, VST3, AU2, etc.
 Most paid plugins come in multiple formats
 Sometimes the "lite" versions of DAWs do not let you use plugins
-
 
 ## Amplitube
 
