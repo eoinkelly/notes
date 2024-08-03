@@ -1,0 +1,11 @@
+version: "3"
+services:
+  spark:
+    image: spark:python3
+    networks:
+      - spark-net
+    command: tail -f /dev/null
+    volumes:
+      - .:/data
+networks:
+  spark-net:

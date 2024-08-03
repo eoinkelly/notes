@@ -9,9 +9,11 @@
     - [Parquet (File format)](#parquet-file-format)
     - [Delta lake (database built on Parquet)](#delta-lake-database-built-on-parquet)
     - [Apache ORC (Optimized Row Columnar) file format](#apache-orc-optimized-row-columnar-file-format)
+    - [Apache Iceberg (on-disk table format)](#apache-iceberg-on-disk-table-format)
+  - [In memory](#in-memory)
     - [DuckDB (in-memory DB)](#duckdb-in-memory-db)
     - [Apache Arrow (in memory framework)](#apache-arrow-in-memory-framework)
-    - [Apache Iceberg (on-disk table format)](#apache-iceberg-on-disk-table-format)
+  - [On network](#on-network)
     - [Apache arvo](#apache-arvo)
     - [Apache Hudi](#apache-hudi)
     - [Comparing file formats](#comparing-file-formats)
@@ -23,8 +25,13 @@
   - [Apache Impala](#apache-impala)
   - [Apache Hadoop](#apache-hadoop)
   - [AWS EMR](#aws-emr)
+  - [AWS Glue](#aws-glue)
+  - [AWS Athena](#aws-athena)
+  - [AWS Redshift Spectrum](#aws-redshift-spectrum)
   - [AWS Lake formation](#aws-lake-formation)
-    - [Lake formation: Governed tables](#lake-formation-governed-tables)
+  - [AWS Quick sight](#aws-quick-sight)
+    - [AWS Lake formation](#aws-lake-formation-1)
+      - [Lake formation governed tables](#lake-formation-governed-tables)
   - [AWS Redshift](#aws-redshift)
 
 ## Sources
@@ -72,9 +79,10 @@ No standard definitions of data architectures and concepts
     - store your data as in a data-lake but have a layer of transactional storage software which runs on top and lets you do queries
     - can think of it as "data lake with the problems fixed"
     - Open source options
+        - Apache Hudi
+    - File formats which support data lakehouse style implementations
         - Apache iceberg
         - Delta lake
-        - Apache Hudi
     - ![Data lakehouse](data-lakehouse.png)
 1. Data mesh (2019)
     - Fashionable and hyped
@@ -166,6 +174,31 @@ Define data by 6 metrics:
 > distributed work. Within each stripe, the columns are separated from each other
 > so the reader can read just the columns that are required.
 
+### Apache Iceberg (on-disk table format)
+
+> The open table format for analytic datasets.
+>
+> Iceberg is a high-performance format for huge analytic tables. Iceberg brings
+> the reliability and simplicity of SQL tables to big data, while making it
+> possible for engines like Spark, Trino, Flink, Presto, Hive and Impala to safely
+> work with the same tables, at the same time.
+
+-   AWS Lake Formation supports it
+-   https://iceberg.apache.org/
+-   is a Java JAR file
+-   can be used from Hive or Spark
+-   actually stores it's data in Avro, Parquet or ORC
+-   ??? competes with Delta Lake
+    -   Good comparison: https://www.linkedin.com/pulse/ultimate-guide-open-table-formats-delta-lake-vs-part-1-pottammal/
+
+![Delta Lake vs Iceberg](delta-lake-vs-iceberg.png)
+
+```
+Q: How does iceberg compare to governed table
+```
+
+## In memory
+
 ### DuckDB (in-memory DB)
 
 > is an in-process SQL OLAP database management system
@@ -203,28 +236,7 @@ brew install duckdb
 > Parquet and ORC are designed to be used for storage on disk and Arrow is
 > designed to be used for storage in memory
 
-### Apache Iceberg (on-disk table format)
-
-> The open table format for analytic datasets.
->
-> Iceberg is a high-performance format for huge analytic tables. Iceberg brings
-> the reliability and simplicity of SQL tables to big data, while making it
-> possible for engines like Spark, Trino, Flink, Presto, Hive and Impala to safely
-> work with the same tables, at the same time.
-
--   AWS Lake Formation supports it
--   https://iceberg.apache.org/
--   is a Java JAR file
--   can be used from Hive or Spark
-- actually stores it's data in Avro, Parquet or ORC
-- ??? competes with Delta Lake
-    - Good comparison: https://www.linkedin.com/pulse/ultimate-guide-open-table-formats-delta-lake-vs-part-1-pottammal/
-
-![Delta Lake vs Iceberg](delta-lake-vs-iceberg.png)
-
-```
-Q: How does iceberg compare to governed table
-```
+## On network
 
 ### Apache arvo
 
@@ -242,7 +254,7 @@ https://hudi.apache.org/
 
 > Apache Hudi is a transactional data lake platform that brings database and data warehouse capabilities to the data lake. Hudi reimagines slow old-school batch data processing with a powerful new incremental processing framework for low latency minute-level analytics.
 
-- ??? A competitor AWS EMR? It seems to have similar scope
+-   ??? A competitor AWS EMR? It seems to have similar scope
 
 ### Comparing file formats
 
@@ -259,6 +271,7 @@ https://hudi.apache.org/
 
 -   A data analytics framework for processing large amounts of data in-memory
 -   Spark does not include storage - it uses Hive etc. for that
+-   Creators founded Databricks
 -   Is "a faster map-reduce"
 -   A way of doing distributed computing for jobs that take a long time or need to process a whole lot of data
 -   You have a cluster of VMs each running the JVM and having some way to accept compute jobs
@@ -292,12 +305,19 @@ https://cwiki.apache.org/confluence/display/hive/design
 -   Cons
     -   Data must have structure
     -   Not good for OLTP or OLAP type operations
+-   Is used by AWS Athena
 
 > Hive is primarily designed to perform extraction and analytics using SQL-like
 > queries, while Spark is an analytical platform offering high-speed performance
-> Both these tools have respective benefits and cons with specific capabilities and features. Spark, for instance, is highly memory expensive, thereby increasing the total hardware costs. Hive, on the other hand, does not support real-time transaction processing.
-
-> Both these tools are open-source and the products of Apache. However, it is incorrect to consider either of the tools as the replacement of the other. The selection of the tool must be as per the specifications and requirements considering the operating systems, database models, languages, and likewise.
+> Both these tools have respective benefits and cons with specific capabilities
+> and features. Spark, for instance, is highly memory expensive, thereby
+> increasing the total hardware costs. Hive, on the other hand, does not support
+> real-time transaction processing.
+>
+> Both these tools are open-source and the products of Apache. However, it is
+> incorrect to consider either of the tools as the replacement of the other. The
+> selection of the tool must be as per the specifications and requirements
+> considering the operating systems, database models, languages, and likewise.
 
 ## Trino
 
@@ -305,8 +325,7 @@ https://trino.io/
 
 > Fast distributed SQL query engine for big data analytics that helps you explore your data universe.
 
-- A java jar file
-
+-   A java jar file
 
 ## Apache Flink
 
@@ -323,6 +342,9 @@ https://flink.apache.org/
 https://prestodb.io/
 
 > Presto is an open source SQL query engine that’s fast, reliable, and efficient at scale. Use Presto to run interactive/ad hoc queries at sub-second performance for your high volume apps.
+
+-   Can query data from Hive or a relational DB via "connectors"
+-   is the underlying tech for AWS Athena
 
 ## Apache Impala
 
@@ -372,9 +394,43 @@ A distributed compute thing similar idea to Spark
 -   Can do HA multi-master configurations of the frameworks
 -   Manages autoscaling your cluster for you
 
+## AWS Glue
+
+> AWS Glue is a serverless data integration service that makes data preparation simpler, faster, and cheaper. You can discover and connect to over 70 diverse data sources, manage your data in a centralized data catalog, and visually create, run, and monitor ETL pipelines to load data into your data lakes.
+
+-   Serverless ETL pipelines
+-   transforms data from one source (Any object storage or DB) into a destination (Any AWS or other cloud storage)
+-   provides GUI tools for letting you define the pipelines:
+    -   Glue Studio
+    -   Sagemaker notebooks
+    -   Other notebooks and IDEs
+-   Can build a data catalog
+    -   You can create a catalog from existing data to make it available for search in tools like Athena, EMR, Redshift Spectrum, AWS Quicksight
+
+## AWS Athena
+
+-   Uses Presto under the hood for SQL queries e.g. `SELECT * FROM ...`
+-   Uses Hive under the hood for DDL functionality e.g. `CREATE TABLE`, `ALTER TABLE` etc.
+- Can use QuickSight for visualsiations or any similar tool that supports ODBC or JDBC e.g. Tableau
+
+## AWS Redshift Spectrum
+
+TODO
+
 ## AWS Lake formation
 
-### Lake formation: Governed tables
+TODO
+
+## AWS Quick sight
+
+-   BI tool
+-   AWS "the PowerBI we have at home"
+-   ++ can be used to create visualisations from Athena
+-   -- allegedly not very featureful compared to its competitors e.g. Tableau
+
+TODO
+
+### AWS Lake formation
 
 -   a fully managed service to build data lakes
     -   manages
@@ -407,6 +463,8 @@ A distributed compute thing similar idea to Spark
 ```
 Q: how does this compare perf and features to Parquet, Orc, Arrow etc.
 ```
+
+#### Lake formation governed tables
 
 ## AWS Redshift
 
