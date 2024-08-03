@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Web components demo</title>
+	<script type="module" src="./example.js"></script>
+	<script type="module" src="./lit-example.js"></script>
+	<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+	<h1>Web component test</h1>
+	<app-drawer name="Eoin Raw Example"></app-drawer>
+	<app-drawer-lit name="Eoin Lit Example"></app-drawer-lit>
+	<hr>
+	<script>
+		setTimeout(() => {
+			console.log('running changes timeout');
+			document.querySelector('app-drawer').setAttribute('name', 'raw new');
+			document.querySelector('app-drawer-lit').setAttribute('name', 'Lit new');
+		}, 2000);
+
+		// setTimeout(() => {
+		// 	console.log('running timeout 2');
+		// 	// delete element from DOM
+		// 	document.querySelector('app-drawer').remove();
+		// }, 4000);
+	</script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "ES6",
+    "module": "ES6",
+    "moduleResolution": "Node",
+    "lib": ["ES6", "ES2020", "DOM"],
+    "noEmit": true,
+    "noEmitOnError": true,
+    "allowJs": true,
+    "checkJs": true,
+    "strict": true,
+    "useDefineForClassFields": true,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitReturns": true,
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true
+  },
+  "exclude": ["node_modules"],
+  "include": ["**/*.js", "**/*.ts", "**/*.tsx"]
+}
