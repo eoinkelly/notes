@@ -15,6 +15,7 @@
   - [Pypy](#pypy)
   - [PyPI (Python Package Index)](#pypi-python-package-index)
   - [Stackless](#stackless)
+  - [distutils (deprecated, removed in 3.12)](#distutils-deprecated-removed-in-312)
 
 ## Recommendations for setting up a new local Python development env in 2023:
 
@@ -217,3 +218,5 @@ https://en.wikipedia.org/wiki/Stackless_Python
 > greenlet.[5] It is used by a number of libraries (e.g. gevent[6]) to provide a
 > green threading solution for CPython. Python since has received a native
 > solution for green threads: await/async.
+
+## distutils (deprecated, removed in 3.12)

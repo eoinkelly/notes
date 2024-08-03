@@ -1,14 +1,20 @@
 [tool.poetry]
-name = "poetry-from-scratch-example"
+name = "nutshell-book"
 version = "0.1.0"
 description = ""
 authors = ["Eoin Kelly <eoin@eoinkelly.info>"]
 readme = "README.md"
-packages = [{include = "poetry_from_scratch_example"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
 
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.9.1"
+isort = "^5.12.0"
+mypy = "^1.5.1"
+flake8 = "^6.1.0"
+safety = "^2.3.5"
 
 [build-system]
 requires = ["poetry-core"]
