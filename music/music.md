@@ -258,3 +258,21 @@ Why is C the "starting point"
 > a late addition to the modes.
 >
 > So it's historical accident that C major is treated as "basic."
+
+## Pentatonic scale
+
+major and minor scales can also be called heptatonic scales but it isn't common
+
+hemitonic = pentatonic which includes semitones
+anhemitonic = pentatonic which doesn't include semitones
+
+* 5 note scales instead of 7 which the major and minor scales
+
+1. Major pentatonic
+   * built by removing the 4th and 7th from the major scale
+   * you play 1 2 3 5 6 on the major scale
+   `root 2 2 3 2 3`
+2. Minor pentatonic
+    * `root 3 2 2 3 2`
+    * is related to the major pentatonic similar to how the natural minor is to the major
+      * each major pentatonic has a relative minor starting on the 6th e.g. C major pentatonic has A minor pentatonic starting on the 6th just like Cmajor has C natural minor starting on the 6th

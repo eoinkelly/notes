@@ -33,7 +33,7 @@ Has 2 navigation modes for we
 On Safari web content the rotor cycles between
 
 1. Window spots
-    * shortcuts to differnt parts of Safari's UI (not web content)
+    * shortcuts to different parts of Safari's UI (not web content)
 2. Links
 3. Headings
 4. Form controls
