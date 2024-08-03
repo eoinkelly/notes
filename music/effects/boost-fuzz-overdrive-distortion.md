@@ -1,4 +1,4 @@
-# Guitar pedals
+# Boost - Fuzz - Overdrive - Distortion
 
 - [Guitar pedals](#guitar-pedals)
   - [Types of boost](#types-of-boost)

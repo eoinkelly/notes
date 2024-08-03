@@ -1,5 +1,13 @@
-## MIDI
+# MIDI
 
+- [MIDI](#midi)
+  - [General](#general)
+  - [MIDI in guitar pedals](#midi-in-guitar-pedals)
+  - [Extensions to MIDI standard](#extensions-to-midi-standard)
+  - [MIDI messages](#midi-messages)
+  - [Web MIDI](#web-midi)
+
+## General
 -   sources
     -   https://en.wikipedia.org/wiki/MIDI
 -   MIDI (Musical Instrument Digital Interface) is a technical standard that describes
