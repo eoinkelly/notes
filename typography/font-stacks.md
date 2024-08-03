@@ -1,48 +1,12 @@
 # font stacks
-what are the default fonts for windows xp, vista, 7, mac os 10.5/6/7, ubuntu linux
-group them into
-	sans serifs
-	serifs
-	monospace
-	cursive
-	???
 
-Museo slab and museo sans looks pretty awesome: http://type-a-file.com/#seafarer
-
-nice font stack http://peepersdallas.com/
-body {
-	text-shadow: 0 1px 0 rgba(255,255,255,0.9);
-	font-family: 'Gentium Book Basic', 'Georgia', Times, serif;
-}
-
-
-good article: 
-	http://www.awayback.com/revised-font-stack/
-	http://awesome-fontstacks.com/
-	http://georgebutler.com/blog/typography/10-definitive-web-font-stacks-for-designers/
-
-come up with a font stack for each group
-all fonts in the stack should have similar x heights?
-split up by titles and body copy? above 16px is title
-
-research a nice san-serif stack
-	(my version) font-family: "Calibria, "Gill Sans", "FreeSans", "Helvetica Neue", Helvetica, Arial, clean, sans-serif;
-	font-family: Frutiger, "Frutiger Linotype", Univers, Calibri, "Gill Sans", "Gill Sans MT", "Myriad Pro", Myriad, "DejaVu Sans Condensed", "Liberation Sans", "Nimbus Sans L", Tahoma, Geneva, "Helvetica Neue", Helvetica, Arial, sans-serif;
-
-
-font-family: exact font, nearest alternative, platform-wide alternative(s), universal (cross-platform) choice(s), generic
-font-family: Ideal, Alternative, Common, Generic;
-
-general tip:pair fonts by looking for others made by same designer
-
-Arial, Helvetica, sans-serif
-Courier New, Courier, monospace
-Times New Roman, Times, serif
-Georgia, Times New Roman, Times, serif
-Verdana, Arial, Helvetica, sans-serif
-Geneva, Arial, Helvetica, sans-serif
+* http://www.awayback.com/revised-font-stack/
+* http://awesome-fontstacks.com/
+* http://georgebutler.com/blog/typography/10-definitive-web-font-stacks-for-designers/
 
 ## suggested by http://www.sitepoint.com/eight-definitive-font-stacks/
+
+```
 The Times New Roman-based serif stack:
 	font-family: Cambria, "Hoefler Text", Utopia, "Liberation Serif", "Nimbus Roman No9 L Regular", Times, "Times New Roman", serif;
 
@@ -50,7 +14,7 @@ A modern Georgia-based serif stack:
 	font-family: Constantia, "Lucida Bright", Lucidabright, "Lucida Serif", Lucida, "DejaVu Serif", "Bitstream Vera Serif", "Liberation Serif", Georgia, serif;
 
 A more traditional Garamond-based serif stack:
-	font-family: "Palatino Linotype", Palatino, Palladio, "URW Palladio L", "Book Antiqua", Baskerville, "Bookman Old Style", "Bitstream Charter", "Nimbus Roman No9 L", Garamond, "Apple Garamond", "ITC Garamond Narrow", "New Century Schoolbook", "Century Schoolbook", "Century Schoolbook L", Georgia, serif; 
+	font-family: "Palatino Linotype", Palatino, Palladio, "URW Palladio L", "Book Antiqua", Baskerville, "Bookman Old Style", "Bitstream Charter", "Nimbus Roman No9 L", Garamond, "Apple Garamond", "ITC Garamond Narrow", "New Century Schoolbook", "Century Schoolbook", "Century Schoolbook L", Georgia, serif;
 
 The Helvetica/Arial-based sans serif stack:
 	font-family: Frutiger, "Frutiger Linotype", Univers, Calibri, "Gill Sans", "Gill Sans MT", "Myriad Pro", Myriad, "DejaVu Sans Condensed", "Liberation Sans", "Nimbus Sans L", Tahoma, Geneva, "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -66,16 +30,17 @@ The heavier “Impact” sans serif stack:
 
 The monospace stack:
 	font-family: Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console", "Lucida Sans Typewriter", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Liberation Mono", "Nimbus Mono L", Monaco, "Courier New", Courier, monospace;
-
+```
 
 A lot of fonts undergo name changes over the different operating systems, which is why I’ve listed them all; for example, Palatino, Palatino Linotype, Palladio, URW Palladio L, and Book Antiqua are all (more or less) the same font.
 
 Additionally, some thought has been put into which variants have a larger Unicode character family, and which then precede its cousin in its stack (kudos to my friend, Tommy Olsson for reminding me of this important font element).
-Klein states that this stack combines humanist typefaces – Frutiger, Calibri, Gill Sans, and Tahoma – and realist/classical typefaces such as Helvetica. He would separate the two, but it’s important for you to decide what’s best for your purpose; combining humanist and realist/classical typefaces might be suitable. 
+Klein states that this stack combines humanist typefaces – Frutiger, Calibri, Gill Sans, and Tahoma – and realist/classical typefaces such as Helvetica. He would separate the two, but it’s important for you to decide what’s best for your purpose; combining humanist and realist/classical typefaces might be suitable.
 
 
 
 ## http://css-tricks.com/snippets/css/font-stacks/
+```css
 /* Times New Roman-based stack */
 font-family: Cambria, "Hoefler Text", Utopia, "Liberation Serif", "Nimbus Roman No9 L Regular", Times, "Times New Roman", serif;
 
@@ -98,12 +63,15 @@ font-family: Impact, Haettenschweiler, "Franklin Gothic Bold", Charcoal, "Helvet
 
 /* Monospace stack */
 font-family: Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console", "Lucida Sans Typewriter", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Liberation Mono", "Nimbus Mono L", Monaco, "Courier New", Courier, monospace;
+```
 
-## suggested by unit interactive 
+## suggested by unit interactive
+
 	http://unitinteractive.com/blog/2008/06/26/better-css-font-stacks/
 	p – balanced for paragraphs or body copy
 	t – balanced for headlines or titles
 
+```
 Arial, “Helvetica Neue”, Helvetica, sans-serif - p, t
 Baskerville, “Times New Roman”, Times, serif - p
 Baskerville, Times, “Times New Roman”, serif - t
@@ -135,4 +103,4 @@ Times, “Times New Roman”, Georgia, serif - p, t
 “Trebuchet MS”, Tahoma, Arial, sans-serif - t
 Verdana, Geneva, Tahoma, sans-serif - p
 Verdana, Tahoma, Geneva, sans-serif - t
-
+```
