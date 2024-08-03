@@ -24,3 +24,12 @@ pip install plotly  --upgrade
 
 # pytorch
 pip install torch torchvision --upgrade
+
+
+packages = [
+	# weights and biases
+	"wandb",
+
+	# langchain
+	"langchain"
+	]

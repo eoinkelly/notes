@@ -5,7 +5,7 @@
 
 * OpenAI prices per token (piece of a word)
 * https://openai.com/pricing
-* 1000 tokens ~= 750 words
+  * 1000 tokens ~= 750 words
 
 ### Sceario: GPT4 with up to 8K of context
 
