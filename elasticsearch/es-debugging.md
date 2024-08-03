@@ -1,3 +1,69 @@
+## Diagnosing issues
+
+```js
+// recommended settings to get better logs from slower queries
+PUT / index / _settings;
+{
+    "index.search.slowlog.threshold.query.warn: 1s",
+        "index.search.slowlog.threshold.query.info: 500ms",
+        "index.search.slowlog.threshold.query.debug: 1500ms",
+        "index.search.slowlog.threshold.query.trace: 300ms",
+        "index.search.slowlog.threshold.fetch.warn: 500ms",
+        "index.search.slowlog.threshold.fetch.info: 400ms",
+        "index.search.slowlog.threshold.fetch.debug: 300ms",
+        "index.search.slowlog.threshold.fetch.trace: 200ms";
+}
+```
+
+## JSON API Overview
+
+-   Responses are unformatted JSON unless you pass `?pretty=true`
+    -   Kibana formats all responses by default
+
+## Cat APIs
+
+https://www.elastic.co/guide/en/elasticsearch/reference/7.17/cat.html
+
+-   Intended for humans to consume
+-   Returns tabular text not JSON
+-   All cat APIs are under `GET /_cat/...`
+-   Handy query params
+    -   `v` => show headings in tables
+    -   `help` => show help output describing each column instead of actual output
+-   you can control which columns are returned by query param
+-   some options to control the presentation of numeric and time columns
+-   can sort by different columns
+-   output available in the following formats
+    -   text (default)
+    -   JSON `format=json` (add `pretty` to get pretty output via CURL, Kibana is always pretty)
+    -   YAML `format=yaml`
+    -   cbor `format=cbor`
+        -   Concise Binary Object Representation
+        -   a binary format loosely based on JSON
+        -   https://en.wikipedia.org/wiki/CBOR
+    -   smile `format=smile`
+        -   a binary encoding of JSON
+        -   called smile because the data header includes `:)`
+        -   https://en.wikipedia.org/wiki/Smile_(data_interchange_format)
+
+### Logging
+
+-   Default log level is INFO
+-   Changing log level to DEBUG is **very** noisy
+-   Instead, turn on logging of each index, fetch and query operation
+-   The logs appear in docker-compose output as you would hope.
+
+```js
+GET /_all/_settings
+
+// * Enable detailed logging for **all** indexes.
+// * You can also do this per-index.
+// * Be aware that doing it for all indices makes kibana indexes very noisy
+PUT /_all/_settings
+{"index.indexing.slowlog.threshold.index.debug": "0s",
+"index.search.slowlog.threshold.fetch.debug" : "0s",
+"index.search.slowlog.threshold.query.debug": "0s"}
+```
 # Debugging Elasticsearch
 
 * If you are using the searchkick gem then then Rails server log is a better place to get query logs because:

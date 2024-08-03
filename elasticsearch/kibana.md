@@ -17,8 +17,8 @@ The search box can use:
     * It doesn't support nested objects which KQL does
     * When this option is selected you can also enter queries using the Elasticsearch query DSL
 
-Note: Neither KQL nor Lucene query mini-language is the same thing as the Elasticsearch query DSL!
-
+>*Note*
+> Neither KQL nor Lucene query mini-language is the same thing as the Elasticsearch query DSL.
 
 ## Kibana saved objects
 
@@ -30,5 +30,6 @@ Types
     * Appear under the "Dashboard" tab in Kibana
 3. Index pattern
 
-They are presented as multiple JSON blobs in the "Saved Objects" UI
+They are presented as multiple JSON blobs in the "Saved Objects" UI.
+Q: where are they saved? In ES or in browser?
 

@@ -93,3 +93,79 @@ total 26M
 -rw-rw-r-- 1 elasticsearch root   729 Nov 22 00:57 segments_3
 -rw-rw-r-- 1 elasticsearch root     0 Nov 22 00:51 write.lock # lock file, only one thread can modify the index at a time
 ```
+
+## Example
+
+These documents
+
+```json
+{
+    "name": "John Doe",
+    "age": 33,
+    "favourite_song": "Harvester of Sorrow"
+}
+
+
+{
+    "name": "Mary Doe",
+    "age": 99,
+    "favourite_song": "Sweet Leaf"
+}
+
+```
+
+becomes something like the following terms
+
+```clj
+; index, a sequence of documents
+(
+    ; document, a sequence of fields
+    (
+        (_id, "abc123")
+        (name, "John")
+        (name, "Doe")
+        (age, "33")
+        (favourite_song, "Harvester")
+        (favourite_song, "Sorrow")
+        (_source, '{ "name": "John Doe", "age": 33, "favourite_song": "Harvester of Sorrow" }')
+    ),
+    (
+        (_id, "abc123")
+        (name, "Mary")
+        (name, "Doe")
+        (age, "99")
+        (favourite_song, "Sweet")
+        (favourite_song, "Leaf")
+        (_source, '{ "name": "Mary Doe", "age": 99, "favourite_song": "Sweet Leaf" }')
+    )
+)
+
+; some kind of stats
+; not sure what
+```
+
+q: how does lucene work?
+
+
+  * term = a tuple `(field_name, sequence_of_bytes)`
+  * field = **named** sequence of terms
+  * document = sequence of fields
+  * index = sequence of documents
+* Lucene stores:
+  1. terms
+  2. statistics about the terms e.g. which documents include the term, where in the doc the term appears
+* Terms are stored with the field name so the same word appearing in different fields is not considered the same term e.g. if both `title` and `body` contain the word `hello`, Lucene will store separate `hello` terms for each field
+* Lucene has two ways of saving a field:
+  1. A _Stored_ field
+    * the text is stored literally (not inverted)
+  2. An _Indexed_ field
+    * The data in the field is stored inverted
+    * the raw field value is tokenized and stored as terms.
+    * sometimes tokenization does nothing and emits just the raw value e.g. you would do this for an ID field
+* The same field can (and often is) stored as both _stored_ and _indexed_.
+
+In Elasticsearch, all document scores are positive 32-bit floating point numbers.
+
+"The quality of a search is typically described using precision and recall metrics. Recall measures how well the search system finds relevant documents; precision measures how well the system filters out the irrelevant documents"
+
+"Nearly all search engines, including Lucene, automatically statically boost fields that are shorter over fields that are longer. Intuitively this makes sense: if you match a word or two in a very long document, it’s quite a bit less relevant than matching the same words in a document that’s, say, three or four words long"

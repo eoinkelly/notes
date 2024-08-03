@@ -1,8 +1,8 @@
-# N-Gram and Elasticsearch
+# N-Gram and Autocomplete
 
-- [N-Gram and Elasticsearch](#n-gram-and-elasticsearch)
+- [N-Gram and Autocomplete](#n-gram-and-autocomplete)
   - [N-Gram Background](#n-gram-background)
-    - [Aside: Using n-grams to model natual language](#aside-using-n-grams-to-model-natual-language)
+    - [Aside: Using n-grams to model natural language](#aside-using-n-grams-to-model-natural-language)
   - [Elasticsearch](#elasticsearch)
     - [Completion suggesters](#completion-suggesters)
     - [Exploring edge\_ngram analyzer](#exploring-edge_ngram-analyzer)
@@ -11,7 +11,7 @@
 
 * A concept from Natural language processing (NLP)
 * Is just the generalised idea of a moving window of "items" in a stream of text, where items can be various parts of text.
-    * the items are often words in NLP
+    * the items are often words in NLP (but not alwasys)
 * a contiguous sequence of _n_ items from a given sample of text or speech
 * Items can be:
   * phoneme
@@ -41,7 +41,7 @@
 * If the items are words, n-grams can also be called shingles
 * In Elasticsearch the phrase "n-gram" usually refers to characters and the word "shingle" is used to refer to words
 
-### Aside: Using n-grams to model natual language
+### Aside: Using n-grams to model natural language
 
 https://www.youtube.com/watch?v=Saq1QagC8KY
 
@@ -62,7 +62,7 @@ https://www.youtube.com/watch?v=Saq1QagC8KY
       * predictably it's shit
   * Bigram model (n = 2)
       * We look at the previous word to guess the next
-      * Not as bad as unigram but still not great
+      * Not as bad as unigram but still not good
   * Trigram
     * We look at the previous two words to guess the next
     * Better than bigram but still not great
@@ -75,6 +75,7 @@ https://www.youtube.com/watch?v=Saq1QagC8KY
 * you need to create a custom analyzer to implement this n-gram stuff
 
 ```bash
+# original word
 "star"
 
 # has the following n-grams
