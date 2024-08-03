@@ -181,6 +181,18 @@ How human ears perceive intervals, from most consonant to most dissonant:
 * An equally tempered semitone is 100 cents **by definition**
 * An octave is 1200 cents by definition
 
+## Alternative names for intervals
+
+* all minor intervals also known as "flat" or "flattened" intervals
+* major intervals can be called "natural" intervals e.g. "natural 3rd"
+* major 7th can be called "raised 7th"
+* diminished 5th also called
+    * flat 5
+    * flattened 5th
+    * augmented 4th
+    * tritone
+* minor 6 also called augmented 5th
+
 ## Alternatives to 12 notes in octave
 
 * examples
