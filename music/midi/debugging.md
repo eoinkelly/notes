@@ -31,5 +31,5 @@ Steps
 
 ```sh
 # dump info about USB host controller
-ioreg_ -w0 -rc AppleUSBHostController
+ioreg -w0 -rc AppleUSBHostController
 ```
