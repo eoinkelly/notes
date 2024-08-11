@@ -237,7 +237,7 @@ Modern digital delay
         -   very complicated looking digital delay
 -   You can create a version of chorus with some digital delays
 
-History
+History of digital delay
 
 -   1983
     -   Boss DD-2 launches
@@ -250,6 +250,9 @@ History
             -   it's not as clear/pristine as digital delays
             -   doesn't have as many controls as others e.g. filtering, modulation
             -   it has a great sound but not as configurable as more modern ones
+-   ???
+    -   Boss DD-5
+        -   First pedal with tap tempo
 
 ## Delays and multiple amps
 

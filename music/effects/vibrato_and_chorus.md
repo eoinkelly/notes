@@ -47,11 +47,70 @@ Making chorus from scratch in a DAW
 
 # Vibrato and chorus pedals
 
+## Classic analog chorus pedals
+
+-   Boss CE-1 (Chorus Ensemble 1)
+    -   1976
+    -   same circuit as Roland Jazz Chorus amp JC-120
+    -   first chorus pedal
+    -   would do a kind of overdrive when you pushed it
+    -   combined rate and depth control
+-   TC Electronic Stereo Chorus Plus
+    -   1976
+    -   available as a re-issue
+    -   has a flange mode
+    -   very versatile
+    -   first ever TC Electronic pedal
+    -   Aside: TC Electronic are based in Denmark
+-   Boss CE-2
+    -   1979
+    -   most famous and most copied Chorus pedal
+    -   vs CE-1 it's more shimmery and not as "thick"
+    -   separate rate and depth controls (unlike CE-1)
+    -   available as a Waza craft which includes a CE-1 mode
+-   EHX Small Clone
+    -   1979
+    -   Used on Come as you are
+-   Gaia tone Chorus box
+    -   almost identical parts to CE-1
+    -   very configurable
+-   Ibanez CS-9 Stereo chorus
+    -   released 1982
+    -   CE-2 with faster rate and more depth
+-   Aeron SCH-1
+    -   released 1985
+    -   CE-2 topology modified to have bigger "swings" like a Leslie
+    -   sounds very like a Leslie rotary cabinet
+    -   JHS Emperor Chorus was designed around it
+-   Boss Dimension C
+    -   released 1985
+    -   pedal version of Roland Dimension D chorus rack unit
+    -   used by
+        -   Talking heads
+        -   INXS
+        -   Peter Gabriel
+-   DOD FX-65 Stereo Chorus
+
+## Classic digital chorus pedals
+
+-   Ibanez Digital Stereo Chorus
+    -   released 1985
+-   Ibanez Twin Cam Chorus
+    -   released 1986
+    -   two independent classic CS-9s in one pedal
+-   Digitec WH-1 Whammy
+    -   Not a chorus pedal but can do chorus via it's "detuned"
+
+TODO: whammy and how it's related to chorus
+
+## Modern chorus pedals
+
 -   JHS 3 series
     -   a chorus pedal but has button to turn off clean signal
 -   JHS Emperor
     -   a chorus pedal but has button to turn off clean signal
     -   uses bucket brigade
+    -   modelled on Aeron SCH-1 but more features, remote tap tempo
 -   JHS Unicorn
     -   does vibrato with photocell light bulb
     -   has a switch to shut off the clean to be vibrato only
@@ -67,3 +126,15 @@ Making chorus from scratch in a DAW
 -   Boss VB-2
 -   TC Tailspin
 -   TC Shaker
+
+## Famous chorus songs
+
+-   Crowded house - Don't dream it's over
+-   Nirvana - Come as you are
+-   Midnight Oil - Beds are burning
+    -   uses CE-1 (which also gives the overdrive when you push it hard)
+-   The Smiths - many songs
+    -   Uses
+        -   Boss CE-2
+        -   Ibanez CS-505
+        -   Flanger BF-2
