@@ -17,13 +17,16 @@ Effects are also documented in the Boss GT-100 Boss Tone Studio also used to con
 11. Distortion
 12. Fat DS
 13. DST+ (MXR Distortion+)
-14. Guv DS (Marshall Guv’nor)
+14. Guv DS (Marshall Guv'nor)
 15. Rat (Proco Rat)
 16. Metal Zone (Boss MT-2)
 17. Metal DS
 18. '60s Fuzz (Fuzzface)
 19. Muff Fuzz (E-H Big Muff Pi)
 20. Oct Fuzz
+21. HM-2
+22. Metal Core
+23. Centa OD
 
 ## Mod/FX Type
 
@@ -51,21 +54,30 @@ There are two positions in the chain to load these effects (Mod and FX)
 20. AC. Processor
 21. Wave Synth
 22. Octave
-23. Pitch Shifter
-24. Harmonist
-25. Humanizer
+23. Heavy Octave
+24. Pitch Shifter
+25. Harmonist
+26. Humanizer
+27. Phaser 90E
+28. Flanger 117E
+29. DC-30
+30. Pedal Bend
 
 ## Delay Type
 
 1. Digital
-2. Analog
-3. Modulate
-4. Reverse
+2. Pan
+3. Stereo
+4. Analog
+5. Tape Echo
+6. Reverse
+7. Modulate
+8. SDE-3000
 
 ## Reverb Type
 
 1. Plate
 2. Room
-3. Hall 1
+3. Hall
 4. Spring
 5. Modulate
