@@ -1,14 +1,22 @@
 # Wah pedal
 
--   [Wah pedal](#wah-pedal)
-    -   [Overview](#overview)
-    -   [Wah songs](#wah-songs)
-    -   [Anatomy of a wah](#anatomy-of-a-wah)
-    -   [Vox vs Dunlop](#vox-vs-dunlop)
-    -   [Aside: Dunlop](#aside-dunlop)
-    -   [Specific pedals](#specific-pedals)
-        -   [BMF wah](#bmf-wah)
-        -   [Dunlop cry baby wah pedals](#dunlop-cry-baby-wah-pedals)
+- [Wah pedal](#wah-pedal)
+  - [Overview](#overview)
+  - [Wah songs](#wah-songs)
+  - [Anatomy of a wah](#anatomy-of-a-wah)
+  - [Vox vs Dunlop](#vox-vs-dunlop)
+  - [Aside: Dunlop](#aside-dunlop)
+  - [Specific pedals](#specific-pedals)
+    - [BMF wah](#bmf-wah)
+    - [Dunlop cry baby wah pedals](#dunlop-cry-baby-wah-pedals)
+  - [Ways of using wah pedal](#ways-of-using-wah-pedal)
+    - [Wah placement](#wah-placement)
+    - [1. Rhythmical use (funk)](#1-rhythmical-use-funk)
+    - [2. Note expression](#2-note-expression)
+    - [3. Cocked wah](#3-cocked-wah)
+    - [4. (kinda) Screaming seagull effect](#4-kinda-screaming-seagull-effect)
+  - [Auto wah](#auto-wah)
+  - [Envelope filters](#envelope-filters)
 
 ## Overview
 
@@ -137,3 +145,119 @@ https://lifestyle.jimdunlop.com/find-your-cry-baby-wah/
 -   CM95 Clyde McCoy
     -   similar range to 95 but less Q
     -   most vintage styled and aimed
+
+## Ways of using wah pedal
+
+https://www.youtube.com/watch?v=38ccazzUrqc (TPS)
+
+### Wah placement
+
+-   Wah at very front of chain
+    -   most common
+    -   filters guitar signal only
+    -   usually where wah is put
+    -   your time based effects will operate on the wah filtered signal
+    -   your effects only gets the filtered signal from the wah
+-   Wah at end of chain
+    -   less common
+    -   your wah will filter all your effected signal (you will wah your signal with it's delay
+        trails)
+    -   becomes a master filter
+    -   can do some cool effects in some contexts
+
+It's worth trying placing wah in different places
+
+Wah and Fuzz exception - Fuzz is often right at the very front just before wah
+
+### 1. Rhythmical use (funk)
+
+-   Instead of tapping your foot along with the music, you tap the wah pedal
+-   sounds good with some overdrive
+-   give an extra percussive vibe to your playing
+-   used extensively on funk
+
+### 2. Note expression
+
+-   Faux talk-box expression kind of thing
+-   Hammett and Satriani use this extensively
+-   lets the notes alternately either pop out or disappear
+-   helps you stand out over a rhythm sound
+
+### 3. Cocked wah
+
+-   Notable users
+    -   Mick Ronson (Bowie's guitar player)
+-   Find a spot in the wah sweep and stick to it
+-   You can mimic this sound with a treble booster
+
+:question: Can auto wah pedals do this?
+
+### 4. (kinda) Screaming seagull effect
+
+-   If you wire your wah pedal the wrong way (guitar into output, input to amp), it turns into an
+    oscillator
+-   It creates an incredibly loud "screaming seagull" like sound when you turn the volume up on the
+    guitar
+-   Pink Floyd (Gilmore) used this
+-   Must be an unbuffered vintage style wah pedal - a wah with a buffer won't do this
+-   [JAM Seagulls](https://www.jampedals.com/seagull/) pedal gives you a controllable version of
+    this
+
+## Auto wah
+
+-   Auto-wah and envelope filters are similar but not the same.
+    -   Auto wah is a time controlled effect. Envelope filters are a volume controlled effect.
+-   An auto-wah automates the movement of the sweep on a standard wah pedal.
+    -   It can be fixed in place easily
+    -   The sweep can be made faster than you could conveniently do with your foot
+-   An envelope filter the sweep is controlled by the average amplitude of your guitar signal
+    -   Locking the sweep in place (like a cocked wah) is a feature available on some EF pedals but
+        then the pedal is not operating as an EF
+-   auto-wah pedals
+    -   [Boss AW-3](https://www.boss.info/global/products/aw-3/)
+    -   [Flower Pedals Hosta Wah (discontinued)](https://flower-pedals.com/pages/discontinued-pedals)
+        -   has tap tempo
+-   can move the sweep faster than you could move your foot
+-   the best ones are typically analog
+
+## Envelope filters
+
+-   Envelope filter is a sweepable filter (can be LP, HP, BP depending on pedal)
+-   it does sound very similar to a wah pedal
+-   The sweep is controlled by the intensity of the guitar signal
+-   A wah is a filter that you control the filter sweep with your foot
+-   An envelope filter is controlled by how hard you hit the string.
+    -   it reacts to your playing style
+    -   the louder you play the more "intense" the effect is
+    -   the amplitude envelope (or average signal level over time) of the incoming sound determines
+        and changes the center point of the filter
+    -   Louder sounds move the center frequency higher, softer sounds move it lower
+        -   Some pedals have a "direction" toggle to invert this
+    -   Guitar output goes into envelope detector which controls an output voltage based on an
+        average amplitude of the incoming signal
+-   used on bass a lot
+-   you place it just how you would place a wah
+-   Pedals
+    -   Mutron
+        -   the original envelope filter
+        -   currently available as a Mutron III
+        -   still highly recommended
+    -   EHX Q-Tron
+        -   Available in _Mini_ and _Nano_ sizes
+    -   [Source Audio Spectrum](https://www.sourceaudio.net/spectrum_intelligent_filter.html)
+        -   can also operate as an auto-wah (I think)
+        -   very feature rich, has an app to do setup
+    -   Analogman Envelope Filter
+    -   DOD 440
+    -   [Earthquaker Spatial Delivery](https://www.earthquakerdevices.com/spatial-delivery)
+    -   [EHX Riddle (discontinued)](https://www.ehx.com/products/riddle/)
+    -   [Wampler Terraform](https://www.wamplerpedals.com/products/modulation/terraform/)
+        -   technically a multi-fx board but can do Envelope filter
+-   Used extensively in funk playing
+-   Notable players
+    -   Bootsy Collins
+-   Notable songs
+    -   Stevie Wonder's Higher Ground
+-   Some pedals have both envelope filter and auto wah functionality
+-   Tip: Running a compressor **after** the EF is good because it evens out the volume and knocks
+    down any very loud notes
