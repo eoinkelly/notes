@@ -1,0 +1,19 @@
+auth:
+  type: DISABLED
+kafka:
+  clusters:
+  - bootstrapServers: broker:9092
+    name: Local Play 1
+    properties: {}
+    readOnly: false
+  - bootstrapServers: docker.host.internal:9092
+    name: Cluster 2
+    properties: {}
+    readOnly: false
+  - bootstrapServers: kafka0:29092
+    name: Local
+    properties: {}
+    readOnly: false
+rbac:
+  roles: []
+webclient: {}
