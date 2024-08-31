@@ -45,6 +45,12 @@ There are two positions in the chain to load these effects (Mod and FX)
 11. Compressor
 12. Limiter
 13. Touch Wah
+    - modelled on Boss TW-1
+    - basically an envelope filter
+    - up = act as high pass filter (removes all lower frequencies and gradually adds them back in
+      based on guitar volume)
+    - down = low pass filter (remove all high frequencies, gradually add them back in)
+        - rarely used
 14. Auto Wah
 15. Pedal Wah
 16. Graphic EQ

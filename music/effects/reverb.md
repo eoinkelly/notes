@@ -29,7 +29,7 @@ https://www.youtube.com/watch?v=ZyOqgwmaJ8k
 1. Natural reverb
     - Use a real room
 2. Electromechanical devices (e.g. spring, plate)
-    - Simulates natural reverb using devices
+    - Somewhat simulate natural reverb but also have their own character now
 3. Algorithmic reverbs
     - Digital processing to emulate various kinds of reverb
 4. Convolution reverbs
@@ -69,7 +69,7 @@ https://www.youtube.com/watch?v=ZyOqgwmaJ8k
     - An example of an algorithmic reverb
     - Always digital
     - Used everywhere in 80's 90's
-5. Shimmer reverb
+5. Octave (Shimmer) reverb
     - Mixes reverb with high and low octave effects
     - Pioneered by Eno inserting octave effects into reverb
     - Used by U2 on Unforgettable Fire
