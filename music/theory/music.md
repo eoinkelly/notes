@@ -3,12 +3,13 @@
 -   [Music](#music)
     -   [Overview](#overview)
     -   [Tuning](#tuning)
-        -   [Why the 7 letters for notes?](#why-the-7-letters-for-notes)
+    -   [Origins of notation](#origins-of-notation)
+        -   [Why 7 letters?](#why-7-letters)
         -   [Why is C the "starting point"?](#why-is-c-the-starting-point)
         -   [Alternatives to 12 notes/octave](#alternatives-to-12-notesoctave)
         -   [Cents](#cents)
         -   [Temperament](#temperament)
-        -   [12 tone equal temperament (12ET)](#12-tone-equal-temperament-12et)
+        -   [Our default: 12 tone equal temperament (12ET)](#our-default-12-tone-equal-temperament-12et)
     -   [Intervals](#intervals)
         -   [Interval names and scale names use "major","minor" differently](#interval-names-and-scale-names-use-majorminor-differently)
     -   [Scale degrees](#scale-degrees)
@@ -40,11 +41,6 @@
 
 ## Overview
 
-![How notes map to frequencies](./notes-to-frequencies.png)
-
-Original:
-https://docs.google.com/spreadsheets/d/1jeIa2PHvUnrhHvyD5D9zVmV7eO89LbLETm-np8UuNwY/edit#gid=168383079
-
 There are 4 main aspects of music:
 
 1. Pitch (aka note or tone)
@@ -56,7 +52,7 @@ There are 4 main aspects of music:
     - harmony = two or more pitches at the same time
     - the Hz distance between notes is not constant - the higher the note the bigger the gap to the
       next note
-        - seems to be roughly exponential looking
+        - seems to be roughly exponential looking (see graph below)
         - example:
             - Guitar open low E -> F is ~10 Hz
             - Guitar high E string 12th fret E -> F is ~78 Hz
@@ -68,35 +64,40 @@ There are 4 main aspects of music:
 4. Tension and release
     - Building and releasing tension is an important facet of a musical piece
 
+![How notes map to frequencies](./notes-to-frequencies.png) Original:
+https://docs.google.com/spreadsheets/d/1jeIa2PHvUnrhHvyD5D9zVmV7eO89LbLETm-np8UuNwY/edit#gid=168383079
+
 Piano Tips
 
 -   C is the white key to the left of two black keys, D is in the middle, E is on the right
--   F is on the left of three black keys cluster, then B, then G and A is on the right
+-   F is on the left of three black keys cluster, then G, then A and B is on the right
 
 ## Tuning
 
 A = 440hz
 
--   11 named pitches
+-   12 named pitches
     -   7 with one name
-    -   4 with two possible names (flat or sharp) (these are called _enharmonic_)
+    -   5 with two possible names (flat or sharp) (these are called _enharmonic_)
 -   12 pitches in an octave
     -   so the root must be shared between the octave above and below it
--   it is not the absolute frequencies that matter - it is the intervals between the frequencies
-    (the interval distance in Hz gets larger as notes get higher
--   a melody is a sequence of **intervals**
--   the names of the intervals are subjective & based on how they feel to us
+-   It is not the absolute frequencies that matter - it is the intervals between the frequencies.
+-   The interval distance in Hz gets larger as notes get higher
+-   Human perception of musical intervals is is approximately logarithmic wrt fundamental frequency
+-   A melody is a sequence of notes but can also be thought of as a sequence of **intervals**
+    counted from the root note.
+-   In standard Western equal temperament, the notion of pitch is insensitive to "spelling": the
+    description "G4 double sharp" refers to the same pitch as A4; in other temperaments, these may
+    be distinct pitches.
+-   Pitches can be labeled with:
+    -   note name
+    -   note name with frequency appended e.g. A440
+    -   scientific pitch notation (starting $C_0$ = 16 Hz) e.g. E2, C4 etc.
+    -   a number representing the frequency in Hz
+    -   _Helmholtz pitch notation_ - a uses chars such as `,'"` to indicate which note it is e.g.
+        C', C", C""
 
-### Why the 7 letters for notes?
-
-Using the 7 letters mean the same 7 **letters** are used in every key - this is supposedly easier to
-understand than having to memorize which letters are skipped.
-
-The "no repeat letters" thing applies most of the time but not always:
-
--   it's impossible to write the blues scale without double a note given three notes with two half
-    step gaps.
--   also octatonic scales (TODO: what are these?)
+## Origins of notation
 
 Ancient greeks noticed:
 
@@ -105,22 +106,63 @@ Ancient greeks noticed:
 -   Quadrupling the length of a string gives a very harmonious outcome
 
 They thought in terms of string lengths, we know this maps directly to frequencies now. They
-experimented with different length strings to produce different outcomes
+experimented with different length strings to produce different outcomes.
 
-They noticed that the ratios of 3/2 and 4/3 made for nice sounding output This later solidified into
-the major triad.
+They noticed that the ratios of 3/2 (P5) and 4/3 (M3) made for nice sounding output. This later
+solidified into the major triad.
 
-Together 3/2 and 4/3 divide up the octave
+3/2 (P5) and 4/3 (M3) are still a fundamental way we divide up the octave.
+
+### Why 7 letters?
+
+Using the 7 letters mean the same 7 **letters** are used in every key - this is supposedly easier to
+understand than having to memorize which letters are skipped. The "no repeat letters" thing applies
+most of the time but not always:
+
+-   it's impossible to write the blues scale without double a note given three notes with two half
+    step gaps.
+
+In general people try to have each letter used just once in a key.
+
+When an accidental is notated for a letter, you have to notate the "reverting back to natural" the
+next time the letter appears. This is two things to add to the music sheet. People generally want to
+avoid adding more notation than absolutely necessary so they pick # or b names for enharmonic notes
+to keep the notation concise.
+
+> There are different rules in different contexts, but when it comes to scales, the governing rule
+> is: one of each note letter.
+>
+> This means the F major scale has a Bb, while the B major scale has an A#. (Write them out with a
+> different letter for each note, and you'll find out why.)
+>
+> Similar things apply to chords. So an Emaj7 chord has a D#, not a Eb (it's already got an "E",
+> right?).
+>
+> But for major scales, the one-of-each-note-letter rule leads to a more well-known rule: sharps
+> only or flats only. (Just three harmonic or melodic minor scales break that rule, but purely to
+> obey the "one of each letter" rule. Such as D harmonic minor: D E F G A Bb C#. (Not A# or Db.) )
+>
+> In actual music, however, it's quite common to have two versions of a single note -
+> "chromaticism" - and then the choice is more subtle. So if you have a melody line (in C major)
+> running D-Eb-E, that would require two accidentals: a flat on the first E, and then a natural on
+> the second one. But making it D# means you only need one accidental. Coming down E-Eb-D is the
+> opposite: using D# would then require two, while Eb only needs one. But if the key was Eb major,
+> then D-Eb-E only needs one accidental. Descending E-Eb-D would require two (natural then flat),
+> but E-D#-D would need three! There are yet other considerations when you have a chromatic chord.
+> In key of C major, you might get an E major chord. That needs a G#. But an Ab chord (also quite
+> common in C major) needs an Ab, obviously. That's regardless of which way a melody line might be
+> running.
+>
+> https://www.reddit.com/r/musictheory/comments/p4rkqa/comment/h90pv1o/
 
 ### Why is C the "starting point"?
 
-> Notes do not "start" with C; C major is just the easiest major key to notate in modern notation.
-> The concept of a major key came about long after letters were assigned to the notes. Before there
-> were major (and minor) keys, people used modes, usually just using the notes of the modern white
-> keys and starting and ending in different places. The Ionian mode (which became modern major) was
-> a late addition to the modes.
->
-> So it's historical accident that C major is treated as "basic."
+-   It's historical accident that C major is treated as "basic."
+-   Notes do not "start" with C; C major is just the easiest major key to notate in modern notation.
+-   The concept of a major key came about long after letters were assigned to the notes.
+-   Before there were major (and minor) keys, people used modes, usually just using the notes of the
+    modern white keys and starting and ending in different places.
+-   The Ionian mode (which became modern major) was a late addition to the modes.
 
 ### Alternatives to 12 notes/octave
 
@@ -130,7 +172,7 @@ There are alternatives to 12 notes in octave:
     -   24 notes per octave
     -   19 notes per octave
 -   -- much more complicated to play
--   ++ moar notes!
+-   ++ more notes!
 -   most people agree that the extra notes are not useful enough for the added complexity
 -   12 notes in an octave is the commonly agreed upon compromise
 -   some composers have had a play
@@ -141,6 +183,7 @@ There are alternatives to 12 notes in octave:
 
 ### Cents
 
+-   An equal tempered semitone is divided into 100 cents
 -   A unit of measure for the **ratio** between two frequencies
 -   An equally tempered semitone is 100 cents **by definition**
 -   An octave is 1200 cents by definition
@@ -170,7 +213,7 @@ able to move around
 
 The (almost) universally adopted modern system is _12 tone equal temperament_.
 
-### 12 tone equal temperament (12ET)
+### Our default: 12 tone equal temperament (12ET)
 
 -   12ET makes every interval equidistant.
 -   Steps
@@ -195,6 +238,8 @@ The (almost) universally adopted modern system is _12 tone equal temperament_.
 | m7            | ?               | +17.6                   |
 | Octave        | 2:1             | 0                       |
 
+So 12TET is sometimes a +/- 17 cents compromise. That's a lot.
+
 ## Intervals
 
 So it's all about **frequency intervals** and not much to do with absolute frequencies
@@ -207,44 +252,46 @@ So it's all about **frequency intervals** and not much to do with absolute frequ
 
 So in our imaginary "building music from scratch" we have the octave interval.
 
--   now we need to divide the octave up into smaller intervals based on how it sounds to our ears
--   these divisions have names based on their distance from the octave frequencies
+-   now we choose to divide the octave up into 12 smaller divisions
+-   These divisions have names based on their distance from the octave frequencies
+-   The names are based on how they sound to our ears
 -   all these divisions are defined as jumps from the "base" octave frequency
--   the more consonant an interval sounds to human ears, the simpler the relationship between the
-    two notes
+-   In general, the more consonant an interval sounds to human ears, the simpler the relationship
+    between the two notes.
 
 Notation
 
-    M = major
-    m = minor
+```
+M = major
+m = minor
+```
 
-| Interval | Just Intonation mult. | Just Intonation | To the ear       | 12TET adjustment (cent) |
-| -------- | --------------------- | --------------- | ---------------- | ----------------------- |
-| Octave   | 2                     | 2:1             | Most Consonant   | 0                       |
-| P5       | 1.5                   | 3:2             | Highly Consonant | +1.96                   |
-| P4       | 1.33                  | 4:3             | Highly Consonant | -1.96                   |
-| M3       | 1.25                  | 5:4             | Consonant        | -13.69                  |
-| m3       | 1.2                   | 6:5             | Consonant        | +15.64                  |
-| M6       | 1.6                   | 8:5             | Consonant        | -15.64                  |
-| m6       | 1.66                  | 5:3             | Consonant        | -13.69                  |
-| M2       | ?                     | ?               | Dissonant        | +3.91                   |
-| m2       | ?                     | ?               | Dissonant        | +11.73                  |
-| M7       | ?                     | ?               | Dissonant        | -11.73                  |
-| m7       | ?                     | ?               | Dissonant        | +17.6                   |
-| T        | ?                     | ?               | Dissonant        | -17.49                  |
+| Interval | Just Int. | To the ear       | 12TET adjustment (cent) |
+| -------- | --------- | ---------------- | ----------------------- |
+| Unison   | ?         | Most Consonant   | 0                       |
+| m2       | ?         | Dissonant        | +11.73                  |
+| M2       | ?         | Dissonant        | +3.91                   |
+| m3       | 6:5       | Consonant        | +15.64                  |
+| M3       | 5:4       | Consonant        | -13.69                  |
+| P4       | 4:3       | Highly Consonant | -1.96                   |
+| T        | ?         | Dissonant        | -17.49                  |
+| P5       | 3:2       | Highly Consonant | +1.96                   |
+| m6       | 5:3       | Consonant        | -13.69                  |
+| M6       | 8:5       | Consonant        | -15.64                  |
+| m7       | ?         | Dissonant        | +17.6                   |
+| M7       | ?         | Dissonant        | -11.73                  |
+| Octave   | 2:1       | Most Consonant   | 0                       |
 
-Remember we are just naming **intervals** here, not naming notes!
+Remember we are naming **intervals** (distances) here, not naming notes (points)!
 
 We want the intervals within the octave to be _more or less_ evenly spaced because it makes it much
-easier to move music up/down the frequency range (i.e. change key)
+easier to move music up/down the frequency range (i.e. change key).
 
 Layout of our interval names within an octave
 
 ```
-root m2 M2 m3 M3 P4 Tritone P5 m6 M6 m7 M7 8ve
+root m2 M2 m3 M3 P4 Tritone P5 m6 M6 m7 M7 octave
 ```
-
-Aside: Power chord = root + P5 or root + P5 + 8ve
 
 How human ears perceive intervals, from most consonant to most dissonant:
 
@@ -328,21 +375,21 @@ Scale degrees are named in multiple ways:
 -   The primary names below are derived from the major scale
 -   The natural state of the intervals is the major scale are the "major intervals".
 
-| # semitones | Deg. num | Deg. name    | Primary Name(s) | Aliases                                 |
-| ----------- | -------- | ------------ | --------------- | --------------------------------------- |
-| 0           | 1        | Tonic        | Perfect unison  | Diminished 2nd                          |
-| 1           |          |              | Minor 2nd       | Flat 2nd                                |
-| 2           | 2        | Supertonic   | Major 2nd       | Natural 2nd                             |
-| 3           |          |              | Minor 3rd       | Augmented 2nd, Flat 3rd                 |
-| 4           | 3        | Mediant      | Major 3rd       | Diminished 4th, Natural 3rd             |
-| 5           | 4        | Subdominant  | Perfect 4th     | Augmented 3rd                           |
-| 6           |          |              | Tritone         | Augmented 4th, Diminished 5th, Flat 5th |
-| 7           | 5        | Dominant     | Perfect 5th     | Diminished sixth                        |
-| 8           |          |              | Minor sixth     | Augmented 5th, Flat 6th                 |
-| 9           | 6        | Submediant   | Major sixth     | Diminished 7th, Natural 6th             |
-| 10          |          |              | Minor 7th       | Augmented sixth, Flat 7th               |
-| 11          | 7        | Leading note | Major 7th       | Diminished octave, Raised 7th           |
-| 12          | 8        | Tonic        | Octave          | Augmented 7th                           |
+| Name   | # semitones | Deg. num | Deg. name    | Primary Name(s) | Aliases                                 |
+| ------ | ----------- | -------- | ------------ | --------------- | --------------------------------------- |
+| root   | 0           | 1        | Tonic        | Perfect unison  | Diminished 2nd                          |
+| m2     | 1           |          |              | Minor 2nd       | Flat 2nd                                |
+| M2     | 2           | 2        | Supertonic   | Major 2nd       | Natural 2nd                             |
+| m3     | 3           |          |              | Minor 3rd       | Augmented 2nd, Flat 3rd                 |
+| M3     | 4           | 3        | Mediant      | Major 3rd       | Diminished 4th, Natural 3rd             |
+| P4     | 5           | 4        | Subdominant  | Perfect 4th     | Augmented 3rd                           |
+| T      | 6           |          |              | Tritone         | Augmented 4th, Diminished 5th, Flat 5th |
+| P5     | 7           | 5        | Dominant     | Perfect 5th     | Diminished sixth                        |
+| m6     | 8           |          |              | Minor sixth     | Augmented 5th, Flat 6th                 |
+| M6     | 9           | 6        | Submediant   | Major sixth     | Diminished 7th, Natural 6th             |
+| m7     | 10          |          |              | Minor 7th       | Augmented sixth, Flat 7th               |
+| M7     | 11          | 7        | Leading note | Major 7th       | Diminished octave, Raised 7th           |
+| octave | 12          | 8        | Tonic        | Octave          | Augmented 7th                           |
 
 -   Alternative names for intervals
     -   all minor intervals also known as "flat" or "flattened" intervals
@@ -364,9 +411,6 @@ Scale degrees are named in multiple ways:
 
 What is a scale?
 
--   A scale is 8 successive pitches within a one octave range
--   Always ends on the same note as the first note but one octave higher
--   Each scale has 8 _degrees_
 -   Different types of scale have different distances between their degrees. These different
     intervals are what makes the scales different
 -   If you play notes which are part of the scale they are _diatonic_. If you play notes outside the
@@ -377,14 +421,12 @@ What is a scale?
     1. its first degree/tonic note
     2. it's interval pattern
 -   Based on their interval patterns, scales are grouped into categories such as major, minor,
-    chromatic etc.
+    chromatic, pentatonic etc.
 -   a bunch of notes arranged in steps into a particular order that gives a sense of "home"
 -   the sense of "home" is called tonality
 -   tonality is a sort of "musical gravity"
 -   scale and key mean the same thing
 -   "what key is this in?" == "what scale does this use?"
--   most (but not all) scales are a selection of 7 pitches from the available 12
-    -   any note within the 7 is said to be "diatonic" ie within the scale/key
 -   the "home note" of the scale is called the tonic/root/do (as in do-re-me...)/one of the scale
 -   scales
     -   7 notes per octave = hepatonic
@@ -420,15 +462,11 @@ There is only one major scale for each pitch.
 
 ### Minor scales (3 related patterns)
 
-There is only one kind of major scale but many kinds of minor scale.
-
-There are many minor scales but 3 are common:
+There is only one kind of major scale but there are many minor scales. Three are common:
 
 1. Natural minor
-2. Harmonic minor (also called Enharmonic)
+2. Harmonic minor (also called Enharmonic minor)
 3. Melodic minor
-
-So you could say there are 48 commonly used scales in music.
 
 Scales are named after their most significant intervals, which happens to be the 3rd (in both the
 major and minor scales). (Major and minor chords, likewise, are named after their 3rds.)
@@ -514,7 +552,10 @@ C    D     Eb    F     G     A     B     C
 
 ### Blues scale
 
-TODO: I know nothing here
+> The term blues scale refers to several different scales with differing numbers of pitches and
+> related characteristics. A blues scale is often formed by the addition of an out-of-key "blue
+> note" to an existing scale, notably the flat fifth addition to the minor pentatonic scale.
+> However, the heptatonic blues scale can be considered a major scale with altered intervals.
 
 ### Aside: Types of scale
 
