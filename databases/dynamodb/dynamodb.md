@@ -79,7 +79,7 @@ DynamoDB is
 * most responses in 1-9 mS range
     * Can make this faster with DynamoDB Accelerator (DAX) is a fully manged in-memory cache for a single DynamoDB table
 * HTTP connection model
-* All requests are mad via HTTP requests, not some other protocol like SQL DBs
+* All requests are made via HTTP requests, not some other protocol like SQL DBs
 * Connections are not persistent unlike in SQL DBs
     * This makes DynamoDB slower than RDBMS for some use-cases because you have to setup the connection every time
     * But it does enable the huge scaling

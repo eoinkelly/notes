@@ -1,0 +1,11 @@
+source "https://rubygems.org"
+
+git_source(:github) { |repo_name| "https://github.com/#{repo_name}" }
+
+gem "aws-sdk-dynamodb"
+gem "aws-sdk-dynamodbstreams"
+gem "nokogiri" # aws-sdk fails if this isn't here
+
+# Ruby 3.4+ doesn't these gems by default anymore
+gem "base64"
+gem "bigdecimal"
