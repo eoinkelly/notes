@@ -375,21 +375,21 @@ Scale degrees are named in multiple ways:
 -   The primary names below are derived from the major scale
 -   The natural state of the intervals is the major scale are the "major intervals".
 
-| Name   | # semitones | Deg. num | Deg. name    | Primary Name(s) | Aliases                                 |
-| ------ | ----------- | -------- | ------------ | --------------- | --------------------------------------- |
-| root   | 0           | 1        | Tonic        | Perfect unison  | Diminished 2nd                          |
-| m2     | 1           |          |              | Minor 2nd       | Flat 2nd                                |
-| M2     | 2           | 2        | Supertonic   | Major 2nd       | Natural 2nd                             |
-| m3     | 3           |          |              | Minor 3rd       | Augmented 2nd, Flat 3rd                 |
-| M3     | 4           | 3        | Mediant      | Major 3rd       | Diminished 4th, Natural 3rd             |
-| P4     | 5           | 4        | Subdominant  | Perfect 4th     | Augmented 3rd                           |
-| T      | 6           |          |              | Tritone         | Augmented 4th, Diminished 5th, Flat 5th |
-| P5     | 7           | 5        | Dominant     | Perfect 5th     | Diminished sixth                        |
-| m6     | 8           |          |              | Minor sixth     | Augmented 5th, Flat 6th                 |
-| M6     | 9           | 6        | Submediant   | Major sixth     | Diminished 7th, Natural 6th             |
-| m7     | 10          |          |              | Minor 7th       | Augmented sixth, Flat 7th               |
-| M7     | 11          | 7        | Leading note | Major 7th       | Diminished octave, Raised 7th           |
-| octave | 12          | 8        | Tonic        | Octave          | Augmented 7th                           |
+| Interval Name | # semitones | Deg. num | Deg. name    | Primary Name(s) | Aliases                                 |
+| ------------- | ----------- | -------- | ------------ | --------------- | --------------------------------------- |
+| root          | 0           | 1        | Tonic        | Perfect unison  | Diminished 2nd                          |
+| m2            | 1           |          |              | Minor 2nd       | Flat 2nd                                |
+| M2            | 2           | 2        | Supertonic   | Major 2nd       | Natural 2nd                             |
+| m3            | 3           |          |              | Minor 3rd       | Augmented 2nd, Flat 3rd                 |
+| M3            | 4           | 3        | Mediant      | Major 3rd       | Diminished 4th, Natural 3rd             |
+| P4            | 5           | 4        | Subdominant  | Perfect 4th     | Augmented 3rd                           |
+| T             | 6           |          |              | Tritone         | Augmented 4th, Diminished 5th, Flat 5th |
+| P5            | 7           | 5        | Dominant     | Perfect 5th     | Diminished sixth                        |
+| m6            | 8           |          |              | Minor sixth     | Augmented 5th, Flat 6th                 |
+| M6            | 9           | 6        | Submediant   | Major sixth     | Diminished 7th, Natural 6th             |
+| m7            | 10          |          |              | Minor 7th       | Augmented sixth, Flat 7th               |
+| M7            | 11          | 7        | Leading note | Major 7th       | Diminished octave, Raised 7th           |
+| octave        | 12          | 8        | Tonic        | Octave          | Augmented 7th                           |
 
 -   Alternative names for intervals
     -   all minor intervals also known as "flat" or "flattened" intervals
@@ -549,6 +549,32 @@ C    D     Eb    F     G     A     B     C
           A minor pentatonic starting on the 6th just like Cmaj has C natural minor starting on the
           6th
     - E A D G B E (Guitar open strings) are E minor pentatonic
+    - Barre any fret and the notes are in the minor pentatonic of that fret
+
+Minor pentatonic
+
+-   5 shapes on fretboard
+-   imagine playing it only on 6th string
+    -   each shape starts on one of the scale notes on the 6th string
+
+Example Am pentatonic
+
+5 shapes:
+
+1. Start 6th string A (name: minor shape)
+2. Start 6th string C (name: major shape)
+    - this is the 2nd shape of Am pentatonic and also first shape of CMaj pentatonic
+3. Start 6th string D (name: suspended shape - why?)
+4. Start 6th string E (name: blues minor shape - why?)
+5. Start 6th string G (name: blues major shape - why?)
+
+After 5th shape it wraps around to the 1st shape again
+
+Am relative major is CMaj
+
+2 x 1-4 followed by 3 x 1-3
+
+root is always the 1 of second 1-4 root is always the 3 of middle 1-3
 
 ### Blues scale
 
