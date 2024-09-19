@@ -493,8 +493,7 @@ C     D     Eb    F     G     Ab    Bb     C
     -   up 9 half-steps or down 3 half-steps
     -   up 5 degrees or down 2 degrees
 -   has exactly the same 8 notes as it's corresponding Major scale
--   The notes in natural minor is what is used for the minor key signatures (not harmonic or melodic
-    minors)
+-   natural minor is the basis the minor key signatures (not harmonic or melodic minors)
 
 #### Harmonic minor
 
@@ -604,7 +603,7 @@ find a combo of notes that sounds good to you and other people and then you have
 
 ## Modes
 
-Q: are they combinations of notes not represented by the combo of major + minors + modes?
+Q: are there combinations of notes not represented by the combo of major + minors + modes?
 
 -   Once you get past the major and minor scales, all the other 8 note combinations are called
     **modes** instead of scales.
@@ -648,12 +647,43 @@ Q: are they combinations of notes not represented by the combo of major + minors
 
 ### Key signatures
 
+-   There are 12 major scales (ignoring enharmonics) so there are 12 major keys
 -   You specify a key by setting a "key signature" at the very start of a piece.
 -   The key signature specifies which sharps and flats to use for the whole piece
 -   There is a key for each scale
--   There are 15 major scales (including 3 enharmonics) so there are 15 major keys
 -   Natural minor scales are rotations of the major scales so they share the same key signature as
     their corresponding major scale because they include the same notes
+
+### Enharmonic
+
+-   There are 5 enharmonic notes but they do not map directly to enharmonic keys
+    1. C#/Db
+    2. D#/Eb
+    3. F#/Gb
+    4. G#/Ab
+    5. A#/Bb
+-   Some key signatures have an enharmonic equivalent that contains the same pitches, albeit spelled
+    differently.
+-   In twelve-tone equal temperament, there are three pairs each of major and minor enharmonic keys
+    -   major enharmonic keys
+        1.  B major/C♭ major
+        2.  F♯ major/G♭ major
+        3.  C♯ major/D♭ major
+    -   minor enharmonic keys
+        1.  G♯ minor/A♭ minor
+        2.  D♯ minor/E♭ minor
+        3.  A♯ minor/B♭ minor
+-   In some strict sense there are 12 + 5 = 17 major scales but some of them are so fiddly to notate
+    when you stick to only using each letter once that they are never used.
+    -   Using each note once forces you to use double sharps (annotated with the &#x1D12A; symbol
+        but I'm using `##` for convenience here)
+-   Extremely fiddly to notate major keys
+    1. D# major = D♯, E♯, F##, G♯, A♯, B♯, C##
+    2. G# major = G♯, A♯, B♯, C♯, D♯, E♯, F##
+    3. A# major = A♯, B♯, C, D♯, E♯, F## and G##
+-   Extremely fiddly to notate minor keys
+    1. C#
+    2. F#
 
 #### Reading key signatures
 
