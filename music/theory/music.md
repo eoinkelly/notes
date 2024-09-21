@@ -29,6 +29,7 @@
         -   [7 essential modes](#7-essential-modes)
     -   [Keys (annotating written music)](#keys-annotating-written-music)
         -   [Key signatures](#key-signatures)
+        -   [Enharmonic](#enharmonic)
             -   [Reading key signatures](#reading-key-signatures)
         -   [Blue notes vs Accidentals](#blue-notes-vs-accidentals)
     -   [Chords \& harmony](#chords--harmony)
@@ -574,6 +575,10 @@ Am relative major is CMaj
 2 x 1-4 followed by 3 x 1-3
 
 root is always the 1 of second 1-4 root is always the 3 of middle 1-3
+
+Pentatonic Scales are a subset of Major or Minor. Your harmony is still major/minor. If you're in A
+Major, you simply may choose to play A Major Pentatonic instead of the full A Major scale. You don't
+need to "build chords out of it" because the chords are already there from the Major Key.
 
 ### Blues scale
 
