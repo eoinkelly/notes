@@ -687,8 +687,10 @@ Q: are there combinations of notes not represented by the combo of major + minor
     2. G# major = G♯, A♯, B♯, C♯, D♯, E♯, F##
     3. A# major = A♯, B♯, C, D♯, E♯, F## and G##
 -   Extremely fiddly to notate minor keys
-    1. C#
-    2. F#
+    1. C# minor = C# D# E F# G# A B
+    2. F# minor = F♯, G♯, A, B, C♯, D, and E
+
+:question: why aren't the minor chords included? they seem ok
 
 #### Reading key signatures
 
