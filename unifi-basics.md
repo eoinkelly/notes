@@ -1,20 +1,19 @@
 # macOS Controller
 
-
 Overview
 
-* The app: `/Applications/UniFi.app`
-* App data:
-    * `~/Application Support/UniFi/`
-    * `~/Application Support/UniFi/data` (MongoDB data)
+- The app: `/Applications/UniFi.app`
+- App data:
+    - `~/Application Support/UniFi/`
+    - `~/Application Support/UniFi/data` (MongoDB data)
 
-* It bundles mongod and Java
-* it stores backups as a binary .unf file
-* Q: is all the data in mongo or is some on disk too?
+- It bundles mongod and Java
+- it stores backups as a binary .unf file
+- Q: is all the data in mongo or is some on disk too?
 
 ## mongod
 
-* runs mongodb on non-standard port
+- runs mongodb on non-standard port
 
 ```
 bin/mongod
@@ -43,16 +42,18 @@ https://lg.io/2015/12/13/using-lets-encrypt-to-secure-cloud-hosted-services-like
 
 # Background
 
-* The "device Authentication" credentials allow
+- The "device Authentication" credentials allow
     1. SSH access into all devices
-        * you can sudo
+        - you can sudo
     2. Web login for the USG at `http://<IP address of USG>`
-* You can make changes via SSH but they are overwritten by the controller on next provision
-* USG seems to be based on Vyatta
-    * a specialized Debian-based Linux distribution with networking applications such as Quagga, OpenVPN, and many others
-    * https://vyos.io/ is an OSS fork of Vyatta core
-* UAP-AP seems to use busybox https://busybox.net/
-    * uses dropbear ssh-server https://matt.ucc.asn.au/dropbear/dropbear.html
+- You can make changes via SSH but they are overwritten by the controller on
+  next provision
+- USG seems to be based on Vyatta
+    - a specialized Debian-based Linux distribution with networking applications
+      such as Quagga, OpenVPN, and many others
+    - https://vyos.io/ is an OSS fork of Vyatta core
+- UAP-AP seems to use busybox https://busybox.net/
+    - uses dropbear ssh-server https://matt.ucc.asn.au/dropbear/dropbear.html
 
 ## SSH into an UAP-AP
 

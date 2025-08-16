@@ -1,74 +1,69 @@
-
-Can debug with gdb or lldb
-	which should I learn?
+Can debug with gdb or lldb which should I learn?
 
 ## Manually setting up lldb
 
-	TODO
+    TODO
 
 ## Using VS Code
 
 VS Code extension: https://github.com/vadimcn/vscode-lldb/blob/v1.6.10/MANUAL.md
 LLDB: https://lldb.llvm.org/
 
-* the VS Code extension will generate a skeleton launch.json and detect cargo support
-* but I had to add `sourceMap` - it seems like that hash code will change over time but I'm not sure when???
+- the VS Code extension will generate a skeleton launch.json and detect cargo
+  support
+- but I had to add `sourceMap` - it seems like that hash code will change over
+  time but I'm not sure when???
 
 ```json
 {
-	// Use IntelliSense to learn about possible attributes.
-	// Hover to view descriptions of existing attributes.
-	// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-	"version": "0.2.0",
-	"configurations": [
-		{
-			"type": "lldb",
-			"request": "launch",
-			"stopOnEntry": false,
-			"name": "Debug executable 'aoc_2021'",
-			"sourceMap": {
-				"/rustc/f1edd0429582dd29cccacaf50fd134b05593bd9c": "/Users/eoinkelly/.rustup/toolchains/stable-aarch64-apple-darwin/lib/rustlib/src/rust"
-			},
-			"cargo": {
-				"args": [
-					"build",
-					"--bin=aoc_2021",
-					"--package=aoc_2021"
-				],
-				"filter": {
-					"name": "aoc_2021",
-					"kind": "bin"
-				}
-			},
-			"args": [],
-			"cwd": "${workspaceFolder}"
-		},
-		{
-			"type": "lldb",
-			"request": "launch",
-			"name": "Debug unit tests in executable 'aoc_2021'",
-			"sourceMap": {
-				"/rustc/f1edd0429582dd29cccacaf50fd134b05593bd9c": "/Users/eoinkelly/.rustup/toolchains/stable-aarch64-apple-darwin/lib/rustlib/src/rust"
-			},
-			"cargo": {
-				"args": [
-					"test",
-					"--no-run",
-					"--bin=aoc_2021",
-					"--package=aoc_2021"
-				],
-				"filter": {
-					"name": "aoc_2021",
-					"kind": "bin"
-				}
-			},
-			"args": [],
-			"cwd": "${workspaceFolder}"
-		}
-	]
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "stopOnEntry": false,
+            "name": "Debug executable 'aoc_2021'",
+            "sourceMap": {
+                "/rustc/f1edd0429582dd29cccacaf50fd134b05593bd9c": "/Users/eoinkelly/.rustup/toolchains/stable-aarch64-apple-darwin/lib/rustlib/src/rust"
+            },
+            "cargo": {
+                "args": ["build", "--bin=aoc_2021", "--package=aoc_2021"],
+                "filter": {
+                    "name": "aoc_2021",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in executable 'aoc_2021'",
+            "sourceMap": {
+                "/rustc/f1edd0429582dd29cccacaf50fd134b05593bd9c": "/Users/eoinkelly/.rustup/toolchains/stable-aarch64-apple-darwin/lib/rustlib/src/rust"
+            },
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--bin=aoc_2021",
+                    "--package=aoc_2021"
+                ],
+                "filter": {
+                    "name": "aoc_2021",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
 }
 ```
-
 
 ```bash
 # see the exact location

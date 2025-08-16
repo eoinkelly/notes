@@ -1,6 +1,6 @@
 # App server example
 
-* load balanced nginx with outside access
+- load balanced nginx with outside access
 
 ```bash
 # create initial deploy.yml

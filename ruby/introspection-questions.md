@@ -62,6 +62,7 @@ sim1.methods.grep /some_method/
 ## all methods defined in the object's class (includancestors)in the object
 
 TODO: check exactly what this does
+
 ```ruby
 ob.methods - Object.methods
 ```
@@ -87,5 +88,5 @@ sim1.method(:foo).source_location
 ##
 
 ```ruby
-```
 
+```

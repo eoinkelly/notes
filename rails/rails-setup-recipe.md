@@ -1,10 +1,10 @@
 # Eoin's Rails Recipe
 
-* Make sure postgres server is up and running
+- Make sure postgres server is up and running
 
-Q: how does rails know what username + pass to use for psotgres?
-A: If the database role is blank, postgres will use the operating system user and ??? password
-    * TODO: research a bi tmore into how postgres does permissions
+Q: how does rails know what username + pass to use for psotgres? A: If the
+database role is blank, postgres will use the operating system user and ???
+password \* TODO: research a bi tmore into how postgres does permissions
 
 ```bash
 gem update rails
@@ -15,7 +15,7 @@ git add -A
 git commit -m "Initial commit"
 ```
 
-* Add the following to `Gemfile`
+- Add the following to `Gemfile`
 
 ```ruby
 # ./Gemfile
@@ -33,5 +33,4 @@ git add -A
 git commit -m "Setup Rspec"
 ```
 
-todo
-remove turbolinks
+todo remove turbolinks

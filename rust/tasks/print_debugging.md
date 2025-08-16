@@ -1,18 +1,18 @@
 # Task: basic print debugging
 
-* The various printing options use `format!` internally
-* Argument syntax: https://doc.rust-lang.org/std/fmt/#syntax
-* how format args (within `{}`) map to traits
-  * nothing ⇒ Display
-  * ? ⇒ Debug
-  * o ⇒ Octal
-  * x ⇒ LowerHex
-  * X ⇒ UpperHex
-  * p ⇒ Pointer
-  * b ⇒ Binary
-  * e ⇒ LowerExp
-  * E ⇒ UpperExp
-* See the log crate for logging with the usual set of features
+- The various printing options use `format!` internally
+- Argument syntax: https://doc.rust-lang.org/std/fmt/#syntax
+- how format args (within `{}`) map to traits
+    - nothing ⇒ Display
+    - ? ⇒ Debug
+    - o ⇒ Octal
+    - x ⇒ LowerHex
+    - X ⇒ UpperHex
+    - p ⇒ Pointer
+    - b ⇒ Binary
+    - e ⇒ LowerExp
+    - E ⇒ UpperExp
+- See the log crate for logging with the usual set of features
 
 ```rust
 // dbg! is for "quick and dirty" debugging
@@ -33,5 +33,3 @@ println!("{}", x); // requires x implement std::fmt::Display trait
 println!("{:?}", x); // requires x implement std::fmt::Debug trait
 println!("{:#?}", x); // requires x implement std::fmt::Debug trait
 ```
-
-

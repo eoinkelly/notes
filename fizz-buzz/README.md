@@ -1,4 +1,5 @@
-How fast can I make fizzbuzz? Output data measured using [pv](https://www.ivarch.com/programs/pv.shtml) on my laptop
+How fast can I make fizzbuzz? Output data measured using
+[pv](https://www.ivarch.com/programs/pv.shtml) on my laptop
 
 ```bash
 # Ruby attempt_1

@@ -2,19 +2,22 @@
 
 These are some random points I learned/found interesting
 
-* A partial function is one which can't provide a valid result for all possible
+- A partial function is one which can't provide a valid result for all possible
   inputs.
-    * they are a very common occurance in programming e.g. find a user in the database
-* Haskell `Maybe` is implemented as a library - it is not part of the language
-* `=` is _defining equivalence_ not variable assignment
-    * This means that either side of `=` can be substituted for the other in a
+    - they are a very common occurance in programming e.g. find a user in the
+      database
+- Haskell `Maybe` is implemented as a library - it is not part of the language
+- `=` is _defining equivalence_ not variable assignment
+    - This means that either side of `=` can be substituted for the other in a
       computation and you'll still get the same answer.
-* most code in Haskell is in "value land" but stuff on the RHS of `::` is in "type land"
-    * "type land" can be delimited by parens e.g. `(3 :: Float) / 9`
+- most code in Haskell is in "value land" but stuff on the RHS of `::` is in
+  "type land"
+    - "type land" can be delimited by parens e.g. `(3 :: Float) / 9`
     ```hs
     almostThird = (3 :: Float) / 9 -- type signatures can be inline enclosed in parens
     ```
-* Type signatures vs type annotations
+- Type signatures vs type annotations
+
     ```hs
     five :: Int -- type signature
     five = 5
@@ -22,7 +25,6 @@ These are some random points I learned/found interesting
     -- type annotation (note: is different from type signature)
     five = 5 :: Int
     ```
-
 
 ### Defining functions
 
@@ -36,7 +38,6 @@ add = (\x -> (\y -> x + y))
 add :: Int -> Int -> Int
 add x y = x + y
 ```
-
 
 ```
 f . g = f (g x)
@@ -78,6 +79,3 @@ foo 3 5 True
 
 Together these features mean that we can have all functions be curried by
 default without any unwieldy syntax.
-
-
-

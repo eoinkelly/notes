@@ -11,7 +11,6 @@ mysql some_db
 mysql -u root some_db
 ```
 
-
 ```bash
 ### show connection info
 \s
@@ -40,7 +39,7 @@ SHOW TABLES;
 DESCRIBE some_table;
 ```
 
-# See the name  and size on disk of each relation (table)
+# See the name and size on disk of each relation (table)
 
 # See total database size on disk
 

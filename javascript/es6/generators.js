@@ -1,7 +1,6 @@
-
 function* helloWorldGenerator() {
-    yield 'hello';
-    yield 'world';
+  yield 'hello';
+  yield 'world';
 }
 
 var helloWorldIterator = helloWorldGenerator();
@@ -10,7 +9,6 @@ console.log(helloWorldIterator); // { next: [Function], throw: [Function], retur
 console.log(helloWorldIterator.next()); // prints { value: 'hello', done: false }
 console.log(helloWorldIterator.next()); // prints { value: 'world', done: false }
 console.log(helloWorldIterator.next()); // prints { value: undefined, done: true }
-
 
 // Normal JS functions are "run to completion" i.e. a function will always
 // complete in its turn of the event loop.
@@ -26,8 +24,8 @@ console.log(helloWorldIterator.next()); // prints { value: undefined, done: true
 // expressions and if it uses the function* syntax.
 //
 // it does not matter where you put the * (but against the function name is preferred)
-function* foo() { }
-function *foo() { }
+function* foo() {}
+function* foo() {}
 
 // yield XYZ
 // * is an expression
@@ -37,7 +35,7 @@ function *foo() { }
 //
 // calling a generator in the normal way does NOT execute it, it simply returns the iterator which can be used to run the generator
 
-function *reallySimpleGenerator() {
+function* reallySimpleGenerator() {
   yield 1;
   yield 2;
   yield 3;
@@ -60,7 +58,7 @@ console.log(iterator.next()); // { value: 5, done: false }
 
 console.log(iterator.next()); // { value: undefined, done: true }
 
-function *generatorWithReturn() {
+function* generatorWithReturn() {
   yield 1;
   yield 2;
   return 3;
@@ -77,4 +75,3 @@ console.log(iterator2.next()); //{ value: 2, done: false }
 console.log(iterator2.next()); //{ value: 3, done: true }
 console.log(iterator2.next()); //{ value: undefined, done: true }
 console.log(iterator2.next()); //{ value: undefined, done: true }
-

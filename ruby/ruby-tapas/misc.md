@@ -1,4 +1,5 @@
 # Misc stuff from ruby tapas
+
 ```ruby
 # he uses inline assigns - ugh?
 gateway = instance_spy("SomeGateway", do_thing_func: result = double('the result'))
@@ -16,20 +17,21 @@ rspec spy and instance_spy
 
 is using RSpec.describe a useful thing?
 
-* `double` `double('some_name')`
-    * every rspec double is implicitly a spy i.e. it records the messages it receives
-    * use the `have_received` matchers to assert
-* spy
-    * just a shortcut for `double.as_null_object`
-    * will happily receive any message
-* intance_spy("SomeClass")
-    * will only accept messages that are defined on `SomeClass`
+- `double` `double('some_name')`
+    - every rspec double is implicitly a spy i.e. it records the messages it
+      receives
+    - use the `have_received` matchers to assert
+- spy
+    - just a shortcut for `double.as_null_object`
+    - will happily receive any message
+- intance_spy("SomeClass")
+    - will only accept messages that are defined on `SomeClass`
 
+it is tricky to verify the absence of a message send rspec has introduced
+"verifying doubles" - instance_spy is one of these
 
-it is tricky to verify the absence of a message send
-rspec has introduced "verifying doubles" - instance_spy is one of these
-
-instance_spy("SomeModel") # will error if you send it a message that SomeModel does not implement
+instance_spy("SomeModel") # will error if you send it a message that SomeModel
+does not implement
 
 # Handling exceptions in RSpec
 
@@ -59,7 +61,6 @@ end
 
 expect { thing.foo }.to raise_error(Thing::Error)
 ```
-
 
 # Converting between numbers and strings
 

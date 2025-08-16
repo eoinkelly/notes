@@ -1,6 +1,7 @@
 # tensorflow on GPU on macOS M1
 
-https://developer.apple.com/metal/tensorflow-plugin/ uses conda to install the tensorflow-metal plugin.
+https://developer.apple.com/metal/tensorflow-plugin/ uses conda to install the
+tensorflow-metal plugin.
 
 ```bash
 $ cd ./conda-home

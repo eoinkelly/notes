@@ -9,10 +9,10 @@ QUESTION: what happens between yarv and machine code?
 
 ### Tokenize
 
-* Convert characters in file to tokens
-* Tokenization and parsing are separate processes which occur at the same time
-    * the ruby parser runs the tokenizer whenever it needs a new token
-* examples of tokens
+- Convert characters in file to tokens
+- Tokenization and parsing are separate processes which occur at the same time
+    - the ruby parser runs the tokenizer whenever it needs a new token
+- examples of tokens
     ```
     tINTEGER
     tIDENTIFIER
@@ -21,24 +21,27 @@ QUESTION: what happens between yarv and machine code?
 
 #### Ruby parsing
 
-* `parse.y`
-    * contains the rules of the ruby grammar
-    * ruby keywords are defined in `defs/keywords` which is fed into `gpref` (A C package which allows you to quickly lookup strings in a table)
-    * the generated C code is in `lex.c` in a `rb_reserved_word` function
-    * ruby does not use `Lex` with yacc and bison - ruby tokenization and parsing is written by hand.
-    * contains a switch statement which does the tokenizing of ruby code:
+- `parse.y`
+    - contains the rules of the ruby grammar
+    - ruby keywords are defined in `defs/keywords` which is fed into `gpref` (A
+      C package which allows you to quickly lookup strings in a table)
+    - the generated C code is in `lex.c` in a `rb_reserved_word` function
+    - ruby does not use `Lex` with yacc and bison - ruby tokenization and
+      parsing is written by hand.
+    - contains a switch statement which does the tokenizing of ruby code:
         ```
         static enum yytokentype
         parser_yylex(struct parser_params *parser)
         ```
-    * is a Bison grammar rule file
-    * is where ruby's grammar is defined
-    * ruby wants to share the parser between ruby and ripper
-    * `parse.y` contains C snippets that are used by
+    - is a Bison grammar rule file
+    - is where ruby's grammar is defined
+    - ruby wants to share the parser between ruby and ripper
+    - `parse.y` contains C snippets that are used by
         1. both Ruby and Ripper
         1. Ruby only
         1. Ripper only
-    * these snippets are delimited by special comment chars
+    - these snippets are delimited by special comment chars
+
         ```
         TODO: this does not seem consistent
 
@@ -50,35 +53,36 @@ QUESTION: what happens between yarv and machine code?
         CODE_BUILTIN_TO_RIPPER
         %*/
         ```
-* Bison is
-    * a **parser generator** - it takes `parse.y` and generates `parse.c`
-    * a newer version of YACC (yet another compiler compiler)
-* Ruby uses a LALR parser
-* `ruby -y`
-    * will dump detailed parser state change info to console
-    * `--yydebug` or `-y` turns on ruby debug mode
-    * `-y` is not documented in `ruby --help` output but is in man page
 
+- Bison is
+    - a **parser generator** - it takes `parse.y` and generates `parse.c`
+    - a newer version of YACC (yet another compiler compiler)
+- Ruby uses a LALR parser
+- `ruby -y`
+    - will dump detailed parser state change info to console
+    - `--yydebug` or `-y` turns on ruby debug mode
+    - `-y` is not documented in `ruby --help` output but is in man page
 
 #### LALR
 
-* Look ahead, left, reversed rightmost derivation
+- Look ahead, left, reversed rightmost derivation
     ```
     Look Ahead
     Left
     Reversed rightmost derivation
     ```
-* Look Ahead
-    * parser will peek ahead in the token stream to decide how to deal with the current token
-        * QUESTION: how far?
-* Left
-    * parser consumes tokens from left to right
-* Reversed rightmost derivation
-    * parser takes a "bottom up" strategy
-    * uses shift/reduce technique to find matching grammar rules
-* the parser is a state machine
-* each new token moves the machine from one state to another
-* in ruby parser the states are assigned numbers
+- Look Ahead
+    - parser will peek ahead in the token stream to decide how to deal with the
+      current token
+        - QUESTION: how far?
+- Left
+    - parser consumes tokens from left to right
+- Reversed rightmost derivation
+    - parser takes a "bottom up" strategy
+    - uses shift/reduce technique to find matching grammar rules
+- the parser is a state machine
+- each new token moves the machine from one state to another
+- in ruby parser the states are assigned numbers
 
 The parsing algorithm seems to be
 
@@ -88,8 +92,8 @@ The parsing algorithm seems to be
     1. ???
     Eoin: this is wrong/incomplete
 
-
-The parser has to decide when to shift new tokens onto stack and when to reduce the tokens already on there
+The parser has to decide when to shift new tokens onto stack and when to reduce
+the tokens already on there
 
 ```
 $ ruby -y hello-world.rb
@@ -195,28 +199,30 @@ $ ruby --dump parsetree hello_en.rb
 #         +- coverage_enabled: true
 ```
 
-
 TODO: dig into LALR properly - I don't have a clear understanding yet
 
 UP TO END CHAP 1
 
 ## Chapter 2
 
-* ruby compiles the AST generated by parsing into YARV bytecode
-* ruby 1.8 did not have a compiler
-* IMPORTANT: YARV bytecode is the final form that **your** code gets transformed into.
-    * your code never directly becomes machine code
-* Yarv is a stack oriented virtual machine
-    * most instructions either push values onto the stack or
-    * operate on some values form the top of the stack then replace them with a result
+- ruby compiles the AST generated by parsing into YARV bytecode
+- ruby 1.8 did not have a compiler
+- IMPORTANT: YARV bytecode is the final form that **your** code gets transformed
+  into.
+    - your code never directly becomes machine code
+- Yarv is a stack oriented virtual machine
+    - most instructions either push values onto the stack or
+    - operate on some values form the top of the stack then replace them with a
+      result
 
+- internally ruby distinguishes between "function calls" and "method calls"
+    - function calls assume the receiver is the current value of `self`
+    - method calls have an explicit receiver
+- ruby automatically creates a top-level "main" object for the script to run in.
+    - All "function calls" at the top-level of a ruby script will use that
+      object as their receiver
+    - That object is pointed to by `self` at the top level of your script
 
-* internally ruby distinguishes between "function calls" and "method calls"
-    * function calls assume the receiver is the current value of `self`
-    * method calls have an explicit receiver
-* ruby automatically creates a top-level "main" object for the script to run in.
-    * All "function calls" at the top-level of a ruby script will use that object as their receiver
-    * That object is pointed to by `self` at the top level of your script
     ```ruby
     puts "hi"
     # is same as
@@ -249,38 +255,39 @@ UP TO END CHAP 1
 
 Anatomy of the ruby AST
 
-I pulled this together by observing the output of `ruby --dump parsetree -e "some code"`
+I pulled this together by observing the output of
+`ruby --dump parsetree -e "some code"`
 
-* NODE_SCOPE
-    * contains
+- NODE_SCOPE
+    - contains
         1. nd_tbl (a table)
         1. nd_args (a list of args)
         1. nd_body
-* NODE_PRELUDE
-    * contains
+- NODE_PRELUDE
+    - contains
         1. nd_head
         1. nd_body
         1. nd_compile_options
-* NODE_FCALL
-    * contains
+- NODE_FCALL
+    - contains
         1. nd_mid (method id)
         1. nd_args (arguments)
-* NODE_CALL
-    * contains
+- NODE_CALL
+    - contains
         1. nd_mid (method id)
         1. nd_recv (the receiver)
         1. nd_args (arguments)
-* NODE_ARRAY
-    * contains
-        * nd_alen (length)
-        * nd_head (seems to be an array entry)
-        * nd_next
-* (null node)
-    * contains nothing
-    * represents an empty node
-* NODE_LIT
-    * contains
-        * node_lit (a literal value)
+- NODE_ARRAY
+    - contains
+        - nd_alen (length)
+        - nd_head (seems to be an array entry)
+        - nd_next
+- (null node)
+    - contains nothing
+    - represents an empty node
+- NODE_LIT
+    - contains
+        - node_lit (a literal value)
 
 ```
 ruby --dump parsetree -e "puts 2 + 2"
@@ -329,7 +336,7 @@ http://graysoftinc.com/the-ruby-vm-interview/the-ruby-vm-episode-v
 > written, primitive. Ruby code can be represented in these primitive
 > instruction. Second is instructions for optimization. It's not needed to
 > represent Ruby scripts, but they are added for optimization. Primitive
-> instructions doesn't include _ in their name (like putobject), and optimize
+> instructions doesn't include \_ in their name (like putobject), and optimize
 > instructions do (like opt_plus). This policy helps you if you want to see VM
 > instructions. Initially, you need to read primitive instructions.
 

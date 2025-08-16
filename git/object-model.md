@@ -1,17 +1,16 @@
 # git object model
 
-
 Git has ? types of object
 
 1. blob
-    * represents a file **contents**, not file name or anything else
-    * stored in the "object store" `.git/objects`
-    * name in storage is calculated by SHA1 hash of `TYPE SIZE\0CONTENTS`
-    * first two chars of hash are pulled off to make dir name
+    - represents a file **contents**, not file name or anything else
+    - stored in the "object store" `.git/objects`
+    - name in storage is calculated by SHA1 hash of `TYPE SIZE\0CONTENTS`
+    - first two chars of hash are pulled off to make dir name
 1. tree
-    * represents a directory (but is not the same as a directory)
-    * not created when you add files to staging area
-    * are created when you commit
+    - represents a directory (but is not the same as a directory)
+    - not created when you add files to staging area
+    - are created when you commit
 1. commit
 
 ### working through an example
@@ -50,8 +49,9 @@ we see it create one blob in the repo:
 
 ### Hashing
 
-* git uses SHA-1 for hashing (same as the default output of `shasum` command)
-* when storing objects within `.git/objects` it uses the first two chars of hash dir name and the rest as filename
+- git uses SHA-1 for hashing (same as the default output of `shasum` command)
+- when storing objects within `.git/objects` it uses the first two chars of hash
+  dir name and the rest as filename
 
 git calculates the blob dir/filename by
 
@@ -71,12 +71,13 @@ Once it has the data it compresses it with zlib before storing it on disk
 
 ### git cat-file
 
-* can dump following info on repository objects
-    * contents (this is default, you have to tell git the type on cmd line too
-    * type
-    * size
-    * pretty printed contents
-* `git cat-file -p SHA1_OF_INTERESTING_OBJECT` is the most useful usage (without -p you have to specify the type)
+- can dump following info on repository objects
+    - contents (this is default, you have to tell git the type on cmd line too
+    - type
+    - size
+    - pretty printed contents
+- `git cat-file -p SHA1_OF_INTERESTING_OBJECT` is the most useful usage (without
+  -p you have to specify the type)
 
 ```bash
 # git cat-file TYPE SHA
@@ -139,7 +140,8 @@ $ tree .git
 13 directories, 16 files
 ```
 
-We see that git has created two more objects in the object store. These objects are:
+We see that git has created two more objects in the object store. These objects
+are:
 
 1. a commit object
 1. a tree object
@@ -180,18 +182,20 @@ TODO
 
 ### Tree objects
 
-* each line in the tree is listing data about either
-    * a blob
-    * another tree
-* each line in the tree is of form `{mode-and-permissions-as-ascii}{space}{filename}{null-byte}{unknown-binary-data}`
-    * in upcase video the tree seems to be ascii - whats up ???
-* filenames in git are stored in the tree objects
-    * => if you rename a file the only object which needs to change is the tree object
-* tree objects cannot be empty - git will not create one if there are no entries
-    * => git ignores empty dirs
-* a tree object can contain any number of blobs or trees
-* Use `git cat-file -p SHA1_OF_TREE_OBJECT` to inspect a raw tree object
-* Use `git ls-tree SHA1_OF_TREE_OBJECT` to see another view of a tree object
+- each line in the tree is listing data about either
+    - a blob
+    - another tree
+- each line in the tree is of form
+  `{mode-and-permissions-as-ascii}{space}{filename}{null-byte}{unknown-binary-data}`
+    - in upcase video the tree seems to be ascii - whats up ???
+- filenames in git are stored in the tree objects
+    - => if you rename a file the only object which needs to change is the tree
+      object
+- tree objects cannot be empty - git will not create one if there are no entries
+    - => git ignores empty dirs
+- a tree object can contain any number of blobs or trees
+- Use `git cat-file -p SHA1_OF_TREE_OBJECT` to inspect a raw tree object
+- Use `git ls-tree SHA1_OF_TREE_OBJECT` to see another view of a tree object
 
 ### Commit objects
 
@@ -200,54 +204,51 @@ commits point at trees
 commit objects are text file with following fields
 
 1. tree
-    * sha1 hash of **the single** tree which this commit points to
+    - sha1 hash of **the single** tree which this commit points to
 1. parent (optional)
-    * sha1 hash of another commit object
-    * Only one commit in your repo will not have a parent commit - this is called the "root" commit
+    - sha1 hash of another commit object
+    - Only one commit in your repo will not have a parent commit - this is
+      called the "root" commit
 1. author
-    * Name, email, timestamp
+    - Name, email, timestamp
 1. commiter
-    * Name, email, timestamp
+    - Name, email, timestamp
 1. commit message
-    * whatever message we typed in
+    - whatever message we typed in
 
 A commit object ...
 
-* connects everything together - is the "hub" of the git object graph
-* Use `git cat-file -p SHA1_OF_COMMIT_OBJECT` to inspect a raw commit object
-
+- connects everything together - is the "hub" of the git object graph
+- Use `git cat-file -p SHA1_OF_COMMIT_OBJECT` to inspect a raw commit object
 
 ## Diffs
 
-* Git does not **store** diffs - it stores snapshots of file contents
-* it calculates diffs in memory when it needs them
+- Git does not **store** diffs - it stores snapshots of file contents
+- it calculates diffs in memory when it needs them
 
 ## Branches
 
-* branches point at commits
+- branches point at commits
 
 ## Reflog
 
-* is local to a repository - does not get pushed & pulled
-* a log of any changes to references in the repository
-* gets updated anytime a command changes your working directory
+- is local to a repository - does not get pushed & pulled
+- a log of any changes to references in the repository
+- gets updated anytime a command changes your working directory
 
-git-gc will remove reflog entries older than an expire time or not reachable from the current tip
+git-gc will remove reflog entries older than an expire time or not reachable
+from the current tip
 
 QUESTION: waht things destory the reflog? gc?
 
 Questions
 
-what does .git/HEAD do?
-    it seems to point to a ref within .git/refs
+what does .git/HEAD do? it seems to point to a ref within .git/refs
 
-what is job of .git/index ???
-    is binary file
+what is job of .git/index ??? is binary file
 
-.git/logs
-    I *think* this is where the reflog is stored
-    seems to be a history of all changes I made locally to the object store
+.git/logs I _think_ this is where the reflog is stored seems to be a history of
+all changes I made locally to the object store
 
-
-local branches are called "heads" and stored in `.git/refs/heads` because they are things that HEAD can point at
-
+local branches are called "heads" and stored in `.git/refs/heads` because they
+are things that HEAD can point at

@@ -8,11 +8,12 @@ netstat -nral
 netstat -nrs
 ```
 
-* -n show network addresses as numbers (normally netstat trys to resolve names for them)
-* -r shows routing tables
-    * -ra adds "protocol-cloned" routes
-    * -rl shows MTU column
-    * -rs show routing stats
+- -n show network addresses as numbers (normally netstat trys to resolve names
+  for them)
+- -r shows routing tables
+    - -ra adds "protocol-cloned" routes
+    - -rl shows MTU column
+    - -rs show routing stats
 
 ```
 -r    Show the routing tables.  Use with -a to show protocol-cloned routes.  When -s is also present, show routing statistics instead.
@@ -54,5 +55,5 @@ which is marked with the RTF_PROXY flag will not generate new routes that are as
 
 ```
 
-QUESTION: The above indicates that routes are obtained and "held" somehow in the kernel - how does this work?
-QUESTION: what is the deal with cloning routes?
+QUESTION: The above indicates that routes are obtained and "held" somehow in the
+kernel - how does this work? QUESTION: what is the deal with cloning routes?

@@ -1,5 +1,3 @@
-
-
 ```ruby
 # Gemfile
 
@@ -9,7 +7,6 @@ group :test do
   gem "webdrivers"
 end
 ```
-
 
 ```ruby
 # spec/rails_helper.rb
@@ -35,4 +32,3 @@ end
 
 Capybara.javascript_driver = :chrome
 ```
-

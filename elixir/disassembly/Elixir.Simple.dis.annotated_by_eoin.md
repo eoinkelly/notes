@@ -1,5 +1,3 @@
-
-
 ```
 functions from the snippet
 

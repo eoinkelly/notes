@@ -16,4 +16,3 @@ C-y, # expand shortcut in vim
 <div class="foo">9</div>
 <div class="foo">10</div>
 ```
-

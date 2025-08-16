@@ -1,12 +1,13 @@
 # arrays - oh my!
+
 ## a.k.a. stuff Eoin never knew existed but probably should have ...
 
 ## Creating arrays
 
-
 ## getting things out
 
 ## clever []
+
 ```ruby
 
 # slicing
@@ -41,8 +42,8 @@ stack.pop   # => "b"
 # make a FIFO queue
 queue = []
 a.push "foo"
-a.push "bar" 
-a.shift       # => "foo" 
+a.push "bar"
+a.shift       # => "foo"
 a.unshift     # => "bar"
 
 ? use case for FIFO ?
@@ -54,32 +55,33 @@ a[0..2] # => ["a", "b", "c"]
 # get everything except first and last elements
 middle = a[1..-2]
 
-# handy for recursion 
+# handy for recursion
 
-args = [1, 2, 3] 
+args = [1, 2, 3]
 
 # split the array into a head and a tail
 first = a[0]
 rest = a[1..-1]
 
-first  # => 1 
+first  # => 1
 rest   # => [2, 3]
 
 # or even nicer ...
 
 first, *rest = args # this is called destructuring btw
 
-first               # => 1 
+first               # => 1
 rest                # => [2, 3]
 
 # ? demo a recursion algorithm here
 
-# replacing a chunk of an array at once 
+# replacing a chunk of an array at once
 a[0..2] = ["a", "b", "c"]
 
 ```
 
 ### quick mass assignment
+
 ```ruby
 array = ["bird", "is", "the", "word"]
 a, b, c = array
@@ -91,6 +93,7 @@ c # => "the"
 ## converting to other things
 
 ### Converting to string
+
 ```ruby
 a = ['hello', 'there']
 a.join('-') # => 'hello-there'
@@ -126,7 +129,7 @@ bar = "wat?"
 
 ## rails #blank? and #present?
 
-Instead of 
+Instead of
 
 ```ruby
 full_name = current_user.full_name

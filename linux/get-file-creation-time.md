@@ -1,13 +1,15 @@
-
-
- Ext4 stores the following timestamps:
+Ext4 stores the following timestamps:
 
 1. Access time (atime) when contents of file were last accessed
 1. Modificaiton time (mtime) - when contents of file were last changed
 1. Change time (ctime) - when the inode was last modified
-1. Birth time - when the file was created (not well supported, waiting on kernel feature)
+1. Birth time - when the file was created (not well supported, waiting on kernel
+   feature)
 
- By default linux does not show you file creation (or "birth" time. Ext4 supports it but `ls` and `stat` don't currently support reading it because they are waiting to additions to the system calls. You can however read it for a single file using a combination of `stat` and `debugfs`
+By default linux does not show you file creation (or "birth" time. Ext4 supports
+it but `ls` and `stat` don't currently support reading it because they are
+waiting to additions to the system calls. You can however read it for a single
+file using a combination of `stat` and `debugfs`
 
 ```
 $ stat .profile

@@ -1,4 +1,3 @@
-
 ```plain
 tmux new -s SESSION_NAME # create named session (protip: always name session)
 
@@ -53,16 +52,14 @@ new-window -n status "top"
 prefix ? # show help
 ```
 
-* keybindings are just shortcuts for tmux commands
-* you can execte commands from
+- keybindings are just shortcuts for tmux commands
+- you can execte commands from
     1. terminal itself
     1. the command area of the tmux status line
-* when you start a window with an initial command the window will close when
+- when you start a window with an initial command the window will close when
   that command exits - if you want the window to persist you have to create it
   without an initial command and run the command in the shell
 
 Things I want
 
-maximize current pane
-? can i name panes?
-add a nice theme
+maximize current pane ? can i name panes? add a nice theme

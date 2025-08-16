@@ -4,7 +4,7 @@ const util = require('util');
 
 var filename = process.argv[2];
 
-if (! filename) {
+if (!filename) {
   throw Error('You forgot filename');
 }
 

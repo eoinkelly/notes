@@ -2,7 +2,7 @@
 
 Sources
 
-* https://www.digitalocean.com/community/tutorials/how-to-write-custom-system-audit-rules-on-centos-7
+- https://www.digitalocean.com/community/tutorials/how-to-write-custom-system-audit-rules-on-centos-7
 
 ```bash
 
@@ -67,7 +67,6 @@ filter=name of a kernel rule matching filter, one of: task|exit|user|exclude
 -w /etc/hosts -p wa -k hosts_file_change
 
 ```
-
 
     -a always,exit -F arch=b64 -S sethostname -S setdomainname -k system-locale
     -a always,exit -F arch=b32 -S sethostname -S setdomainname -k system-locale

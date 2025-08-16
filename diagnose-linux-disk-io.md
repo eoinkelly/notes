@@ -8,24 +8,37 @@ Each process has:
 
 1. An I/O scheduling _class_. One of:
     1. None (0)
-        * processes are in this class if they are not specifically put in a different class
-        * the kernel scheduler treats this class as if it were the same as `Best-Effort` i.e. if `None` is the reported class then `Best-Effort` is the effective class
+        - processes are in this class if they are not specifically put in a
+          different class
+        - the kernel scheduler treats this class as if it were the same as
+          `Best-Effort` i.e. if `None` is the reported class then `Best-Effort`
+          is the effective class
     1. Realtime (1)
-        * given first access to the disk regardless of what else is happening on the system
-        * can starve other proesses
-        * valid priority levels are 0-7 (0 = highest, 7 = lowest) within this class
-        * only root can set this
+        - given first access to the disk regardless of what else is happening on
+          the system
+        - can starve other proesses
+        - valid priority levels are 0-7 (0 = highest, 7 = lowest) within this
+          class
+        - only root can set this
     1. Best-effort (2)
-        * valid priority levels are 0-7 (0 = highest, 7 = lowest) within this class
-        * Priority defaults to being calculated by formula `io_priority = (cpu_nice + 20) / 5`
-            * By default `cpu_nice = 0` for a process so by default `io_priority = (0 + 20) / 5 = 4`
-        * In modern kernels processes inherit their IO scheduling **class** from their parent but their priority is calculated based on CPU niceness
+        - valid priority levels are 0-7 (0 = highest, 7 = lowest) within this
+          class
+        - Priority defaults to being calculated by formula
+          `io_priority = (cpu_nice + 20) / 5`
+            - By default `cpu_nice = 0` for a process so by default
+              `io_priority = (0 + 20) / 5 = 4`
+        - In modern kernels processes inherit their IO scheduling **class** from
+          their parent but their priority is calculated based on CPU niceness
     1. Idle (3)
-        * this class is the lowest - processes in this class will only get disk time when **no other program** has asked for any within a defined grace period.
-        * has no priority levels within it
+        - this class is the lowest - processes in this class will only get disk
+          time when **no other program** has asked for any within a defined
+          grace period.
+        - has no priority levels within it
 1. An I/O scheduling _priority_
-    * a number which defines how big a time slice a given process will receive on each scheduling window
-    * Most (but not all) scheduling classes have priorities within them from 0 (highest) to 7 (lowest)
+    - a number which defines how big a time slice a given process will receive
+      on each scheduling window
+    - Most (but not all) scheduling classes have priorities within them from 0
+      (highest) to 7 (lowest)
 
 Examples
 
@@ -39,7 +52,8 @@ $ ionice -p 3212
 none: prio 0
 ```
 
-> Even with the lowest priority, a disk-intensive process tends to slow the system down, if nothing else because it pollutes the cache.
+> Even with the lowest priority, a disk-intensive process tends to slow the
+> system down, if nothing else because it pollutes the cache.
 
 QUESTION: which cache?
 
@@ -55,9 +69,8 @@ Common tools
 
 Custom tools
 
-* showboost
-* pmcarch
-
+- showboost
+- pmcarch
 
 ### top
 
@@ -65,22 +78,26 @@ I/O wait is the percentage of time the CPU has to wait for the disk
 
 Highi IO presents as
 
-* load averages are high but CPUs don't report as busy doing either user or system work
-* `top` by default reports `wa` on the `%Cpu(s)` line
-    * `wa` is the average across all cores of the percent of time that core was waiting for IO when sampled
-        * NB: it is an **average** so hides detail
-    * Hit `1` in top to show stats for each CPU core - this is a more useful view
-    * A `wa` value of `0.0` is expected, anything above `1.0` indicates IO bottleneck
+- load averages are high but CPUs don't report as busy doing either user or
+  system work
+- `top` by default reports `wa` on the `%Cpu(s)` line
+    - `wa` is the average across all cores of the percent of time that core was
+      waiting for IO when sampled
+        - NB: it is an **average** so hides detail
+    - Hit `1` in top to show stats for each CPU core - this is a more useful
+      view
+    - A `wa` value of `0.0` is expected, anything above `1.0` indicates IO
+      bottleneck
 
 ### perf
 
-* part of linux kernel
-* can be used to do sampling of a specific running process
-    * http://www.brendangregg.com/blog/2014-06-22/perf-cpu-sample.html
+- part of linux kernel
+- can be used to do sampling of a specific running process
+    - http://www.brendangregg.com/blog/2014-06-22/perf-cpu-sample.html
 
 ### atop
 
-* runs as a background process - I'm not sure I want this on servers by default
+- runs as a background process - I'm not sure I want this on servers by default
 
 ```
 Figures shown for active processes:
@@ -142,11 +159,10 @@ Miscellaneous commands:
 
 ### iotop
 
-* shows percentage of sampling period where the thread/process was
-    * swapping data into memory
-    * waiting on I/O
-* shows I/O priority (class/level)
-
+- shows percentage of sampling period where the thread/process was
+    - swapping data into memory
+    - waiting on I/O
+- shows I/O priority (class/level)
 
 ```
 sudo iotop -Po

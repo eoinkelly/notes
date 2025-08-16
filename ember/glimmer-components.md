@@ -1,31 +1,21 @@
-
-* aka angle bracket components
-* enabled 1-way binding by default
+- aka angle bracket components
+- enabled 1-way binding by default
 
 ```hbs
 <my-awesome-thing src={{model.foo}} />
 ```
 
-
-component.rerender()
-component.set()
+component.rerender() component.set()
 
 new component hooks
 
-didInsertElement
-    * old hook
-    * fired in response to an event from outside the component (parent
-      inserting it into DOM)
-didUpdateElement
-    * new hook
-    * fired when changes come from inside the component
+didInsertElement _ old hook _ fired in response to an event from outside the
+component (parent inserting it into DOM) didUpdateElement _ new hook _ fired
+when changes come from inside the component
 
-
-attrs
-<my-comp src={{model.src}} />
+attrs <my-comp src={{model.src}} />
 
 within the component you access `attrs.src`
-
 
 # mut helper
 

@@ -1,6 +1,6 @@
 # Signals
 
-* `man 7 signal` on linux for help
+- `man 7 signal` on linux for help
 
 ```plain
 # Most important signals
@@ -21,24 +21,28 @@
 21   TTIN (e.g. Sidekiq uses this)
 ```
 
-* every signal has a default action associated
-* Default actions:
+- every signal has a default action associated
+- Default actions:
     1. terminate the process (`Term` in man page)
     1. dump core (`Core` in man page)
     1. ignore (`Ign` in man page)
     1. stop the process (`Stop` in man page)
     1. continue the process (`Cont` in man page)
-* by default linux will not actually dump cores unless you tell it to e.g. in bash `ulimit -c unlimited`
-* a process (whether script or binary) can trap signals and do something custom with them
-* A PID of `-1` indicates all processes except the `kill` process and init
-* Keyboard bound signals
-    * `CTRL-c` sends INT
-    * `CTRL-d` sends EOF which is not actually a signal
-    * `CTRL-\` sends QUIT
-* the kill command
-    * `kill` can be either a shell built-in (`zsh` does this) or a binary in `/bin/kill`
-    * the default signal sent by `kill` is `TERM`
-* the `SIGRT*` signals are real-time (if your OS supports them, linux does since 2.2)
+- by default linux will not actually dump cores unless you tell it to e.g. in
+  bash `ulimit -c unlimited`
+- a process (whether script or binary) can trap signals and do something custom
+  with them
+- A PID of `-1` indicates all processes except the `kill` process and init
+- Keyboard bound signals
+    - `CTRL-c` sends INT
+    - `CTRL-d` sends EOF which is not actually a signal
+    - `CTRL-\` sends QUIT
+- the kill command
+    - `kill` can be either a shell built-in (`zsh` does this) or a binary in
+      `/bin/kill`
+    - the default signal sent by `kill` is `TERM`
+- the `SIGRT*` signals are real-time (if your OS supports them, linux does since
+  2.2)
 
 ## Ways of sending signals
 
@@ -212,4 +216,3 @@ SIGIO (which is not specified in POSIX.1-2001) is ignored by default on several 
 
 Where defined, SIGUNUSED is synonymous with SIGSYS on most architectures.
 ```
-

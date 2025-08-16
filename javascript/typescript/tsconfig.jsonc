@@ -28,18 +28,7 @@
   },
   // Options for telling the compiler where to find .ts files
   // compiler will error if any of these are missing (so you might want to use `files` and `include` together)
-  "files": [
-    "core.ts",
-    "sys.ts",
-    "types.ts",
-    "scanner.ts",
-    "parser.ts"
-  ],
-  "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "**/*.spec.ts"
-  ]
+  "files": ["core.ts", "sys.ts", "types.ts", "scanner.ts", "parser.ts"],
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "**/*.spec.ts"]
 }

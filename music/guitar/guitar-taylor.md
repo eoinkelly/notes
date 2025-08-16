@@ -34,4 +34,3 @@
 | Fingerboard Ext                  | None                    |
 | Buttons                          | Chrome                  |
 | Edge Trim                        | B/W/B                   |
-

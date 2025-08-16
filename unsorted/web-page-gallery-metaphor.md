@@ -1,9 +1,6 @@
-decide how I want them to understand galleries
-    options
-        gallery as a custom post type
-            + separate in admin
-            + same gallery can be added to multiple pages
-            + can have multiple galleries on the same page
+decide how I want them to understand galleries options gallery as a custom post
+type + separate in admin + same gallery can be added to multiple pages + can
+have multiple galleries on the same page
 
         gallery on every page
             + no need to create a gallery to put pics on the page

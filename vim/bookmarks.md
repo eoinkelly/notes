@@ -1,23 +1,23 @@
 # Vim Bookmarks
 
-* https://github.com/kshenoy/vim-signature is pretty great
-* marks are smart enough to stay valid even as you add/remove/edit lines
+- https://github.com/kshenoy/vim-signature is pretty great
+- marks are smart enough to stay valid even as you add/remove/edit lines
 
 The scope of marks depends on their name
 
-* `a-z` are valid within one file
-    * (row, col)
-    * they are removed when you close the buffer
-    * are restored by undo and redo
-    * can be used with operators e.g. `d't`
-* `A-Z are aka "file marks", valid across all files
-    * (row, col, filename)
-    * can only be used with operators if you are in the same buffer as the mark
-    * and suc
-* `0-9` are numbered marks, set from .viminfo
-    * cannot be set directly
-    * 0 is the location of the cursor when you last exited vim
-    * 1 is the location of the cursor the time before that
+- `a-z` are valid within one file
+    - (row, col)
+    - they are removed when you close the buffer
+    - are restored by undo and redo
+    - can be used with operators e.g. `d't`
+- `A-Z are aka "file marks", valid across all files
+    - (row, col, filename)
+    - can only be used with operators if you are in the same buffer as the mark
+    - and suc
+- `0-9` are numbered marks, set from .viminfo
+    - cannot be set directly
+    - 0 is the location of the cursor when you last exited vim
+    - 1 is the location of the cursor the time before that
 
 ```
 m{mark}  set mark {mark} (where {mark} = a-z)

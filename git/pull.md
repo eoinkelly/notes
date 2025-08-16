@@ -1,7 +1,7 @@
 # git pull
 
-* is a wrapper over git fetch and git merge
-* most of its options are passed through to those commands
+- is a wrapper over git fetch and git merge
+- most of its options are passed through to those commands
 
 ```
 $ git pull

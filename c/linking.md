@@ -1,10 +1,9 @@
-
-
 ## ldd
 
-* prints shared object dependencies
-* ldd displays the location of the matching object and the (hexadecimal) address at which it is loaded
-* `man ldd`
+- prints shared object dependencies
+- ldd displays the location of the matching object and the (hexadecimal) address
+  at which it is loaded
+- `man ldd`
 
 ```
 # to see what a binary is linked with
@@ -22,10 +21,15 @@ $ ldd `which ls`
 
 ### Security warning
 
-* in some circumstances, some versions of ldd may attempt to obtain the dependency information by attempting to directly execute the program, which may lead to the execution of whatever code is defined in the program's ELF interpreter, and perhaps to execution of the program itself.
-* You should never employ ldd on an untrusted executable, since this may result in the execution of arbitrary code.
-* A safer alternative when dealing with untrusted executables is:
+- in some circumstances, some versions of ldd may attempt to obtain the
+  dependency information by attempting to directly execute the program, which
+  may lead to the execution of whatever code is defined in the program's ELF
+  interpreter, and perhaps to execution of the program itself.
+- You should never employ ldd on an untrusted executable, since this may result
+  in the execution of arbitrary code.
+- A safer alternative when dealing with untrusted executables is:
 
-           $ objdump -p /path/to/program | grep NEEDED
+             $ objdump -p /path/to/program | grep NEEDED
 
-* Note, however, that this alternative shows only the direct dependencies of the executable, while ldd shows the entire dependency tree of the executable
+- Note, however, that this alternative shows only the direct dependencies of the
+  executable, while ldd shows the entire dependency tree of the executable

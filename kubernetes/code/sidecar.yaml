@@ -7,23 +7,23 @@ metadata:
   name: sidecar-pod
 spec:
   volumes:
-  - name: logs
-    # will create empty dir on the host and bind mount it into the container
-    emptyDir: {}
+    - name: logs
+      # will create empty dir on the host and bind mount it into the container
+      emptyDir: {}
   containers:
-  - name: app
-    image: busybox
-    command: ["/bin/sh"]
-    args: ["-c", "while true; do date >> /var/log/date.txt; sleep 10; done"]
-    volumeMounts:
-    - name: logs
-      mountPath: /var/log
-  - name: sidecar
-    image: centos/httpd
-    ports:
-    - containerPort: 80
-    volumeMounts:
-    - name: logs
-      mountPath: /var/www/html
+    - name: app
+      image: busybox
+      command: ['/bin/sh']
+      args: ['-c', 'while true; do date >> /var/log/date.txt; sleep 10; done']
+      volumeMounts:
+        - name: logs
+          mountPath: /var/log
+    - name: sidecar
+      image: centos/httpd
+      ports:
+        - containerPort: 80
+      volumeMounts:
+        - name: logs
+          mountPath: /var/www/html
   dnsPolicy: ClusterFirst
   restartPolicy: Always

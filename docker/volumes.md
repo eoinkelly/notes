@@ -1,6 +1,5 @@
 # Volumes
 
-
 ## Cheatsheet
 
 ```
@@ -11,9 +10,11 @@ docker volume rm VOLUME_NAME
 
 ### Data volume containers
 
-* use a container as an abstraction over one or more mounts
-* other containers depend on **just the data container name** and they automtaically get all the volume mounts from it
-    * ++ all depending containers magically get a collection of the exact same set of mounts
+- use a container as an abstraction over one or more mounts
+- other containers depend on **just the data container name** and they
+  automtaically get all the volume mounts from it
+    - ++ all depending containers magically get a collection of the exact same
+      set of mounts
 
 ```
 # create a data volume container
@@ -28,6 +29,7 @@ docker run -it --detach --rm --volumes-from datastore --name my-app-1 ubuntu bas
 docker run -it --detach --rm --volumes-from datastore --name my-app-2 ubuntu bash
 # ...
 ```
+
 ## Syntax
 
 "bind mount syntax" is
@@ -38,23 +40,19 @@ Any SRC_PATH which **begins** with a string which amtches one of the dirs you
 have shared from mac to docker then that src will be sourced from your mac.
 Every **other** SRC_PATH paths are source from the docker linux distro
 
-
-/Users
-/Volumes
-/tmp
-/private
-/
+/Users /Volumes /tmp /private /
 
 docker run -it -v ~/Desktop:/mydesk ubuntu:latest bash
 
-Paths that already exist in the VM **and** contain files are reserved by Docker and cannot be exported from macOS i.e. if you have a `/Users` dir in your container which contains files then you cannot bind mount `/Users` from your mac
+Paths that already exist in the VM **and** contain files are reserved by Docker
+and cannot be exported from macOS i.e. if you have a `/Users` dir in your
+container which contains files then you cannot bind mount `/Users` from your mac
 
 ## Performance
 
 Explains how it works and the trade-offs:
 
     https://docs.docker.com/docker-for-mac/osxfs/
-
 
 ## Volume caching options (17.04 and later)
 

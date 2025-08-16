@@ -1,11 +1,11 @@
-"use strict";
+'use strict';
 
-var _foo = _interopRequireWildcard(require("./foo.js"));
+var _foo = _interopRequireWildcard(require('./foo.js'));
 
 function _getRequireWildcardCache() {
-  if (typeof WeakMap !== "function") return null;
+  if (typeof WeakMap !== 'function') return null;
   var cache = new WeakMap();
-  _getRequireWildcardCache = function() {
+  _getRequireWildcardCache = function () {
     return cache;
   };
   return cache;
@@ -15,7 +15,7 @@ function _interopRequireWildcard(obj) {
   if (obj && obj.__esModule) {
     return obj;
   }
-  if (obj === null || (typeof obj !== "object" && typeof obj !== "function")) {
+  if (obj === null || (typeof obj !== 'object' && typeof obj !== 'function')) {
     return { default: obj };
   }
   var cache = _getRequireWildcardCache();
@@ -45,9 +45,9 @@ function _interopRequireWildcard(obj) {
 }
 
 // it seems test files are not modules but are commonjs?
-test("some test", () => {
-  console.log("default import:", (0, _foo.default)());
-  console.log("greeting:", _foo.greeting);
-  console.log("foo:", (0, _foo.foo)());
+test('some test', () => {
+  console.log('default import:', (0, _foo.default)());
+  console.log('greeting:', _foo.greeting);
+  console.log('foo:', (0, _foo.foo)());
   expect(1).toEqual(1);
 });

@@ -3,23 +3,25 @@
 Things we might want to track in an ember app
 
 Page views
-* {{link-to}}
-* this.transitionTo()
-* this.replaceWith()
-* user manually edits the URL bar
-* model change - the route stays the same but the model changes e.g /post/1 -> /post/2
+
+- {{link-to}}
+- this.transitionTo()
+- this.replaceWith()
+- user manually edits the URL bar
+- model change - the route stays the same but the model changes e.g /post/1 ->
+  /post/2
 
 Actions
-* {{action}}
-* this.send()
-* this.triggerAction()
-* this.sendAction()
-* simple actions - things that are not you triggering an action e.g.
-    * did a promise return
-    * did a timeout end?
+
+- {{action}}
+- this.send()
+- this.triggerAction()
+- this.sendAction()
+- simple actions - things that are not you triggering an action e.g.
+  - did a promise return
+  - did a timeout end?
 
 Under the hood: sendAction() calls triggerAction() which calls send()
-
 
 ```js
 // The right way to do page tracking in Ember
@@ -39,4 +41,5 @@ App.ApplicationRoute = Ember.Route.extend({
 });
 ```
 
-There is a pretty complete analytics implementation at https://github.com/alexdiliberto/emberconf-2014-demo/
+There is a pretty complete analytics implementation at
+https://github.com/alexdiliberto/emberconf-2014-demo/

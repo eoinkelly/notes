@@ -8,28 +8,30 @@ Tools to find out what PG is doing
 
 # ps
 
-`ps` can tell us a lot about what postgres is doing. There are 5 "helper" processes we
-expect to always see:
+`ps` can tell us a lot about what postgres is doing. There are 5 "helper"
+processes we expect to always see:
 
 1. master process
-    * will show the command line that PG was started with
+    - will show the command line that PG was started with
 2. stats collector
-    * if not show then it is configured to start manually
+    - if not show then it is configured to start manually
 3. autovacuum launcher
-    * if not show then it is configured to start manually
+    - if not show then it is configured to start manually
 4. wal writer
-    * write ahead log
+    - write ahead log
 5. checkpoint
 
 and we also expect to see some database session processes
 
-* one process per session
-* format of the line is `postgres: {user} {database} {host} {activity}`
-* If `update_process_title` is enabled (causes a lot of overhead in some systems) then activities can be
-    * IDLE
-    * IDLE IN TRANSACTION
-    * command name .e.g. SELECT
-* activity will have `waiting` appended if it is waiting for a lock from another session
+- one process per session
+- format of the line is `postgres: {user} {database} {host} {activity}`
+- If `update_process_title` is enabled (causes a lot of overhead in some
+  systems) then activities can be
+    - IDLE
+    - IDLE IN TRANSACTION
+    - command name .e.g. SELECT
+- activity will have `waiting` appended if it is waiting for a lock from another
+  session
 
 ```sh
 ➜  postgres git:(master) ps auxww | grep postgres
@@ -82,11 +84,11 @@ postgres─┬─postgres
 
 # View settings
 
-* NB: postgres configuration files are usually not definitive
-* SHOW ALL, SHOW {setting name}
-    * good but they won't let you see if it is a session specific change
-* `SELECT * FROM pg_settings;`
-    * most comprehensive
+- NB: postgres configuration files are usually not definitive
+- SHOW ALL, SHOW {setting name}
+    - good but they won't let you see if it is a session specific change
+- `SELECT * FROM pg_settings;`
+    - most comprehensive
 
 ```sql
 -- show all ~240 settings
@@ -97,17 +99,15 @@ select * from pg_stat_activity;
 select * from pg_stat_activity where pid <> pg_backend_pid()  and usename = current_user;
 ```
 
-
 # controlling session processes
 
-* `max_connections` defaults to 100
+- `max_connections` defaults to 100
 
-> Generally, PostgreSQL on good hardware can support a few
-> hundred connections. If you want to have thousands instead,
-> you should consider using connection pooling software to
-> reduce the connection overhead.
+> Generally, PostgreSQL on good hardware can support a few hundred connections.
+> If you want to have thousands instead, you should consider using connection
+> pooling software to reduce the connection overhead.
 
-* PG will spread sessions across all CPUs but a single session can only use one
+- PG will spread sessions across all CPUs but a single session can only use one
   CPU so a single complex query is not parallelized
 
 # Seeing the exact command being executed by each server process in the cluster right now
@@ -125,23 +125,21 @@ information about server activity.
 
 counts
 
-* access to tables in disk block terms
-* access to tables in row terms
-* access to indexes in disk block terms
-* access to indexes in row terms
-* total no. of rows in the table
-* info about the
-    * vacuum section
-    * analyze section
-  of each table
-* no of calls to user defined functions and the time spent in each one
+- access to tables in disk block terms
+- access to tables in row terms
+- access to indexes in disk block terms
+- access to indexes in row terms
+- total no. of rows in the table
+- info about the
+    - vacuum section
+    - analyze section of each table
+- no of calls to user defined functions and the time spent in each one
 
-There are a no. of views available to view stats on the cluster
-    * full list: http://www.postgresql.org/docs/9.4/interactive/monitoring-stats.html
-    * Remember that
-        * these do not update instanteously
-        * they will not update if you are within a transaction block so you don't
-        have to worry about the numbers changing under you
+There are a no. of views available to view stats on the cluster _ full list:
+http://www.postgresql.org/docs/9.4/interactive/monitoring-stats.html _ Remember
+that _ these do not update instanteously _ they will not update if you are
+within a transaction block so you don't have to worry about the numbers changing
+under you
 
 TODO: Which of those tables is most useful (Sat 28 Mar 08:37:38 2015)
 
@@ -152,11 +150,14 @@ select * from pg_stat_all_indexes;
 
 # pg_locks table
 
-The `pg_locks` table will show you details of what locks are outstanding in the system. You can
+The `pg_locks` table will show you details of what locks are outstanding in the
+system. You can
 
-* filter them by database or table or session
-* figure out which database has the most ungranted locks - this might indicate that this DB is a source of contention among clients
-* compare how much lock contention there is with how busy the DB is to figure out how traffic relates to locks for you
+- filter them by database or table or session
+- figure out which database has the most ungranted locks - this might indicate
+  that this DB is a source of contention among clients
+- compare how much lock contention there is with how busy the DB is to figure
+  out how traffic relates to locks for you
 
 # Dynamic tracing
 

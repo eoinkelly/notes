@@ -1,6 +1,7 @@
 # aws s3api
 
-The full S3 Rest API is available from the command line via the `aws s3api` command.
+The full S3 Rest API is available from the command line via the `aws s3api`
+command.
 
 ```
 $ aws s3api help # show man page

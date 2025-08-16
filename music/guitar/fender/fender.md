@@ -8,17 +8,14 @@
 | ???       | contemporary            |           |               |             | american ultra luxe | 2600 - 2700 |
 | beginners | sonic                   |           |               |             |                     | 200 - 210   |
 
-American performer 1400 - 1500 USD
-Other things
+American performer 1400 - 1500 USD Other things
 
 meteroa
 
--   Fender japan
+- Fender japan
+    - Short runs
+    - High quality
+    - Priced between Mexico an entry USA
 
-    -   Short runs
-    -   High quality
-    -   Priced between Mexico an entry USA
-
--   Paranormal
-    -   Mash-ups
-        ![Fender Range](fender-range.jpeg)
+- Paranormal
+    - Mash-ups ![Fender Range](fender-range.jpeg)

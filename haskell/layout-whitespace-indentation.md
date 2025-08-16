@@ -2,34 +2,34 @@
 
 Sources
 
-* http://en.wikibooks.org/wiki/Haskell/Indentation
+- http://en.wikibooks.org/wiki/Haskell/Indentation
 
-*Any* kind of whitespace is also a proper delimiter for lexemes. This means
-that newline is the same as space and tab as far as the compiler is concerned.
+_Any_ kind of whitespace is also a proper delimiter for lexemes. This means that
+newline is the same as space and tab as far as the compiler is concerned.
 
 ## Indentation rules
 
 1. Code which is part of some _expression_ should be indented further in than
-   the beginning of that _expression_  (even if the expression is not the
+   the beginning of that _expression_ (even if the expression is not the
    leftmost element of the line)
-    * note this rule is independent of the layout keyword rules below
-2. All grouped expressions must be *exactly* aligned
+    - note this rule is independent of the layout keyword rules below
+2. All grouped expressions must be _exactly_ aligned
 
 Things which are expressions in Haskell
 
-* function definitions
-* let blocks
-* do blocks
-* where blocks
-* of blocks
-* if-else
-* others ???
+- function definitions
+- let blocks
+- do blocks
+- where blocks
+- of blocks
+- if-else
+- others ???
 
 There are 4 layout keywords: `let`, `where`, `do`, `of`
 
-* They begin _layout blocks_
-* Under the hood Haskell encloses these in `{` and `;`
-* If the compiler finds a `{` after one of the layout blocks it will parse the
+- They begin _layout blocks_
+- Under the hood Haskell encloses these in `{` and `;`
+- If the compiler finds a `{` after one of the layout blocks it will parse the
   block directly (not using the layout rules)
 
 The layout process can be summed up in three translation rules (plus a fourth
@@ -39,8 +39,8 @@ one that doesn't come up very often):
    curly brace (right before the stuff that follows it)
 2. If you see something indented to the SAME level, insert a semicolon
 3. If you see something indented LESS, insert a closing curly brace
-4. If you see something unexpected in a list, like where, insert a closing
-   brace before instead of a semicolon.
+4. If you see something unexpected in a list, like where, insert a closing brace
+   before instead of a semicolon.
 
 ```
 -- this does not work:
@@ -83,10 +83,10 @@ do  { thing
 
 # Functions and if-then-else are "One line" in Haskell
 
-Things which are considered "one line" in haskell (in the sense of no `{` or
-`;` being inserted):
+Things which are considered "one line" in haskell (in the sense of no `{` or `;`
+being inserted):
 
-* function definitions
+- function definitions
     ```
     -- this is fine because newline is just another kind of whitespace to the haskell compiler
     -- aside: it does not work in ghci
@@ -97,23 +97,21 @@ Things which are considered "one line" in haskell (in the sense of no `{` or
         +
         12
     ```
-* if then else expressions (semicolons are not allowed within an if-then-else)
+- if then else expressions (semicolons are not allowed within an if-then-else)
 
 ## Aside: `_`
 
-* `_` is a reserved identifier in Haskell
-* compilers are encouraged to supress warnings about unused variables that
-* _begin with_ it.
-* It is a way of telling the complier "I expect this to be unused"
+- `_` is a reserved identifier in Haskell
+- compilers are encouraged to supress warnings about unused variables that
+- _begin with_ it.
+- It is a way of telling the complier "I expect this to be unused"
 
 # Indentation and module
 
-Q: so why can't i make a funciton with all tokens starting in first line
-    does every file have an implicit module wrapper? if so I am always
-    within a where block
-    => all new statements must start at the same level of indent
-    => if i put my function bits all at same indent the compiler thinks they
-        are separate expressions
+Q: so why can't i make a funciton with all tokens starting in first line does
+every file have an implicit module wrapper? if so I am always within a where
+block => all new statements must start at the same level of indent => if i put
+my function bits all at same indent the compiler thinks they are separate
+expressions
 
 QUESTION: is there an implict where at top of all haskell files?
-

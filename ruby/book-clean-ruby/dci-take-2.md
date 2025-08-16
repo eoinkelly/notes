@@ -1,33 +1,32 @@
 Times
-* design & first write time
-    * we want to be able to reason bout the program here
-* program runtime
-* maintain time 
-    * we want to be able to reason bout the program here
 
+- design & first write time
+    - we want to be able to reason bout the program here
+- program runtime
+- maintain time
+    - we want to be able to reason bout the program here
 
 Things old OO is good at
 
-* capturing state
-    * at write-time you create attributes in your class
-    * at maintain-time you only have one place to look to find out about
+- capturing state
+    - at write-time you create attributes in your class
+    - at maintain-time you only have one place to look to find out about
       everything that class does (hopefully!). this makes it easy to reason
       about
-    * easy questions " what state is associated with objects of this type?"
+    - easy questions " what state is associated with objects of this type?"
 
-* expression operations associated with that state
-    * these operations don't involve collaborators
-    * easy questions "what operations can be performed on the state?" easy
+- expression operations associated with that state
+    - these operations don't involve collaborators
+    - easy questions "what operations can be performed on the state?" easy
       because all the operations are in one place (the class). even if other
       parts of the system invoke the operation at runtime you can
-    * hard questions "who invokes these operations while the system is running?"
-            * hard because you potentially have to look at every other file in
-              the system
+    - hard questions "who invokes these operations while the system is
+      running?" \* hard because you potentially have to look at every other file
+      in the system
 
-  Things OO is bad at
-  * capturing interactions between objects
-  * hard questions "who the fuck calls my methods at runtime?"
-
+    Things OO is bad at
+    - capturing interactions between objects
+    - hard questions "who the fuck calls my methods at runtime?"
 
 After a while our models become bags of functionality that is vaguely related to
 the state in the model There isn't any one place in the system to look at the
@@ -36,42 +35,39 @@ code, going from method to method trying to infer what was intended based on
 method & variable names this is very hard esp if methods have a high complexity
 (large no. of possible paths through them)
 
-
 Downsides of DCI
-* we modify the class heirarchy at run time which means all the stuff ruby had
+
+- we modify the class heirarchy at run time which means all the stuff ruby had
   cached gets blown away def obj.method; end class << self; end extend
   define_method
 
-  arguments against it http://tonyarcieri.com/dci-in-ruby-is-completely-broken
-  (it kills method cache)
+    arguments against it http://tonyarcieri.com/dci-in-ruby-is-completely-broken
+    (it kills method cache)
 
 There are a few issues here
 
-* Is DCI a good idea? Probably
-* Is DCI just the Delegator pattern?
-* Can we do it in Ruby? Yes
-* Is it worth the downsides?
-
+- Is DCI a good idea? Probably
+- Is DCI just the Delegator pattern?
+- Can we do it in Ruby? Yes
+- Is it worth the downsides?
 
 DCI is about much more than just extending objects at runtime. It's about
 capturing the end user's mental model and reconstructing that into maintainable
 code. It's an outside → in approach, similar to BDD, where we regard the user
-interaction first and the data model second. 
+interaction first and the data model second.
 
 DCI is about more than code - it is a design process
 
-
 The flow of DCI (with movie methaphor stuff)
 
-* start with your user story (the tagline)
-* flesh it out into a use case (the script)
-    * the script has actors, scenarios start and end points, roles (actors are
+- start with your user story (the tagline)
+- flesh it out into a use case (the script)
+    - the script has actors, scenarios start and end points, roles (actors are
       taught to play these)
 
-DCI Paper 
-=========
+# DCI Paper
 
-* http://www.artima.com/articles/dci_visionP.html
+- http://www.artima.com/articles/dci_visionP.html
 
 OO was supposed to be about capturing mental models
 
@@ -80,49 +76,45 @@ use for the operation e.g. insert image into paragraph of text in Word but I'm
 not sure how much that can be solved by DCI
 
 In standard OO the algorightms (methods) are put iwht the objects they show the
-most affinity for.  This works fine for a single object but is a bit shit if the
+most affinity for. This works fine for a single object but is a bit shit if the
 algorithm involves many objects becase we have to split the algorightm across
 many objects
 
 Consider an Account class which has two abilities
+
 1. Decrease it's balance
 2. Widthdraw money
 
-Decreasing a balance is 
-    * a "characteristic of the data"
-    * "what it is"
-    * a stable operation D
+Decreasing a balance is _ a "characteristic of the data" _ "what it is" \* a
+stable operation D
 
-Performing a withdrawal is 
-    * "the purpose of the data"
-    * "what it does"
-    * a relatively unstable operation
-    * a behaviour of the **system** - it far outstrips any data model
+Performing a withdrawal is _ "the purpose of the data" _ "what it does" _ a
+relatively unstable operation _ a behaviour of the **system** - it far outstrips
+any data model
 
 The two abilities are very different when viewed from any of these prespectives
-* System architechture
-    * ???
-* Software engineering
-    * ???
-* Maintenance rate of change
+
+- System architechture
+    - ???
+- Software engineering
+    - ???
+- Maintenance rate of change
 
 Traditional OO lumps both abilities into the same bucket
 
-
-My objects should depend on objects that are more stable than them.  If all my
+My objects should depend on objects that are more stable than them. If all my
 objects are supposed to be stable where do I put the parts of the system that
 change?
 
 I know that there are parts of my system taht are stable (change infrequently)
-and parts that unstable.  A key decision I have to make when designing is where
+and parts that unstable. A key decision I have to make when designing is where
 to put the stable bits and where to put the unstable bits This implies that I
 should rate functionality based on it's stability when I am designing ???
 Traditional OO kind of forces you to put the stable and unstable bits together
 
-One approach to this problem in traditional OO is to use inheritance:
-    * Put the stable stuff in the parent
-    * Put the unstable stuff in the children This approach is the "open-closed
-      principle"
+One approach to this problem in traditional OO is to use inheritance: _ Put the
+stable stuff in the parent _ Put the unstable stuff in the children This
+approach is the "open-closed principle"
 
 This paper distinguishes between a class and an object "the class became the
 implementation tool for the analysis concept called an object" I think this
@@ -136,10 +128,9 @@ structure algorithm structure
 
 Consider the example of a SavingsAccount class it can certainly
 increase/decrease and report it's balance what happens when I want to add
-"withdrawals" to the system?  where do I put the logic?  I make some new objects
-to handle it and add some extra skills to SavingsAccount I would make a
-            * controller /withdrawal. It might coordinate the whole thing
-
+"withdrawals" to the system? where do I put the logic? I make some new objects
+to handle it and add some extra skills to SavingsAccount I would make a \*
+controller /withdrawal. It might coordinate the whole thing
 
 The paper makes the point that roles are how humans think about systems. I have
 a general model of what a funds transfer means in my head independant of what
@@ -149,39 +140,39 @@ Objects capture what objects are roles capbure collections of behaviours about
 what objects do The authors believe that roles are unfamiliar to us because our
 existing languages are miserable at expressing them
 
-
 We still do procedural decomposition when we are breaking down an algorightm!
-* In traditional OO we create boundaries to the decomposition along object lines
-    * Object boundaries also are used as boundaries for the data - this dual use
+
+- In traditional OO we create boundaries to the decomposition along object lines
+    - Object boundaries also are used as boundaries for the data - this dual use
       is confusing because we are forcing ourselves to break down our
       algorightms along the same boundaries we break down the data!!!
-    * In DCI we create boundaries along role lines
+    - In DCI we create boundaries along role lines
 
-Video 
-======
-
+# Video
 
 DCI shines when there is a sequence of operations
 
 Use cases
-* they must have a business goal at the end
+
+- they must have a business goal at the end
 
 They distinguish roles and classes almost as if roles existed in the sytem as a
-thing like classes ``` Role SourceAccount ...  end ```
+thing like classes `Role SourceAccount ...  end`
 
-having a business goal this the defining characteristic of a use-case!  A
-usecase = a collection of scenarios between objects that achieve a business goal
-in context Their design process generates "classes" and "roles"
-* event based operations = atomic operations without a goal
-* classes = good at modeling the domain objects and simple "event-based"
+having a business goal this the defining characteristic of a use-case! A usecase
+= a collection of scenarios between objects that achieve a business goal in
+context Their design process generates "classes" and "roles"
+
+- event based operations = atomic operations without a goal
+- classes = good at modeling the domain objects and simple "event-based"
   programming
-* roles = a collection of related responsibilities, good a modeling the use
+- roles = a collection of related responsibilities, good a modeling the use
   cases
-* algorightms = steps that represent sequencing steps imposed by the
+- algorightms = steps that represent sequencing steps imposed by the
   implementation
-    * the usecase can be a bit more vague that the final code in some areas e.g.
+    - the usecase can be a bit more vague that the final code in some areas e.g.
       which account initiates a transfer of funds
-* habits = common bits of action sequences that don't have a business goal, can
+- habits = common bits of action sequences that don't have a business goal, can
   be re-used in many use-cases. a use-case can contain habits
 
 Software only has value in its running, not when it is just sitting on the
@@ -195,7 +186,7 @@ programming
 
 Class composition --------------
 
-* The techniques we use in DCI are "class composition" - this is different to
+- The techniques we use in DCI are "class composition" - this is different to
   the "object composition that we are used to
 
 object composition = an object can hold references to other objects (to whom it
@@ -212,7 +203,7 @@ Ruby's #extend doesn't really do class composition (it does it on an instance by
 instance basis) but in other langs such as Scala it is achieved by real class
 composition - these "mixed in" modules are called traits in some languages
 
-``` Class MoneyTransfer def initialize(src, dst, amt) # these instance vars are
+````Class MoneyTransfer def initialize(src, dst, amt) # these instance vars are
 **roles** @source_acc = src @destination_acc = dst @amount = amt end end ```
 
 "contexts stack"
@@ -246,7 +237,7 @@ variations"
 
 Books - Peter Coad: he perhaps has some interesting ideas on this
 
-Trygve talk 
+Trygve talk
 ===========
 
 "Java is not object orientated, neither is Simula" WHen reading a program we
@@ -334,7 +325,7 @@ it in the small
 The difference between procedural and OO tinking
     * "this happens and then that happens and then the other happens"
 
-OO thinking: 
+OO thinking:
     * thinking about *who* does things "A does this and then B does that and
       then C does the other"
 
@@ -371,3 +362,4 @@ change you mind later
 
 
 Service objects are when you extract a controller code into a helper module.
+````

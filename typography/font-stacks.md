@@ -1,8 +1,8 @@
 # font stacks
 
-* http://www.awayback.com/revised-font-stack/
-* http://awesome-fontstacks.com/
-* http://georgebutler.com/blog/typography/10-definitive-web-font-stacks-for-designers/
+- http://www.awayback.com/revised-font-stack/
+- http://awesome-fontstacks.com/
+- http://georgebutler.com/blog/typography/10-definitive-web-font-stacks-for-designers/
 
 ## suggested by http://www.sitepoint.com/eight-definitive-font-stacks/
 
@@ -32,44 +32,107 @@ The monospace stack:
 	font-family: Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console", "Lucida Sans Typewriter", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Liberation Mono", "Nimbus Mono L", Monaco, "Courier New", Courier, monospace;
 ```
 
-A lot of fonts undergo name changes over the different operating systems, which is why I’ve listed them all; for example, Palatino, Palatino Linotype, Palladio, URW Palladio L, and Book Antiqua are all (more or less) the same font.
+A lot of fonts undergo name changes over the different operating systems, which
+is why I’ve listed them all; for example, Palatino, Palatino Linotype, Palladio,
+URW Palladio L, and Book Antiqua are all (more or less) the same font.
 
-Additionally, some thought has been put into which variants have a larger Unicode character family, and which then precede its cousin in its stack (kudos to my friend, Tommy Olsson for reminding me of this important font element).
-Klein states that this stack combines humanist typefaces – Frutiger, Calibri, Gill Sans, and Tahoma – and realist/classical typefaces such as Helvetica. He would separate the two, but it’s important for you to decide what’s best for your purpose; combining humanist and realist/classical typefaces might be suitable.
-
-
+Additionally, some thought has been put into which variants have a larger
+Unicode character family, and which then precede its cousin in its stack (kudos
+to my friend, Tommy Olsson for reminding me of this important font element).
+Klein states that this stack combines humanist typefaces – Frutiger, Calibri,
+Gill Sans, and Tahoma – and realist/classical typefaces such as Helvetica. He
+would separate the two, but it’s important for you to decide what’s best for
+your purpose; combining humanist and realist/classical typefaces might be
+suitable.
 
 ## http://css-tricks.com/snippets/css/font-stacks/
+
 ```css
 /* Times New Roman-based stack */
-font-family: Cambria, "Hoefler Text", Utopia, "Liberation Serif", "Nimbus Roman No9 L Regular", Times, "Times New Roman", serif;
+font-family:
+    Cambria, 'Hoefler Text', Utopia, 'Liberation Serif',
+    'Nimbus Roman No9 L Regular', Times, 'Times New Roman', serif;
 
 /* Modern Georgia-based serif stack */
-font-family: Constantia, "Lucida Bright", Lucidabright, "Lucida Serif", Lucida, "DejaVu Serif", "Bitstream Vera Serif", "Liberation Serif", Georgia, serif;
+font-family:
+    Constantia, 'Lucida Bright', Lucidabright, 'Lucida Serif', Lucida,
+    'DejaVu Serif', 'Bitstream Vera Serif', 'Liberation Serif', Georgia, serif;
 
 /* Traditional Garamond-based serif stack */
-font-family: "Palatino Linotype", Palatino, Palladio, "URW Palladio L", "Book Antiqua", Baskerville, "Bookman Old Style", "Bitstream Charter", "Nimbus Roman No9 L", Garamond, "Apple Garamond", "ITC Garamond Narrow", "New Century Schoolbook", "Century Schoolbook", "Century Schoolbook L", Georgia, serif;
+font-family:
+    'Palatino Linotype', Palatino, Palladio, 'URW Palladio L', 'Book Antiqua',
+    Baskerville, 'Bookman Old Style', 'Bitstream Charter', 'Nimbus Roman No9 L',
+    Garamond, 'Apple Garamond', 'ITC Garamond Narrow', 'New Century Schoolbook',
+    'Century Schoolbook', 'Century Schoolbook L', Georgia, serif;
 
 /* Helvetica/Arial-based sans serif stack */
-font-family: Frutiger, "Frutiger Linotype", Univers, Calibri, "Gill Sans", "Gill Sans MT", "Myriad Pro", Myriad, "DejaVu Sans Condensed", "Liberation Sans", "Nimbus Sans L", Tahoma, Geneva, "Helvetica Neue", Helvetica, Arial, sans serif;
+font-family:
+    Frutiger,
+    'Frutiger Linotype',
+    Univers,
+    Calibri,
+    'Gill Sans',
+    'Gill Sans MT',
+    'Myriad Pro',
+    Myriad,
+    'DejaVu Sans Condensed',
+    'Liberation Sans',
+    'Nimbus Sans L',
+    Tahoma,
+    Geneva,
+    'Helvetica Neue',
+    Helvetica,
+    Arial,
+    sans serif;
 
 /* Verdana-based sans serif stack */
-font-family: Corbel, "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", "DejaVu Sans", "Bitstream Vera Sans", "Liberation Sans", Verdana, "Verdana Ref", sans serif;
+font-family:
+    Corbel,
+    'Lucida Grande',
+    'Lucida Sans Unicode',
+    'Lucida Sans',
+    'DejaVu Sans',
+    'Bitstream Vera Sans',
+    'Liberation Sans',
+    Verdana,
+    'Verdana Ref',
+    sans serif;
 
 /* Trebuchet-based sans serif stack */
-font-family: "Segoe UI", Candara, "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans serif;
+font-family:
+    'Segoe UI',
+    Candara,
+    'Bitstream Vera Sans',
+    'DejaVu Sans',
+    'Bitstream Vera Sans',
+    'Trebuchet MS',
+    Verdana,
+    'Verdana Ref',
+    sans serif;
 /* Impact-based sans serif stack */
-font-family: Impact, Haettenschweiler, "Franklin Gothic Bold", Charcoal, "Helvetica Inserat", "Bitstream Vera Sans Bold", "Arial Black", sans serif;
+font-family:
+    Impact,
+    Haettenschweiler,
+    'Franklin Gothic Bold',
+    Charcoal,
+    'Helvetica Inserat',
+    'Bitstream Vera Sans Bold',
+    'Arial Black',
+    sans serif;
 
 /* Monospace stack */
-font-family: Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console", "Lucida Sans Typewriter", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Liberation Mono", "Nimbus Mono L", Monaco, "Courier New", Courier, monospace;
+font-family:
+    Consolas, 'Andale Mono WT', 'Andale Mono', 'Lucida Console',
+    'Lucida Sans Typewriter', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono',
+    'Liberation Mono', 'Nimbus Mono L', Monaco, 'Courier New', Courier,
+    monospace;
 ```
 
 ## suggested by unit interactive
 
-	http://unitinteractive.com/blog/2008/06/26/better-css-font-stacks/
-	p – balanced for paragraphs or body copy
-	t – balanced for headlines or titles
+    http://unitinteractive.com/blog/2008/06/26/better-css-font-stacks/
+    p – balanced for paragraphs or body copy
+    t – balanced for headlines or titles
 
 ```
 Arial, “Helvetica Neue”, Helvetica, sans-serif - p, t

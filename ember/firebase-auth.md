@@ -1,6 +1,5 @@
-
-Not part of emberfire yet
-    discussed https://github.com/firebase/emberfire/issues/12
+Not part of emberfire yet discussed
+https://github.com/firebase/emberfire/issues/12
 
 some gists of sample implementations:
 

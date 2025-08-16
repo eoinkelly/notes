@@ -2,48 +2,58 @@
 
 Sources
 
-* https://lucene.apache.org/core/9_4_2/core/org/apache/lucene/codecs/lucene94/package-summary.html
+- https://lucene.apache.org/core/9_4_2/core/org/apache/lucene/codecs/lucene94/package-summary.html
 
 Overview
 
-* Terminology
-  * term = a tuple `(field_name, sequence_of_bytes)`
-  * field = **named** sequence of terms
-  * document = sequence of fields
-  * index = sequence of documents
-* Lucene stores:
-  1. terms
-  2. statistics about the terms e.g. which documents include the term, where in the doc the term appears
-* Terms are stored with the field name so the same word appearing in different fields is not considered the same term e.g. if both `title` and `body` contain the word `hello`, Lucene will store separate `hello` terms for each field
-* Lucene has two ways of saving a field:
-  1. A _Stored_ field
-    * the text is stored literally (not inverted)
-  2. An _Indexed_ field
-    * The data in the field is stored inverted
-    * the raw field value is tokenized and stored as terms.
-    * sometimes tokenization does nothing and emits just the raw value e.g. you would do this for an ID field
-* The same field can (and often is) stored as both _stored_ and _indexed_.
-* A lucene index:
-  * a directory of files
-  * the format of the files often changes between Lucene versions
-  * may be composed of multiple sub-indexes, or **segments**.
-  * Each segment is a fully independent index, which could be searched separately.
-  * Lucene evolves the index over time as data is added and removed.
-    * Additions will eventually require adding new segments
-    * removals create gaps which are revolved by merging existing segments
-  * There are multiple Segments in an Index
-  * A search can happen across multiple Indexes
-  * In dockerized ES the data is stored in `/usr/share/elasticsearch/data/nodes/0/indices/<uuid_of_index>`
-  * You can force merge segments
-* Document number
-  * Lucene refers to documents by an **integer** document number (starting at 0 and incrementing by 1)
-  * Segments are allocated a range of document numbers
-  * The document number is unique within the Segement (not within the index)
-  * The segment has a base number which is added to the document number to create an external number
-  * A document's number can change over time e.g. when segements are merged
-* Deleted documents are not dropped until segments are merged!
-* All files which belong to a Segment have the same name (w. different extensions)
-* The files stored on disk are serializations of the data structures (implemented as Java classes) that Lucene uses
+- Terminology
+    - term = a tuple `(field_name, sequence_of_bytes)`
+    - field = **named** sequence of terms
+    - document = sequence of fields
+    - index = sequence of documents
+- Lucene stores:
+    1. terms
+    2. statistics about the terms e.g. which documents include the term, where
+       in the doc the term appears
+- Terms are stored with the field name so the same word appearing in different
+  fields is not considered the same term e.g. if both `title` and `body` contain
+  the word `hello`, Lucene will store separate `hello` terms for each field
+- Lucene has two ways of saving a field:
+    1. A _Stored_ field
+    - the text is stored literally (not inverted)
+    2. An _Indexed_ field
+    - The data in the field is stored inverted
+    - the raw field value is tokenized and stored as terms.
+    - sometimes tokenization does nothing and emits just the raw value e.g. you
+      would do this for an ID field
+- The same field can (and often is) stored as both _stored_ and _indexed_.
+- A lucene index:
+    - a directory of files
+    - the format of the files often changes between Lucene versions
+    - may be composed of multiple sub-indexes, or **segments**.
+    - Each segment is a fully independent index, which could be searched
+      separately.
+    - Lucene evolves the index over time as data is added and removed.
+        - Additions will eventually require adding new segments
+        - removals create gaps which are revolved by merging existing segments
+    - There are multiple Segments in an Index
+    - A search can happen across multiple Indexes
+    - In dockerized ES the data is stored in
+      `/usr/share/elasticsearch/data/nodes/0/indices/<uuid_of_index>`
+    - You can force merge segments
+- Document number
+    - Lucene refers to documents by an **integer** document number (starting at
+      0 and incrementing by 1)
+    - Segments are allocated a range of document numbers
+    - The document number is unique within the Segement (not within the index)
+    - The segment has a base number which is added to the document number to
+      create an external number
+    - A document's number can change over time e.g. when segements are merged
+- Deleted documents are not dropped until segments are merged!
+- All files which belong to a Segment have the same name (w. different
+  extensions)
+- The files stored on disk are serializations of the data structures
+  (implemented as Java classes) that Lucene uses
 
 ```bash
 $ ls -lh /usr/share/elasticsearch/data/nodes/0/indices/sTDG86UlQB6JWj2NrmaX5Q/0/index
@@ -146,26 +156,36 @@ becomes something like the following terms
 
 q: how does lucene work?
 
+- term = a tuple `(field_name, sequence_of_bytes)`
+- field = **named** sequence of terms
+- document = sequence of fields
+- index = sequence of documents
+- Lucene stores:
+    1. terms
+    2. statistics about the terms e.g. which documents include the term, where
+       in the doc the term appears
+- Terms are stored with the field name so the same word appearing in different
+  fields is not considered the same term e.g. if both `title` and `body` contain
+  the word `hello`, Lucene will store separate `hello` terms for each field
+- Lucene has two ways of saving a field:
+    1. A _Stored_ field
+    - the text is stored literally (not inverted)
+    2. An _Indexed_ field
+    - The data in the field is stored inverted
+    - the raw field value is tokenized and stored as terms.
+    - sometimes tokenization does nothing and emits just the raw value e.g. you
+      would do this for an ID field
+- The same field can (and often is) stored as both _stored_ and _indexed_.
 
-  * term = a tuple `(field_name, sequence_of_bytes)`
-  * field = **named** sequence of terms
-  * document = sequence of fields
-  * index = sequence of documents
-* Lucene stores:
-  1. terms
-  2. statistics about the terms e.g. which documents include the term, where in the doc the term appears
-* Terms are stored with the field name so the same word appearing in different fields is not considered the same term e.g. if both `title` and `body` contain the word `hello`, Lucene will store separate `hello` terms for each field
-* Lucene has two ways of saving a field:
-  1. A _Stored_ field
-    * the text is stored literally (not inverted)
-  2. An _Indexed_ field
-    * The data in the field is stored inverted
-    * the raw field value is tokenized and stored as terms.
-    * sometimes tokenization does nothing and emits just the raw value e.g. you would do this for an ID field
-* The same field can (and often is) stored as both _stored_ and _indexed_.
+In Elasticsearch, all document scores are positive 32-bit floating point
+numbers.
 
-In Elasticsearch, all document scores are positive 32-bit floating point numbers.
+"The quality of a search is typically described using precision and recall
+metrics. Recall measures how well the search system finds relevant documents;
+precision measures how well the system filters out the irrelevant documents"
 
-"The quality of a search is typically described using precision and recall metrics. Recall measures how well the search system finds relevant documents; precision measures how well the system filters out the irrelevant documents"
-
-"Nearly all search engines, including Lucene, automatically statically boost fields that are shorter over fields that are longer. Intuitively this makes sense: if you match a word or two in a very long document, it’s quite a bit less relevant than matching the same words in a document that’s, say, three or four words long"
+"Nearly all search engines, including Lucene, automatically statically boost
+fields that are shorter over fields that are longer. Intuitively this makes
+sense: if you match a word or two in a very long document, it’s quite a bit less
+relevant than matching the same words in a document that’s, say, three or four
+words long"

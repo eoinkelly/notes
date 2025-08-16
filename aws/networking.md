@@ -13,5 +13,3 @@ Common patterns
 
 1. NAT Gateways
 2. Bastion hosts
-
-

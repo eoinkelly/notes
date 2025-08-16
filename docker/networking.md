@@ -9,6 +9,7 @@ NETWORK ID          NAME                DRIVER              SCOPE
 a92c5404e7b9        host                host                local
 9ff818afc86f        none                null                local
 ```
+
 When you install docker it creates a network called `bridge`
 
 ```
@@ -30,13 +31,14 @@ bridge0: flags=8863<UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST> mtu 1500
 Docker creates 3 networks by default
 
 1. bridge
-    * `docker run ... --network=bridge ...` (or omit `--network=...` entirely)
-    * containers join this by default
-    * is the `docker0` network interface on the host `ip addr show` to inspect
+    - `docker run ... --network=bridge ...` (or omit `--network=...` entirely)
+    - containers join this by default
+    - is the `docker0` network interface on the host `ip addr show` to inspect
 1. none
-    * `docker run ... --network=none ...`
-    * any container you add to this network will not have a network inferface (`ifconfig` will show loopback only)
+    - `docker run ... --network=none ...`
+    - any container you add to this network will not have a network inferface
+      (`ifconfig` will show loopback only)
 1. host
-    * `docker run ... --network=host ...`
-    * adds the container to the hosts networking stack
-    * no network isolation between container and host machine
+    - `docker run ... --network=host ...`
+    - adds the container to the hosts networking stack
+    - no network isolation between container and host machine

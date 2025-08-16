@@ -9,28 +9,27 @@
 // In this formulation, repeat takes on values from 9 -> 0 within the loop and the final test sets its value to -1 for the rest of the function.
 
 var repeat = 10;
-while (repeat--) { // test truthyness, then subtract 1
-	console.log('repeat: ' + repeat);
+while (repeat--) {
+  // test truthyness, then subtract 1
+  console.log('repeat: ' + repeat);
 }
 // repeat = -1 from here on
 
-
 // In this formulation, repeat takes on values from 9 --> 1 - WATCH OUT this does not loop 10 times
 var repeat = 10;
-while (--repeat) { // subtract 1, then test truthyness
-	console.log('repeat: ' + repeat);
+while (--repeat) {
+  // subtract 1, then test truthyness
+  console.log('repeat: ' + repeat);
 }
 // repeat = 0 from here on
-
 
 // This behaves identically to --repeat, only loops 9 times !!!
 var repeat = 10;
-while ((repeat -= 1)) { // subtract 1, then test for truthyness
-	console.log('repeat: ' + repeat);
+while ((repeat -= 1)) {
+  // subtract 1, then test for truthyness
+  console.log('repeat: ' + repeat);
 }
 // repeat = 0 from here on
-
-
 
 /*
 for ([initialization]; [condition]; [final-expression])
@@ -72,7 +71,7 @@ the execution path for a loop that goes through 3 iterations is
 var repeat = 10;
 var i;
 for (i = repeat; i > 0; i -= 1) {
-	console.log('i: ' + i);
+  console.log('i: ' + i);
 }
 // i = 0 for the rest of the code in this function
 
@@ -82,17 +81,9 @@ for (i = repeat; i > 0; i -= 1) {
 var repeat = 9;
 var i;
 for (i = repeat; i >= 0; i -= 1) {
-	console.log('i: ' + i);
+  console.log('i: ' + i);
 }
 // i = 0 for the rest of the code in this function
-
-
-
-
-
-
-
-
 
 // Looping & Counting (looping X times & having a variable to know which iteration you are on, either 0 or 1 based counting)
 // ------------------------------------------------------------
@@ -102,6 +93,6 @@ for (i = repeat; i >= 0; i -= 1) {
 // finished.
 var j, maxValue;
 for (j = 1; j <= maxValue; j += 1) {
-	console.log('hello');
+  console.log('hello');
 }
 // j = maxValue for rest of code in this function

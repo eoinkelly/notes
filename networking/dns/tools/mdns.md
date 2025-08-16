@@ -1,12 +1,12 @@
 # mdns (.local addresses)
 
-* uses port 5353
-* multicast DNS (mDNS) protocol resolves hostnames to IP addresses within small
+- uses port 5353
+- multicast DNS (mDNS) protocol resolves hostnames to IP addresses within small
   networks that do not include a local name server.
-* It is a zero-configuration service, using essentially the same programming
+- It is a zero-configuration service, using essentially the same programming
   interfaces, packet formats and operating semantics as unicast Domain Name
   Service (DNS).
-* It was designed to work as either a stand-alone protocol or compatibly with
+- It was designed to work as either a stand-alone protocol or compatibly with
   standard DNS servers
 
 Implemented by
@@ -18,10 +18,12 @@ Implemented by
 
 Can work with DNS-SD (DNS Service Discovery) which is a companion protocol
 
-1. Querying machine sends an IP multicast quer asking the host with that name to identify itself
+1. Querying machine sends an IP multicast quer asking the host with that name to
+   identify itself
 1. Target machine then multicasts a message that includes it's IP address
 1. All machines within hearing can update their mDNS caches
-1. A host can relinquish it's claim on a name by sending a response with a TTL of 0
+1. A host can relinquish it's claim on a name by sending a response with a TTL
+   of 0
 
 By default it exclusively resolves hostnames ending with `.local`
 
@@ -35,7 +37,6 @@ publisher of mDNS information. mDNSResponder monitors multicast traffic on port
 5353, the mDNS port, to keep track of services advertised on the local network.
 mDNSResponder performs DNS resolution for non-local queries, and resolves
 queries in the special '.local' domain using mDNS.
-
 
     _<thing>._tcp.local seems to be a common address pattern
 

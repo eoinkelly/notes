@@ -31,9 +31,10 @@ poetry export | poetry run safety check --stdin
 
 ## Useful VSCode extensions for Python
 
-* https://marketplace.visualstudio.com/items?itemName=ms-python.python
-* https://marketplace.visualstudio.com/items?itemName=ms-python.black-formatter
-    * You need to configure it manually in your vscode settings
-    * Bundles black so it might not be exactly the same version as you run on CLI
-* https://marketplace.visualstudio.com/items?itemName=ms-python.mypy-type-checker
-    * Bundles mypy so it might not be exactly the same version as you run on CLI
+- https://marketplace.visualstudio.com/items?itemName=ms-python.python
+- https://marketplace.visualstudio.com/items?itemName=ms-python.black-formatter
+    - You need to configure it manually in your vscode settings
+    - Bundles black so it might not be exactly the same version as you run on
+      CLI
+- https://marketplace.visualstudio.com/items?itemName=ms-python.mypy-type-checker
+    - Bundles mypy so it might not be exactly the same version as you run on CLI

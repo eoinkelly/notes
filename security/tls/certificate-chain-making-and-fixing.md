@@ -2,21 +2,25 @@
 
 ## I have my_common_name.crt, how do I create a chain?
 
-Good tutorial: https://medium.com/@superseb/get-your-certificate-chain-right-4b117a9c0fce
+Good tutorial:
+https://medium.com/@superseb/get-your-certificate-chain-right-4b117a9c0fce
 
 https://certificatechain.io/ seems like a useful automatic way to do it
 
 Create a bundle of certs for your server which has the full chain so browsers
 can work their way back to their trusted root certs.
 
-NB: Always test certificates using `curl` or similiar (browsers will fill in gaps in chain with AIA and hide problems from you)
+NB: Always test certificates using `curl` or similiar (browsers will fill in
+gaps in chain with AIA and hide problems from you)
 
-* A certificate chain is just a concatenation of multiple CRT files
-* a chain is joined on Issuer-in-child-cert --> Subject-in-signing-cert
+- A certificate chain is just a concatenation of multiple CRT files
+- a chain is joined on Issuer-in-child-cert --> Subject-in-signing-cert
 
 Steps
 
-Follow https://medium.com/@superseb/get-your-certificate-chain-right-4b117a9c0fce for details
+Follow
+https://medium.com/@superseb/get-your-certificate-chain-right-4b117a9c0fce for
+details
 
 1. Fet the certificate of the CA that signed your cert
 2. Get the certs for any intermediate CAs
@@ -30,17 +34,21 @@ cat your_domain_name.crt DigiCertCA.crt >> bundle.crt
 
 https://security.stackexchange.com/questions/64415/how-are-browsers-able-to-find-and-construct-an-alternate-trusted-chain-path
 
-Browsers can handle missing intermediate certs but other software cannot. Why? What do browsers do?
+Browsers can handle missing intermediate certs but other software cannot. Why?
+What do browsers do?
 
 1. Cache intermediate certs
-2. Certificates have an _Authority Information Access (AIA)_ extension section which contains the URL of the issuing authority. Browsers will follow this if required.
+2. Certificates have an _Authority Information Access (AIA)_ extension section
+   which contains the URL of the issuing authority. Browsers will follow this if
+   required.
 
 ## Diagnosing a broken chain
 
-* Option 1: Use a website
-    * https://www.sslshopper.com/ssl-checker.html
-    * ++ easy to interpret output
-* Option 2: Use OpenSSL
+- Option 1: Use a website
+    - https://www.sslshopper.com/ssl-checker.html
+    - ++ easy to interpret output
+- Option 2: Use OpenSSL
+
     ```bash
     # you must run all this on the box which will be the client
 
@@ -54,8 +62,8 @@ Browsers can handle missing intermediate certs but other software cannot. Why? W
 
 ## Task: verify a certificate chain
 
-Given a `.cer` file containing a chain of certificates for a site, show that this machine can can verify them using it's built-in certificate store
-
+Given a `.cer` file containing a chain of certificates for a site, show that
+this machine can can verify them using it's built-in certificate store
 
 ```
 # First split the file into multiple .cer files each with a single cert

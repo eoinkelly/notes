@@ -1,5 +1,5 @@
 // it seems test files are not modules but are commonjs?
-import mainThing, {foo, greeting} from './foo.js'
+import mainThing, { foo, greeting } from './foo.js';
 
 test('some test', () => {
   console.log('default import:', mainThing());

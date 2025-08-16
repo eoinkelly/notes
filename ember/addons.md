@@ -1,12 +1,9 @@
-
-An addon is an npm package. It may install bower packages but it *is* the npm package.
-
+An addon is an npm package. It may install bower packages but it _is_ the npm
+package.
 
 addons install bower by ??
 
 addons can create generators
-
-
 
 ```
 ember addon my-awesome-addon
@@ -28,7 +25,8 @@ ember addon my-awesome-addon
         * it means you can move files around within your addon wihtout breaking apps
 ```
 
-
 You can add npm and bower packages to the project
 
-You can add commands e.g. `ember dostuff` - this is used by deployment environments e.g. a heroku addon might add a bunch of commands that heroku knows how to run.
+You can add commands e.g. `ember dostuff` - this is used by deployment
+environments e.g. a heroku addon might add a bunch of commands that heroku knows
+how to run.

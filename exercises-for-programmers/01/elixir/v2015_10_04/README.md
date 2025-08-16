@@ -11,4 +11,3 @@ $ mix escript.build
 ```
 
 # 2. Mix task
-

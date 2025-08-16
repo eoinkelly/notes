@@ -15,7 +15,6 @@ The key-hash is stored in the app's "android settings" on facebook.com
 There is also a key-hash in your facebook developer profile but I think this is
 just for the sample facebook android app.
 
-
 # To generate a key-hash
 
 Use
@@ -29,4 +28,3 @@ keytool -exportcert -alias androiddebugkey -keystore ~/.android/debug.keystore |
 WARNING: you must specify the correct alias for the key in a keystore when
 generating the key or the output will be incorrect. Unfortunately you will
 receive no indication that something is wrong!
-

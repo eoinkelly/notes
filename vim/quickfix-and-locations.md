@@ -3,18 +3,19 @@
 Vim associates two "lists" with each open window
 
 1. Quickfix List
-    * shared between all windows
+    - shared between all windows
 1. Location list
-    * each window has a separate location list
+    - each window has a separate location list
 
 The key to productive use of these lists is to learn to navigate through the
 lists without changing to the window that opens
 
 ## Quickfix list
 
-* Vim allows you to compile your program with an external tool and capture the output while staying in vim
-* it puts the compiler output into the "quickfix" window
-* The vim quickfix list is tied to the vim `:make` command
+- Vim allows you to compile your program with an external tool and capture the
+  output while staying in vim
+- it puts the compiler output into the "quickfix" window
+- The vim quickfix list is tied to the vim `:make` command
 
 you can control what program gets called by :make with
 
@@ -33,7 +34,6 @@ Commands
     :clist  # show only lines with file and line numbers
     :clist! # show all lines
 
-
 Vim remembers the output of the previous 10 runs of the `make` program
 
     :colder # see an older run of the `:make` program
@@ -41,4 +41,5 @@ Vim remembers the output of the previous 10 runs of the `make` program
 
 # Location list
 
-Uses same commands as quickfix list except prefix with l not c e.g. `:lopen`, `:cnext`
+Uses same commands as quickfix list except prefix with l not c e.g. `:lopen`,
+`:cnext`

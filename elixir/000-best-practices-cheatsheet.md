@@ -1,4 +1,3 @@
-
 ```
 # change iex prompt to you can copy paste to doctests without faffing with the prompt
 IEx.configure(default_prompt: "%prefix>")

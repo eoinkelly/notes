@@ -10,4 +10,4 @@ $ config path
 
 shadowed commands
 
-* open
+- open

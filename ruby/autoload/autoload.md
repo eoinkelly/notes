@@ -1,11 +1,12 @@
 # Module#autoload
 
-* also available as `Kernel#autoload` (i.e. bare `autoload`)
-* lets defer loading a file with `require` until it is actually used by the running code
-* good for situations where
-    * you have **many** ruby files
-    * not all of them are necessary for every run of the program
-    * parsing them all at program start would slow things down e.g. Rails
+- also available as `Kernel#autoload` (i.e. bare `autoload`)
+- lets defer loading a file with `require` until it is actually used by the
+  running code
+- good for situations where
+    - you have **many** ruby files
+    - not all of them are necessary for every run of the program
+    - parsing them all at program start would slow things down e.g. Rails
 
 ### Example
 

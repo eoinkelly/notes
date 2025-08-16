@@ -1,19 +1,22 @@
 # What is a unix socket?
 
-* represented by a file on disk
-* data does not flow through that file
-* allow communication between processes on the same host system
-* two flavours
+- represented by a file on disk
+- data does not flow through that file
+- allow communication between processes on the same host system
+- two flavours
     1. stream (stream UDS or TCP)
     1. datagram (datagram UDS or UDP)
-* access is controlled via file permissions
-* a socket address takes the form of a pathname **but** IO on the socket does not involve any operations on the underlying filesystem
-* sockets on a system can be configured via parameters under `/proc/sys/net/core/`
-* a socket may be bound to only one pathname and a pathname can only be bound to one socket
-    * socket pathnames should be absolute - otherwise the listener has to know your cwd to be able to figure out what path to use
-* `socketpair()` used to create a pair of _connected_ unix domain sockets
-* `bind()` actually creates the socket entry in the filesystem
-
+- access is controlled via file permissions
+- a socket address takes the form of a pathname **but** IO on the socket does
+  not involve any operations on the underlying filesystem
+- sockets on a system can be configured via parameters under
+  `/proc/sys/net/core/`
+- a socket may be bound to only one pathname and a pathname can only be bound to
+  one socket
+    - socket pathnames should be absolute - otherwise the listener has to know
+      your cwd to be able to figure out what path to use
+- `socketpair()` used to create a pair of _connected_ unix domain sockets
+- `bind()` actually creates the socket entry in the filesystem
 
 `man 7 socket` contains description of the options
 
@@ -91,7 +94,8 @@ if (bind(sfd, (struct sockaddr *) &addr, sizeof(struct sockaddr_un)) == -1)
 
 ## Socket docs
 
-* you use the same functions for TCP, UDP and unix domain sockets - the socket struct is what tells the function which kind you are using
+- you use the same functions for TCP, UDP and unix domain sockets - the socket
+  struct is what tells the function which kind you are using
 
 ```
 # overview
@@ -158,18 +162,26 @@ events via poll(2) or select(2)
 
 See `socket(7)`
 
-* option values are usually pointers to `int`
-* options are documented in `man 7 socket` http://man7.org/linux/man-pages/man7/socket.7.html
+- option values are usually pointers to `int`
+- options are documented in `man 7 socket`
+  http://man7.org/linux/man-pages/man7/socket.7.html
 
 ### backlog
 
-* the baclog is a parameter to `listen(2)`
+- the baclog is a parameter to `listen(2)`
 
 from listen(2):
 
-* The backlog argument defines the maximum length to which the queue of pending connections for sockfd may grow.
-* If a connection request arrives when the queue is full, the client may receive an error with an indication of ECONNREFUSED or, if the underlying protocol supports retransmission, the request may be ignored so that a later reattempt at connection succeeds.
-* If the backlog argument is greater than the value in `/proc/sys/net/core/somaxconn`, then it is silently truncated to that value; the default value in this file is 128.  In kernels before 2.4.25, this limit was a hard coded value, SOMAXCONN, with the value 128.
+- The backlog argument defines the maximum length to which the queue of pending
+  connections for sockfd may grow.
+- If a connection request arrives when the queue is full, the client may receive
+  an error with an indication of ECONNREFUSED or, if the underlying protocol
+  supports retransmission, the request may be ignored so that a later reattempt
+  at connection succeeds.
+- If the backlog argument is greater than the value in
+  `/proc/sys/net/core/somaxconn`, then it is silently truncated to that value;
+  the default value in this file is 128. In kernels before 2.4.25, this limit
+  was a hard coded value, SOMAXCONN, with the value 128.
 
 ```
 # on AWS t2.medium
@@ -177,19 +189,20 @@ $ cat /proc/sys/net/core/somaxconn
 128
 ```
 
-> Note: with the Linux kernel, the net.core.somaxconn sysctl defaults to 128, capping this value to 128. Raising the sysctl allows a larger backlog (which may not be desirable with multiple, load-balanced machines)
+> Note: with the Linux kernel, the net.core.somaxconn sysctl defaults to 128,
+> capping this value to 128. Raising the sysctl allows a larger backlog (which
+> may not be desirable with multiple, load-balanced machines)
 
 QUESTION: should i raise this value?
 
 ### SO_SNDBUF
 
-Sets or gets the maximum socket send buffer in bytes.  The
-kernel doubles this value (to allow space for bookkeeping
-overhead) when it is set using setsockopt(2), and this doubled
-value is returned by getsockopt(2).  The default value is set
-by the /proc/sys/net/core/wmem_default file and the maximum
-allowed value is set by the /proc/sys/net/core/wmem_max file.
-The minimum (doubled) value for this option is 2048.
+Sets or gets the maximum socket send buffer in bytes. The kernel doubles this
+value (to allow space for bookkeeping overhead) when it is set using
+setsockopt(2), and this doubled value is returned by getsockopt(2). The default
+value is set by the /proc/sys/net/core/wmem_default file and the maximum allowed
+value is set by the /proc/sys/net/core/wmem_max file. The minimum (doubled)
+value for this option is 2048.
 
 ```
 # example on AWS t2.medium (212992 bytes = 208 KB)
@@ -203,16 +216,14 @@ Linux assumes that half of the send/receive buffer is used for internal kernel
 structures; thus the values in the corresponding /proc files are twice what can
 be observed on the wire.
 
-
 ### SO_RCVBUF
 
-Sets or gets the maximum socket receive buffer in bytes.  The
-kernel doubles this value (to allow space for bookkeeping
-overhead) when it is set using setsockopt(2), and this doubled
-value is returned by getsockopt(2).  The default value is set
-by the /proc/sys/net/core/rmem_default file, and the maximum
-allowed value is set by the /proc/sys/net/core/rmem_max file.
-The minimum (doubled) value for this option is 256.
+Sets or gets the maximum socket receive buffer in bytes. The kernel doubles this
+value (to allow space for bookkeeping overhead) when it is set using
+setsockopt(2), and this doubled value is returned by getsockopt(2). The default
+value is set by the /proc/sys/net/core/rmem_default file, and the maximum
+allowed value is set by the /proc/sys/net/core/rmem_max file. The minimum
+(doubled) value for this option is 256.
 
 ```
 # example on AWS t2.medium (212992 bytes = 208 KB)
@@ -228,35 +239,44 @@ be observed on the wire.
 
 # Performance of a unix socket vs TCP socket?
 
-It seems that TCP sockets over loopback are slower than unix domain sockets because TCP has extra congestion control and overhead (SYN, SYN ACK etc.) but the difference only matters when the throughput is high.
+It seems that TCP sockets over loopback are slower than unix domain sockets
+because TCP has extra congestion control and overhead (SYN, SYN ACK etc.) but
+the difference only matters when the throughput is high.
 
-Loopback TCP sockets have no special knowledge of being on the same machine. UDS sockets assume they are on the same machine.
+Loopback TCP sockets have no special knowledge of being on the same machine. UDS
+sockets assume they are on the same machine.
 
 Overhead that TCP sockets have that UDS do not:
 
-* checksums
-* flow control at IP level
-* SYN, SYN ACK, RST packets etc.
-* breaking data into MTU sized datagrams
+- checksums
+- flow control at IP level
+- SYN, SYN ACK, RST packets etc.
+- breaking data into MTU sized datagrams
 
 References
 
-* https://redis.io/topics/benchmarks
-* https://lists.freebsd.org/pipermail/freebsd-performance/2005-February/001143.html
+- https://redis.io/topics/benchmarks
+- https://lists.freebsd.org/pipermail/freebsd-performance/2005-February/001143.html
 
 # Tuning Unicorn's unix domain socket
 
 From https://bogomips.org/unicorn/TUNING.html
 
-> If you're doing extremely simple benchmarks and getting connection errors under high request rates, increasing your :backlog parameter above the already-generous default of 1024 can help avoid connection errors. Keep in mind this is not recommended for real traffic if you have another machine to failover to (see above).
+> If you're doing extremely simple benchmarks and getting connection errors
+> under high request rates, increasing your :backlog parameter above the
+> already-generous default of 1024 can help avoid connection errors. Keep in
+> mind this is not recommended for real traffic if you have another machine to
+> failover to (see above).
 >
-> For load testing/benchmarking with UNIX domain sockets, you should consider increasing net.core.somaxconn or else nginx will start failing to connect under heavy load. You may also consider setting a higher :backlog to listen on as noted earlier.
+> For load testing/benchmarking with UNIX domain sockets, you should consider
+> increasing net.core.somaxconn or else nginx will start failing to connect
+> under heavy load. You may also consider setting a higher :backlog to listen on
+> as noted earlier.
 
-Unicorn defaults to asking for a backlog of `1024` but by default the Kernel will cap it at 128 unless you raise `maxsoconn`
-
+Unicorn defaults to asking for a backlog of `1024` but by default the Kernel
+will cap it at 128 unless you raise `maxsoconn`
 
 ```
 $ sudo sysctl net.core.somaxconn
 net.core.somaxconn = 128
 ```
-

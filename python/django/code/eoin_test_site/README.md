@@ -1,5 +1,3 @@
-
-
 Note: `django-admin` doesn't create a README
 
 ## command record for starting this app

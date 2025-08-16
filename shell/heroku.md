@@ -17,7 +17,6 @@ heroku config # show the config on server
 
 ## migrating a database from one heroku to another
 
-
 1. Option: Copy all data to local pg_dump file via pg_dump
 1. Option: Copy all data to local pg_dump file via heroku command line tool
 1. Option: Copy all data directly from one heroku db to another

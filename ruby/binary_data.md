@@ -2,23 +2,32 @@
 
 ## Encodings
 
-* Every string in ruby has an associated encoding (view it via `str.encoding`)
-* Understanding encodings is foundational knowledge for handling binary data in ruby
-* All Ruby script code has an associated Encoding which any String literal created in the source code will be associated to.
-    * the default encoding of source files (and therefore string literals) changed in Ruby 2.0 from US-ASCII to UTF-8.
-    * you can see the currently active encoding via the `__ENCODING__` constant
-    * the default encoding can be changed by a magic comment on the first line of the source code file (or second line, if there is a shebang line on the first).
+- Every string in ruby has an associated encoding (view it via `str.encoding`)
+- Understanding encodings is foundational knowledge for handling binary data in
+  ruby
+- All Ruby script code has an associated Encoding which any String literal
+  created in the source code will be associated to.
+    - the default encoding of source files (and therefore string literals)
+      changed in Ruby 2.0 from US-ASCII to UTF-8.
+    - you can see the currently active encoding via the `__ENCODING__` constant
+    - the default encoding can be changed by a magic comment on the first line
+      of the source code file (or second line, if there is a shebang line on the
+      first).
+
     ```ruby
     # encoding: UTF-8
 
     # the magic comment above makes all string literals created in this file use that encoding
     "some string".encoding #=> #<Encoding:UTF-8>
     ```
-* IMPORTANT: strings that represent binary data should have the `Encoding::ASCII_8BIT` encoding
-* `Encoding::ASCII_8BIT` is a special encoding that is usually used for a byte string, not a character string.
 
-There are three ways to make an `Encoding::ASCII_8BIT` encoded string literal
-in ruby:
+- IMPORTANT: strings that represent binary data should have the
+  `Encoding::ASCII_8BIT` encoding
+- `Encoding::ASCII_8BIT` is a special encoding that is usually used for a byte
+  string, not a character string.
+
+There are three ways to make an `Encoding::ASCII_8BIT` encoded string literal in
+ruby:
 
 ```ruby
 way_1 = "\xff\x01".force_encoding(Encoding::ASCII_8BIT) # "\xFF\x01"
@@ -33,17 +42,19 @@ way_3.encoding # => #<Encoding:ASCII-8BIT>
 
 ## String literals with non-ascii bytes
 
-* Use `\x` to make string literals with byte values outside the normal ASCII range
-* IMPORANT: The currently active encoding (see `__ENCODING__` will be used to create the string)
-    * strings with different encodings will not compare as equal for bytes
-    outside of the printable ASCII ranges
+- Use `\x` to make string literals with byte values outside the normal ASCII
+  range
+- IMPORANT: The currently active encoding (see `__ENCODING__` will be used to
+  create the string)
+    - strings with different encodings will not compare as equal for bytes
+      outside of the printable ASCII ranges
     ```ruby
     "\xff" == "\xff" # => true
     "\xff" == "\xff".b # => false
     ```
-* use `\x` escape character to put non-printing byte values in a ruby string
-* you must use double quoted strings or the `\x` escape char will not be enabled
-* case does not matter e.g. `\xAB` == `\xAb` == `\xab`
+- use `\x` escape character to put non-printing byte values in a ruby string
+- you must use double quoted strings or the `\x` escape char will not be enabled
+- case does not matter e.g. `\xAB` == `\xAb` == `\xab`
 
 ```ruby
 # create a single char string with a non printing value
@@ -60,26 +71,27 @@ way_3.encoding # => #<Encoding:ASCII-8BIT>
 ss = "\xfe\x00\xcf\xab"
 ```
 
-
 ### Reading binary data in/out
 
-Each IO object has an external encoding which indicates the encoding that Ruby will use to read its data. By default Ruby sets the external encoding of an IO object to the default external encoding. The default external encoding is set by locale encoding or the interpreter -E option. ::default_external returns the current value of the external encoding.
+Each IO object has an external encoding which indicates the encoding that Ruby
+will use to read its data. By default Ruby sets the external encoding of an IO
+object to the default external encoding. The default external encoding is set by
+locale encoding or the interpreter -E option. ::default_external returns the
+current value of the external encoding.
 
 ```ruby
 Encoding.default_external # #<Encoding:UTF-8> on my system
 ```
 
-
-IO objects have an external encoding associated
-    * it can be set by IO#set_encoding or by passing options to IO.new
-
+IO objects have an external encoding associated \* it can be set by
+IO#set_encoding or by passing options to IO.new
 
 ## String#ord
 
-* Return the Integer ordinal of a one-character string.
+- Return the Integer ordinal of a one-character string.
 
-* converts a single char string into an integer based on its binary value
-* only looks at the first char in the string
+- converts a single char string into an integer based on its binary value
+- only looks at the first char in the string
 
 ```ruby
 
@@ -90,8 +102,8 @@ IO objects have an external encoding associated
 
 When typing in literals ...
 
-* `\x00` to `\x79` work with #ord
-* `\x80` to `\xFF` raise ArgumentError
+- `\x00` to `\x79` work with #ord
+- `\x80` to `\xFF` raise ArgumentError
 
 ```ruby
 
@@ -137,12 +149,10 @@ a == b
 # true
 ```
 
-
-
 ### Integer#chr(encoding)
 
-* chr converts an integer into a string with the same binary value
-* encodes an integer as a string according to encoding
+- chr converts an integer into a string with the same binary value
+- encodes an integer as a string according to encoding
 
 ```ruby
 255.chr(Encoding::BINARY) # => "\xFF"
@@ -150,7 +160,6 @@ a == b
 ```
 
 QUESTION: what is the default encoding for ruby ???
-
 
 ## String#bytes
 
@@ -161,7 +170,6 @@ QUESTION: what is the default encoding for ruby ???
 ## String#chars
 
 "abc".chars
-
 
 convert Fixnum to a Sting representation of the number in the given base
 
@@ -174,18 +182,17 @@ String#bytes
 
 ### String#hex
 
-* hex :: String -> Fixnum
-* converts a given string of chars in the hex range (0-9,a-f) into the corresponding number
-* string can have optional `0x` prefix
-* returns 0 if string can not be converted to hex
+- hex :: String -> Fixnum
+- converts a given string of chars in the hex range (0-9,a-f) into the
+  corresponding number
+- string can have optional `0x` prefix
+- returns 0 if string can not be converted to hex
 
-    "9".hex # => 9
-    "a".hex # => 10
-    "0xa".hex # => 10
+    "9".hex # => 9 "a".hex # => 10 "0xa".hex # => 10
 
 ### Converting a sting of hex bytes into a stirng of binary data
 
-* the string represents a *stream* of numbers not a single number
+- the string represents a _stream_ of numbers not a single number
 
 ```ruby
 def hex_to_bin(s)
@@ -198,15 +205,15 @@ def hex_to_bin(s)
   # the return value is a string of binary data
 end
 ```
-## Binary literals
 
+## Binary literals
 
 "\x34\x45\xFF"
 
 ### Base64
 
-* Use the "strict" versions of the encode and decode methods to not add
-newlines after every 60 chars
+- Use the "strict" versions of the encode and decode methods to not add newlines
+  after every 60 chars
 
 ```ruby
 require "base64"

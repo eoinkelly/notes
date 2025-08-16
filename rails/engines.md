@@ -11,22 +11,18 @@ TODO: remove MIT license if appropriate
 
 # Engines background
 
-Rails::Application inherits from Rails::Engine
-    * => you can think of a rails app as a specialisation of an engine
+Rails::Application inherits from Rails::Engine \* => you can think of a rails
+app as a specialisation of an engine
 
-
-* engines have same directory layout as plugins
-engine routes are namespacedk
-controllers, models and table names are namespaced within the engine
-host application code always takes precedence
-
+- engines have same directory layout as plugins engine routes are namespacedk
+  controllers, models and table names are namespaced within the engine host
+  application code always takes precedence
 
 ```
 $ rails plugin foo            # generates a plugin named foo
 $ rails plugin --full         # generates an engine named 'foo'
 $ rails plugin --mountable    # generates an engine named 'foo' with extra stuff ???
 ```
-
 
 ```
 $ rails plugin new plugin_no_args
@@ -128,32 +124,33 @@ The gemspec at /Users/eoinkelly/Desktop/plugin_mountable/plugin_mountable.gemspe
 The validation error was '"FIXME" or "TODO" is not a description'
 ```
 
-* `rails plugin new foo`
-* `rails plugin new --full foo`
-* `rails plugin new --mountable foo`
+- `rails plugin new foo`
+- `rails plugin new --full foo`
+- `rails plugin new --mountable foo`
 
-* vanilla plugin
-    * seems to be mostly just an empty gem with a few handy rails things added
-    * it
-        * sets up some basic rake tasks: `rake test`, `rake rdoc`
-        * seems to be hard-coded to use minitest
-        * creates a module for you
-        * sets up tests
-        * sets up a version number
-        * stubs out a gemspec
-        * adds a very minimal rails app called "dummy" to the tests dir
-* full
-    * full engines are not namespaced by default i.e. all their routes, controllers, models etc. are mixed into the host app!
-    * a full engine is kind of like a mixin rails app
-        * might be useful if your host app is super thin or you don't want the namespacing
-            * I *think* you can still have unnamespaced routes with a mountable engine by mounting it at `/` ???
-* mountable
-    * a superset of `full`
-    * makes the engine "mountable" and adds namespace isolation
-    * adds
-        * namespaced ApplicationController stub
-        * namespaced ApplicationHelper stub
-        * layout view template
-        *
-
-
+- vanilla plugin
+    - seems to be mostly just an empty gem with a few handy rails things added
+    - it
+        - sets up some basic rake tasks: `rake test`, `rake rdoc`
+        - seems to be hard-coded to use minitest
+        - creates a module for you
+        - sets up tests
+        - sets up a version number
+        - stubs out a gemspec
+        - adds a very minimal rails app called "dummy" to the tests dir
+- full
+    - full engines are not namespaced by default i.e. all their routes,
+      controllers, models etc. are mixed into the host app!
+    - a full engine is kind of like a mixin rails app
+        - might be useful if your host app is super thin or you don't want the
+          namespacing
+            - I _think_ you can still have unnamespaced routes with a mountable
+              engine by mounting it at `/` ???
+- mountable
+    - a superset of `full`
+    - makes the engine "mountable" and adds namespace isolation
+    - adds
+        - namespaced ApplicationController stub
+        - namespaced ApplicationHelper stub
+        - layout view template
+        -

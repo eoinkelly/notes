@@ -1,14 +1,15 @@
 # Phar files
 
-* JAR archives for PHP basically
-* lets you put a whole PHP app in a single file
-* you can reference files within phar files from a php script
-* All Phar archives contain three to four sections:
+- JAR archives for PHP basically
+- lets you put a whole PHP app in a single file
+- you can reference files within phar files from a php script
+- All Phar archives contain three to four sections:
     1. a stub
     1. a manifest describing the contents
     1. the file contents
-    1. [optional] a signature for verifying Phar integrity (phar file format only)
-* use the `phar` tool to work with them
+    1. [optional] a signature for verifying Phar integrity (phar file format
+       only)
+- use the `phar` tool to work with them
 
 ```
 $ phar info mine.phar

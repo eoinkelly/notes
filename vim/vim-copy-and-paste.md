@@ -1,23 +1,23 @@
 # Vim copy & paste
 
-gp    paste and move cursor to end of what you pasted
-p     paste last yanked/changed/deleted thing just after the cursor
-P     paste last yanked/changed/deleted thing just before the cursor
-          pastes with the original indentation
-]p    does a `p` paste at the level of indentation the cursor is currently at
-[p    does a `P` paste at the level of indentation the cursor is currently at
+gp paste and move cursor to end of what you pasted p paste last
+yanked/changed/deleted thing just after the cursor P paste last
+yanked/changed/deleted thing just before the cursor pastes with the original
+indentation ]p does a `p` paste at the level of indentation the cursor is
+currently at [p does a `P` paste at the level of indentation the cursor is
+currently at
 
 :reg show registers list
 
-0 register = default for yanks
-" register = default for changes, deletes, yanks
+0 register = default for yanks " register = default for changes, deletes, yanks
 
-when you yank it is put in both 0 and "
-when you delete/change it goes into " only
+when you yank it is put in both 0 and " when you delete/change it goes into "
+only
 
 `*` is the system clipboard register
 
 - ???
+
 ```
 ":   reg
 "%   app/models/beemo_cache_manager.rb
@@ -50,4 +50,5 @@ There are ten types of registers:			*registers* *E354*
 
 Macros are recorded into registers!!!
 
-running a macro is like pressing the exact sequence of keys in that macro's register.
+running a macro is like pressing the exact sequence of keys in that macro's
+register.

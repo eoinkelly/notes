@@ -1,40 +1,42 @@
 ## Databases and strings
 
-##  MySQL
+## MySQL
 
-* very flexible: lets you mix and match character set and collation at
-    server, db, table, column levels
+- very flexible: lets you mix and match character set and collation at server,
+  db, table, column levels
 
 ## Postgres
 
 [postgres docs](http://www.postgresql.org/docs/9.4/static/charset.html)
 
-* Postgres sets locale info for a database at `initdb` time.
-    * You can adjust most of these per query but the DB needs a fixed way to save them on disk
-* It maintains an internal set of variables that map to the locale info provided by your shell
-* Some locale categories have their values fixed when `initdb` is run
-  because changing them would break ordering of indexes and text columns
-    * LC_COLLATE
-    * LC_CTYPE (a way to specialise LC_COLLATE, not often used)
-* The other locale categories can be changed whenever desired by setting the server configuration parameters.
+- Postgres sets locale info for a database at `initdb` time.
+    - You can adjust most of these per query but the DB needs a fixed way to
+      save them on disk
+- It maintains an internal set of variables that map to the locale info provided
+  by your shell
+- Some locale categories have their values fixed when `initdb` is run because
+  changing them would break ordering of indexes and text columns
+    - LC_COLLATE
+    - LC_CTYPE (a way to specialise LC_COLLATE, not often used)
+- The other locale categories can be changed whenever desired by setting the
+  server configuration parameters.
 
 ```
 # you can specify locale at database create time
 initdb --locale=sv_SE
 ```
 
-* The locale affects
-    * sort order of queries
-    * whether LIKE, SIMILAR TO, regexps will match
-    * upper, lower, initcap functions
+- The locale affects
+    - sort order of queries
+    - whether LIKE, SIMILAR TO, regexps will match
+    - upper, lower, initcap functions
 
 WARNING: using custom locales has a performance impact!
 
 > The drawback of using locales other than C or POSIX in PostgreSQL is its
 > performance impact. It slows character handling and prevents ordinary indexes
-> from being used by LIKE. For this reason use locales only if you actually
-> need them
-
+> from being used by LIKE. For this reason use locales only if you actually need
+> them
 
 ```sql
 SHOW all; -- show all configuration
@@ -46,8 +48,8 @@ SHOW lc_ctype;
 
 ### Collation support
 
-* supports setting collation per column and even per operation
-    * makes the fixed LC_COLLATE much less of a big deal
+- supports setting collation per column and even per operation
+    - makes the fixed LC_COLLATE much less of a big deal
 
 ```sql
 CREATE TABLE test1 (
@@ -81,4 +83,5 @@ SELECT a < b COLLATE "de_DE" FROM test1;
 > character set is allowed, but for other locales there is only one character
 > set that will work correctly.
 
-You can see the encoding, ctype and collation of each table in a db using `\l` in psql
+You can see the encoding, ctype and collation of each table in a db using `\l`
+in psql

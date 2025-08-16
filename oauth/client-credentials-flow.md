@@ -1,13 +1,11 @@
 # Spock
 
-can take params from
-    HTTP_CLIENT_SECRET
-    HTTP_CLIENT_ID
-or from client_secret and client_id params
+can take params from HTTP_CLIENT_SECRET HTTP_CLIENT_ID or from client_secret and
+client_id params
 
 # With doorkeeper
 
-* OAuth spec requires application/x-www-form-urlencoded for POST requests but
+- OAuth spec requires application/x-www-form-urlencoded for POST requests but
   Doorkeeper will also accept `multipart/form-data` (presumably because rails
   decodes it into `params` for doorkeeper and rails does that)
 
@@ -44,7 +42,6 @@ curl
 How doorkeeper allows the client-application to authenticate itself
 
 1. it first checks HTTP_AUTHORIZATION header
-    * QUESTION: waht is format of that header
-1. then checks `:client_id` and `:client_secret` params from the rails `params` object
-
-
+    - QUESTION: waht is format of that header
+1. then checks `:client_id` and `:client_secret` params from the rails `params`
+   object

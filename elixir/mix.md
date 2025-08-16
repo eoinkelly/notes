@@ -1,92 +1,101 @@
 # Built-ins
 
-* Erlang is more than a language, it is also an operating system for your applications.
-* Erlang developers rarely write standalone modules, they write libraries or
+- Erlang is more than a language, it is also an operating system for your
+  applications.
+- Erlang developers rarely write standalone modules, they write libraries or
   applications, and then bundle those into what is called a release.
-* A release contains the Erlang VM plus all applications required to run the
+- A release contains the Erlang VM plus all applications required to run the
   node, so it can be pushed to production directly.
 
-* `mix` `elixirc`, `elixir`, `iex` commands come with elixir and live in the exlixir install dir
-* `/Users/eoinkelly/.exenv/versions/1.1.1/lib/mix/ebin`
-* mix is a mix.app and a bunch of .beam files
+- `mix` `elixirc`, `elixir`, `iex` commands come with elixir and live in the
+  exlixir install dir
+- `/Users/eoinkelly/.exenv/versions/1.1.1/lib/mix/ebin`
+- mix is a mix.app and a bunch of .beam files
 
 # Archives
 
-* Erlang archives are ZIP files with .ez extension.
-* Erlang archives may also be enclosed in escript files whose file extension is arbitrary
-* Erlang archive files may contain entire Erlang applications or parts of applications.
-* The structure in an archive file is the same as the directory structure for an application.
-* Archives are kept in `~/.mix/archives`
-* Currently my installation only contains `.ez` files for `phoenix_new` and `hex`
-* Mix will load all archives every time you run it so don't install too many
-    * elixir 1.3 will add mix escripts so you can keep the no. of archives lower
-* Use `MIX_DEBUG=1` env var to make mix more verbose for debugging
-    * added in elixir 1.3
+- Erlang archives are ZIP files with .ez extension.
+- Erlang archives may also be enclosed in escript files whose file extension is
+  arbitrary
+- Erlang archive files may contain entire Erlang applications or parts of
+  applications.
+- The structure in an archive file is the same as the directory structure for an
+  application.
+- Archives are kept in `~/.mix/archives`
+- Currently my installation only contains `.ez` files for `phoenix_new` and
+  `hex`
+- Mix will load all archives every time you run it so don't install too many
+    - elixir 1.3 will add mix escripts so you can keep the no. of archives lower
+- Use `MIX_DEBUG=1` env var to make mix more verbose for debugging
+    - added in elixir 1.3
 
-IMPORANT: the syntax for getting help is `mix help COMMAND_NAME` not `mix COMMAND_NAME --help`
+IMPORANT: the syntax for getting help is `mix help COMMAND_NAME` not
+`mix COMMAND_NAME --help`
 
 # Standard mix tasks
 
 ## mix hex.outdated
 
-* `mix hex.outdated` shows only the out of date _installed_ depencencies i.e. if its not downloaded it you won't see it
+- `mix hex.outdated` shows only the out of date _installed_ depencencies i.e. if
+  its not downloaded it you won't see it
 
 ## mix deps
 
-* only makes sense within an existing project dir
-* manages the dependencies of a particular project
-* `mix deps` shows all dependences
+- only makes sense within an existing project dir
+- manages the dependencies of a particular project
+- `mix deps` shows all dependences
 
-* check the state of dependencies
-* if it says something like
-    ```
-    * phoenix_haml 0.2.0 (Hex package) (mix)
-    locked at 0.2.0 (phoenix_haml)
-    ok
-    ```
-then the dependency has been downloaded and compiled.
+- check the state of dependencies
+- if it says something like
+  `     * phoenix_haml 0.2.0 (Hex package) (mix)     locked at 0.2.0 (phoenix_haml)     ok     `
+  then the dependency has been downloaded and compiled.
 
 ## mix hex
 
-* interacts with the package manager
+- interacts with the package manager
 
 ## mix archive
 
-* lists the archives installed on the machine - not specific to a particular project
-* archives are a way of distributing erlang code, hex is more recent and comes from elixir land
-* you install an archive by `mix archive.install https://github.com/path/to/someproject-1.0.3.ez`
+- lists the archives installed on the machine - not specific to a particular
+  project
+- archives are a way of distributing erlang code, hex is more recent and comes
+  from elixir land
+- you install an archive by
+  `mix archive.install https://github.com/path/to/someproject-1.0.3.ez`
 
 ## mix local
 
-* ???
+- ???
 
 ## mix deps.unlock --all
 
-* rewrites `mix.lock`to contain only an empty Map (but does not delete the file)
+- rewrites `mix.lock`to contain only an empty Map (but does not delete the file)
 
 ## mix deps.clean --all
 
-* wipes the slate clean
-* empties the `_build` dir (but does not delete it)
-* empties the `deps` dir
+- wipes the slate clean
+- empties the `_build` dir (but does not delete it)
+- empties the `deps` dir
 
 ## mix.get
 
-* download dependencies into `/deps`
-* Can download and untar hex and rebar packages
-* e.g. a hex package is `https://s3.amazonaws.com/s3.hex.pm/tarballs/bbmustache-1.0.3.tar`
-* each hex package is a tar file which contains
-    * VERSION
-    * CHECKSUM
-    * metadata.config
-    * contents.tar.gz
+- download dependencies into `/deps`
+- Can download and untar hex and rebar packages
+- e.g. a hex package is
+  `https://s3.amazonaws.com/s3.hex.pm/tarballs/bbmustache-1.0.3.tar`
+- each hex package is a tar file which contains
+    - VERSION
+    - CHECKSUM
+    - metadata.config
+    - contents.tar.gz
 
 ## mix.compile
 
-* Compile the dependencies
-* compiles each dependency in its own dir in `deps/`
-* creates `_build/` in project root and puts links in there to the `ebin` dir of each dependency
-* after this point `mix deps` tells you everything has compiled OK
+- Compile the dependencies
+- compiles each dependency in its own dir in `deps/`
+- creates `_build/` in project root and puts links in there to the `ebin` dir of
+  each dependency
+- after this point `mix deps` tells you everything has compiled OK
 
 # List of mix commands
 
@@ -159,6 +168,5 @@ mix release.clean       # Clean up any release-related files.
 mix release.plugins     # View information about active release plugins
 ```
 
-QUESTION: How does mix find tasks and files and know what to build?
-    naming convention?
-
+QUESTION: How does mix find tasks and files and know what to build? naming
+convention?

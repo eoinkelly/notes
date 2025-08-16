@@ -26,7 +26,7 @@ print values to screen (? is shorthand)
     PRINT Z
     ? Z
 
-: functions a bit like ; in C languages - lets us put multiple statements on one line
-max line length is 80 chars
+: functions a bit like ; in C languages - lets us put multiple statements on one
+line max line length is 80 chars
 
     A = 12 : B = 14 : PRINT A B

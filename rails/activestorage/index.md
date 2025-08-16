@@ -12,7 +12,8 @@ end
 
 ## How the tables are used
 
-1. Rails knows from the ruby code in the class telling it that it should find and ActiveStorage attachment called `file`
+1. Rails knows from the ruby code in the class telling it that it should find
+   and ActiveStorage attachment called `file`
 1. It starts by finding the corresponding blob ID in the attachments table
     ```sql
     select blob_id from active_storage_attachments where name = 'file' and record_type = 'PageVersionImage' and record_id = '0966589d-a80b-432f-a617-8201933565ad';
@@ -32,10 +33,13 @@ end
 1. Use the blob to gererate the URL to the actual file
     - Url will depend on the service
     - ?? How are key, filename and checksum used in generating the URL?
-    - Checksum is an MD5 checksum. Rails computes it if you use proxy upload. JS computes it if you use direct upload
+    - Checksum is an MD5 checksum. Rails computes it if you use proxy upload. JS
+      computes it if you use direct upload
     - `key` field is used to find the file on the service
     - An example using `:local` service:
-        - In the `:local` service a key of `7n2wq10jop4macqv2hm68nz1hsls` is stored in a file on disk at `<local-storage-root>/7n/2w/7n2wq10jop4macqv2hm68nz1hsls`
+        - In the `:local` service a key of `7n2wq10jop4macqv2hm68nz1hsls` is
+          stored in a file on disk at
+          `<local-storage-root>/7n/2w/7n2wq10jop4macqv2hm68nz1hsls`
         - This file is the image file:
             ```
             $ file 7n2wq10jop4macqv2hm68nz1hsls
@@ -64,7 +68,7 @@ Variants are not actually created until something tries to download the file
 
 ### active_storage_attachments
 
--   https://edgeapi.rubyonrails.org/classes/ActiveStorage/Attachment.html
+- https://edgeapi.rubyonrails.org/classes/ActiveStorage/Attachment.html
 -
 
 ```
@@ -96,7 +100,8 @@ Foreign-key constraints:
 
 ### active_storage_blobs
 
-> A blob is a record that contains the metadata about a file and a key for where that file resides on the service.
+> A blob is a record that contains the metadata about a file and a key for where
+> that file resides on the service.
 
 ```
 =# \d active_storage_blobs
@@ -129,11 +134,14 @@ Referenced by:
 
 ### active_storage_variant_records
 
-* Stores the variant digests for a blob ( a blob can have many variants and therefore variant digests)
-* https://github.com/rails/rails/blob/main/activestorage/app/models/active_storage/variation.rb
-* I think the variation digest is a checksum of the list of transforms for that variant. It lets rails see if the variant has already been created
+- Stores the variant digests for a blob ( a blob can have many variants and
+  therefore variant digests)
+- https://github.com/rails/rails/blob/main/activestorage/app/models/active_storage/variation.rb
+- I think the variation digest is a checksum of the list of transforms for that
+  variant. It lets rails see if the variant has already been created
 
-An ActiveStorage::Variation is a set of transformations that can be applied to a blob to create a variant.
+An ActiveStorage::Variation is a set of transformations that can be applied to a
+blob to create a variant.
 
 ```
 =# \d active_storage_variant_records
@@ -186,9 +194,7 @@ file.representation(resize_to_limit: [100, 100]).url
 file.representation(resize_to_limit: [100, 100]).url
 ```
 
-the app uses
-url_for()
-url_for(img.variant())
+the app uses url_for() url_for(img.variant())
 
-in tests:
-url_for(main_image.variant(resize_to_limit: [336, 225])).remove('http://www.example.com')
+in tests: url_for(main_image.variant(resize_to_limit: [336,
+225])).remove('http://www.example.com')

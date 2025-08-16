@@ -1,4 +1,3 @@
-
 ```ruby
 # to see if there are any duplicate public_id values in things
 sql_count_all = "SELECT count(*) from things"

@@ -1,7 +1,7 @@
 # The art of PostgreSQL
 
-* latest SQL standard is 2016
-* every SQL statement embeds some business logic
+- latest SQL standard is 2016
+- every SQL statement embeds some business logic
 
 ### pgloader
 
@@ -15,7 +15,6 @@ $ pgloader https://github.com/lerocha/chinook-database/raw/master/ChinookDatabas
 
 psql Tricks
 
-
 ```
 -- show all variable values
 \set
@@ -26,4 +25,3 @@ psql Tricks
 
 \edit -- edit the last sql query in $EDITOR
 ```
-

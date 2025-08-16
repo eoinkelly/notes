@@ -1,28 +1,34 @@
 # Prompt engineering
 
 - [Prompt engineering](#prompt-engineering)
-  - [Takeaways](#takeaways)
-  - [General rules](#general-rules)
-  - [Context window sizes](#context-window-sizes)
-  - [Claude](#claude)
-    - [System prompt](#system-prompt)
-  - [OpenAI](#openai)
+    - [Takeaways](#takeaways)
+    - [General rules](#general-rules)
+    - [Context window sizes](#context-window-sizes)
+    - [Claude](#claude)
+        - [System prompt](#system-prompt)
+    - [OpenAI](#openai)
 
 ## Takeaways
 
--   Start a new conversation if you are asking a new question - don't be lazy and just use the same conversation. The old context from unrelated questions might give you worse answers
+- Start a new conversation if you are asking a new question - don't be lazy and
+  just use the same conversation. The old context from unrelated questions might
+  give you worse answers
 
 ## General rules
 
--   The context window for the model is presented as the "conversation" in the chatbot UI
-    -   The full context window is re-parsed every time you submit some text for it to predict an output.
-
+- The context window for the model is presented as the "conversation" in the
+  chatbot UI
+    - The full context window is re-parsed every time you submit some text for
+      it to predict an output.
 
 ## Context window sizes
 
 Assume `1 token ~= 5.5 bytes`
 
-The average English word is around 4.5 characters long, plus a space for separation, making it 5.5 characters on average. Given that each character is typically one byte in UTF-8 encoding, this calculation gives us an average word length of about 5.5 bytes.
+The average English word is around 4.5 characters long, plus a space for
+separation, making it 5.5 characters on average. Given that each character is
+typically one byte in UTF-8 encoding, this calculation gives us an average word
+length of about 5.5 bytes.
 
 | Model       | context window tokens      | Approx. context window |
 | ----------- | -------------------------- | ---------------------- |
@@ -35,12 +41,15 @@ The average English word is around 4.5 characters long, plus a space for separat
 
 https://docs.anthropic.com/claude/docs/introduction-to-prompt-design
 
-Claude generates tokens
-It uses all the text you have sent it **and** all it's previous responses in the "context window" to generate the next token
-It cannot remember previous conversations
-It cannot open links
+Claude generates tokens It uses all the text you have sent it **and** all it's
+previous responses in the "context window" to generate the next token It cannot
+remember previous conversations It cannot open links
 
-Under the hood claude expects the context window to have tagged sections about which bits came from you and which came from claude. It uses `\n\nHuman:` and `\n\nAssistant:` as tokens to indicate a change in speaker (note the required newlines). The web app and slack app hide this complexity but you need to know it for the API.
+Under the hood claude expects the context window to have tagged sections about
+which bits came from you and which came from claude. It uses `\n\nHuman:` and
+`\n\nAssistant:` as tokens to indicate a change in speaker (note the required
+newlines). The web app and slack app hide this complexity but you need to know
+it for the API.
 
 Claude 2.1 can take 1.3 MB of context window
 
@@ -50,7 +59,8 @@ Human: stuff you typed
 Assistant: a response from claude
 ```
 
-> Claude 2.1 has double the context length, at ~150,000 words / ~200,000 tokens / ~680,000 Unicode characters
+> Claude 2.1 has double the context length, at ~150,000 words / ~200,000 tokens
+> / ~680,000 Unicode characters
 
 ```
 Bard: 680,000 Unicode characters is approximately 1328.12 KB.
@@ -78,32 +88,40 @@ Winner: Claude gave the best answer, stating it's assumptions the clearest
 
 ### System prompt
 
-It is allowed by the API to include text before the first \n\nHuman:; this is sometimes called a "system prompt".
+It is allowed by the API to include text before the first \n\nHuman:; this is
+sometimes called a "system prompt".
 
-A system prompt is a way of providing context and instructions to Claude, such as specifying a particular goal or role for Claude before asking it a question or giving it a task. System prompts can include:
+A system prompt is a way of providing context and instructions to Claude, such
+as specifying a particular goal or role for Claude before asking it a question
+or giving it a task. System prompts can include:
 
--   Task instructions
--   Personalization, such as role prompting & tone instructions
--   Context for the user input
--   Creativity constraints & style guidance, such as being more concise
--   External knowledge & data, such as FAQ documents or guidelines
--   Rules & guardrails
--   Output verification standards, such asking for citations or thinking out loud to enhance credibility
+- Task instructions
+- Personalization, such as role prompting & tone instructions
+- Context for the user input
+- Creativity constraints & style guidance, such as being more concise
+- External knowledge & data, such as FAQ documents or guidelines
+- Rules & guardrails
+- Output verification standards, such asking for citations or thinking out loud
+  to enhance credibility
 
-> Your whole prompt should still be one multiline string, including the system prompt. You should still use two new lines after the system prompt, before Human:.
+> Your whole prompt should still be one multiline string, including the system
+> prompt. You should still use two new lines after the system prompt, before
+> Human:.
 
 ## OpenAI
 
 Sources
 
-* https://medium.com/coinmonks/top-20-chatgpt-prompts-that-every-prompt-engineers-should-know-937b0ea5472
+- https://medium.com/coinmonks/top-20-chatgpt-prompts-that-every-prompt-engineers-should-know-937b0ea5472
 
 has the idea of roles in the API messages I submit - `system`, `user`
 
-Messages with the "system" role are not considered as part of the conversation but rather as directives or guidelines for how the model should behave or what persona it should adopt.
+Messages with the "system" role are not considered as part of the conversation
+but rather as directives or guidelines for how the model should behave or what
+persona it should adopt.
 
-At the prompt you can mimic the system role by setting context at the start of a conversation. It is not as precise but mostly works
-
+At the prompt you can mimic the system role by setting context at the start of a
+conversation. It is not as precise but mostly works
 
 ```
 Summarise the text delimited by ### into a single paragraph

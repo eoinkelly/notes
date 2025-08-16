@@ -4,9 +4,9 @@ Possibly pronounced "eh-rel"
 
 Sources
 
-* http://radar.oreilly.com/2014/03/just-enough-arel.html
-* https://github.com/rails/arel/blob/master/lib/arel/predications.rb
-* https://github.com/rails/arel
+- http://radar.oreilly.com/2014/03/just-enough-arel.html
+- https://github.com/rails/arel/blob/master/lib/arel/predications.rb
+- https://github.com/rails/arel
 
 ## ActiveRecord query interface #where
 
@@ -26,13 +26,13 @@ where(name: ['x', 'y', nil])
 # (WHERE name IN ('x', 'y') OR name IS NULL)
 ```
 
-* #where
-    * is a DSL for making a SQL WHERE clause
-    * can only combine queries using AND
-    * it only provides the `=` (equal), `<>` (not equal) and `in` operators
-    * cannot do numeric comparisons e.g. `<=`
+- #where
+    - is a DSL for making a SQL WHERE clause
+    - can only combine queries using AND
+    - it only provides the `=` (equal), `<>` (not equal) and `in` operators
+    - cannot do numeric comparisons e.g. `<=`
 
-* #where can receive as arg
+- #where can receive as arg
     1. a hash
     2. an array
     3. a string
@@ -40,12 +40,8 @@ where(name: ['x', 'y', nil])
 
 Usage of the AR query interface should be limited to models in the system!
 
-SQL things Arel can do
-    * named functions
-        * Arel::Nodes::NamedFunction #new(name, expr, aliaz = nil)
-    * order by
-    * all conditionals/comparisons
-    * Unions
+SQL things Arel can do _ named functions _ Arel::Nodes::NamedFunction #new(name,
+expr, aliaz = nil) _ order by _ all conditionals/comparisons \* Unions
 
 The layers:
 
@@ -55,17 +51,20 @@ The layers:
 
 Arel is
 
-* just a SQL generator library - it does not call the DB or retrieve data
-* the engine that rails uses to turn method calls (ActiveRecord Query DSL) into SQL statements.
-* Each column in Arel::Table is represented by Arel::Attributes::Attribute
+- just a SQL generator library - it does not call the DB or retrieve data
+- the engine that rails uses to turn method calls (ActiveRecord Query DSL) into
+  SQL statements.
+- Each column in Arel::Table is represented by Arel::Attributes::Attribute
 
 How you work with Arel
 
 1. Figure out what I want to do in raw SQL
-2. As much as possible express it with the normal ActiveRecord query DSL. Express the rest as Arel
+2. As much as possible express it with the normal ActiveRecord query DSL.
+   Express the rest as Arel
 3. Get hold of a reference to Arel::Table
 4. Get a reference to some Arel::Attributes::Attribute (columns) in it
-5. send predicate messages to the Arel::Attributes::Attribute to start building the query
+5. send predicate messages to the Arel::Attributes::Attribute to start building
+   the query
 6. Start work on the query using ActiveRecord #where
 
 Example
@@ -114,33 +113,33 @@ Author.where(book_count: 1..5) # will call Arel #in under the covers (best way)
 
 What SQL calls "SELECT clause" is called a "projection" in Arel
 
-Arel is designed to let you make SQL without the problems associated with
-string interpolation. It can be used (as Rails does) to build an ORM.
+Arel is designed to let you make SQL without the problems associated with string
+interpolation. It can be used (as Rails does) to build an ORM.
 
 Conclusion: to make the most of Arel I first need to be good at SQL
 
 Advantages of Arel over raw SQL:
 
-1. It automatically scopes column names if you have a join e.g. `id` would be ambigious if you join two tables which have `id` columns
+1. It automatically scopes column names if you have a join e.g. `id` would be
+   ambigious if you join two tables which have `id` columns
 1. It lets you break SQL queries apart to be more readable
 1. It is harder to arbitrarily combine sub queries that use string interpolation
 
-Arel::Table
-    * acts like a hash that has each column of the table as a key
-    * each column is of type Node
+Arel::Table _ acts like a hash that has each column of the table as a key _ each
+column is of type Node
 
 Arel has "predications". A predication is the logical affirmation of something
-about another; especially :  assignment of something to a class
-"i contend that thing A is related to thing B by {predicate}"
+about another; especially : assignment of something to a class "i contend that
+thing A is related to thing B by {predicate}"
 
 Arel's predications are documented at
-    https://github.com/rails/arel/blob/master/lib/arel/predications.rb
+https://github.com/rails/arel/blob/master/lib/arel/predications.rb
 
-When breaking apart a query to use Arel, I find a good rule of thumb is to break out a method
+When breaking apart a query to use Arel, I find a good rule of thumb is to break
+out a method
 
 1. anywhere the word AND or OR is used,
 2. or when something is wrapped in parenthesis.
-
 
 Arel is a Relational Algebra gem that allows you to generate SQL queries
 directly from an abstract syntax tree (AST) of nodes. It’s what Active Record
@@ -148,7 +147,9 @@ uses internally to build up expressions symbolically from the Hash syntax.
 
 QUESTION: What exacty is a relational algebra
 
-The #where method in Active Record can accept an Arel node e.g. `User.where({arel methods})`
+The #where method in Active Record can accept an Arel node e.g.
+`User.where({arel methods})`
+
 ```
 User.arel_table
 
@@ -184,19 +185,18 @@ The ancestor list for Arel::Table is not too crazy
 
 Arel provides a bunch of predicates:
 
-* eq
-* not_eq
-* in
-* not_in
-* gteq
-* gt
-* lteq
-* lt
-* matches
-* does_not_match
+- eq
+- not_eq
+- in
+- not_in
+- gteq
+- gt
+- lteq
+- lt
+- matches
+- does_not_match
 
 can append `*_all` or `*_any` to all the above
-
 
 ```ruby
 # match any row where name is equal to 'value'
@@ -231,6 +231,7 @@ name.eq_any(['val1', 'val2', 'val3'])
 ```
 
 The Squeel library provides some sugar on top of Arel
+
 ```
 Author.where { name ~= 'foo' }
 ```

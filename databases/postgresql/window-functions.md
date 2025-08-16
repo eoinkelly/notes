@@ -2,9 +2,9 @@
 
 Aside: `array_agg()`
 
-* a very useful function to help understand window functions
-* when called on a table (bag of row) as input, it will create an array of the given column value from each row
-
+- a very useful function to help understand window functions
+- when called on a table (bag of row) as input, it will create an array of the
+  given column value from each row
 
 ```sql
 select array_agg(num) from generate_series(1,15) as a_nums(num);
@@ -14,7 +14,10 @@ select array_agg(num) from generate_series(1,15) as a_nums(num);
 -- (1 row)
 ```
 
-SQL is odd because the code we see in the _SELECT list_ isn't the function getting called with the args you pass it - the args you pass it are kind of "setup options" that tune the behaviour of the function when it's actual inputs (the rows) arrive.
+SQL is odd because the code we see in the _SELECT list_ isn't the function
+getting called with the args you pass it - the args you pass it are kind of
+"setup options" that tune the behaviour of the function when it's actual inputs
+(the rows) arrive.
 
 ```
 # Imaginary DSL for writing SQL in a Rubyish language
@@ -22,7 +25,6 @@ SQL is odd because the code we see in the _SELECT list_ isn't the function getti
 generate_series(start: 1, end: 15, table_name: "a_nums", col_name: "num")
 |> array_agg(on_col: "num")
 ```
-
 
 ```
 SELECT a, b, avg(c) OVER (PARTITION BY a) FROM some_table;
@@ -32,27 +34,31 @@ SELECT <col-1>, <col-2>, <window-function-col> FROM <source-table>
 
 How postgres generates the `<result-table>`
 
-* foreach row in `<source-table>`
-    * start building new resulttable row
-        * copy `<col-1>` and `<col-2>` from `<source-table>` to `<result-table>`
-        * start processing the <window-function-col>
+- foreach row in `<source-table>`
+    - start building new resulttable row
+        - copy `<col-1>` and `<col-2>` from `<source-table>` to `<result-table>`
+        - start processing the <window-function-col>
             1. read the value of <partition-col-name> from the current row
             2. use that value to do a search of the table for all rows whose
                <partition-col-name> matches that value.
             3. take the set of rows (note: full rows of table) generated in the
                step above and feed it into the `<grouping-func>`.
-            4. copy the output of the gropuing function into the result-table row
-
-
+            4. copy the output of the gropuing function into the result-table
+               row
 
 ## Basics
 
-* are a way of running _aggregate functions_ over a given frame of rows rather than the hard-coded GROUP BY which runs over a fixed window of "all rows returned by the WHERE clause"
-* lets you process several values of the result set at the same time
-* a "window" is a collection of "peer rows" - you can output a single output value from that set of rows, similar to using a normal SQL  aggregate function
-* a window function operates on a set of rows, **but it does not reduce the number of rows returned by the query**.
-* for each input row you have access to a "frame" of data
-* NB: window functions happen **after the WHERE clause** so they operate only on whatever passes those tests
+- are a way of running _aggregate functions_ over a given frame of rows rather
+  than the hard-coded GROUP BY which runs over a fixed window of "all rows
+  returned by the WHERE clause"
+- lets you process several values of the result set at the same time
+- a "window" is a collection of "peer rows" - you can output a single output
+  value from that set of rows, similar to using a normal SQL aggregate function
+- a window function operates on a set of rows, **but it does not reduce the
+  number of rows returned by the query**.
+- for each input row you have access to a "frame" of data
+- NB: window functions happen **after the WHERE clause** so they operate only on
+  whatever passes those tests
 
 ```sql
 -- without a frame specification, the default window for each row is the whole set of rows
@@ -69,8 +75,9 @@ over (order by xx)
 over (order by xx rows between unbounded preceding and current row)
 ```
 
-* You can use `PARTITION BY` to define different frames
-    * it allows you to define "peer rows" as those rows which share a common property with the _current row_
+- You can use `PARTITION BY` to define different frames
+    - it allows you to define "peer rows" as those rows which share a common
+      property with the _current row_
 
 Example _frame specifications_:
 
@@ -253,4 +260,3 @@ select num,
 --  15 │ {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15} │         120
 --(15 rows)
 ```
-

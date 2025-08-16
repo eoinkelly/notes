@@ -20,7 +20,6 @@ psql some_db
 psql -U foo some_db
 ```
 
-
 ```psql
 ### show connection info
 # postgres
@@ -86,7 +85,7 @@ DESCRIBE some_table;
 # mysql
 ```
 
-# See the name  and size on disk of each relation (table)
+# See the name and size on disk of each relation (table)
 
 ```
 # psql
@@ -112,7 +111,6 @@ select pg_size_pretty(pg_database_size('kete_development'));
 # Find the biggest indexes in a DB
 
 ???
-
 
 # Drop a database
 

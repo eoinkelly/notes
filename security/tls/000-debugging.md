@@ -49,10 +49,10 @@ https://certificatechain.io/
 Use different openssl tool to decode the file depending on what it contains:
 
 1. Private key -
-   * begins with `--BEGIN PRIVATE KEY--`
-   * begins with `--BEGIN RSA PRIVATE KEY--`
+    - begins with `--BEGIN PRIVATE KEY--`
+    - begins with `--BEGIN RSA PRIVATE KEY--`
 2. Certificate
-   * begins with `--BEGIN CERTIFICATE--`
+    - begins with `--BEGIN CERTIFICATE--`
 
 ```
 # decode an X509 certificate

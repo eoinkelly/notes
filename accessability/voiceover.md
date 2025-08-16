@@ -1,12 +1,13 @@
 # Apple Voiceover
 
--   Voiceover has it's own focus cursor which is separate to keyboard focus
--   the VO focus jumps between controls
--   Controls are organised into groups which you can go into and out of explicitly
--   `VO-u` opens the rotor which is important for navigating web pages
-    -   the rotor is a modal set of menus that you can navigate with arrows or just type to filter
-    -   holds all the voiceover commands
--   VO key is `Capslock` or `Ctrl+option`
+- Voiceover has it's own focus cursor which is separate to keyboard focus
+- the VO focus jumps between controls
+- Controls are organised into groups which you can go into and out of explicitly
+- `VO-u` opens the rotor which is important for navigating web pages
+    - the rotor is a modal set of menus that you can navigate with arrows or
+      just type to filter
+    - holds all the voiceover commands
+- VO key is `Capslock` or `Ctrl+option`
 
 ```
 Cmd+F5 = start/stop voiceover
@@ -33,24 +34,19 @@ Has 2 navigation modes for we
 On Safari web content the rotor cycles between
 
 1. Window spots
-    * shortcuts to different parts of Safari's UI (not web content)
+    - shortcuts to different parts of Safari's UI (not web content)
 2. Links
 3. Headings
 4. Form controls
 5. Landmarks
 
-
 arrows are used for navigating the rotor
 
-
-we can add keyboard shortcuts to pages which will be announced when they exist if that option is configured
+we can add keyboard shortcuts to pages which will be announced when they exist
+if that option is configured
 
 Changing navigation mode (can also be assigned a shortcut key):
-    ```
-    VO-h-h
-    type: dom
-    then toggle web navigation DOM or group
-    ```
+`     VO-h-h     type: dom     then toggle web navigation DOM or group     `
 
 how does keyboard focus and VO focus interact in web pages?
 

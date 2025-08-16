@@ -1,4 +1,3 @@
-
 ## Structure of music practice
 
 There are 3 parts to music practice
@@ -6,14 +5,14 @@ There are 3 parts to music practice
 1. maintenance (fitness)
     - practice stuff you already know
     - scales, patterns, chords
-2. New material
-    -New scales, techniques, chords, songs etc.
+2. New material -New scales, techniques, chords, songs etc.
 3. Fun/Jamming
     - playing songs you already know
 
 My practice should include all these
 
 ## Structure of music
+
 3 important parts to music:
 
 1. Melody
@@ -27,7 +26,6 @@ My practice should include all these
     - improvised notes should start and end somewhere on a 1/4 1/8 1/16 of a bar
     - ideally i can hear the time tick in my head and know when to start stop
 
-
 ## Specific things to practice
 
 - 1 note from a a scale, improvise over metronome or chords
@@ -35,14 +33,16 @@ My practice should include all these
 - 3 note from a a scale, improvise over metronome or chords
 - ... and so on adding notes
 
-
 - learn the notes on the neck
 - memorise the notes in some scales
-    - together with knowing the notes on the neck this frees me up from specific patterns
+    - together with knowing the notes on the neck this frees me up from specific
+      patterns
 - try "flash card" approach of picking note at random and figuring it out
 - landmarks
-    - 5th fret is always the same as the open string below it (4th in case of G string)
-- use whole, half as words for scale intervals - there are already multiple sets of numbers in the mix so 1,2 isn't as clear
+    - 5th fret is always the same as the open string below it (4th in case of G
+      string)
+- use whole, half as words for scale intervals - there are already multiple sets
+  of numbers in the mix so 1,2 isn't as clear
 - practice using strict alternate picking for scales
 
 ### Scale sequences
@@ -94,6 +94,7 @@ Any pattern is valid
 ```
 
 These practice
+
 - finger dexterity
 - getting soloing way from up/down scales
 -

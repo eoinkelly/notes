@@ -1,43 +1,42 @@
 # Sources
 
-* http://docs.oracle.com/cd/E19957-01/806-3568/ncg_goldberg.html
-* http://www.cprogramming.com/tutorial/floating_point/understanding_floating_point_representation.html
-* http://en.wikipedia.org/wiki/Floating_point
+- http://docs.oracle.com/cd/E19957-01/806-3568/ncg_goldberg.html
+- http://www.cprogramming.com/tutorial/floating_point/understanding_floating_point_representation.html
+- http://en.wikipedia.org/wiki/Floating_point
 
 # Terminology
 
-Significant figures of a number are those figures that carry meaning contributing to its precision i.e.
+Significant figures of a number are those figures that carry meaning
+contributing to its precision i.e.
 
 Significant figures are all digits except:
 
-1. leading zeros
-    0.00052 = 2 significant figures: 5, 2
-    0000054 = 2 significant figures: 5, 4
-2. trailing zeros _only_ when they are just placeholders to indicate scale
-    even this is a bit ambigious
-    13400 = probably 5 significant digits (sometimes bar over last signficant
-    digit or sometimes an explicit decimal point is used e.g.  13400.
-    12.334000 = 8 significant digits (trailing 0 is significant if num has decimal point!!!)
+1. leading zeros 0.00052 = 2 significant figures: 5, 2 0000054 = 2 significant
+   figures: 5, 4
+2. trailing zeros _only_ when they are just placeholders to indicate scale even
+   this is a bit ambigious 13400 = probably 5 significant digits (sometimes bar
+   over last signficant digit or sometimes an explicit decimal point is used
+   e.g. 13400. 12.334000 = 8 significant digits (trailing 0 is significant if
+   num has decimal point!!!)
 3. spurious digits resulting from
     1. measurements reported to a greater precision than the equipment supports
     2. calculations carried out to greater precision than the source data
 
 Significance arithmetic is
 
-* a simplified _propagation of uncertainty rules_
-* a rough set of rules for maintaining significance throughout a computation
-
+- a simplified _propagation of uncertainty rules_
+- a rough set of rules for maintaining significance throughout a computation
 
 Scientific notation;
 
-* removes any ambiguity about trailing 0 being significant
-* all digits are signifcant (otherwise they shouldn't be there)
-* part of the representation that contains significant figures is called the _significand_
+- removes any ambiguity about trailing 0 being significant
+- all digits are signifcant (otherwise they shouldn't be there)
+- part of the representation that contains significant figures is called the
+  _significand_
 
-    1.3400 * 10^4
-    1300 = ambigious about whether the trailing 0s are significant
-    1.300 * 10^3 = 1300 to 4 significant figures
-    1.3 * 10^3 = 1300 to two significant figures
+    1.3400 _ 10^4 1300 = ambigious about whether the trailing 0s are significant
+    1.300 _ 10^3 = 1300 to 4 significant figures 1.3 \* 10^3 = 1300 to two
+    significant figures
 
 # Representing a wide range of numbers
 
@@ -53,7 +52,7 @@ significant digits * base^exponent
 
 Contrast with integers which only have significand.
 
-Floating point numbers trade greater *range* for less *precision*
+Floating point numbers trade greater _range_ for less _precision_
 
 http://floating-point-gui.de/formats/fp/
 
@@ -61,11 +60,10 @@ When you want to store a fractional number in a computer you have only so many
 digits available .e.g. 64 bit word size
 
 You need to allocate some digit to representing the integer part and allocate
-the rest to the fractional part. This is true whether you are using bits (base
-2) or decimal digits (base 10)
+the rest to the fractional part. This is true whether you are using bits
+(base 2) or decimal digits (base 10)
 
-3 digits for integer, 4 digits for fractional
-023.4569
+3 digits for integer, 4 digits for fractional 023.4569
 
 If you choose a fixed allocation it is difficult to store very small numbers and
 very large nmbers e.g.
@@ -78,11 +76,11 @@ To solve this we use a "floating point" number
 we store
 
 1. the numbers digits (the _significand_)
-2. where the decimal point should be placed relative to the start of the significand (the _exponent_)
+2. where the decimal point should be placed relative to the start of the
+   significand (the _exponent_)
 
 In decimal system, floating point numbers usually take the form of scientific
 notation
-
 
 # IEEE 754 representation
 
@@ -90,9 +88,7 @@ significand is also called _mantissa_
 
 To prevent having many bit strings that could represent the same number e.g.
 
-2 * 10^-1
-0.2 * 10^0
-20 * 10^-2
+2 _ 10^-1 0.2 _ 10^0 20 \* 10^-2
 
 ### 1.m mantissa representation
 
@@ -104,7 +100,8 @@ Any binary number that isn't 0 has a 1 somewhere so we can always make `1.m`
 representation work by choosing the exponent so the left-most 1 in the binary
 number is on the LHS of the point.
 
-Basically the significands most significant bit is assumed to be 1 and is not included
+Basically the significands most significant bit is assumed to be 1 and is not
+included
 
 ### shift-127 exponent representation
 
@@ -127,41 +124,32 @@ not being able to tell the difference between `1.0` and `0`!
 
 The bits appear in this order:
 
-single precision
-    1 sign bit
-    8 exponent bits
-    23 significand bits
-32 bits total
+single precision 1 sign bit 8 exponent bits 23 significand bits 32 bits total
 
-double precision
-    1 sign bit
-    11 exponent bits
-    52 significand bits
-64 bits total
+double precision 1 sign bit 11 exponent bits 52 significand bits 64 bits total
 
-exponent bits
-    it does not have a sign - uses a custom scheme to represent sign
-
+exponent bits it does not have a sign - uses a custom scheme to represent sign
 
 ## Special cases
 
 ### 0
 
-* If all bits are 0 (sign bit is ignored) then the value is 0
-* There are separate positive and negative 0 patterns (all bits 0 except the sign bit)
+- If all bits are 0 (sign bit is ignored) then the value is 0
+- There are separate positive and negative 0 patterns (all bits 0 except the
+  sign bit)
 
 ### Infinity
 
-* exponent all 1, significand all 0 = representation of Infinity
-* there is positive/negative infinity depending on sign
-* positive Infinity and negative Infinity must be considered equal
+- exponent all 1, significand all 0 = representation of Infinity
+- there is positive/negative infinity depending on sign
+- positive Infinity and negative Infinity must be considered equal
 
 ### NaN
 
-* exponent all 1, significand *not* all 0 = representioan of NaN
-* represents the result of various undefined calculations
-* there is positive and negative NaN
-* _Even bit identical NaN values must *not* be considered equal_
+- exponent all 1, significand _not_ all 0 = representioan of NaN
+- represents the result of various undefined calculations
+- there is positive and negative NaN
+- _Even bit identical NaN values must *not* be considered equal_
 
 ### other
 
@@ -180,12 +168,12 @@ Possible solution:
 If you are dealing with fractions and want to preserve accuracy, store them as
 two integers and only make the floating point representation when you need it.
 
-
 # Ruby and floats
 
 Can make a NaN value in ruby by `Float::NAN`
 
-Can test if an instance of Float is NaN via `#nan?` - you will get a NoMethodError if you try it on other types
+Can test if an instance of Float is NaN via `#nan?` - you will get a
+NoMethodError if you try it on other types
 
 ```
 >> x = 23
@@ -208,7 +196,8 @@ NaN
 true
 ```
 
-Dividing by 0 (instance of Fixnum) raises a ZeroDivisionError **but** dividing by `0.0` (instance of Float) returns `NaN`!!!
+Dividing by 0 (instance of Fixnum) raises a ZeroDivisionError **but** dividing
+by `0.0` (instance of Float) returns `NaN`!!!
 
 ```
 >> 0 / 0

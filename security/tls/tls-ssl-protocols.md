@@ -11,64 +11,71 @@ export SSL_CERT_FILE="/usr/local/Cellar/curl-ca-bundle/1.87/share/ca-bundle.crt"
 
 ## Sources
 
-* TLS 1.2
-    * https://tools.ietf.org/html/rfc5246
-* https://en.wikipedia.org/wiki/Transport_Layer_Security
+- TLS 1.2
+    - https://tools.ietf.org/html/rfc5246
+- https://en.wikipedia.org/wiki/Transport_Layer_Security
 
 ## Protocols
 
-* There are three SSL protocols (1.0, 2.0, 3.0) and they have ALL been deprecated now
-* TLS 1.0
-    * 1999
-    * refines previous version, upgrades keys and algorithms
-    * supports downgrading to SSL 3.0 which weakens security
-* TLS 1.1
-    * 2006
-    * refines previous version, upgrades keys and algorithms
-* TLS 1.2
-    * 2008
-    * refines previous version, upgrades keys and algorithms
-* TLS 1.3 (draft)
-    * WIP
+- There are three SSL protocols (1.0, 2.0, 3.0) and they have ALL been
+  deprecated now
+- TLS 1.0
+    - 1999
+    - refines previous version, upgrades keys and algorithms
+    - supports downgrading to SSL 3.0 which weakens security
+- TLS 1.1
+    - 2006
+    - refines previous version, upgrades keys and algorithms
+- TLS 1.2
+    - 2008
+    - refines previous version, upgrades keys and algorithms
+- TLS 1.3 (draft)
+    - WIP
 
-TLS Record protocol
-TLS Handshake protocol
+TLS Record protocol TLS Handshake protocol
 
-##  Host Verification and Peer Verification
+## Host Verification and Peer Verification
 
- * TLS can secure any protocol over TCP
-    * https is just a common one
+- TLS can secure any protocol over TCP
+    - https is just a common one
 
-* OpenSSL default behavior is to not verify certificates
+- OpenSSL default behavior is to not verify certificates
 
 OpenSSL has flags you can set to tell it how to verify certificates
 
-* `SSL_VERIFY_NONE`
-    * in server mode
-        * no request for certificate is sent to client
-        * client should not send a certificate
-    * in client mode
-        * any certificated sent by the server will be verified BUT failure of this verification will not terminate the connection
-    * use cases
-        * only makes sense when operating in server mode when clients can't provide a certificate to prove their identity
-* `SSL_VERIFY_PEER`
-    * in server mode
-        * a request for a certificate will be sent to the client during handshake
-        * the client is NOT required to send a cert
-        * but if the client does send a cert the server will verify it and terminate connection if that verification fails
-    * in client mode
-        * if the server sends a certificate it will be verified and the connection terminated if that verification fails
-        * the only time a server would not send a certificate is if an "anonymous cipher" is enabled
-            * anonymous ciphers are disabled by default
-* `SSL_VERIFY_FAIL_IF_NO_PEER_CERT`
-    * only used in server mode
-    * only used if `SSL_VERIFY_PEER` is also set
-    * causes the server to terminate the connection if the client does not provide a certificate
-* `SSL_VERIFY_CLIENT_ONCE`
-    * only used in server mode
-    * only used if `SSL_VERIFY_PEER` is also set
-    * server still requests certificate from client during initial handshake
-    * server does NOT request certificate from client during renegotiations
+- `SSL_VERIFY_NONE`
+    - in server mode
+        - no request for certificate is sent to client
+        - client should not send a certificate
+    - in client mode
+        - any certificated sent by the server will be verified BUT failure of
+          this verification will not terminate the connection
+    - use cases
+        - only makes sense when operating in server mode when clients can't
+          provide a certificate to prove their identity
+- `SSL_VERIFY_PEER`
+    - in server mode
+        - a request for a certificate will be sent to the client during
+          handshake
+        - the client is NOT required to send a cert
+        - but if the client does send a cert the server will verify it and
+          terminate connection if that verification fails
+    - in client mode
+        - if the server sends a certificate it will be verified and the
+          connection terminated if that verification fails
+        - the only time a server would not send a certificate is if an
+          "anonymous cipher" is enabled
+            - anonymous ciphers are disabled by default
+- `SSL_VERIFY_FAIL_IF_NO_PEER_CERT`
+    - only used in server mode
+    - only used if `SSL_VERIFY_PEER` is also set
+    - causes the server to terminate the connection if the client does not
+      provide a certificate
+- `SSL_VERIFY_CLIENT_ONCE`
+    - only used in server mode
+    - only used if `SSL_VERIFY_PEER` is also set
+    - server still requests certificate from client during initial handshake
+    - server does NOT request certificate from client during renegotiations
 
 there are other flags
 http://etutorials.org/Programming/secure+programming/Chapter+10.+Public+Key+Infrastructure/10.7+Verifying+an+SSL+Peer+s+Certificate/
@@ -87,33 +94,34 @@ OpenSSL 1.0.2d 9 Jul 2015
 
 ## curl
 
-* docs: http://curl.haxx.se/docs/sslcerts.html
-* use -k to put curl in insecure mode (will stop if failing if the server cert does not verify)
-* curl verifies certs using its "installed CA cert bundle" by default
-    * `/usr/local/Cellar/curl-ca-bundle/1.87/share/ca-bundle.crt`
-* If you're using the curl command line tool, you can specify your own CA cert
+- docs: http://curl.haxx.se/docs/sslcerts.html
+- use -k to put curl in insecure mode (will stop if failing if the server cert
+  does not verify)
+- curl verifies certs using its "installed CA cert bundle" by default
+    - `/usr/local/Cellar/curl-ca-bundle/1.87/share/ca-bundle.crt`
+- If you're using the curl command line tool, you can specify your own CA cert
   path by setting the environment variable CURL_CA_BUNDLE to the path of your
   choice
 
 ## CA bundles
 
-In order for OpenSSl to verify the certificate for a server it needs to have
-the certificate of the CA (certificate authority) available locally
+In order for OpenSSl to verify the certificate for a server it needs to have the
+certificate of the CA (certificate authority) available locally
 
 CA certificates are usually distributed as a "bundle" e.g.
 http://curl.haxx.se/ca/cacert.pem is a bundle of X.509 certificates of public
 certificate authorities
 
-* curl installs a CA bundle
-    * `/usr/local/Cellar/curl-ca-bundle/1.87/share/ca-bundle.crt`
-* OS X keeps certs in Keychain
-* Firefox includes a certs file too
-    * http://mxr.mozilla.org/mozilla-central/source/security/nss/lib/ckfw/builtins/certdata.txt
-    * TODO: not sure where this lives on local filesystem
-* openssl installs a cert bundle
-    * `/usr/local/etc/openssl/cert.pem`
-    * 5000 lines long on my system
-    * just certs without comments
+- curl installs a CA bundle
+    - `/usr/local/Cellar/curl-ca-bundle/1.87/share/ca-bundle.crt`
+- OS X keeps certs in Keychain
+- Firefox includes a certs file too
+    - http://mxr.mozilla.org/mozilla-central/source/security/nss/lib/ckfw/builtins/certdata.txt
+    - TODO: not sure where this lives on local filesystem
+- openssl installs a cert bundle
+    - `/usr/local/etc/openssl/cert.pem`
+    - 5000 lines long on my system
+    - just certs without comments
 
 ## Openssl: Show cert chain for a given host
 
@@ -237,12 +245,12 @@ closed
 
 Source: https://www.youtube.com/watch?v=0EB7zh_7UE4
 
-* Don't use TLS comopression
-    * connection is already using HTTP compression (gzip)
-    * TLS compression has a significant memory allocation overhead e.g. up to
+- Don't use TLS comopression
+    - connection is already using HTTP compression (gzip)
+    - TLS compression has a significant memory allocation overhead e.g. up to
       1MB per connection on server
 
-* Elliptic curve ephermeral Diffe-hellman can be favoured as a cipher suite
+- Elliptic curve ephermeral Diffe-hellman can be favoured as a cipher suite
   because of TLS resumption allows reuse of the session
 
 ```
@@ -250,20 +258,20 @@ Source: https://www.youtube.com/watch?v=0EB7zh_7UE4
 openssl s_client -connect foo.herokuapp.com:443 -tls1 -tlsextdebug -status
 ```
 
-Most servers out of the box don't automatically rotate keys so your "perfect forward secrecy" won't work properly
+Most servers out of the box don't automatically rotate keys so your "perfect
+forward secrecy" won't work properly
 
-* CDNs are good for TLS performance
-* TLS has an extra 2 RTTs so you want to minimuse the problem
-* The closer you can terminate the TLS connection the better the latency
-
+- CDNs are good for TLS performance
+- TLS has an extra 2 RTTs so you want to minimuse the problem
+- The closer you can terminate the TLS connection the better the latency
 
 OCSP Online Certificate Status Program
 
-* browser checks with CA that the server cert is still valid
-* You will see it as an empty area on the waterfall graph as the browser goes
+- browser checks with CA that the server cert is still valid
+- You will see it as an empty area on the waterfall graph as the browser goes
   off and does the check
-* There are problems with the OCSP protocol
-* Chrome doesn't block on the OCSP check, firefox does a live check
+- There are problems with the OCSP protocol
+- Chrome doesn't block on the OCSP check, firefox does a live check
 
 OCSP stapling makes getting the OCSP response the servers job. It "staples" the
 OCSP response (which has been signed by the CA) to the response it sends the
@@ -275,5 +283,5 @@ You can see OCSP stapling in the output of `s_client` if it has happened e.g.
 OCSP response: no response sent
 ```
 
-* Stapled OSCP increases the size of the certificate.
-* If your cert chain is large, browser will need more than 2 RTT to setup TLS
+- Stapled OSCP increases the size of the certificate.
+- If your cert chain is large, browser will need more than 2 RTT to setup TLS

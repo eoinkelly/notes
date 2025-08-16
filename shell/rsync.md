@@ -1,10 +1,6 @@
-
-
-
 # compare two directories with rsync
 
-By default rsync compares mtime and size
-adding -c tells it to compre checksums
+By default rsync compares mtime and size adding -c tells it to compre checksums
 
 ```bash
 

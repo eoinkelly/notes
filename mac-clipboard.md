@@ -19,4 +19,6 @@ Clipboard data can be in one of 4 formats
 
 A pasteboard can hold multiple representations of the same pasteboard item.
 
-For example, a rich text editor might provide RTFD, RTF, and NSString representations of the copied data. An item that is added to a pasteboard specifies what representations it is able to provide.
+For example, a rich text editor might provide RTFD, RTF, and NSString
+representations of the copied data. An item that is added to a pasteboard
+specifies what representations it is able to provide.

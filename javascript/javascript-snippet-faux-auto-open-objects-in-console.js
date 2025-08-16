@@ -1,3 +1,3 @@
-var j = function(d) {
-    return JSON.stringify(d, true, 2);
+var j = function (d) {
+  return JSON.stringify(d, true, 2);
 };

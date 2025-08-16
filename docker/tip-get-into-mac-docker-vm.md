@@ -1,5 +1,3 @@
-
-
 ```
 # To enter the linux VM which runs docker on your mac:
 you@local$ screen ~/Library/Containers/com.docker.docker/Data/com.docker.driver.amd64-linux/tty

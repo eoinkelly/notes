@@ -38,6 +38,5 @@ final col:
 + =  file has extended security information (e.g. ACL). `ls -le` to see ACLs
 ```
 
-TODO: Find out more about extended attributes on mac
-TODO: Find out more about mac ACLs
-Q: How can I tell a hard-link from a real file?
+TODO: Find out more about extended attributes on mac TODO: Find out more about
+mac ACLs Q: How can I tell a hard-link from a real file?

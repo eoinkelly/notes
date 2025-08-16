@@ -1,4 +1,3 @@
-
 To upgrade a phoenix project:
 
 ```
@@ -8,4 +7,3 @@ mix deps.unlock --all
 mix deps.update
 mix deps.compile
 ```
-

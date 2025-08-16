@@ -12,7 +12,6 @@ objc_msgSend(user, @selector(logoutNow), nil);
 
 ```
 
-
 # C strings vs NSString
 
 ```objc
@@ -20,12 +19,11 @@ objc_msgSend(user, @selector(logoutNow), nil);
 @"hello" // creates an instance of NSString
 ```
 
-
 # Manual memory management
 
-* ObjC on desktop has GC but not on iPhone
-* ARC is only available on iOS 5+
-* This is how to manually manage release and retain
+- ObjC on desktop has GC but not on iPhone
+- ARC is only available on iOS 5+
+- This is how to manually manage release and retain
 
 ```objc
 // creating an Objective-C object has two steps
@@ -34,20 +32,20 @@ NSMutableArray *ary = [[NSMutableArray alloc] init];
 [ary release]; // drecrement the retain count
 ```
 
-* Never call `dealloc` yourself
+- Never call `dealloc` yourself
 
 ### 2 rules of memory management
 
 1. Methods named `init`, `new`, `copy` the returned object has a retain count of
    and you must release the object when you are finished with it.
-    * Any object returned from any other method is assumed to be autorelease.
+    - Any object returned from any other method is assumed to be autorelease.
 2. If you recieve an object and intend to hold on to it you need to `retain` it.
 
 How to know when you need to release?
 
-* Did I create this object? THen YES
-* Did I call retain on this object? Then YES
-* Otherwise NO.
+- Did I create this object? THen YES
+- Did I call retain on this object? Then YES
+- Otherwise NO.
 
 ```objc
 // Consider the factory method:
@@ -74,7 +72,7 @@ How to know when you need to release?
 UILabel *myLabel = [[self labelWithText:@"my label"] retain];
 ```
 
-* Objective C has a run loop
+- Objective C has a run loop
 
 TODO: find out more about it
 
@@ -169,7 +167,6 @@ TODO: find out more about it
 @end
 ```
 
-
 # @synthesise
 
 ```objc
@@ -182,11 +179,11 @@ TODO: find out more about it
 
 # Is ObjC pass by reference or value?
 
-* It is a strict superset of C so always passes in a value (even if that value is
-  often a pointer)
-* By implication C is also pass by value
-* In C (and Objective-C) you can simulate pass-by-reference by passing a
+- It is a strict superset of C so always passes in a value (even if that value
+  is often a pointer)
+- By implication C is also pass by value
+- In C (and Objective-C) you can simulate pass-by-reference by passing a
   pointer, but it's important to remember that you're still technically passing
   a value, which happens to be a the value of a pointer.
-* In Objective-C (and C, for the matter) there is no concept of reference as
+- In Objective-C (and C, for the matter) there is no concept of reference as
   intended in other languages (such as C++ or Java).

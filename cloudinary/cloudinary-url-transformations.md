@@ -8,37 +8,38 @@ https://res.cloudinary.com/<cloud_name>/<asset_type>/<delivery_type>/<transforma
 
 c_crop,g_face,h_400,w_400/r_max/c_scale,w_200
 
-_transformation parameters_ are comma separated
-_transformations_ are `/` separated
+_transformation parameters_ are comma separated _transformations_ are `/`
+separated
 
-
-* transformation parameters
-* two kinds
-	1. action parameters
-		* these trigger the actual transforming of the image
-		* each transformation must have exactly one action parameter
-	2. qualifier parameters
-		* these tweak the settings of a previous action param
-		* a given action parameter will have documented required and optional qualifier parameters
-
+- transformation parameters
+- two kinds
+    1.  action parameters
+        - these trigger the actual transforming of the image
+        - each transformation must have exactly one action parameter
+    2.  qualifier parameters
+        - these tweak the settings of a previous action param
+        - a given action parameter will have documented required and optional
+          qualifier parameters
 
 a single transformation = action parameter + 0-N qualifier parameters
 
 can chain transformations with `/`
 
-	<transform-1>/<transform-2>/<transform-3>
+    <transform-1>/<transform-2>/<transform-3>
 
 creates a pipeline
 
-	<transform-1> -> <transform-2> -> <transform-3>
+    <transform-1> -> <transform-2> -> <transform-3>
 
-modeled in the ruby API as an array of hashes (each hash a collection of transformation params), each transformation applied in order
+modeled in the ruby API as an array of hashes (each hash a collection of
+transformation params), each transformation applied in order
 
 Pataka embedded crops are a c_crop followed by a c_scale
 
 ## What happens if a c_crop is applied twice in a URL?
 
-Each c_crop works on the *output* of the previous transformation - they form a pipeline. It is not the case that "last crop wins".
+Each c_crop works on the _output_ of the previous transformation - they form a
+pipeline. It is not the case that "last crop wins".
 
 ```bash
 # given a public ID

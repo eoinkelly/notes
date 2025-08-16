@@ -1,7 +1,7 @@
 # OpenAI API
 
--   Docs: https://platform.openai.com/docs/api-reference/introduction
--   Authentication via API key in HTTP Basic Auth header
+- Docs: https://platform.openai.com/docs/api-reference/introduction
+- Authentication via API key in HTTP Basic Auth header
 
 ## API endpoints overview
 
@@ -9,7 +9,8 @@
 1. Models: Show info about a specific model
 1. Completions: Create completion(s) from a given prompt
 1. Chat completion: Create a chat response given a chat message
-1. Edits: Given some text (prompt) and an instruction, perform the instruction to edit the prompt
+1. Edits: Given some text (prompt) and an instruction, perform the instruction
+   to edit the prompt
 
     ```json
     {
@@ -38,11 +39,14 @@
 1. Images: Generate 1-10 images (max size 1024KB each) based on the given prompt
 1. Images: Edit an image
 1. Images: Create variations of a given image
-1. Embeddings: Create a vector representation of a given input which can be consumed by ML models
+1. Embeddings: Create a vector representation of a given input which can be
+   consumed by ML models
 1. Audio: Create an audio transcription of a given audio file
-1. Audio: Create an English text transcription of the given audio where audio is in a different language (i.e. translation)
+1. Audio: Create an English text transcription of the given audio where audio is
+   in a different language (i.e. translation)
 1. Various endpoints for CRUDing files you have uploaded to OpenAI
-1. Fine-tune: Create a fine-tune job for a given uploaded dataset and a given OpenAI model
+1. Fine-tune: Create a fine-tune job for a given uploaded dataset and a given
+   OpenAI model
 1. Fine-tune: RUD existing fine-tunes
 1. Moderation: Check if a given input violates OpenAIs content policy
 

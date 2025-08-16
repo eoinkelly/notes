@@ -1,32 +1,36 @@
 # SQL JOIN
 
 - [SQL JOIN](#sql-join)
-  - [Sources](#sources)
-  - [Overview](#overview)
-  - [Illustrating JOIN](#illustrating-join)
-  - [Basic JOINs](#basic-joins)
-  - [Semi join and Anti join](#semi-join-and-anti-join)
-  - [Semi join](#semi-join)
-  - [Anti join](#anti-join)
-  - [LATERAL JOIN (not really a new kind of join tbh)](#lateral-join-not-really-a-new-kind-of-join-tbh)
-  - [JOIN order](#join-order)
-  - [Do JOIN always duplicate rows?](#do-join-always-duplicate-rows)
-  - [How does Postgres decide which table to put in inner loop in a CROSS JOIN?](#how-does-postgres-decide-which-table-to-put-in-inner-loop-in-a-cross-join)
+    - [Sources](#sources)
+    - [Overview](#overview)
+    - [Illustrating JOIN](#illustrating-join)
+    - [Basic JOINs](#basic-joins)
+    - [Semi join and Anti join](#semi-join-and-anti-join)
+    - [Semi join](#semi-join)
+    - [Anti join](#anti-join)
+    - [LATERAL JOIN (not really a new kind of join tbh)](#lateral-join-not-really-a-new-kind-of-join-tbh)
+    - [JOIN order](#join-order)
+    - [Do JOIN always duplicate rows?](#do-join-always-duplicate-rows)
+    - [How does Postgres decide which table to put in inner loop in a CROSS JOIN?](#how-does-postgres-decide-which-table-to-put-in-inner-loop-in-a-cross-join)
 
 ## Sources
 
-* https://blog.jooq.org/2016/07/05/say-no-to-venn-diagrams-when-explaining-joins/
-* https://learnsql.com/blog/how-to-left-join-multiple-tables/
+- https://blog.jooq.org/2016/07/05/say-no-to-venn-diagrams-when-explaining-joins/
+- https://learnsql.com/blog/how-to-left-join-multiple-tables/
 
 ## Overview
 
-* when joining, the whole row (tuple) in the table is treated as an atom i.e. each table is a column vector of tuple objects. I think this is an important detail for the JOIN mental model
-* the cross join is the "mother join" of all other joins because they can be derived from it
-    * all other joins are a cross join with additional filters and unions
+- when joining, the whole row (tuple) in the table is treated as an atom i.e.
+  each table is a column vector of tuple objects. I think this is an important
+  detail for the JOIN mental model
+- the cross join is the "mother join" of all other joins because they can be
+  derived from it
+    - all other joins are a cross join with additional filters and unions
 
 ## Illustrating JOIN
 
-Despite how commonly used they are, Venn diagrams are good to illustrate **actual set operations** but JOIN is not a set operation!
+Despite how commonly used they are, Venn diagrams are good to illustrate
+**actual set operations** but JOIN is not a set operation!
 
 SQL has three **set** operations:
 
@@ -34,49 +38,55 @@ SQL has three **set** operations:
 1. INTERSECT
 1. EXCEPT
 
-These set operations operate on sets of elements (tuples), which are **all of the same type**.
+These set operations operate on sets of elements (tuples), which are **all of
+the same type**.
 
-* JOIN allows you to combine things of different types e.g. a `films` table joined to `actors` table
-* A JOIN is really a cartesian product (also called cross product) with a filter, and in the case of the OUTER JOINs some `UNION`s
+- JOIN allows you to combine things of different types e.g. a `films` table
+  joined to `actors` table
+- A JOIN is really a cartesian product (also called cross product) with a
+  filter, and in the case of the OUTER JOINs some `UNION`s
 
 ## Basic JOINs
 
 Describing how you get from cross join to other joins:
 
-* CROSS JOIN
-    * Steps:
+- CROSS JOIN
+    - Steps:
         1. Do a cross join
-* INNER JOIN:
-    * Aliases:
-      * THETA JOIN
-    * Steps:
+- INNER JOIN:
+    - Aliases:
+        - THETA JOIN
+    - Steps:
         1. Create a new table by doing a CROSS JOIN
         2. Remove rows from the table which don't match the join condition
-    * Consequences
-        * is a filtered CROSS JOIN
-        * The output **is a subset of the CROSS JOIN table**
-        * The rows of either table can be duplicated in the output
-* LEFT OUTER JOIN:
-    * Steps
+    - Consequences
+        - is a filtered CROSS JOIN
+        - The output **is a subset of the CROSS JOIN table**
+        - The rows of either table can be duplicated in the output
+- LEFT OUTER JOIN:
+    - Steps
         1. Do an INNER JOIN
-        2. Find the rows from the LHS table which don't appear in the INNER JOIN output
+        2. Find the rows from the LHS table which don't appear in the INNER JOIN
+           output
         3. UNION the inner join table with the rows from step 2.
-    * Consequences
-      * The output is **not a subset of a CROSS JOIN**
-      * The output is a superset of an INNER JOIN
-* RIGHT OUTER JOIN:
-    * Same as LEFT OUTER JOIN but just swap the tables first
-* FULL OUTER JOIN:
-    * Steps
+    - Consequences
+        - The output is **not a subset of a CROSS JOIN**
+        - The output is a superset of an INNER JOIN
+- RIGHT OUTER JOIN:
+    - Same as LEFT OUTER JOIN but just swap the tables first
+- FULL OUTER JOIN:
+    - Steps
         1. Do an INNER JOIN
-        2. Find the rows from the LHS table which don't appear in the INNER JOIN output
-        3. Find the rows from the RHS table which don't appear in the INNER JOIN output
+        2. Find the rows from the LHS table which don't appear in the INNER JOIN
+           output
+        3. Find the rows from the RHS table which don't appear in the INNER JOIN
+           output
         4. UNION the inner join table with the rows from step 2. and 3.
-    * Consequences
-      * The output is **not a subset of a CROSS JOIN**
-      * The output is a superset of an INNER JOIN
-      * The output is a superset of a LEFT OUTER JOIN
-      * The output is a superset of a RIGHT OUTER JOIN
+    - Consequences
+        - The output is **not a subset of a CROSS JOIN**
+        - The output is a superset of an INNER JOIN
+        - The output is a superset of a LEFT OUTER JOIN
+        - The output is a superset of a RIGHT OUTER JOIN
 
 ```sql
 -- Use a real LEFT OUTER JOIN from the database
@@ -140,22 +150,25 @@ FROM left_outer_join;
 
 ## Semi join and Anti join
 
-* A fancy name for when you put a SELECT query in the WHERE clause of your original query
-* semi join and anti join are ideas from relational algebra
-* Semi and Anti joins only return columns from one table not two
-* Use them when you want to filter a table based on data in another table and **you don't want any duplicate rows generated**
-* there is no SQL syntax for these
-* you can implement them in SQL using sub selects with
-    * IN()
-    * EXISTS()
-* The postgres optimizer will recognise semi joins and make a special query plan
-* ORMs use this pattern
-    * examples ???
+- A fancy name for when you put a SELECT query in the WHERE clause of your
+  original query
+- semi join and anti join are ideas from relational algebra
+- Semi and Anti joins only return columns from one table not two
+- Use them when you want to filter a table based on data in another table and
+  **you don't want any duplicate rows generated**
+- there is no SQL syntax for these
+- you can implement them in SQL using sub selects with
+    - IN()
+    - EXISTS()
+- The postgres optimizer will recognise semi joins and make a special query plan
+- ORMs use this pattern
+    - examples ???
 
-> semi join: "give me just columns from table A but only if some data in A matches some data in B"
+> semi join: "give me just columns from table A but only if some data in A
+> matches some data in B"
 
-> anti join: "give me just columns from table A but only if some data in A does NOT match some data in B"
-
+> anti join: "give me just columns from table A but only if some data in A does
+> NOT match some data in B"
 
 ```sql
 -- given two tables: employees, departments
@@ -173,22 +186,22 @@ FROM employees
 WHERE EXISTS ( SELECT 1 FROM departments where employees.department_name = departments.name)
 ```
 
-* QUESTION: how does those semi join implementations go if columns can be null?
+- QUESTION: how does those semi join implementations go if columns can be null?
 
 ## Semi join
 
 Sources
 
-* https://blog.jooq.org/2015/10/13/semi-join-and-anti-join-should-have-its-own-syntax-in-sql/
+- https://blog.jooq.org/2015/10/13/semi-join-and-anti-join-should-have-its-own-syntax-in-sql/
 
 Overview
 
-* Sometimes called a "half join"
+- Sometimes called a "half join"
 
 > What we really mean is we want all actors that played in films. But we don't
-> want any films in the results, just the actors. More specifically, we don't want
-> each actor several times, once per film. We want each actor only once (or zero
-> times) in the result.
+> want any films in the results, just the actors. More specifically, we don't
+> want each actor several times, once per film. We want each actor only once (or
+> zero times) in the result.
 
 ```sql
 
@@ -253,11 +266,13 @@ WHERE NOT EXISTS (
 > sometimes, your table-valued function (or subquery) is so complex, that's the
 > only way you can actually use it.
 
-The LATERAL keyword doesn't really change the semantics of the JOIN type that it is applied to.
+The LATERAL keyword doesn't really change the semantics of the JOIN type that it
+is applied to.
 
 TODO: get more use cases for lateral joins
 
-I think they make sense when the rhs of your join is dynamically calculated and wants to reference the left side of your join
+I think they make sense when the rhs of your join is dynamically calculated and
+wants to reference the left side of your join
 
 they don't seem to make much sense for joining two tables on disk
 
@@ -266,15 +281,13 @@ sub-SELECT to refer to columns of FROM items that appear before it in the FROM
 list. (Without LATERAL, each sub-SELECT is evaluated independently and so cannot
 cross-reference any other FROM item.)
 
-
 ## JOIN order
 
-* INNER JOIN are commutative and associative so order does not matter
-    * Some databases will choose which order it thinks is best
-* OUTER JOIN order does matter
-    * Joins happen in the order written
-    * Start with the table that you want to keep all the rows from
-
+- INNER JOIN are commutative and associative so order does not matter
+    - Some databases will choose which order it thinks is best
+- OUTER JOIN order does matter
+    - Joins happen in the order written
+    - Start with the table that you want to keep all the rows from
 
 ```sql
 a LEFT JOIN b LEFT JOIN c
@@ -286,24 +299,34 @@ a LEFT JOIN b LEFT JOIN c
 
 A join will almost always duplicate rows
 
-In some ways, the whole point of a JOIN is to duplicate rows to build new, bigger, rows that you can then filter
+In some ways, the whole point of a JOIN is to duplicate rows to build new,
+bigger, rows that you can then filter
 
-* All joins do start with a CROSS JOIN
-    * => all joins **start** by duplicating **all the rows** i.e. they naturally tend to duplicate rows
-        * the only time they don't is if there is a very specific filter applied
-* INNER JOIN = CROSS JOIN which is then filtered
-* LEFT JOIN or RIGHT JOIN = CROSS JOIN which is then filtered, and then has rows from one table appended and extended to fit
-    * the subtle bit is that the extra rows are appended **after** the filtering happens
-    * the filtering happens to the cross-join output but the extension adds any row which hasn't appeared at least once already
-    * you will have all the duplicates that the INNER JOIN gave you, and **then** you add one copy of each row which didn't match the filter
-* FULL JOIN = CROSS JOIN which is then filtered, and then has rows from **two** tables appended and extended to fit
+- All joins do start with a CROSS JOIN
+    - => all joins **start** by duplicating **all the rows** i.e. they naturally
+      tend to duplicate rows
+        - the only time they don't is if there is a very specific filter applied
+- INNER JOIN = CROSS JOIN which is then filtered
+- LEFT JOIN or RIGHT JOIN = CROSS JOIN which is then filtered, and then has rows
+  from one table appended and extended to fit
+    - the subtle bit is that the extra rows are appended **after** the filtering
+      happens
+    - the filtering happens to the cross-join output but the extension adds any
+      row which hasn't appeared at least once already
+    - you will have all the duplicates that the INNER JOIN gave you, and
+      **then** you add one copy of each row which didn't match the filter
+- FULL JOIN = CROSS JOIN which is then filtered, and then has rows from **two**
+  tables appended and extended to fit
 
-You can use a GROUP BY to collapse the output back to just the rows from the left table, provided you have some way of grouping the data from the columns of the rhs table
+You can use a GROUP BY to collapse the output back to just the rows from the
+left table, provided you have some way of grouping the data from the columns of
+the rhs table
 
 ## How does Postgres decide which table to put in inner loop in a CROSS JOIN?
 
-* The table with fewer rows will always be in the "inner loop".
-* If both tables have the same number of rows then it _seems_ (I can't be sure without checking PG source) that PG will use lhs table as the outer loop.
+- The table with fewer rows will always be in the "inner loop".
+- If both tables have the same number of rows then it _seems_ (I can't be sure
+  without checking PG source) that PG will use lhs table as the outer loop.
 
 ```ruby
 # pseudo code to implement cross join

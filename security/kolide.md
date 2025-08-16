@@ -1,11 +1,9 @@
-
-
 Runs 3 binaries on linux
 
 1. launcher
 1. osqueryd
 1. osquery-extension.ext
-    * communicates with osqueryd via its "extensions socket"
+    - communicates with osqueryd via its "extensions socket"
 
 ```
 $ systemd-cgls
@@ -31,7 +29,6 @@ transport jsonrpc
 hostname k2device.kolide.com
 ```
 
-
 Runs 2 binaries on macOS
 
 ```
@@ -53,4 +50,3 @@ root             57225   0.0  0.1  4382116  22816   ??  S     1:57pm   4:36.82 /
                                                                                                                     --disable_watchdog
                                                                                                                     --utc
 ```
-

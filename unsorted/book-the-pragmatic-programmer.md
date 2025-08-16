@@ -1,1 +1,3 @@
-* Great Prag-prog dave quote: Software engineering is the science and art of designing and making, with economy and elegance systems so that they can readily adapt to the situations to which they may be subjected
+- Great Prag-prog dave quote: Software engineering is the science and art of
+  designing and making, with economy and elegance systems so that they can
+  readily adapt to the situations to which they may be subjected

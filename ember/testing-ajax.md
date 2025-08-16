@@ -3,7 +3,8 @@
 ?
 
 https://www.npmjs.org/package/ic-ajax
-* seems good
+
+- seems good
 
 ```js
 // overwrite ajax to use ic.ajax
@@ -13,3 +14,4 @@ App.ApplicationAdapter = Ember.ActiveModelAdapter.extend({
     return ic.ajax(options);
   }
 })
+```

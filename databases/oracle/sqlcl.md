@@ -1,6 +1,6 @@
 ## SQLcl
 
-* is a superset of `SQL*Plus`
+- is a superset of `SQL*Plus`
 
 > Does it require an Oracle Client?
 >
@@ -33,4 +33,3 @@ exit
 ```
 
     The AS SYSDBA, AS SYSOPER and AS SYSASM  options are database administration privileges.
-

@@ -1,5 +1,3 @@
-
-
 ```sh
 # find {where} {how}
 

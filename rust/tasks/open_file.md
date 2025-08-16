@@ -1,4 +1,3 @@
-
 ## Read a whole file into memory as a String
 
 ```rs

@@ -1,5 +1,5 @@
-lenses through which to view my site
-------------------------------------
+## lenses through which to view my site
+
     just html
         seen by
             google

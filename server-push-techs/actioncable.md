@@ -1,6 +1,6 @@
 # Actioncable
 
-* is websockets **only** - it does not have a fallback!
+- is websockets **only** - it does not have a fallback!
 
 ```javascript
 // Append to app/assets/javascripts/cable.js to get logging
@@ -41,27 +41,33 @@ Sec-WebSocket-Protocol: actioncable-v1-json
 
 Note that
 
-* The client asked for extensions `permessage-deflate; client_max_window_bits` but the server include a `Sec-WebSocket-Extensions` header so no extensions will be used
-    * `permessage-deflate`
-        * has https://tools.ietf.org/html/rfc7692
-        * is a registered protocol with IANA https://www.iana.org/assignments/websocket/websocket.xml
-        * `client_max_window_bits` is part of `permessage-deflate`
+- The client asked for extensions `permessage-deflate; client_max_window_bits`
+  but the server include a `Sec-WebSocket-Extensions` header so no extensions
+  will be used
+    - `permessage-deflate`
+        - has https://tools.ietf.org/html/rfc7692
+        - is a registered protocol with IANA
+          https://www.iana.org/assignments/websocket/websocket.xml
+        - `client_max_window_bits` is part of `permessage-deflate`
 
-* The client stated that it supported protocols `actioncable-v1-json, actioncable-unsupported`, the server indicated it wanted to use `actioncable-v1-json` so that is what the connection will use.
-* Actioncable has not registered it's `actioncable-v1-json` with IANA https://www.iana.org/assignments/websocket/websocket.xml
-
+- The client stated that it supported protocols
+  `actioncable-v1-json, actioncable-unsupported`, the server indicated it wanted
+  to use `actioncable-v1-json` so that is what the connection will use.
+- Actioncable has not registered it's `actioncable-v1-json` with IANA
+  https://www.iana.org/assignments/websocket/websocket.xml
 
 ## Adapters
 
 Actioncable provides the following adapters
 
 1. inline
-    * seems to use a Hash to manage connections
+    - seems to use a Hash to manage connections
 2. asynchronous
-    * inherits from _inline_
+    - inherits from _inline_
 3. PostgreSQL
-    * uses Postgres pub/sub via one of ActiveRecord connection pool
+    - uses Postgres pub/sub via one of ActiveRecord connection pool
 4. evented Redis
 5. non-evented Redis
 
-I have found very few docs about them https://guides.rubyonrails.org/action_cable_overview.html#adapter-configuration
+I have found very few docs about them
+https://guides.rubyonrails.org/action_cable_overview.html#adapter-configuration

@@ -2,15 +2,16 @@
 
 ### Sources
 
-* [blog on writing 64 bit mac os assembler](http://www.idryman.org/blog/2014/12/02/writing-64-bit-assembly-on-mac-os-x/)
-* [Apple Mach-O file format](https://developer.apple.com/library/mac/documentation/DeveloperTools/Conceptual/MachORuntime/index.html)
-* [OSX Assembler reference](https://developer.apple.com/library/mac/documentation/DeveloperTools/Reference/Assembler/000-Introduction/introduction.html#//apple_ref/doc/uid/TP30000851-CH211-SW1)
-* [Intel manuals](http://www.intel.com/content/www/us/en/processors/architectures-software-developer-manuals.html)
-* [Fantastic video series from OpenSecurityTraining](https://www.youtube.com/watch?v=H4Z0S9ZbC0g)
+- [blog on writing 64 bit mac os assembler](http://www.idryman.org/blog/2014/12/02/writing-64-bit-assembly-on-mac-os-x/)
+- [Apple Mach-O file format](https://developer.apple.com/library/mac/documentation/DeveloperTools/Conceptual/MachORuntime/index.html)
+- [OSX Assembler reference](https://developer.apple.com/library/mac/documentation/DeveloperTools/Reference/Assembler/000-Introduction/introduction.html#//apple_ref/doc/uid/TP30000851-CH211-SW1)
+- [Intel manuals](http://www.intel.com/content/www/us/en/processors/architectures-software-developer-manuals.html)
+- [Fantastic video series from OpenSecurityTraining](https://www.youtube.com/watch?v=H4Z0S9ZbC0g)
 
 ## Aside: converting binary to decimal mentally
 
-* moving from right to left accumulate the power of two value of the position of each 1 e.g.
+- moving from right to left accumulate the power of two value of the position of
+  each 1 e.g.
 
 ```
 original binary: 0010 1101
@@ -96,7 +97,6 @@ To see CPU details on command line do:
     machdep.cpu.core_count: 2
     machdep.cpu.thread_count: 4
 
-
 ## Intel architectures and microarchitectures
 
 Intel has 2 "architectures"
@@ -110,17 +110,17 @@ Intel has many "microarchitectures" which vary based on the chip generation.
 Each "microarchitecture" goes with a family of processors. Microarchitectures
 have names like
 
-* haswell
-* sandy bridge
-* nehalem
+- haswell
+- sandy bridge
+- nehalem
 
 It seems to be like Architecture is the category and microarchitecture is the
 sub-category.
 
 Things in common between the two architectures
 
-* both store data bytes (not bits!) little endian
-* bytes in a word are numbered starting at least significant byte
+- both store data bytes (not bits!) little endian
+- bytes in a word are numbered starting at least significant byte
 
 ## Intel manual notation
 
@@ -131,110 +131,112 @@ Intel manual uses
 
 to show instruction examples.
 
-* Note order of source and destination!
-* manual uses `H` suffix for hex numbers e.g. `FA3FH` is `0xFA3F`
+- Note order of source and destination!
+- manual uses `H` suffix for hex numbers e.g. `FA3FH` is `0xFA3F`
 
 ## Assembler and assemblers
 
-* When you write aseembly language in a file it is called "assembler"
-* file extension is `.s` or `.asm`
-* the program that turns your `.s` file into an object is also an assembler
+- When you write aseembly language in a file it is called "assembler"
+- file extension is `.s` or `.asm`
+- the program that turns your `.s` file into an object is also an assembler
 
 There are two popular x86 assembler syntaxes
 
 1. Intel syntax: `<instruction> <dst> <src1> <src2>`
-    * dominates in windows world
-    * used by:
-        * NASM
-            * Netwide Assembler (NASM)
-            * available on mac
-            * uses variation of intel syntax!!!
-            * outputs lots of binary formats
-            * installed by Xcode `NASM version 0.98.40 (Apple Computer, Inc.
-              build 11) compiled on Jun 17 2015`
-            * much newer version from homebrew `NASM version 2.11.08 compiled
-              on Mar 10 2015` but have to invoke as `/usr/local/bin/nasm`
-            * From nasm page:
-            * > gas designed to be a back end to gcc, which always feeds it correct
-              code. So its error checking is minimal. Also, its syntax is
-              horrible, from the point of view of anyone trying to actually
-              write anything in it.
-        * DASM
-            * Macro assembler with support for several 8-bit microprocessors
-            * available on mac
-        * FLASM
-            * Flash command-line assembler and disassembler
-            * available on mac
-        * FASM
-            * (flat assembler)
-            * free, open source
-            * outputs binaries in windows, linux formats
-        * MASM
-            * Microsoft Macro Assembler
-        * TASM
-            * Turbo Assembler
-            * Windows only
+    - dominates in windows world
+    - used by:
+        - NASM
+            - Netwide Assembler (NASM)
+            - available on mac
+            - uses variation of intel syntax!!!
+            - outputs lots of binary formats
+            - installed by Xcode
+              `NASM version 0.98.40 (Apple Computer, Inc. build 11) compiled on Jun 17 2015`
+            - much newer version from homebrew
+              `NASM version 2.11.08 compiled on Mar 10 2015` but have to invoke
+              as `/usr/local/bin/nasm`
+            - From nasm page:
+            - > gas designed to be a back end to gcc, which always feeds it
+              > correct code. So its error checking is minimal. Also, its syntax
+              > is horrible, from the point of view of anyone trying to actually
+              > write anything in it.
+        - DASM
+            - Macro assembler with support for several 8-bit microprocessors
+            - available on mac
+        - FLASM
+            - Flash command-line assembler and disassembler
+            - available on mac
+        - FASM
+            - (flat assembler)
+            - free, open source
+            - outputs binaries in windows, linux formats
+        - MASM
+            - Microsoft Macro Assembler
+        - TASM
+            - Turbo Assembler
+            - Windows only
 2. Gnu syntax/GAS/AT&T Syntax: `<instruction> <src1> <src2> <dst>`
-    * dominates in unix world
+    - dominates in unix world
 
 Assemblers that support both syntaxes
 
-* YASM
-    * Modular BSD reimplementation of NASM
-    * available on mac
-    * assembler and disassembler
-    * supports both syntaxes
-    * very modular
-    * outputs lots of binary formats for mac, win, dos, linux
-* GAS
-    * appears as `as`
-    * supports both syntaxes via the `.intel_syntax` directive
-    * installed by Xcode `Apple Inc version cctools-870, GNU assembler version 1.38`
-    * `/usr/bin/as` is a sort of front end for a bunch of assemblers that
-      target different architectures there is a separate assembler for
-        * 32-bit intel aka i386 aka IA-32
-        * 64-bit intel aka x86_64 aka "Intel 64"
+- YASM
+    - Modular BSD reimplementation of NASM
+    - available on mac
+    - assembler and disassembler
+    - supports both syntaxes
+    - very modular
+    - outputs lots of binary formats for mac, win, dos, linux
+- GAS
+    - appears as `as`
+    - supports both syntaxes via the `.intel_syntax` directive
+    - installed by Xcode
+      `Apple Inc version cctools-870, GNU assembler version 1.38`
+    - `/usr/bin/as` is a sort of front end for a bunch of assemblers that target
+      different architectures there is a separate assembler for
+        - 32-bit intel aka i386 aka IA-32
+        - 64-bit intel aka x86_64 aka "Intel 64"
 
 ## Processor execution modes
 
 1. real mode
-    * 16 bit
-        * ??? 16 bits of what?
-    * segmented memory addresses (can address 1 MB via 20bit addresses)
-    * direct software access to peripheral hardware
-    * no concept of memory protection or multitasking at the hardware level
+    - 16 bit
+        - ??? 16 bits of what?
+    - segmented memory addresses (can address 1 MB via 20bit addresses)
+    - direct software access to peripheral hardware
+    - no concept of memory protection or multitasking at the hardware level
 2. protected mode
-    * 16 and 32 bit
-    * 16 MB of addressable physical memory
-    * 1 GB addressable virtual memory
-    * provides protected memory
-        * segment registers do not store real segment offsets - they store an
+    - 16 and 32 bit
+    - 16 MB of addressable physical memory
+    - 1 GB addressable virtual memory
+    - provides protected memory
+        - segment registers do not store real segment offsets - they store an
           index into a "descriptor table"
-        * two such tables
-            * global descriptor table
-            * local descriptor table
-        * each memory segment can be assigned one of 4 "ring levels" which
+        - two such tables
+            - global descriptor table
+            - local descriptor table
+        - each memory segment can be assigned one of 4 "ring levels" which
           allows for some hardware security
 3. long mode
-    * 64 bit
+    - 64 bit
 4. virtual 86 mode
-    * 16 bit
+    - 16 bit
 5. system management mode
-    * 16 bit
+    - 16 bit
 
 The processor runs in real mode immediately after power on. The OS has to
 explicitly change mode
 
 ### Aside: IA-64 is not x86-64
 
-* IA-64 (Itanium architecture) is a different architecture to x86-64
-    * created by Intel
-    * has different instruction set to IA-32
-    * was hoped to replace x86 architecture but didn't take off
-* x86-64 is a 64 bit extension to the x86 architecture
-    * AMD created x86-64 as extensions to x86-32
-    * much less radical approach, allowed better interop with existing code
-    * Intel was forced to implement x86-64, branded it "Intel 64"
+- IA-64 (Itanium architecture) is a different architecture to x86-64
+    - created by Intel
+    - has different instruction set to IA-32
+    - was hoped to replace x86 architecture but didn't take off
+- x86-64 is a 64 bit extension to the x86 architecture
+    - AMD created x86-64 as extensions to x86-32
+    - much less radical approach, allowed better interop with existing code
+    - Intel was forced to implement x86-64, branded it "Intel 64"
 
 IA-64 is mostly of historial interest now.
 
@@ -243,13 +245,13 @@ IA-64 is mostly of historial interest now.
 Intel processors support two kinds of memory addressing
 
 1. byte addressing
-    * simple, memory organised as a sequence of bytes
-    * to read a byte you just provide the address
+    - simple, memory organised as a sequence of bytes
+    - to read a byte you just provide the address
 2. segment addressing
-    * program has many independent address spaces e.g.
-        * code (instructions)
-        * stack
-    * segment addresses have form `segment_register:byte_address_within_segment`
+    - program has many independent address spaces e.g.
+        - code (instructions)
+        - stack
+    - segment addresses have form `segment_register:byte_address_within_segment`
         ```
         DS:FF79H
         # segment given by contents of DS register
@@ -261,30 +263,31 @@ Intel processors support two kinds of memory addressing
         # 0x10 is decimal 16 so the multiplication is a 4 bit shift right
         ```
 
-The segment:offset format lets us have 20 bit addresses
-    => you can address up to 1MB of RAM
+The segment:offset format lets us have 20 bit addresses => you can address up to
+1MB of RAM
 
 QUESTION: what processor modes does this apply to?
 
 ## Exceptions
 
-* Processors can throw exceptions if they encounter an error.
-* Notation is `#exception_memonic(fault_code)` e.g. `#PF(0)` for page-fault
-* Examples:
-    * page fault
-    * an attempt to access kernel memory by a process
+- Processors can throw exceptions if they encounter an error.
+- Notation is `#exception_memonic(fault_code)` e.g. `#PF(0)` for page-fault
+- Examples:
+    - page fault
+    - an attempt to access kernel memory by a process
 
 # Fundemental data sizes
 
-* nibble = 4 bits
-* byte/char = 8 bits
-* word/short = 16 bit
-    * a word is 16 bits because that was the word size on the processor they
+- nibble = 4 bits
+- byte/char = 8 bits
+- word/short = 16 bit
+    - a word is 16 bits because that was the word size on the processor they
       first introduced words on.
-* int/long/double word/dword = 32 bits
-* long long/double/qword = 64 bits
+- int/long/double word/dword = 32 bits
+- long long/double/qword = 64 bits
 
-Instructor recommend memorizing Dec <-> Binary <-> Hex conversions for dec 0 to 15
+Instructor recommend memorizing Dec <-> Binary <-> Hex conversions for dec 0 to
+15
 
 # 2's complement representation
 
@@ -320,8 +323,8 @@ original:    0001b      0x1
 0xFF = -1
 ```
 
-* => range is -128 to 127 for a single byte of storage
-* => you cannot represent d128 in a single byte in 2's complement
+- => range is -128 to 127 for a single byte of storage
+- => you cannot represent d128 in a single byte in 2's complement
 
 We arrange things so that we can tell whether a number is positive or negative
 just by inspecting the high order bit - that is why there is one extra negative
@@ -329,72 +332,74 @@ value! See discussion of Sign Flag in EFLAGS below for an example of usage
 
 ### Aside: CISC vs RISC
 
-* CISC
-    * many special purpose instructions that have been added based on patterns
+- CISC
+    - many special purpose instructions that have been added based on patterns
       of usage observed in the wild
-    * compilers don't use most of them
-    * variable length instructions 1-16(ish) bytes max
-    * Examples: Intel x86
-* RISC Reduced instruction set computer
-    * usually
-        * more registers
-        * less instructions
-        * fixed-size instructions (fixed at the size of the architecture)
-    * came from wanting a cleaner architecture
-    * examples: PowerPC, ARM, SPARC, MIPS (note these are not all the same architecture)
+    - compilers don't use most of them
+    - variable length instructions 1-16(ish) bytes max
+    - Examples: Intel x86
+- RISC Reduced instruction set computer
+    - usually
+        - more registers
+        - less instructions
+        - fixed-size instructions (fixed at the size of the architecture)
+    - came from wanting a cleaner architecture
+    - examples: PowerPC, ARM, SPARC, MIPS (note these are not all the same
+      architecture)
 
 ### Endianness
 
-* comes from gullivers travels - it doesn't matter which end you should break
+- comes from gullivers travels - it doesn't matter which end you should break
   your hard-boiled egg at.
 
-* little endian
-    * least significant _byte_ stored first in memory.
-    * note that endian is about bytes only - it is NOT bits within a byte
-    * intel stores thing in RAM as little endian but in registers is big endian - TRAP!
-    * bytes are numbered from least significant to most e.g. byte 0 of a
+- little endian
+    - least significant _byte_ stored first in memory.
+    - note that endian is about bytes only - it is NOT bits within a byte
+    - intel stores thing in RAM as little endian but in registers is big
+      endian - TRAP!
+    - bytes are numbered from least significant to most e.g. byte 0 of a
       quad-word is the least significant byte of an 8 byte value.
-* big endian
-    * Network traffic is big endian
-    * english is big endian when we write numbers 123456 (the digit on left is
+- big endian
+    - Network traffic is big endian
+    - english is big endian when we write numbers 123456 (the digit on left is
       the most significant)
 
 ## Registers
 
-* small memory storage area built into the CPU
-* will lose value if power is lost
+- small memory storage area built into the CPU
+- will lose value if power is lost
 
 There are
 
-* 1 x instruction pointer register `rip`
-* 16 x general purpose registers
-* 16 floating point registers
-* other special registers for SSE etc.
+- 1 x instruction pointer register `rip`
+- 16 x general purpose registers
+- 16 floating point registers
+- other special registers for SSE etc.
 
 Intel has "register conventions" - suggestions to compiler writers and
-hand-coding assembly writing. You con't have to use the register conventions
-but it makes it easier to understand.
+hand-coding assembly writing. You con't have to use the register conventions but
+it makes it easier to understand.
 
 1. RAX
-	* stores function return values. Also used as an "accumulator" register.
-    * functions that return a number will have a `mov` into it right before the
+    - stores function return values. Also used as an "accumulator" register.
+    - functions that return a number will have a `mov` into it right before the
       function returns
 2. RBX
-	* Base pointer to the data section
+    - Base pointer to the data section
 3. RCX
-	* Counter for string and loop operations
+    - Counter for string and loop operations
 4. RDX
-	* I/O pointer
+    - I/O pointer
 5. RSI
-	* source pointer for string operations
+    - source pointer for string operations
 6. RDI
-	* destionation pointer for string operations
+    - destionation pointer for string operations
 7. RSP
-	* stack pointer
+    - stack pointer
 8. RBP
-	* stack frame base pointer
+    - stack frame base pointer
 9. RIP
-	* (Instruction Pointer) pointer to next instruction to execute
+    - (Instruction Pointer) pointer to next instruction to execute
 10. R8
 11. R9
 12. R10
@@ -404,24 +409,28 @@ but it makes it easier to understand.
 16. R14
 17. R15
 18. RFLAGS
-    * a collection of 1 bit flags
+    - a collection of 1 bit flags
 
 Recommended use of the general purpose registers:
 
-* AL/AH/AX/EAX/RAX: Accumulator
-* BL/BH/BX/EBX/RBX: Base index (for use with arrays)
-* CL/CH/CX/ECX/RCX: Counter (for use with loops and strings)
-* DL/DH/DX/EDX/RDX: Extend the precision of the accumulator (e.g. combine 32-bit EAX and EDX for 64-bit integer operations in 32-bit code)
-* SI/ESI/RSI: Source index for string operations.
-* DI/EDI/RDI: Destination index for string operations.
-* SP/ESP/RSP: Stack pointer for top address of the stack.
-* BP/EBP/RBP: Stack base pointer for holding the address of the current stack frame.
-* IP/EIP/RIP: Instruction pointer. Holds the program counter, the current instruction address.
+- AL/AH/AX/EAX/RAX: Accumulator
+- BL/BH/BX/EBX/RBX: Base index (for use with arrays)
+- CL/CH/CX/ECX/RCX: Counter (for use with loops and strings)
+- DL/DH/DX/EDX/RDX: Extend the precision of the accumulator (e.g. combine 32-bit
+  EAX and EDX for 64-bit integer operations in 32-bit code)
+- SI/ESI/RSI: Source index for string operations.
+- DI/EDI/RDI: Destination index for string operations.
+- SP/ESP/RSP: Stack pointer for top address of the stack.
+- BP/EBP/RBP: Stack base pointer for holding the address of the current stack
+  frame.
+- IP/EIP/RIP: Instruction pointer. Holds the program counter, the current
+  instruction address.
 
-We can't move arbitrary values into RIP but we can change it as a side effect
-of other insructions.
+We can't move arbitrary values into RIP but we can change it as a side effect of
+other insructions.
 
-You can grab sub-portions of registers (exists for backward compatability reasons)
+You can grab sub-portions of registers (exists for backward compatability
+reasons)
 
 How register names are nested:
 
@@ -445,16 +454,15 @@ You can grab the bits 0-16 of ESP, EBP, ESI, EDI, EIP
     AH = bits 8-15 of EAX (single byte)
     AL = bits 0-7 of EAX (single byte)
 
-
 You can use any general purpose register for any task _but_ hardware will be
 faster if you follow the guides e.g. RAX will be fastest to use as an
 accumulator
 
 ### Segment registers
 
-* not general purpose
-* cannot be set or read from directly ???
-* each segment register determines where a particular 64KB segment starts
+- not general purpose
+- cannot be set or read from directly ???
+- each segment register determines where a particular 64KB segment starts
 
 Segment registers:
 
@@ -469,21 +477,21 @@ Segment registers:
 
 There are other "extension" registers for specialized tasks e.g.
 
-* MMX
-    * MMX is an instruction set!
-    * MMX doesn't stand for anything - is a marketing term from Intel
-    * it is a single instruction, multiple data (SIMD) instruction set
-    * defines 8 registers MM0 to MM7
-    * are aliases to the x87 floating point registers
-        * hardware takes care of making their contents always be same
-    * are directly addressable (unlike the FP registers)
-* 3DNow!
-    * AMD expansion on MMX instruction set
-    * Never popular, dropped since 2010
-* SSE, SSE2, SSE3, SSE4
-    * streaming SIMD instructions
-    * a further expansion of MMX instruction set
-    * is what modern processors have
+- MMX
+    - MMX is an instruction set!
+    - MMX doesn't stand for anything - is a marketing term from Intel
+    - it is a single instruction, multiple data (SIMD) instruction set
+    - defines 8 registers MM0 to MM7
+    - are aliases to the x87 floating point registers
+        - hardware takes care of making their contents always be same
+    - are directly addressable (unlike the FP registers)
+- 3DNow!
+    - AMD expansion on MMX instruction set
+    - Never popular, dropped since 2010
+- SSE, SSE2, SSE3, SSE4
+    - streaming SIMD instructions
+    - a further expansion of MMX instruction set
+    - is what modern processors have
 
 ### RFLAGS register
 
@@ -493,123 +501,138 @@ results in the specific register.
 
 RFLAGS is used a lot for conditional logic
 
-* holds many single bit flags - each bit has a different name
+- holds many single bit flags - each bit has a different name
 
-* AF Auxilliary flag
-    * used for conditional logic
-* CF Carry flag
-    * used for conditional logic
-* OF Overflow flag
-    * used for conditional logic
-* PF Parity flag
-    * used for conditional logic
-* SF (Sign Flag):
-    * Set equal the most significant bit of the result which is the sign bit of
+- AF Auxilliary flag
+    - used for conditional logic
+- CF Carry flag
+    - used for conditional logic
+- OF Overflow flag
+    - used for conditional logic
+- PF Parity flag
+    - used for conditional logic
+- SF (Sign Flag):
+    - Set equal the most significant bit of the result which is the sign bit of
       a signed integer
-        * 0 => positive value
-        * 1 => negative value
-* ZF (Zero Flag)
-    * set if the result of some instruction is zero; cleared otherwise
+        - 0 => positive value
+        - 1 => negative value
+- ZF (Zero Flag)
+    - set if the result of some instruction is zero; cleared otherwise
 
-Hardware has no idea of signs of numbers - it does addition of bits and sets
-the flags appropriately - it is up to the compiler/programmer to intrepret the
+Hardware has no idea of signs of numbers - it does addition of bits and sets the
+flags appropriately - it is up to the compiler/programmer to intrepret the
 result properly.
 
     TODO: understand that statment properly
 
 ## The Stack
 
-* A conceptional area of main memory which is _designated by the OS_ when a
+- A conceptional area of main memory which is _designated by the OS_ when a
   program is started.
-    * different OSes start it at different addresses by convention
-* Stack is a LIFO/FILO data structure
-* By convention on x86 the stack grows towards lower memory addresses
-    * => "adding" to the stack means the top of the stack is now at a lower memory address
-* RSP always points to the top of the stack - the lowest address which is being used.
-    * pop off the stack => RSP = RSP + sizeof(thing_you_popped)
-    * push onto the stack => RSP = RSP - sizeof(thing_you_pushed)
-* Things on the stack:
-    * local variables
-    * used to pass arguments to the next funtion to be called
-    * addresses of other parts of the stack - the stack frames form a linked list
-* A good understanding of the stack is essential for understanding program operation
-* Stack frame pointers create a linked list
+    - different OSes start it at different addresses by convention
+- Stack is a LIFO/FILO data structure
+- By convention on x86 the stack grows towards lower memory addresses
+    - => "adding" to the stack means the top of the stack is now at a lower
+      memory address
+- RSP always points to the top of the stack - the lowest address which is being
+  used.
+    - pop off the stack => RSP = RSP + sizeof(thing_you_popped)
+    - push onto the stack => RSP = RSP - sizeof(thing_you_pushed)
+- Things on the stack:
+    - local variables
+    - used to pass arguments to the next funtion to be called
+    - addresses of other parts of the stack - the stack frames form a linked
+      list
+- A good understanding of the stack is essential for understanding program
+  operation
+- Stack frame pointers create a linked list
 
-* stack grows down from very top of logical address space
-    * "to reserve space on the stack" == subtract num bytes required for all local vars from ESP
-    * Add to rsp => remove bytes from top of stack
-    * Subtract from rsp => add more bytes to top of stack
+- stack grows down from very top of logical address space
+    - "to reserve space on the stack" == subtract num bytes required for all
+      local vars from ESP
+    - Add to rsp => remove bytes from top of stack
+    - Subtract from rsp => add more bytes to top of stack
 
 ## Function call conventions
 
 Compilers have conventions about the preparation that happens before a function
 call and the cleanup that happens afterwards.
 
-1. the caller does some "caller saves" to save off the values of any registers that the callee might overwrite
-2. The caller pushes the local arguments for the callee onto the stack (from right to left parameter)
-    * pushing on from right-to-left means the callee will read them off from left-to-right!
+1. the caller does some "caller saves" to save off the values of any registers
+   that the callee might overwrite
+2. The caller pushes the local arguments for the callee onto the stack (from
+   right to left parameter)
+    - pushing on from right-to-left means the callee will read them off from
+      left-to-right!
 3. execute the CALL instruction (see above)
-1. callee takes callers frame pointer from EBP and puts it on stack for later
-1. writes into EBP the new top of the stack as that will be the start of callee's stack
-1. callee saves its callee-save registers onto the stack
-1. callee reserves space for its own local variables on the stack
+4. callee takes callers frame pointer from EBP and puts it on stack for later
+5. writes into EBP the new top of the stack as that will be the start of
+   callee's stack
+6. callee saves its callee-save registers onto the stack
+7. callee reserves space for its own local variables on the stack
 
-* You can tweak the above process with compile options e.g. `-fomit-frame-pointers` in GCC
-* The above convention is what compilers will do - you don't have to do exactly
+- You can tweak the above process with compile options e.g.
+  `-fomit-frame-pointers` in GCC
+- The above convention is what compilers will do - you don't have to do exactly
   this when you hand-write assembly.
 
 ### Register clean-up
 
 Conventions for how functions argree to not destroy each others registers
 
-* Caller-save registers: RAX RDX RCX
-    * If I am the caller and I have stuff I care about in any of these
-      registers I know I need to save it somewhere before I do a function call
-      as the callee can scribble over them.
-    * If I am a callee I know I can do what I want with these registers
-* Callee-save registers: RBP RBX RSI RDI
-    * If I am the callee and I need to use any of these registers I have to be
+- Caller-save registers: RAX RDX RCX
+    - If I am the caller and I have stuff I care about in any of these registers
+      I know I need to save it somewhere before I do a function call as the
+      callee can scribble over them.
+    - If I am a callee I know I can do what I want with these registers
+- Callee-save registers: RBP RBX RSI RDI
+    - If I am the callee and I need to use any of these registers I have to be
       careful to put everything back the way it was before I was called
-    * If I am the caller I can trust that these registers will not be changed
+    - If I am the caller I can trust that these registers will not be changed
 
 ### Pushing args onto the stack and popping them off after
 
-How code calls a subroutine is compiler-dependent and configurable but there
-are some conventions for 32 bit code:
+How code calls a subroutine is compiler-dependent and configurable but there are
+some conventions for 32 bit code:
 
-* Caller cleanup (caller cleans up args off the stack)
-    * examples
-        * `cdecl`
-            * C declaration - most common calling convention
-            * default for C code
-            * the process:
+- Caller cleanup (caller cleans up args off the stack)
+    - examples
+        - `cdecl`
+            - C declaration - most common calling convention
+            - default for C code
+            - the process:
                 1. caller pushes function params onto stack from right to left
                 1. caller issues CALL instruction
-                    * pushes next instruction after call onto stack (for RET to use)
-                    * changes RIP to point to new instruction
+                    - pushes next instruction after call onto stack (for RET to
+                      use)
+                    - changes RIP to point to new instruction
                 1. callee saves current RBP (stack frame pointer) onto the stack
                 1. callee copies current stack pionter into the RBP so current
                    top of stack becomes the start of a new stack frame.
                 1. callee ... executes its instructions ...
                 1. callee puts its return value in EAX or EDX:EAX
                 1. callee issues RET which pops the top of stack into RIP
-                    * how does it know where to find that value? is it (RBP + 4)?
-                1. caller cleans up stack by popping the args it put on there off.
-                    * how???
-            * NB: caller is responsible for cleaning up the stack
-    * caller cleanup allows for variable numbers of args.
-* Callee cleanup( callee cleans up args off the stack)
-    * cannot do variable numbers of arguments as the exact no. of bytes to be
+                    - how does it know where to find that value? is it (RBP +
+                      4)?
+                1. caller cleans up stack by popping the args it put on there
+                   off.
+                    - how???
+            - NB: caller is responsible for cleaning up the stack
+    - caller cleanup allows for variable numbers of args.
+- Callee cleanup( callee cleans up args off the stack)
+    - cannot do variable numbers of arguments as the exact no. of bytes to be
       wiped off the stack have to be known at compile time
-    * examples:
-        * `stdcall`
-            * same as `cdecl` except the callee is responsible for cleaning up
+    - examples:
+        - `stdcall`
+            - same as `cdecl` except the callee is responsible for cleaning up
               any stack params it takes
-                * typically used in MS C++ code ("std" does not imply standard)
+                - typically used in MS C++ code ("std" does not imply standard)
 
-Note: there is no difference between cdecl and stdcall unless the callee gets arguments
+Note: there is no difference between cdecl and stdcall unless the callee gets
+arguments
 
-There are [other calling conventions](https://en.wikipedia.org/wiki/X86_calling_conventions)
+There are
+[other calling conventions](https://en.wikipedia.org/wiki/X86_calling_conventions)
 
 The calling convention is different in x86-64 because there is a lot more
 register space available.
@@ -617,17 +640,17 @@ register space available.
 > The calling convention of the System V AMD64 ABI[14] is followed on Solaris,
 > Linux, FreeBSD, Mac OS X, and other UNIX-like or POSIX-compliant operating
 > systems. The first six integer or pointer arguments are passed in registers
-> RDI, RSI, RDX, RCX, R8, and R9, while XMM0, XMM1, XMM2, XMM3, XMM4, XMM5,
-> XMM6 and XMM7 are used for floating point arguments. For system calls, R10 is
-> used instead of RCX. As in the Microsoft x64 calling convention, additional
+> RDI, RSI, RDX, RCX, R8, and R9, while XMM0, XMM1, XMM2, XMM3, XMM4, XMM5, XMM6
+> and XMM7 are used for floating point arguments. For system calls, R10 is used
+> instead of RCX. As in the Microsoft x64 calling convention, additional
 > arguments are passed on the stack and the return value is stored in RAX.
 
 # R/MI Form
 
-* `r/mi32` is a phrase in the intel manuals
-* it refers to something which could be a register or memory
-* In intel synax `[]` always means "from memory" except in the `LEA` instruction
-* `[]` is assembly syntax for dereferencing a pointer
+- `r/mi32` is a phrase in the intel manuals
+- it refers to something which could be a register or memory
+- In intel synax `[]` always means "from memory" except in the `LEA` instruction
+- `[]` is assembly syntax for dereferencing a pointer
 
 ```assembly
     # MOV DST, SRC
@@ -656,56 +679,58 @@ X is 8 here because the array elements are 8 bytes
 
 The displacement (Y) can help with:
 
-* In multi-dimensional arrays you could set Y to whatever the distance of the
+- In multi-dimensional arrays you could set Y to whatever the distance of the
   inner array from the start of the outer array.
-* if you have contigious arrays and want to displace past the first array to
+- if you have contigious arrays and want to displace past the first array to
   another one.
-* An array of structures is fundementally a multi-dimensional array so
+- An array of structures is fundementally a multi-dimensional array so
   displacement is useful there too
 
 # Assembler Instructions
 
-* instruction memonic covers a family of instructions not just one i.e. there
+- instruction memonic covers a family of instructions not just one i.e. there
   are many ways the `MOV` instruction can be encoded as binary in the
   instruction steam.
 
 ## NOP
 
-* No operation, does nothing
-* Just pad/align bytes or to delay time
-    * Sometimes functions need to start on 16-byte boundaries
-* Bad folks use it ot make buffer overflows more reliable :-)
-* "Alias mnemonic for "XCHG EAX EAX"
+- No operation, does nothing
+- Just pad/align bytes or to delay time
+    - Sometimes functions need to start on 16-byte boundaries
+- Bad folks use it ot make buffer overflows more reliable :-)
+- "Alias mnemonic for "XCHG EAX EAX"
 
 ## PUSH
 
-* pushes a (word|double word|quad word) value onto the stack
-* that is:
+- pushes a (word|double word|quad word) value onto the stack
+- that is:
     1. copies the value onto the stack
     2. adjusts RSP to point to the new top of the stack
-* The _value_ can be an "immediate" value or a value in a register (any register except RIP)
-    * immediate value is hard-coded into the assembly code
-* When we push a DWORD onto the stack, then RSP (the stack pointer) needs to become (RSP - 4)
+- The _value_ can be an "immediate" value or a value in a register (any register
+  except RIP)
+    - immediate value is hard-coded into the assembly code
+- When we push a DWORD onto the stack, then RSP (the stack pointer) needs to
+  become (RSP - 4)
     ```
     push rax ; pushes value of rax onto the stack & adjust rsp
     ```
 
 ## POP
 
-* pop a value from the stack into a register
-* that is:
+- pop a value from the stack into a register
+- that is:
     1. copies the value from top of the stack
     2. adjusts RSP to point to the new top of the stack
-* copies the value from the top of the stack to the given register and
+- copies the value from the top of the stack to the given register and
   increments ESP to
-* note that it doesn't delete or zero out the value from the stack area
+- note that it doesn't delete or zero out the value from the stack area
 
     TODO: You can apparently pop directly into a memory address but instructor
     doesn't go into it.
 
 ## CALL
 
-* transfer control to a different function in a way that control can be
+- transfer control to a different function in a way that control can be
   transfered back later
     ```
     CALL <address>
@@ -714,11 +739,12 @@ The displacement (Y) can help with:
 What it does:
 
 1. push address of next instruction on to the stack
-    * RET will take this off the stack and put it in RIP when the function returns
-    * side effect: CALL modifies the stack
+    - RET will take this off the stack and put it in RIP when the function
+      returns
+    - side effect: CALL modifies the stack
 2. change RIP to point to `<address>` given as arg to CALL
-    * CALL implicitly modifies RIP
-    * address can be
+    - CALL implicitly modifies RIP
+    - address can be
         1. absolute
         2. relative to the end of the instruction
 
@@ -730,15 +756,15 @@ sequentially - it keeps incrementing the RIP
 Has 2 forms
 
 1. `RET`
-    * POP the top of the stack into RIP (POP increments the stack pointer)
-    * RET is an implicit POP into RIP
+    - POP the top of the stack into RIP (POP increments the stack pointer)
+    - RET is an implicit POP into RIP
 2. `RET 0x<some-hex-value>`
-    * POP the top of the stack into RIP and move the stack pointer to clean up
+    - POP the top of the stack into RIP and move the stack pointer to clean up
       the parameters it got i.e. add a constant no. of bytes to ESP
-        * Example: if it got 3 params that were 64bit ints then it would add 12
-          to the stack pointer ESP to clean up the stack. Remember adding to
-          ESP actually moves ESP _down_ the stack.
-    * typically used by stdcall functions
+        - Example: if it got 3 params that were 64bit ints then it would add 12
+          to the stack pointer ESP to clean up the stack. Remember adding to ESP
+          actually moves ESP _down_ the stack.
+    - typically used by stdcall functions
 
 Some disassemblers will use the `RETN` mnemoic for this instruction
 
@@ -751,14 +777,15 @@ Can move
 
     # ATT syntax:
     MOV SRC, DST
-* memory -> register
-* register -> memory
-* immediate -> register
-* immediate -> memory
-* it cannot move memory -> memory !!
-    * intel generally does not give you instructions that will do memory to
+
+- memory -> register
+- register -> memory
+- immediate -> register
+- immediate -> memory
+- it cannot move memory -> memory !!
+    - intel generally does not give you instructions that will do memory to
       memory operations e.g. addition
-* Note the destination is first operand - intel asm data travels right to left
+- Note the destination is first operand - intel asm data travels right to left
   (west going)
 
 Memory addresses are given in "r/m32 form"
@@ -770,50 +797,50 @@ An immedate is a constant that is hard-coded into the instruction stream
     ADD DST, SRC
     SUB DST, SRC
 
-* source can be
-    * register
-    * memory
-    * immediate
-* dst can be
-    * register
-    * memory
-* source and dst cannot both be memory (x86 has no memory to memory transfer)
-* Note the destination is first operand - intel asm data travels right to left
+- source can be
+    - register
+    - memory
+    - immediate
+- dst can be
+    - register
+    - memory
+- source and dst cannot both be memory (x86 has no memory to memory transfer)
+- Note the destination is first operand - intel asm data travels right to left
   (west going)
-* evaluates the operation (addition or subtraction) as if it were operating on
+- evaluates the operation (addition or subtraction) as if it were operating on
   both signed and unsigned data - it sets EFLAGS appropriately to indicate
-* modifies
-    * AF auxilliar flag
-    * CF carry flag
-    * OF overflow flag
-    * PF
-    * SF
-    * ZF
+- modifies
+    - AF auxilliar flag
+    - CF carry flag
+    - OF overflow flag
+    - PF
+    - SF
+    - ZF
 
-    ADD esp, 8
-    SUB eax, [ebx*2]
+    ADD esp, 8 SUB eax, [ebx*2]
 
 ## LEA
 
-* Load effective address
-* Is the one instruction where `[]` does not mean "dereference" ("get the value at")
-* Used for both general arithmetic and pointer arithmetic
-    * it cannot do arbitrary arithmetics but it can do addtions and
+- Load effective address
+- Is the one instruction where `[]` does not mean "dereference" ("get the value
+  at")
+- Used for both general arithmetic and pointer arithmetic
+    - it cannot do arbitrary arithmetics but it can do addtions and
       multiplications by 2,4,8 - see discussion of r/mi form above.
-* Is kind of a subset of MOV
-    * Does the calculation within the `[]` but does not load the memory
+- Is kind of a subset of MOV
+    - Does the calculation within the `[]` but does not load the memory
     ```
     LEA eax, [edx + ebx*2]
     ```
-* Note the destination is first operand - intel asm data travels right to left
+- Note the destination is first operand - intel asm data travels right to left
   (west going)
-* Uses
-    * You want to calculate the address of the Nth element of an array but you
+- Uses
+    - You want to calculate the address of the Nth element of an array but you
       don't want to load the data at that address.
 
 ## SHL
 
-* logical shift left
+- logical shift left
     ```
     SHL esi 0x1
     # shift esi left by 1 bit
@@ -821,23 +848,24 @@ An immedate is a constant that is hard-coded into the instruction stream
 
 ## JMP
 
-* change RIP to given address
-* has many forms
-    * short relative
-        * 1 byte displacement from end of JMP instruction
-        * can jump -128 to 127 instructions around the end of JMP itself
-    * near relative
-        * 4 byte displacment from end of JMP instruction
-    * absolute
-        * hardcoded address in instruction
-        * library code can be moved around so you probably shouldn't use this.
-    * absolute indirect
-        * jumping to an absolute address but that address is not stored in the instruction
-        * address calculated with r/m32
-        * CALL uses absolute indirect for function pointers
-* C `goto` is basically `jmp`
-* Displacement is relative to the end of the JMP instruction
-    * `JMP -2` is a 2 byte instruction so will make an infinite loop.
+- change RIP to given address
+- has many forms
+    - short relative
+        - 1 byte displacement from end of JMP instruction
+        - can jump -128 to 127 instructions around the end of JMP itself
+    - near relative
+        - 4 byte displacment from end of JMP instruction
+    - absolute
+        - hardcoded address in instruction
+        - library code can be moved around so you probably shouldn't use this.
+    - absolute indirect
+        - jumping to an absolute address but that address is not stored in the
+          instruction
+        - address calculated with r/m32
+        - CALL uses absolute indirect for function pointers
+- C `goto` is basically `jmp`
+- Displacement is relative to the end of the JMP instruction
+    - `JMP -2` is a 2 byte instruction so will make an infinite loop.
 
 In disassembly jmps tend to look absolute even if they are not - the
 disassembler is trying to help you by showing you the addres sit will jump to
@@ -846,39 +874,36 @@ short relative or near relative JMP.
 
 ## JCC family of instructions (jump if condition is met)
 
-* there are 4+ pages of jump types (some are synonyms)
-* JNE == JNZ (synonyms)
-    * JNE: Jump if not equal
-    * JNZ: Jump if not zero flag set
-    * both check the Zero Flag (ZF == 0)
+- there are 4+ pages of jump types (some are synonyms)
+- JNE == JNZ (synonyms)
+    - JNE: Jump if not equal
+    - JNZ: Jump if not zero flag set
+    - both check the Zero Flag (ZF == 0)
 
-* JE, JZ:       JMP if ZF == 1
-* JNE, JNZ:     JMP if ZF == 0
-* JLE, JLG:     JMP if ZF == 1 or SF != OF
-* JGE, JNL:     JMP if SF == OF
-* JBE:          JMP if CF == 1 or ZF == 1
-* JB:           JMP if CF == 1
+- JE, JZ: JMP if ZF == 1
+- JNE, JNZ: JMP if ZF == 0
+- JLE, JLG: JMP if ZF == 1 or SF != OF
+- JGE, JNL: JMP if SF == OF
+- JBE: JMP if CF == 1 or ZF == 1
+- JB: JMP if CF == 1
 
-Instructor recommends not memorizing these flag values - can look it up in a table if you really care but mostly you won't
+Instructor recommends not memorizing these flag values - can look it up in a
+table if you really care but mostly you won't
 
-OF = overflow flag
-SF = sign flag
+OF = overflow flag SF = sign flag
 
-The zero flag is set if the result of an operation is zero
-The zero flag is stays set until some other instruction changes it (it has no "timeout")
+The zero flag is set if the result of an operation is zero The zero flag is
+stays set until some other instruction changes it (it has no "timeout")
 
 ## CMP
 
-* behind the scenes is actually a subtract instruction
-    ```
-    SUB a, b
-    ```
-compute b - a and set flags the same way SUB would and discard ther esult
-    => it won't mess up your registers
-* modifies SF, OF, CF, ZF, AF, PF
-* is different from SUB because it discards the result
-* sets condition flags for you
-* they do a computation, throw away the results but set the flags
+- behind the scenes is actually a subtract instruction `     SUB a, b     `
+  compute b - a and set flags the same way SUB would and discard ther esult =>
+  it won't mess up your registers
+- modifies SF, OF, CF, ZF, AF, PF
+- is different from SUB because it discards the result
+- sets condition flags for you
+- they do a computation, throw away the results but set the flags
 
 ## TEST
 
@@ -886,9 +911,9 @@ compute b - a and set flags the same way SUB would and discard ther esult
 TEST A B
 ```
 
-* similar to CMP it exists just to set flags
-* does a bitwise logical AND of A and B and sets flags (result is discarded
-* sets SF, ZF, PF flag
+- similar to CMP it exists just to set flags
+- does a bitwise logical AND of A and B and sets flags (result is discarded
+- sets SF, ZF, PF flag
 
 ### Aside: calling C main function
 
@@ -904,40 +929,35 @@ Main gets 2 args arc, argv
     1. push the address of the instruction after the call onto the stack
     2. modify rip to point at the first instruction in `main`
 4. main: push rbp onto stack (rbp holds the address of the start of the previous
-         stack frame)
+   stack frame)
 5. main: copy rsp into rbp - this effectively makes the current top of stack the
-         new frame pointer. All insturctions after this consider themselves to
-         be in the new "frame"
+   new frame pointer. All insturctions after this consider themselves to be in
+   the new "frame"
 6. main: execute the other instructions
 
 ## How instructions are encoded in the instructions stream
 
 Instructions e.g. `MOV` have many possible encodings in the instruction stream.
 
-* MOV can be a 3 byte or 4 byte instruction depending on what it is doing
+- MOV can be a 3 byte or 4 byte instruction depending on what it is doing
 
-instruction # encoding
-push rbp    # 55
+instruction # encoding push rbp # 55
 
 ## C features and the assembly they generate
 
-* Unconditional control flow:
-    * examples:
-        * procedure calls
-        * goto
-        * exceptions
-        * interrupts
+- Unconditional control flow:
+    - examples:
+        - procedure calls
+        - goto
+        - exceptions
+        - interrupts
 
-* Conditional control flow
-    * examples:
-        * if/else
-        * switch
-        * for, while loops
+- Conditional control flow
+    - examples:
+        - if/else
+        - switch
+        - for, while loops
 
 Conditional logic uses RFLAGS register
 
-[IN PROGRESS -
-VIDEO 1,2,3 DONE,
-4 up to 52:00
-]
-
+[IN PROGRESS - VIDEO 1,2,3 DONE, 4 up to 52:00 ]

@@ -1,4 +1,3 @@
-
 ## dealing with a Result<a, b>
 
 ```rs

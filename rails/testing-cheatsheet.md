@@ -1,56 +1,56 @@
-
-
 | Rspec name | Rails name |
-| -- | -- |
+| ---------- | ---------- |
 
-Q: Since rails has deprecated "single controller" functional tests, should we not use Rspec controller specs and use rquest specs instead?
-
+Q: Since rails has deprecated "single controller" functional tests, should we
+not use Rspec controller specs and use rquest specs instead?
 
 Rspec spec types
 
 1. Model specs
-    * `spec/models`
+    - `spec/models`
 2. Controller specs
-    * `spec/controllers`
+    - `spec/controllers`
 3. Feature specs
-    * `spec/features`
-    * drives the app with Capybara
-    * the docs don't reference any built-in Rails equivalent
+    - `spec/features`
+    - drives the app with Capybara
+    - the docs don't reference any built-in Rails equivalent
 4. Request specs
-    * `spec/requests`
-    * are a thin wrapper around Rails' integration tests
-    * Are the closest to Rails controller testing as documented in the Rails guide
-    * rspec provides 2 matchers which delegate to rails assertions
+    - `spec/requests`
+    - are a thin wrapper around Rails' integration tests
+    - Are the closest to Rails controller testing as documented in the Rails
+      guide
+    - rspec provides 2 matchers which delegate to rails assertions
         ```
         render_template # delegates to assert_template
         redirect_to     # delegates to assert_redirected_to
         ```
 5. View specs
-    * `spec/views`
+    - `spec/views`
 6. Helper specs
-    * `spec/helpers`
+    - `spec/helpers`
 7. Mailer specs
-    * `spec/mailers`
+    - `spec/mailers`
 8. Routing specs
-    * `spec/routing`
+    - `spec/routing`
 9. Job specs
-    * `spec/jobs`
+    - `spec/jobs`
 10. System specs
-    * `spec/system`
-
+    - `spec/system`
 
 Rails provides the following classes for you to inherit from:
 
 1. Model tests
-    * Test class inherits from `ActiveSupport::TestCase`
+    - Test class inherits from `ActiveSupport::TestCase`
 2. System tests
-    * live in `test/system`
-    * Seem similar to Rspec feature specs
-    * Test class inherits from `ActionDispatch::SystemTestCase`
-    * Drives your app with a real or headless browser
-    * By default, system tests are run with the Selenium driver, using the Chrome browser, and a screen size of 1400x1400
-    * I think they pull in capybara - TODO: check this
-    * Example:
+    - live in `test/system`
+    - Seem similar to Rspec feature specs
+    - Test class inherits from `ActionDispatch::SystemTestCase`
+    - Drives your app with a real or headless browser
+    - By default, system tests are run with the Selenium driver, using the
+      Chrome browser, and a screen size of 1400x1400
+    - I think they pull in capybara - TODO: check this
+    - Example:
+
         ```ruby
         require "application_system_test_case"
 
@@ -62,43 +62,48 @@ Rails provides the following classes for you to inherit from:
         # end
         end
         ```
-4. Mailer tests
-    * Test class inherits from `ActionMailer::TestCase`
-5. View tests
-    * Test class inherits from `ActionView::TestCase`
-6. Job tests
-    * Test class inherits from `ActiveJob::TestCase`
-7. Integration tests
-    * Test class inherits from `ActionDispatch::IntegrationTest`
-    * can test just one controller endpoint or multiple controller endpoints in the same test
-8. Generator tests
-    * Test class inherits from `Rails::Generators::TestCase`
+
+3. Mailer tests
+    - Test class inherits from `ActionMailer::TestCase`
+4. View tests
+    - Test class inherits from `ActionView::TestCase`
+5. Job tests
+    - Test class inherits from `ActiveJob::TestCase`
+6. Integration tests
+    - Test class inherits from `ActionDispatch::IntegrationTest`
+    - can test just one controller endpoint or multiple controller endpoints in
+      the same test
+7. Generator tests
+    - Test class inherits from `Rails::Generators::TestCase`
 
 ## Controller tests
 
-* live in `spec/controllers` (note the plural)
-* A controller spec is an RSpec wrapper for a Rails **functional** test `ActionController::TestCase::Behavior`
+- live in `spec/controllers` (note the plural)
+- A controller spec is an RSpec wrapper for a Rails **functional** test
+  `ActionController::TestCase::Behavior`
 
-* The Rails testing guide has separate sections for "Integration tests" and "Functional tests" but the examples in both cases inherit from `ActionDispatch::IntegrationTest`
-    * integration tests are scaffolded into `test/integration`
-    * functional/controller tests are scaffolded into `test/controllers`
+- The Rails testing guide has separate sections for "Integration tests" and
+  "Functional tests" but the examples in both cases inherit from
+  `ActionDispatch::IntegrationTest`
+    - integration tests are scaffolded into `test/integration`
+    - functional/controller tests are scaffolded into `test/controllers`
 
 There are two "styles" of controller test
 
 1. integration style
-    * Test classes inherit from `ActionDispatch::IntegrationTest`
-    * these tests **actually perform requests**
-    * encouraged by Rails
-    * are as fast as "functional style" tests
-    * ++ provide extra helpers for testing controller actions e.g.
-        * `parsed_body`
+    - Test classes inherit from `ActionDispatch::IntegrationTest`
+    - these tests **actually perform requests**
+    - encouraged by Rails
+    - are as fast as "functional style" tests
+    - ++ provide extra helpers for testing controller actions e.g.
+        - `parsed_body`
 1. functional style
-    * these tests **simulate performing requests**
-    * should only be used for backwards compatibility
-    * deprecated in Rails
+    - these tests **simulate performing requests**
+    - should only be used for backwards compatibility
+    - deprecated in Rails
 
-
-The current Rails guide shows controller tests inheriting from `ActionDispatch::IntegrationTest`
+The current Rails guide shows controller tests inheriting from
+`ActionDispatch::IntegrationTest`
 
 ```ruby
 # Rails model test
@@ -181,7 +186,6 @@ pry> ActiveSupport::TestCase.ancestors
 
 ```
 
-
 ```ruby
 # spec/controllers/articles_controller_spec.rb
 RSpec.describe ArticlesController, type: :controller do
@@ -200,9 +204,10 @@ end
 
 Given/when/then in a controller test is
 
-* Given: same as other tests
-* When: make a request using one of the request helper functions (`get`, `post` etc.) - this populates a number of ivars and methods (see below)
-* Then: see below
+- Given: same as other tests
+- When: make a request using one of the request helper functions (`get`, `post`
+  etc.) - this populates a number of ivars and methods (see below)
+- Then: see below
 
 ```
 # Inside a controller test you have access to the following **after** the request is made:
@@ -215,4 +220,3 @@ Given/when/then in a controller test is
     @request # the request object
     @response # the response object
 ```
-

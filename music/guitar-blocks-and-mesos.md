@@ -6,21 +6,23 @@
 
 The goal here is to prepare to do the Cory Wong Workshop 1
 
--   Learn the fretboard
-    -   Given a note name, be able to quickly (without calculating) find all its locations between
-        1st and 12th fret
-    -   Given a location between 1-12 frets, be able to quickly (without calculating) name the note
-        there
-    -   Given a chord shape, be able to quickly identify all the notes in the shape
-    -   Given a scale , be able to quickly play that scale on each string using the full range of
-        the string
-        -   be able to play it vertically too
--   Do some time practicing with drone
+- Learn the fretboard
+    - Given a note name, be able to quickly (without calculating) find all its
+      locations between 1st and 12th fret
+    - Given a location between 1-12 frets, be able to quickly (without
+      calculating) name the note there
+    - Given a chord shape, be able to quickly identify all the notes in the
+      shape
+    - Given a scale , be able to quickly play that scale on each string using
+      the full range of the string
+        - be able to play it vertically too
+- Do some time practicing with drone
 
--   I want to practice every day but I have 3 "skip days" each week I can use.
--   Skip days don't roll over to next week.
--   Each practice is 30m but can extend as much as I want.
--   Practice is separate from noodling, playing/learning songs or exploratory learning
+- I want to practice every day but I have 3 "skip days" each week I can use.
+- Skip days don't roll over to next week.
+- Each practice is 30m but can extend as much as I want.
+- Practice is separate from noodling, playing/learning songs or exploratory
+  learning
 
 ```
 TODO: is doing CAGED AND 3n/s at same time too much to memorise?
@@ -144,39 +146,39 @@ pattern numbers are based on which note of the scale they hang from
 
 ### Tip: How to practice a scale
 
--   use a metronome
--   start on a root note. for full range scales, go down and back up to the root at the end so all
-    notes get played but the root is emphasised
--   say each note as I play it
+- use a metronome
+- start on a root note. for full range scales, go down and back up to the root
+  at the end so all notes get played but the root is emphasised
+- say each note as I play it
 
 TODO: Each scale has
 
--   7 notes
--   1 x step pattern
--   1 x intervals pattern
--   many shapes on the fretboard
+- 7 notes
+- 1 x step pattern
+- 1 x intervals pattern
+- many shapes on the fretboard
 
-Q: If I know all the notes on the fretboard well and I know the scale notes then do I need the
-patterns?
+Q: If I know all the notes on the fretboard well and I know the scale notes then
+do I need the patterns?
 
 ### Cory Wong Guitar Course - Pre-requisites
 
 1. Note location
-    - Go fwd and bkwd through circle of 5ths finding the first available note is on each string
+    - Go fwd and bkwd through circle of 5ths finding the first available note is
+      on each string
     - try to get to it at a fast pace and with a metronome
 2. Circle of 4ths and 5ths
 3. Major vs minor triads
 4. Relative major to relative minor
 5. CAGED system
-
     - each note has 5 shapes
-    - each shape is an 4-5 fret chunk of the fretboard. taken together it lets you play the
-      chord/triads/scales of that note in 5 locations on the neck
+    - each shape is an 4-5 fret chunk of the fretboard. taken together it lets
+      you play the chord/triads/scales of that note in 5 locations on the neck
     - each one is a reference point for your brain
     - each shape has
         1. chord shape
-        1. a set of triads within the chord shape (3 note chord options which have all the required
-           parts of the chord)
+        1. a set of triads within the chord shape (3 note chord options which
+           have all the required parts of the chord)
             - C shape = 4 triads (6-4, 5-3, 4-2, 3-1)
             - A shape =
             - D shape = 1 triad (3-1), 4-2 has 1,5 but no 3 (has G,D but no B)
@@ -197,19 +199,22 @@ use pedals
 
 #### Relative minor
 
-For your minor keys, you just need to remember that the 6th scale degree of every major scale is its
-relative minor scale. Scale degree 6 in C major is A, so C major's relative minor is A minor. Scale
-degree 6 of A♭ major is F, therefore A♭ major's relative minor is F minor.
+For your minor keys, you just need to remember that the 6th scale degree of
+every major scale is its relative minor scale. Scale degree 6 in C major is A,
+so C major's relative minor is A minor. Scale degree 6 of A♭ major is F,
+therefore A♭ major's relative minor is F minor.
 
 #### Interval memorisation
 
-One thing you can do is go through any music you are working on, and simply calculate each and every
-interval in that music. This is especially easy (but totally effective) if you READ the music. You
-can take sheet music in with you when you are taking a morning dump, or on your bus commute, or
-whatever. Read the music and calculate every interval, both harmonic and melodic.
+One thing you can do is go through any music you are working on, and simply
+calculate each and every interval in that music. This is especially easy (but
+totally effective) if you READ the music. You can take sheet music in with you
+when you are taking a morning dump, or on your bus commute, or whatever. Read
+the music and calculate every interval, both harmonic and melodic.
 
-Get used to thinking in terms of intervals. Think of all the intervals in various scales. For
-instance, think of the intervals that exist in major and minor, or in the various modes. Like this:
+Get used to thinking in terms of intervals. Think of all the intervals in
+various scales. For instance, think of the intervals that exist in major and
+minor, or in the various modes. Like this:
 
 Major:
 
@@ -239,10 +244,10 @@ Maj 2nd inv: uni - p4, maj6
 
 Etc.
 
-Just think about it and use it all the time. Eventually you just KNOW what intervals are, and don't
-even have to think about it.
+Just think about it and use it all the time. Eventually you just KNOW what
+intervals are, and don't even have to think about it.
 
-It's no different than learning to read, for example, where you had to sound every word out to be
-able to read it. Now you just read in an effortless way.
+It's no different than learning to read, for example, where you had to sound
+every word out to be able to read it. Now you just read in an effortless way.
 
 It just gets easier and easier.

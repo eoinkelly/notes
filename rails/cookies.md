@@ -1,13 +1,15 @@
 # cookies
 
-* Rails will take the contents of the `Cookie` HTTP header and deserialzie it into `cookies` object
-* You can read and write properties of that object
-* `cookies` object available in
-    * controllers
-    * templates
-    * helpers
-* store small bits of non-sensitive info e.g. user preference
-* when you write stuff into `cookies` rails will magically serialize it into the `Cookie:` HTTP header when you send the response
+- Rails will take the contents of the `Cookie` HTTP header and deserialzie it
+  into `cookies` object
+- You can read and write properties of that object
+- `cookies` object available in
+    - controllers
+    - templates
+    - helpers
+- store small bits of non-sensitive info e.g. user preference
+- when you write stuff into `cookies` rails will magically serialize it into the
+  `Cookie:` HTTP header when you send the response
 
 ```rb
 # simple usage
@@ -36,4 +38,3 @@ end
 ```
 
 TODO: go deeper into the how the Cookie HTTP header is implemented
-

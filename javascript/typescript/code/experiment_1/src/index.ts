@@ -8,10 +8,10 @@
 // import ALL the thigns exported by option1 making them available under the namespace in this module
 // ??? what to call this namespace of "functions and static data which pertain to cars"
 //      we don't want to overlap with the type name (in ruby these would be the same)
-import * as carHelpers from "./option1";
-import { create as createCar, drive as driveCar } from "./option1";
-import type { Car } from "./option1";
-import { timeStamp } from "node:console";
+import * as carHelpers from './option1';
+import { create as createCar, drive as driveCar } from './option1';
+import type { Car } from './option1';
+import { timeStamp } from 'node:console';
 
 // this creates an "elixir alike" pattern where modules are namespaces of functions and data is always passed into them
 let myCar: Car = carHelpers.create();
@@ -34,27 +34,27 @@ class Thing {
   // public static members (functions or variables)
 
   // members are public by default
-  static publicByDefault = "publicByDefault";
-  public static publicByExplicit = "publicByExplicit";
+  static publicByDefault = 'publicByDefault';
+  public static publicByExplicit = 'publicByExplicit';
 
   static publicMethod() {
-    return "publicMethod";
+    return 'publicMethod';
   }
 
   private static privateMethod() {
-    return "privateMethod";
+    return 'privateMethod';
   }
 
-  private static privateByExplicit = "privateByExplicit";
+  private static privateByExplicit = 'privateByExplicit';
 
   // protected is also available
 
   publicInstanceMethod() {
-    return "publicInstanceMethod";
+    return 'publicInstanceMethod';
   }
 
   private privateInstanceMethod() {
-    return "privateInstanceMethod";
+    return 'privateInstanceMethod';
   }
 }
 
@@ -83,15 +83,15 @@ is it sensible to mimic a class using a module
 */
 
 // Q: Are wildcard imports bad? They seem better to me than not (less typing, explicit namespacing)
-import * as mimic from "./mimicClass";
+import * as mimic from './mimicClass';
 
 console.log(mimic.publicStaticIsh());
 let mm = mimic.construct(55, 33);
 mimic.greet(mm);
 
 console.log(mimic.someDict);
-mimic.someDict["hello"] = "there";
+mimic.someDict['hello'] = 'there';
 console.log(mimic.someDict);
 
-import { someDict as aliasDict } from "./mimicClass";
-console.log("alias:", aliasDict);
+import { someDict as aliasDict } from './mimicClass';
+console.log('alias:', aliasDict);

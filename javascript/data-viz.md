@@ -1,9 +1,6 @@
 # Data visualisation
 
-
-D3
-ChartJS
-React-Vis
+D3 ChartJS React-Vis
 
 could we build a toolkit for beginners using D3?
 

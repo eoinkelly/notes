@@ -4,10 +4,10 @@ When you send data with a POST request there are four common options for
 packaging it up:
 
 1. multipart/form-data
-    * emulates waht the browser would send when submitting a form
-    * follows RFC 2388
-    * you can send binary files from disk as the value via curl
-    * example with curl
+    - emulates waht the browser would send when submitting a form
+    - follows RFC 2388
+    - you can send binary files from disk as the value via curl
+    - example with curl
         ```
         curl -X POST
             -H "Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW"
@@ -17,8 +17,8 @@ packaging it up:
             "http://localhost:3001/oauth/token/"
         ```
 2. application/x-www-form-urlencoded
-    * used by default by cURL
-    * example using curl
+    - used by default by cURL
+    - example using curl
         ```
         curl -X POST
             -H "Cache-Control: no-cache"
@@ -28,13 +28,12 @@ packaging it up:
             "http://localhost:3001/oauth/token/"
         ```
 3. ascii or raw
-    * curl `-d` aka `--data-ascii`
-    * curl `--data-raw` is same except it will not interpret the `@` character
-    * just sends the given string as data in the body of the HTTP request
-    * cURL `-d "GIVEN_STRING" option
+    - curl `-d` aka `--data-ascii`
+    - curl `--data-raw` is same except it will not interpret the `@` character
+    - just sends the given string as data in the body of the HTTP request
+    - cURL `-d "GIVEN_STRING" option
 4. binary
-    * curl `--data-binary @somefilename`
-
+    - curl `--data-binary @somefilename`
 
 From the curl man page:
 

@@ -1,27 +1,26 @@
-App.ComponentForTypeView = Ember.ContainerView.extend( Ember._Metamorph, {
-
+App.ComponentForTypeView = Ember.ContainerView.extend(Ember._Metamorph, {
   item: null,
   onDelete: 'onDelete',
   onSelect: 'onSelect',
 
-  childViews: (function () {
+  childViews: function () {
     return [this.componentForType()];
-  }).property(),
+  }.property(),
 
-  changeChild: (function () {
+  changeChild: function () {
     this.clear();
     this.pushObject(this.componentForType());
-  }).observes('item.type'),
+  }.observes('item.type'),
 
-  componentForType: function() {
+  componentForType: function () {
     type = this.get('item.type');
 
-    container       = this.get('container');
+    container = this.get('container');
     componentLookup = container.lookup('component-lookup:main');
-    itemComponent   = componentLookup.lookupFactory(type, container);
+    itemComponent = componentLookup.lookupFactory(type, container);
 
     itemComponent.create({
-      item:     this.get('item'),
+      item: this.get('item'),
       onDelete: this.get('onDelete'),
       onSelect: this.get('onSelect')
     });

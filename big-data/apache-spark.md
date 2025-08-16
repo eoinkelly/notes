@@ -10,8 +10,7 @@ https://Spark.apache.org/
 
 ## Install
 
-> [!WARNING]
-> pySpark fails on python 3.12 as of 2024-03-27, works on 3.11, 3.10
+> [!WARNING] pySpark fails on python 3.12 as of 2024-03-27, works on 3.11, 3.10
 
 ```sh
 
@@ -39,84 +38,105 @@ $ docker run -it --rm Spark:r /opt/Spark/bin/SparkR
 
 ## Overview
 
--   developed at UC Berkeley in 2009.
--   team that started the Spark research project at UC Berkeley founded Databricks in 2013
--   supported languages
+- developed at UC Berkeley in 2009.
+- team that started the Spark research project at UC Berkeley founded Databricks
+  in 2013
+- supported languages
     1. Python
     1. SQL
     1. Scala
     1. Java
     1. R
--   Spark itself is written in Scala
-    -   it ships a large collection of `.jar` files (323MB total) - see appendix below
--   what it does
-    -   execute distributed ANSI SQL queries - **Spark includes a SQL engine**
-    -   provides common machine learning models
-    -   can do both batch and real-time streaming
--   Spark-sql loads a Spark SQL CLI driver class `org.apache.Spark.sql.hive.thriftserver.SparkSQLCLIDriver`
--   performance tuning
-    -   Spark performance tuning is Java performance tuning
-    -   https://Spark.apache.org/docs/latest/tuning.html
--   The idea of moving the code to where the data is (vs other way around) is key (see below for why S3 is still better than doing this locality with HDFS)
--   History
-    -   Started with Google File system + MapReduce (Google)
-    -   Hadoop File System (Yahoo) - used the GFS paper but open source
-        -   Includes: Hadoop COmmon, MapReduce, HDFS, Apache Hadoop YARN
-        -   Hadoop companies: Cloudera and Hortonworks
-        -   -- hard to admin
-        -   -- brittle fault tolerance
-        -   -- slow
-        -   Many other systems spawned to fix the problems with Hadoop
-            -   Examples: Hive, Storm, Impala, Giraph, Drill, Mahout
-                -   -- each had their own cluster configuration
-            -   -- added to the complexity of Hadoop
-        -   Spark started at UC Berkeley to make Hadoop MapReduce faster and fix other Hadoop issues
-        -   > The central thrust of the Spark project was to bring in ideas
-            > borrowed from Hadoop MapReduce, but to enhance the system: make it
-            > highly fault tolerant and embarrassingly parallel, support in-memory
-            > storage for intermediate results between iterative and interactive map
-            > and reduce computations, offer easy and composable APIs in multiple
-            > languages as a programming model, and support other workloads in a
-            > unified manner.
-        -   Databricks is _the_ Spark company - they were there before 1.0
--   features
-    -   unified engine for large scale distributed data processing
-        -   Spark wants to be the one engine to rule them all, unify all use-cases in a single core engine with libs on top for the use-case
-    -   in memory storage for intermediate computations (makes it faster than Hadoop MR)
--   philosophical pillars
+- Spark itself is written in Scala
+    - it ships a large collection of `.jar` files (323MB total) - see appendix
+      below
+- what it does
+    - execute distributed ANSI SQL queries - **Spark includes a SQL engine**
+    - provides common machine learning models
+    - can do both batch and real-time streaming
+- Spark-sql loads a Spark SQL CLI driver class
+  `org.apache.Spark.sql.hive.thriftserver.SparkSQLCLIDriver`
+- performance tuning
+    - Spark performance tuning is Java performance tuning
+    - https://Spark.apache.org/docs/latest/tuning.html
+- The idea of moving the code to where the data is (vs other way around) is key
+  (see below for why S3 is still better than doing this locality with HDFS)
+- History
+    - Started with Google File system + MapReduce (Google)
+    - Hadoop File System (Yahoo) - used the GFS paper but open source
+        - Includes: Hadoop COmmon, MapReduce, HDFS, Apache Hadoop YARN
+        - Hadoop companies: Cloudera and Hortonworks
+        - -- hard to admin
+        - -- brittle fault tolerance
+        - -- slow
+        - Many other systems spawned to fix the problems with Hadoop
+            - Examples: Hive, Storm, Impala, Giraph, Drill, Mahout
+                - -- each had their own cluster configuration
+            - -- added to the complexity of Hadoop
+        - Spark started at UC Berkeley to make Hadoop MapReduce faster and fix
+          other Hadoop issues
+        - > The central thrust of the Spark project was to bring in ideas
+          > borrowed from Hadoop MapReduce, but to enhance the system: make it
+          > highly fault tolerant and embarrassingly parallel, support in-memory
+          > storage for intermediate results between iterative and interactive
+          > map and reduce computations, offer easy and composable APIs in
+          > multiple languages as a programming model, and support other
+          > workloads in a unified manner.
+        - Databricks is _the_ Spark company - they were there before 1.0
+- features
+    - unified engine for large scale distributed data processing
+        - Spark wants to be the one engine to rule them all, unify all use-cases
+          in a single core engine with libs on top for the use-case
+    - in memory storage for intermediate computations (makes it faster than
+      Hadoop MR)
+- philosophical pillars
     1. Speed
-        - builds queries as a directed acyclic graph (DAG). Has a DAG scheduler and query optimizer to break the query into tasks that can be spread across workers in the cluster
-        - Has a "whole stage code generation" engine as "physical engine" - this creates compact code for execution
+        - builds queries as a directed acyclic graph (DAG). Has a DAG scheduler
+          and query optimizer to break the query into tasks that can be spread
+          across workers in the cluster
+        - Has a "whole stage code generation" engine as "physical engine" - this
+          creates compact code for execution
         - All intermediate results retained in memory so has limited disk I/O
     2. Ease of use
-        - fundamental abstraction is a single logical data structure: Resilient Distributed Dataset (RDD)
+        - fundamental abstraction is a single logical data structure: Resilient
+          Distributed Dataset (RDD)
         - all higher level abstractions build on RDD e.g. DataFrame, Dataset
     3. Modular
-        - You can run the same Spark "application" or code from any of it's supported languages
+        - You can run the same Spark "application" or code from any of it's
+          supported languages
     4. Extensible
         - Hadoop coupled storage and compute, Spark separates them
-        - `DataFrameReader` and `DataFrameWriter` classes can be extended to any data source
-    -   has libraries with good APIs for
-        -   Machine Learning (MLib)
-        -   SQL (Spark SQL)
-        -   Stream processing (Structured Streaming) for real time data
-        -   Graph processing (GraphX)
--   Spark has 4 components, all of which are entry points to the Spark core and Spark SQL engine
+        - `DataFrameReader` and `DataFrameWriter` classes can be extended to any
+          data source
+    - has libraries with good APIs for
+        - Machine Learning (MLib)
+        - SQL (Spark SQL)
+        - Stream processing (Structured Streaming) for real time data
+        - Graph processing (GraphX)
+- Spark has 4 components, all of which are entry points to the Spark core and
+  Spark SQL engine
     1. SparkSQL + DataFrames + Datasets
     2. Spark Streaming (Structured Streaming)
         - Since Spark 2.0
         - built on top of Spark SQL engine and DataFrame APIs
-        - lets Spark interact with Kafka, Kinesis, HDFS storage, cloud storage etc.
-        - views a stream as a continuously growing table with new rows appending to the end. you can query it like a static table
+        - lets Spark interact with Kafka, Kinesis, HDFS storage, cloud storage
+          etc.
+        - views a stream as a continuously growing table with new rows appending
+          to the end. you can query it like a static table
     3. MLib (Machine learning)
-        - contains common ML algorithms built atop DataFrame based APIs to build models
+        - contains common ML algorithms built atop DataFrame based APIs to build
+          models
     4. GraphX (Graph processing)
-        - lib for manipulating graphs e.g. social network graphs, routes, network topologies
+        - lib for manipulating graphs e.g. social network graphs, routes,
+          network topologies
         - performs graph-parallel computation
-        - includes common algorithms e.g. PageRank, Connected Components, Triangle Counting
--   How Spark works
-    1. You use the Spark APIs in any of the supported languages to write your "Spark application".
-    2. Spark converts it into a DAG of java bytecode (the same bytecode is generated no matter which language you use)
+        - includes common algorithms e.g. PageRank, Connected Components,
+          Triangle Counting
+- How Spark works
+    1. You use the Spark APIs in any of the supported languages to write your
+       "Spark application".
+    2. Spark converts it into a DAG of java bytecode (the same bytecode is
+       generated no matter which language you use)
         - Spark has a DSL in Python/R/Java/Scala for creating Spark applications
     3. Spark runs the DAG bytecode on the workers across the cluster
 
@@ -124,12 +144,14 @@ $ docker run -it --rm Spark:r /opt/Spark/bin/SparkR
 
 `SparkSession` is the (since 2.0) unified entry point for all Spark operations
 
--   There are 3 important concepts which are created on your local JVM when you run a Spark app (TODO: verify)
+- There are 3 important concepts which are created on your local JVM when you
+  run a Spark app (TODO: verify)
     1. Spark Application
         - contains the driver
     2. Spark Driver
         - this is the bit that talks to the cluster manager and
-            - requests resources (CPU, memory) from the cluster manager for Spark's executors (JVMs)
+            - requests resources (CPU, memory) from the cluster manager for
+              Spark's executors (JVMs)
             - transforms all the Spark operations into DAG computations
             - schedules the computations
             - distributes their execution as tasks across the executors
@@ -142,15 +164,17 @@ $ docker run -it --rm Spark:r /opt/Spark/bin/SparkR
             - read from data sources
             - access catalog metadata
             - issue SQL queries
-            - in the Spark shell, the `SparkSession` is created for you and accessible via global variable `Spark` or `sc`
--   Spark executor
-    -   runs on each worker node in the cluster
-    -   communicates with the driver program
-    -   executes tasks on the worker
-    -   usually only one executor per node
--   Cluster manager
-    -   manages resources for the cluster of nodes on which a single Spark application runs
-    -   currently 4 options
+            - in the Spark shell, the `SparkSession` is created for you and
+              accessible via global variable `Spark` or `sc`
+- Spark executor
+    - runs on each worker node in the cluster
+    - communicates with the driver program
+    - executes tasks on the worker
+    - usually only one executor per node
+- Cluster manager
+    - manages resources for the cluster of nodes on which a single Spark
+      application runs
+    - currently 4 options
         1. Built-in standalone cluster manager
         2. Apache Hadoop YARN
         3. Apache Mesos
@@ -181,13 +205,18 @@ $ docker run -it --rm Spark:r /opt/Spark/bin/SparkR
 
 ## Data partitions
 
--   A very important data structure
--   Operations are have either wide or narrow dependencies depending on how many partitions they need as intput (1 = narrow, 1+ = wide)
--   Data is distributed across sotrage (either HDFS or cloud storage) as _partitions_
--   Each partition is abstracted as a DataFrame in memory.
--   Ideally each Spark executor is allocated a task what requires it to read the partition closest to it
--   You control how many partitions are created from your data in your Spark application via `repartition(N)`
-    -   you can tune it to the number of executor cores you have available to get maximum parallelism
+- A very important data structure
+- Operations are have either wide or narrow dependencies depending on how many
+  partitions they need as intput (1 = narrow, 1+ = wide)
+- Data is distributed across sotrage (either HDFS or cloud storage) as
+  _partitions_
+- Each partition is abstracted as a DataFrame in memory.
+- Ideally each Spark executor is allocated a task what requires it to read the
+  partition closest to it
+- You control how many partitions are created from your data in your Spark
+  application via `repartition(N)`
+    - you can tune it to the number of executor cores you have available to get
+      maximum parallelism
         ```python
         big_data_frame = Spark.read.text("path_to_large_text_file").repartition(8)
         print(big_data_frame.rdd.getNumPartitions())
@@ -196,21 +225,23 @@ $ docker run -it --rm Spark:r /opt/Spark/bin/SparkR
 
 ## Spark execution: Driver, Jobs, Stages, Tasks
 
--   Spark driver creates many Spark jobs
--   Spark jobs
-    -   during an interactive session in a Spark shell, the driver converts your Spark applicaiton into one or more "Spark jobs"
-    -   each job is translated into a DAG
-    -   each node wihtin the DAG is one or more "Spark stages"
--   Spark stages
-    -   created based on which tasks can be performed serially or in parallel
-    -   some Spark operations take more than one stage
-    -   stages can be decided by the operators(?) computation boundaries
--   Spark tasks
-    -   each stage is many Spark tasks
-    -   a Spark task is a unit of exeicution
-    -   a task matps to a single core and works on a single partition of data
--   Operations
-    -   Spark operations can be classified as either _transformations_ or _actions_
+- Spark driver creates many Spark jobs
+- Spark jobs
+    - during an interactive session in a Spark shell, the driver converts your
+      Spark applicaiton into one or more "Spark jobs"
+    - each job is translated into a DAG
+    - each node wihtin the DAG is one or more "Spark stages"
+- Spark stages
+    - created based on which tasks can be performed serially or in parallel
+    - some Spark operations take more than one stage
+    - stages can be decided by the operators(?) computation boundaries
+- Spark tasks
+    - each stage is many Spark tasks
+    - a Spark task is a unit of exeicution
+    - a task matps to a single core and works on a single partition of data
+- Operations
+    - Spark operations can be classified as either _transformations_ or
+      _actions_
         1. Tranformations
             - Immutable
             - transform a DataFrame into a new DataFrame
@@ -223,30 +254,38 @@ $ docker run -it --rm Spark:r /opt/Spark/bin/SparkR
                 - `groupBy()` (wide deps)
                 - `orderBy()` (wide deps)
             - evaluated lazily - they are initially recorded as a "lineage"
-            -   - the lineage record allows Spark execution plan to rearrange and coalesce transformations into stages for efficient execution
-            - the lineage can be replayed in case of failures making Spark resilient
+            -   - the lineage record allows Spark execution plan to rearrange
+                  and coalesce transformations into stages for efficient
+                  execution
+            - the lineage can be replayed in case of failures making Spark
+              resilient
             - can have either wide or narrow dependencies
                 - narrow dependencies
-                    - a single output partition can be computed from a single input partition
+                    - a single output partition can be computed from a single
+                      input partition
                 - wide dependencies
-                    - requires output from other partitions to compute its output
+                    - requires output from other partitions to compute its
+                      output
         2. Actions
-            - an action triggers the lazy evaluation of all recorded transformations
+            - an action triggers the lazy evaluation of all recorded
+              transformations
             - examples
                 - `show()`
                 - `take()`
                 - `count()`
                 - `collect()`
                 - `save()`
-    -   Actions and transformations together make a _query plan_
-    -   Spark query optimiser builds the stages to optimise execution of the plan
-        -   join some operations
-        -   pipeline some operations
-        -   break operations into stages based on which operations require data to be moved across the cluster
+    - Actions and transformations together make a _query plan_
+    - Spark query optimiser builds the stages to optimise execution of the plan
+        - join some operations
+        - pipeline some operations
+        - break operations into stages based on which operations require data to
+          be moved across the cluster
 
 ## Running pySpark locally
 
-pySpark is a python shell communicating with a JVM subprocess which runs all the Spark stuff
+pySpark is a python shell communicating with a JVM subprocess which runs all the
+Spark stuff
 
 ```bash
 $ pySpark
@@ -305,7 +344,8 @@ $ pstree 62069
 only showing top 5 rows
 ```
 
-Every computation expressed in the high-level structured APIs (e.g. `strings.count()` above) is:
+Every computation expressed in the high-level structured APIs (e.g.
+`strings.count()` above) is:
 
 1. Decomposed into low-level optimised and generated RDD operations
     - The generated RDD operations code
@@ -315,87 +355,99 @@ Every computation expressed in the high-level structured APIs (e.g. `strings.cou
 
 ## Spark UI
 
--   Spark has a web UI
--   When `pySpark` is running I also have http://localhost:4040/ web GUI available to see stats etc. - it seems read-only
--   shows jobs, stages, tasks
--   lets you monitor the performance of your jobs
+- Spark has a web UI
+- When `pySpark` is running I also have http://localhost:4040/ web GUI available
+  to see stats etc. - it seems read-only
+- shows jobs, stages, tasks
+- lets you monitor the performance of your jobs
 
 ## Data locality and S3
 
 https://www.databricks.com/blog/2017/05/31/top-5-reasons-for-choosing-s3-over-hdfs.html#:~:text=superior%20to%20HDFS%27.-,Performance%20per%20Dollar,-The%20main%20problem
 
--   You can't optimise for data locality with S3
--   But performance per dollar is overall 2x compared to HDFS
-    -   HDFS can be 6x higher read throughput than S3 (if you have perfect data locality)
-    -   S3 is 10x cheaper than HDFS
-    -   Storage and compute are separate so you can start bigger compute for shorter periods
-    -   Databricks find that S3 is approx. 2x per per dollar
+- You can't optimise for data locality with S3
+- But performance per dollar is overall 2x compared to HDFS
+    - HDFS can be 6x higher read throughput than S3 (if you have perfect data
+      locality)
+    - S3 is 10x cheaper than HDFS
+    - Storage and compute are separate so you can start bigger compute for
+      shorter periods
+    - Databricks find that S3 is approx. 2x per per dollar
 
 ## Perf
 
 ### Scala vs Python
 
--   In general: Use what you want, performance is close enough to not matter in most cases
--   performance is almost identical if you use the high-level DataFrame APIs - most of the work happens in Spark anyway
--   Scala is a bit faster if you are using RDD APIs because it doesn't have the overhead of the python process communicating with the JVM
-    -   That _might_ matter depending on your application
+- In general: Use what you want, performance is close enough to not matter in
+  most cases
+- performance is almost identical if you use the high-level DataFrame APIs -
+  most of the work happens in Spark anyway
+- Scala is a bit faster if you are using RDD APIs because it doesn't have the
+  overhead of the python process communicating with the JVM
+    - That _might_ matter depending on your application
 
 ### Tuning
 
-https://spark.apache.org/docs/latest/sql-performance-tuning.html
-TODO
+https://spark.apache.org/docs/latest/sql-performance-tuning.html TODO
 
 ## pyspark
 
--   has a full Spark API
--   also supports the Pandas API so you can run your Pandas code on Spark easily
+- has a full Spark API
+- also supports the Pandas API so you can run your Pandas code on Spark easily
 
 ## Spark SQL
 
--   can act as a distributed query engine providing interfaces for:
+- can act as a distributed query engine providing interfaces for:
     1. JDBC/ODBC
     2. Command line
--   is the basis of Dataset and DataFrame APIs
+- is the basis of Dataset and DataFrame APIs
 
 ### Compression
 
--   Spark SQL uses compression for Parquet and Orc tables.
--   Default compression scheme is `snappy`
--   The scheme is controlled by `spark.sql.parquet.compression.codec` option
-    -   If either `compression` or `parquet.compression` is specified in the table-specific options/properties, the precedence would be `compression`, `parquet.compression`, `spark.sql.parquet.compression.codec`.
-    -   Acceptable values include:
+- Spark SQL uses compression for Parquet and Orc tables.
+- Default compression scheme is `snappy`
+- The scheme is controlled by `spark.sql.parquet.compression.codec` option
+    - If either `compression` or `parquet.compression` is specified in the
+      table-specific options/properties, the precedence would be `compression`,
+      `parquet.compression`, `spark.sql.parquet.compression.codec`.
+    - Acceptable values include:
         1.  none
         2.  uncompressed
         3.  snappy
         4.  gzip
         5.  lzo
         6.  brotli
-            -   requires `BrotliCodec` to be installed.
+            - requires `BrotliCodec` to be installed.
         7.  lz4
         8.  zstd
-            -   requires `ZStandardCodec` to be installed before Hadoop 2.9.0,
+            - requires `ZStandardCodec` to be installed before Hadoop 2.9.0,
 
 ## Spark APIs
 
--   DataFrames and Datasets APIs are built on the Spark SQL engine
+- DataFrames and Datasets APIs are built on the Spark SQL engine
 
 ### Low level RDD (Resilient Distributed Datasets) API
 
--   RDD is the most basic abstraction in Spark
--   Higher level APIs are built on RDD
--   has 3 attributes
+- RDD is the most basic abstraction in Spark
+- Higher level APIs are built on RDD
+- has 3 attributes
     1. Dependencies
-        - a list of dependencies that tells spark how an RDD is built with it's inputs
-        - When outputs are needed, Spark can take the deps and replicate the operations in case of failure
+        - a list of dependencies that tells spark how an RDD is built with it's
+          inputs
+        - When outputs are needed, Spark can take the deps and replicate the
+          operations in case of failure
     2. Partitions (with locality information)
         - lets Spark split the work to parallelize computation across executors
-        - if reading from HDFS, Spark will use locality information to send work to those executors close to the data minimizing network transfer.
+        - if reading from HDFS, Spark will use locality information to send work
+          to those executors close to the data minimizing network transfer.
     3. A compute function of type `Partition => Iterator[T]`
         - produces an `Iterator[T]` for the data that will be stored in the RDD
-        - Spark doesn't see the inside of the compute function - it only sees a lambda
+        - Spark doesn't see the inside of the compute function - it only sees a
+          lambda
         - it can serialise it as an opaque series of bytes
         - it cannot optimise it, cannot re-arrange computations
--   RDD code has lambda calculus vibes - you pass in lambdas to map and reduce to get the job done.
+- RDD code has lambda calculus vibes - you pass in lambdas to map and reduce to
+  get the job done.
 
     ```python
     dataRDD = sc.parallelize([("Brooke", 20), ("Denny", 31), ("Jules", 30),
@@ -409,29 +461,33 @@ TODO
     .map(lambda x: (x[0], x[1][0]/x[1][1])))
     ```
 
--   Downsides:
-    -   -- Opaque to Spark - it cannot optimise
-    -   -- Hard to read for humans
-    -   -- Syntax looks very different between Python/R/Scala/Java
--   The higher level APIs fix these downsides by letting us say _what_ we want and let Spark do the _how_
--   In practice, it is rare to need the RDD API
+- Downsides:
+    - -- Opaque to Spark - it cannot optimise
+    - -- Hard to read for humans
+    - -- Syntax looks very different between Python/R/Scala/Java
+- The higher level APIs fix these downsides by letting us say _what_ we want and
+  let Spark do the _how_
+- In practice, it is rare to need the RDD API
 
 ### DataFrame API
 
--   inspired by pandas DataFrames
--   conceptually a table
--   provides by Spark SQL
--   DataFrames **are immutable** - allows spark to keep a lineage of all transformations
--   DataFrames are distributed in-memory tables with named columns and schemas
--   each column has a data type
--   can be constructed from (https://spark.apache.org/docs/latest/sql-data-sources.html)
-    -   structured data tables (CSV, JSON, Parquet, ORC, Delta Lake etc.)
-    -   Arvo files
-    -   Protobufs
-    -   tables in Hive
-    -   external databases using JDBC
-    -   existing RDDs
--   If you register a DataFrame as a _temporary view_ you can run SQL queries against it
+- inspired by pandas DataFrames
+- conceptually a table
+- provides by Spark SQL
+- DataFrames **are immutable** - allows spark to keep a lineage of all
+  transformations
+- DataFrames are distributed in-memory tables with named columns and schemas
+- each column has a data type
+- can be constructed from
+  (https://spark.apache.org/docs/latest/sql-data-sources.html)
+    - structured data tables (CSV, JSON, Parquet, ORC, Delta Lake etc.)
+    - Arvo files
+    - Protobufs
+    - tables in Hive
+    - external databases using JDBC
+    - existing RDDs
+- If you register a DataFrame as a _temporary view_ you can run SQL queries
+  against it
 
 Spark basic data types in Python
 
@@ -454,18 +510,19 @@ Spark basic data types in Python
 | 15. | StructType    | List or tuple                                        | StructType([fields])                    |
 | 16. | StructField   | A value type corresponding to the type of this field | StructField(name, dataType, [nullable]) |
 
--   DataFrame schemas
-
-    -   DataFrames can have optional schemas
-    -   Schema defines
+- DataFrame schemas
+    - DataFrames can have optional schemas
+    - Schema defines
         1. column names
         2. data type for each column
-    -   Defining schema beforehand is a best practice - benefits:
+    - Defining schema beforehand is a best practice - benefits:
         1. Spark doesn't have to do data type inference
-        2. Avoids Spark having to read a large portion of the file to figure out the schema (is expensive for large files)
+        2. Avoids Spark having to read a large portion of the file to figure out
+           the schema (is expensive for large files)
         3. You get errors if the data doesn't match the schema
-    -   Schemas can be defined with code or with the DDL (DDL is simpler in most cases)
-    -   Example
+    - Schemas can be defined with code or with the DDL (DDL is simpler in most
+      cases)
+    - Example
 
         ```python
         # define in code
@@ -487,17 +544,18 @@ Spark basic data types in Python
         print(my_df.printSchema()) # dump schema to console
         ```
 
--   Columns and expressions
-    -   You can reference named columns to do computations
-        -   `col("ColName")` returns a ref to the column which you can do computations with e.g. `col("ColName") * 2`
-        -   `expr("ColName operator other")` lets you do computations with columns `expr("MyCol * 2")`
-    -   Each column is part of a row.
-        -   => Spark is organised by row not by column
-    -   All rows together make a DataFrame (`DataFrame` is `Dataset[Row]`)
--   Rows
-
-    -   `Row()` method builds a `Row` object
-    -   You can use `Row()` to build a data frame
+- Columns and expressions
+    - You can reference named columns to do computations
+        - `col("ColName")` returns a ref to the column which you can do
+          computations with e.g. `col("ColName") * 2`
+        - `expr("ColName operator other")` lets you do computations with columns
+          `expr("MyCol * 2")`
+    - Each column is part of a row.
+        - => Spark is organised by row not by column
+    - All rows together make a DataFrame (`DataFrame` is `Dataset[Row]`)
+- Rows
+    - `Row()` method builds a `Row` object
+    - You can use `Row()` to build a data frame
 
         ```python
         from pyspark.sql import Row
@@ -515,9 +573,9 @@ Spark basic data types in Python
         # +-------------+-----+
         ```
 
--   `DataFrameReader` and `DataFrameWriter`
-
-    -   Spark objects which read many data sources into DataFrame and write DataFrame to many sources
+- `DataFrameReader` and `DataFrameWriter`
+    - Spark objects which read many data sources into DataFrame and write
+      DataFrame to many sources
 
         ```python
         # the DataFrameReader is held in `spark`
@@ -527,18 +585,20 @@ Spark basic data types in Python
         # the DataFrameWriter is held on the DataFrame itself
         ```
 
-    -   DataFrameReader
-    -   DataFrameWriter
-        -   default format is parquet
+    - DataFrameReader
+    - DataFrameWriter
+        - default format is parquet
 
 ### Dataset API (Java/Scala only)
 
--   Dataset is a distributed collection of data
--   similar to RDDs but use a specialised encoder for serialising objects over network so they mitigate some downsides of RDDs
--   only available in Java/Scala
--   Python/R already have a lot of what Datasets provides for Java/Scala
--   A DataFrame is a Dataset organised into named columns
--   They type of `DataFrame` in Scala is `Dataset[Row]` - data frames are sometimes referred to as "datasets of rows"
+- Dataset is a distributed collection of data
+- similar to RDDs but use a specialised encoder for serialising objects over
+  network so they mitigate some downsides of RDDs
+- only available in Java/Scala
+- Python/R already have a lot of what Datasets provides for Java/Scala
+- A DataFrame is a Dataset organised into named columns
+- They type of `DataFrame` in Scala is `Dataset[Row]` - data frames are
+  sometimes referred to as "datasets of rows"
 
 ## Appendices
 

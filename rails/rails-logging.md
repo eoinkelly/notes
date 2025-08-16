@@ -1,5 +1,3 @@
-
-
 Rails configuration options
 
     config.logger
@@ -28,10 +26,7 @@ logger = ActiveSupport::TaggedLogging.new(logger)
 
 classes involved
 
-Logger
-Logger::Formatter
-ActiveSupport::Logger
+Logger Logger::Formatter ActiveSupport::Logger
 ActiveSupport::Logger::SimpleFormatter
 
-ActiveSupport::TaggedLogging
-    takes an instance of a logger as initialize arg
+ActiveSupport::TaggedLogging takes an instance of a logger as initialize arg

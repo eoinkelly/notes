@@ -1,4 +1,3 @@
-
 ```bash
 cd path/to/my/code
 
@@ -60,8 +59,9 @@ php-fpm -F
 ```
 
 there is a system apache conf and my custom conf - ideally join with one line
-there is a built-in php-fpm conf for each php version but I do want to customise it
-I want them to generate log files where I can see them and log verbosely so i can see things go wrong
+there is a built-in php-fpm conf for each php version but I do want to customise
+it I want them to generate log files where I can see them and log verbosely so i
+can see things go wrong
 
 ```php
 <?php
@@ -96,7 +96,7 @@ $ phpenv configure
 
 ## Setup drupal coding standards
 
-* https://git.drupalcode.org/project/coder
+- https://git.drupalcode.org/project/coder
 
 ```bash
 # install composer module

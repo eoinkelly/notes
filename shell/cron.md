@@ -1,21 +1,21 @@
 # Cron
 
-* Often implemented by systemd now
-* Handy for working out syntax: https://crontab.guru/
+- Often implemented by systemd now
+- Handy for working out syntax: https://crontab.guru/
 
 ## System crontab /etc/crontab
 
-* `/etc/crontab`
-    * it's not recommended you edit this
-    * doesn't have to be edited by `crontab`
-    * it has a different format to user crontab files
-    * typically runs anacron on the /etc/cron.{daily|monthly|weekly} directories
-* `/etc/cron.d`
-    * gets picked up by the cron daemon
-    * contains cron files cron format that includes the username to run as
-    * custom crons added by provisioning tools should put their scripts in here!
+- `/etc/crontab`
+    - it's not recommended you edit this
+    - doesn't have to be edited by `crontab`
+    - it has a different format to user crontab files
+    - typically runs anacron on the /etc/cron.{daily|monthly|weekly} directories
+- `/etc/cron.d`
+    - gets picked up by the cron daemon
+    - contains cron files cron format that includes the username to run as
+    - custom crons added by provisioning tools should put their scripts in here!
 
-Example  /etc/cron.d/ script
+Example /etc/cron.d/ script
 
 ```
 SHELL=/bin/sh
@@ -35,14 +35,14 @@ drwxr-xr-x  2 root root    4096 Sep 13 11:38 cron.weekly
 
 ## user crontabs (not commonly used on servers)
 
-* crontab is the program used to manage the `cron` daemon
-* User crontabs stored in `/var/spool/cron/crontabs` but should be edited via `crontab` command
-* /etc/cron.allow # says users who can usecrontab (takes precedence over /etc/cron.deny)
-* /etc/cron.deny # lists users who are not allowed to use crontab
-* root is always allowed to use cron
-* su can confuse crontab so always use `-u`
-
-
+- crontab is the program used to manage the `cron` daemon
+- User crontabs stored in `/var/spool/cron/crontabs` but should be edited via
+  `crontab` command
+- /etc/cron.allow # says users who can usecrontab (takes precedence over
+  /etc/cron.deny)
+- /etc/cron.deny # lists users who are not allowed to use crontab
+- root is always allowed to use cron
+- su can confuse crontab so always use `-u`
 
 ```
 # show crontab file

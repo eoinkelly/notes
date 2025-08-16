@@ -1,4 +1,3 @@
-
 // Immediately executing function expression
 // (function (){
 // 	"use strict";
@@ -24,11 +23,10 @@ This immediately executing function is a popular pattern because:
 */
 
 //IIFE that also gives you a garuanteed OK undefined + a few small minification & perf wins
-(function (window, document, undefined){
-	"use strict";
-	// contains all variables declared with var
-
-}(this, this.document));
+(function (window, document, undefined) {
+  'use strict';
+  // contains all variables declared with var
+})(this, this.document);
 
 // // *************************************************************************** *
 // // Running Functions at intervals
@@ -60,7 +58,6 @@ This immediately executing function is a popular pattern because:
 
 // // *************************************************************************** *
 
-
 // // Differentiate between an object and an array
 // var x = { a: 33 };
 // var y = [1,2,3];
@@ -79,7 +76,6 @@ This immediately executing function is a popular pattern because:
 // do {
 
 // } while (expression);
-
 
 // // for (initialization, condition, increment)
 // for (var i = 1; i < 100; i++) {
@@ -132,22 +128,21 @@ This immediately executing function is a popular pattern because:
 // 	console.log('caught an error');
 // }
 
-(function (window, document, undefined){
-	"use strict";
-	// contains all variables declared with var
+(function (window, document, undefined) {
+  'use strict';
+  // contains all variables declared with var
 
-	var l1 = 1;
-	// Desugars to var hello = function () {}
-	function hello() {
-		var l2 = 2;
-		console.log('hell');
-		function another() {
-			var l3 = 3;
+  var l1 = 1;
+  // Desugars to var hello = function () {}
+  function hello() {
+    var l2 = 2;
+    console.log('hell');
+    function another() {
+      var l3 = 3;
+    }
+  }
 
-		}
-	}
-
-/*
+  /*
 
 Crockford - The Javascript Programming Language - Video 3
 ---------------------------------------------------------
@@ -199,4 +194,4 @@ JS has no linker - it uses the global object
 	window.document.foo is slower as it has to do more lookups
 
 */
-}(this, this.document));
+})(this, this.document);

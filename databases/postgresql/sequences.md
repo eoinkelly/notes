@@ -1,26 +1,25 @@
 # Postgres sequence generators
 
-* [CREATE SEQUENCE docs](http://www.postgresql.org/docs/current/static/sql-createsequence.html)
-* sequence number generators are very flexible ways to generate sequences of
+- [CREATE SEQUENCE docs](http://www.postgresql.org/docs/current/static/sql-createsequence.html)
+- sequence number generators are very flexible ways to generate sequences of
   numbers that can be queried like SQL tables.
-* You can control
-    * where sequence starts
-    * where it ends
-    * whether it will wrap or not
-    * its step size
-    * whether to cache some values in memory for speed
-* using `OWNED BY table.column` you can associate the sequence to a table
-  column so that the sequence will automatically be dropped if the column is.
-  Handy.
-* They appear as a special single-row table
-* they use `bigint` (8 byte integer) for counting
+- You can control
+    - where sequence starts
+    - where it ends
+    - whether it will wrap or not
+    - its step size
+    - whether to cache some values in memory for speed
+- using `OWNED BY table.column` you can associate the sequence to a table column
+  so that the sequence will automatically be dropped if the column is. Handy.
+- They appear as a special single-row table
+- they use `bigint` (8 byte integer) for counting
 
 ## Caching complications
 
-* e.g. you have a cache of 10 numbers and multiple clients accessing the
+- e.g. you have a cache of 10 numbers and multiple clients accessing the
   database then each connection will get a cache of 10 numbers so it might end
   up that some numbers are unused.
-* if you have cache of 10 and multiple connections then a `setval` won't be
+- if you have cache of 10 and multiple connections then a `setval` won't be
   noticed by other connections until they run out of cached values
 
 Tl:DR probably best to leave cache at 1
@@ -35,16 +34,16 @@ A sequence number generator has 3 functions
 
 Sequence generator "tables" have the form:
 
-* sequence_name
-* last_value
-* start_value
-* increment_by
-* max_value
-* min_value
-* cache_value
-* log_cnt
-* is_cycled
-* is_called
+- sequence_name
+- last_value
+- start_value
+- increment_by
+- max_value
+- min_value
+- cache_value
+- log_cnt
+- is_cycled
+- is_called
 
 List sequences
 

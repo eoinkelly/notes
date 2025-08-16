@@ -2,8 +2,8 @@
 
 ## sources
 
-* http://emacsrocks.com/
-* https://marmalade-repo.org/
+- http://emacsrocks.com/
+- https://marmalade-repo.org/
 
 ## cheat sheet
 
@@ -36,15 +36,13 @@ line to
 
 # Misc stuff
 
-org mode has superceded "planner mode" and "emacs wiki"
-gem rcode-tools and xmp-filter is what avdi used to evaluate ruby inline
+org mode has superceded "planner mode" and "emacs wiki" gem rcode-tools and
+xmp-filter is what avdi used to evaluate ruby inline
 
-package managers:
-    pallet
+package managers: pallet
 
-> It consists of a couple of components – ruby-mode, inf-ruby, autopair-mode, nxhtml-mode, yasnippet and rinari.
-> http://batsov.com/articles/2008/06/19/emacs-rails/
-> emacs-rails
-
+> It consists of a couple of components – ruby-mode, inf-ruby, autopair-mode,
+> nxhtml-mode, yasnippet and rinari.
+> http://batsov.com/articles/2008/06/19/emacs-rails/ emacs-rails
 
 magit package is supposed to be a great UI for git

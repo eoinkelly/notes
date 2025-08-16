@@ -1,44 +1,44 @@
 # Q docs
 
 then(successFunc, errorFunc)
-* *always* returns a promise
-* the promise ALWAYS fulfills or rejects with the VALUE of the input function
-* if that VALUE is not a promise, it is turned into one
-* only one of the "input function" (successFunc, errorFunc) is ever called
+
+- _always_ returns a promise
+- the promise ALWAYS fulfills or rejects with the VALUE of the input function
+- if that VALUE is not a promise, it is turned into one
+- only one of the "input function" (successFunc, errorFunc) is ever called
 
 input function (either successFunc or errorFunc)
 
 if the input function ...
 
-  * throws an error => then() creates a new rejected promise from that error
-  * returns a value => then returns a promise which fulfills to that value
-  * returns a promise => then returns that exact promise
+- throws an error => then() creates a new rejected promise from that error
+- returns a value => then returns a promise which fulfills to that value
+- returns a promise => then returns that exact promise
 
-
-> A promise is an object that represents the return value or the thrown exception that the function may eventually provide
+> A promise is an object that represents the return value or the thrown
+> exception that the function may eventually provide
 
 Callbacks are an "inversion of control"
-* A function that accepts a callback is saying:
-    * "Don't call me I'll call you"
-    * "give me the args I need and tell me who to tell next - I won't give *you* back anything"
 
-Promises "uninvert" this - they cleanly separate input arguments from "control flow arguments"
-    * this makes it easier to create
-        * functions that take a variable num of args
-          * but doesn't node manage this by always having hte error first?
-        * implement rest and spread parameters
+- A function that accepts a callback is saying:
+    - "Don't call me I'll call you"
+    - "give me the args I need and tell me who to tell next - I won't give _you_
+      back anything"
 
-* Q can be used to exchange promises with a bunch of the other implementations
+Promises "uninvert" this - they cleanly separate input arguments from "control
+flow arguments" _ this makes it easier to create _ functions that take a
+variable num of args _ but doesn't node manage this by always having hte error
+first? _ implement rest and spread parameters
+
+- Q can be used to exchange promises with a bunch of the other implementations
 
 Other promise implementations:
 
-* Dojo
-* jQuery
-* When.js
-* WinJS
-* RSVP
-
-
+- Dojo
+- jQuery
+- When.js
+- WinJS
+- RSVP
 
 ```js
 

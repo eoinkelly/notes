@@ -2,49 +2,62 @@
 
 ## Overview
 
--   Sources
-    -   1 https://www.youtube.com/watch?v=aircAruvnKk&t=102s
-    -   2 https://www.youtube.com/watch?v=IHZwWFHWa-w
--   Neurons just contain one number - the activation
--   Weights don't live in the neurons, they live on the connections, they represent the "thickness" of the connections
--   Every neuron has a connection to all the neurons in the layer before it
+- Sources
+    - 1 https://www.youtube.com/watch?v=aircAruvnKk&t=102s
+    - 2 https://www.youtube.com/watch?v=IHZwWFHWa-w
+- Neurons just contain one number - the activation
+- Weights don't live in the neurons, they live on the connections, they
+  represent the "thickness" of the connections
+- Every neuron has a connection to all the neurons in the layer before it
     ```
     layer 1: 50 neurons
     layer 2: 10 neurons
     => each neuron in layer 2 will have 50 connections to 50 i.e. connected to 50 activations via 50 weights
     ```
--   bias
-    -   each neuron has 1 bias number (there as many bias numbers as neurons exluding the input layer)
-    -   neurons in the input layer do not have biases
-    -   the bias is a bias for or against activation
-    -   +10 bias => the weighted sum of activations from previous layer neurons and weights must be greater than -10 to get a positive value
-    -   -10 bias => the weighted sum of activations from previous layer neurons and weights must be greater than 10 to get a positive value
-    -   think of the bias as tendency to be inactive or active
--   each neuron is a function
-    -   which takes in
+- bias
+    - each neuron has 1 bias number (there as many bias numbers as neurons
+      exluding the input layer)
+    - neurons in the input layer do not have biases
+    - the bias is a bias for or against activation
+    - +10 bias => the weighted sum of activations from previous layer neurons
+      and weights must be greater than -10 to get a positive value
+    - -10 bias => the weighted sum of activations from previous layer neurons
+      and weights must be greater than 10 to get a positive value
+    - think of the bias as tendency to be inactive or active
+- each neuron is a function
+    - which takes in
         1. N activation values from previous layer of N neurons
-        2. N weights (conceptually living on the connections between the neurons on the previous layer and this neuron)
+        2. N weights (conceptually living on the connections between the neurons
+           on the previous layer and this neuron)
         3. 1 bias number (assigned to this neuron)
-    -   outputs
+    - outputs
         1. 1 activation value
 
 ## Calculations
 
-We use matrix and vector math so we calculate the activations for a whole layer at a time
+We use matrix and vector math so we calculate the activations for a whole layer
+at a time
 
 Given
 
 $$ w*{n} = \textrm{square matrix of weights for layer n} $$
-$$ a*{n-1} = \textrm{single column vector of activations from layer n-1} $$
-$$ b*{n} = \textrm{single column vector of biases for layer n} $$
-$$ a*{n} = \textrm{single column vector of activations for layer n} $$
-$$ relu() = \textrm{squish function - shown here implies that you apply it to every value in a single column matrix} $$
+$$ a*{n-1} =
+\textrm{single column vector of activations from layer n-1} $$
+$$ b*{n} =
+\textrm{single column vector of biases for layer n} $$
+$$ a*{n} = \textrm{single
+column vector of activations for layer n} $$
+$$ relu() = \textrm{squish
+function - shown here implies that you apply it to every value in a single
+column matrix} $$
 
-Then the activations for the whole of layer $n$ are calculated in a single operation by:
+Then the activations for the whole of layer $n$ are calculated in a single
+operation by:
 
 $$ a*{n} = relu(w*{n} \* a*{n-1} + b*{n}) $$
 
-Moving forward through a network is calculating the activation of each layer in turn until you get to the activations of the output layer.
+Moving forward through a network is calculating the activation of each layer in
+turn until you get to the activations of the output layer.
 
 The process in pseudocode
 
@@ -104,7 +117,8 @@ weights and biases - I think each run of train+tweak is called an epoch
 
 ### Tweaking weights and biases: back propagation
 
-So we have our weights square matrix (W) and biases column vector (B) and a single cost number (c).
+So we have our weights square matrix (W) and biases column vector (B) and a
+single cost number (c).
 
 We want to minimise the cost.
 
@@ -112,24 +126,32 @@ We can think of the cost as being a function
 
 $$ f(W, B) -> c $$
 
-This is a very complex function because there may be thousands or millions of weights and biases.
+This is a very complex function because there may be thousands or millions of
+weights and biases.
 
 How do we find new values for W and B which make c smaller?
 
-If we figure out the slope of the cost function at our current cost c then we can make a decision about which direction to go.
+If we figure out the slope of the cost function at our current cost c then we
+can make a decision about which direction to go.
 
-If you make your step sizes proportional to the slope then you can take smaller steps are the slope gets flatter i.e. you approach a local minimum.
+If you make your step sizes proportional to the slope then you can take smaller
+steps are the slope gets flatter i.e. you approach a local minimum.
 
-The gradient of a function gives you the direction of steepest increase. The reverse of gradient is what we want.
+The gradient of a function gives you the direction of steepest increase. The
+reverse of gradient is what we want.
 
 1. Compute the gradient direction of the cost function
 2. Nudge the inputs in that direction to make the cost smaller
 
-Imagine all our weights and biases are a single column vector. The negative gradient of that vector will also be a vector of the same shape - this is the vector of "nudges". We can apply the nudges to the weights and biases
+Imagine all our weights and biases are a single column vector. The negative
+gradient of that vector will also be a vector of the same shape - this is the
+vector of "nudges". We can apply the nudges to the weights and biases
 
-The algorithm for computing this gradient efficiently is called "back propagation"
+The algorithm for computing this gradient efficiently is called "back
+propagation"
 
-We need the cost function to have a smooth output so that we can make steps. This is why activations are floats not boolean.
+We need the cost function to have a smooth output so that we can make steps.
+This is why activations are floats not boolean.
 
 ### Back propagation
 
@@ -137,11 +159,17 @@ We need the cost function to have a smooth output so that we can make steps. Thi
 
 Steps
 
-1. Starting with the output layer, calculate the vector of nudges you want to happen to the layer before it
-    - go through each output layer neuron and calculate which nudges it wants to all the neurons in the previous layer
-        - do this by changing the N-1 layer weight for each neuron proportional to the activation of that neuron (more active neuron => changing weight has more impact)
-        - add or subtract from the bias based on what you want to happen to the output of this neuron
-    - then sum up all the desired nudges into a single 1D vector of nudges for the previous layer
+1. Starting with the output layer, calculate the vector of nudges you want to
+   happen to the layer before it
+    - go through each output layer neuron and calculate which nudges it wants to
+      all the neurons in the previous layer
+        - do this by changing the N-1 layer weight for each neuron proportional
+          to the activation of that neuron (more active neuron => changing
+          weight has more impact)
+        - add or subtract from the bias based on what you want to happen to the
+          output of this neuron
+    - then sum up all the desired nudges into a single 1D vector of nudges for
+      the previous layer
 2. Repeat this process for each layer, working backwards from output to input
 
 ```python
@@ -180,7 +208,8 @@ Strictly speaking Back prop has to be repeated for **every training example**.
 
 You get a new set of nudges for weights and biases from every example.
 
-Then we **average** all those new nudges together to get one final set of nudges.
+Then we **average** all those new nudges together to get one final set of
+nudges.
 
 ```python
 nudges_for_all_training_exs = []

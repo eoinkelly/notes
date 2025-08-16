@@ -1,4 +1,3 @@
-
 ```
 git push origin foo
 #automatically expands to

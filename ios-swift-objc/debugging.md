@@ -14,12 +14,12 @@ NSLog( @"calling: %s", __PRETTY_FUNCTION__ );
 NSLog(@"%@", [NSThread callStackSymbols]);
 ```
 
-
 Boxing primitives in ObjC
 
 # `#DEBUG` preprocessor macro
 
-Xcode defines this to be 1 for debug builds and 0 for release builds so we can use it to wrap code that we only want to run in development
+Xcode defines this to be 1 for debug builds and 0 for release builds so we can
+use it to wrap code that we only want to run in development
 
 ```objc
 
@@ -27,5 +27,5 @@ Xcode defines this to be 1 for debug builds and 0 for release builds so we can u
     NSLog(...
 #endif
 ```
-TODO: does this apply to swift?
 
+TODO: does this apply to swift?

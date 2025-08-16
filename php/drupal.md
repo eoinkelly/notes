@@ -2,20 +2,26 @@
 
 ## Timeline
 
-* Drupal 9 due June 2020
-  * Drupal 7 supported until Nov 2021
-* 9 will be identical to the last version of 8 but with deprecations removed and 3rd party deps updated
-    * so if an 8.x is kept up to date with minor versions then the jump to 9 should be ok
-* The drupal team think that 8-9 will be the easiest upgrade yet https://www.drupal.org/about/9/get-ready because 9 is not a complete re-invention of the platform
-* minor releases are released every 6 months
-* https://github.com/mglaman/drupal-check can be used to identify deprecations in 8.x code
-* Drupal 9 will use twig2, 8.x used twig1
+- Drupal 9 due June 2020
+    - Drupal 7 supported until Nov 2021
+- 9 will be identical to the last version of 8 but with deprecations removed and
+  3rd party deps updated
+    - so if an 8.x is kept up to date with minor versions then the jump to 9
+      should be ok
+- The drupal team think that 8-9 will be the easiest upgrade yet
+  https://www.drupal.org/about/9/get-ready because 9 is not a complete
+  re-invention of the platform
+- minor releases are released every 6 months
+- https://github.com/mglaman/drupal-check can be used to identify deprecations
+  in 8.x code
+- Drupal 9 will use twig2, 8.x used twig1
 
-* it comes with server config files in multiple directores to control access
-    * `.htaccess` for Apache
-    * `web.config` for IIS
+- it comes with server config files in multiple directores to control access
+    - `.htaccess` for Apache
+    - `web.config` for IIS
 
 ## Install
+
 ```
 # macOS instructions
 
@@ -50,7 +56,7 @@ ddev describe
 ddev delete --omit-snapshot
 ```
 
-* A drupal 8 project is approx 180 MB of code
+- A drupal 8 project is approx 180 MB of code
 
 Hint: use `-` as the separator in project names
 
@@ -58,22 +64,22 @@ why mkcert - is it required or optional?
 
 ## ddev
 
-* wraps around docker to automate setting up a dev env with
+- wraps around docker to automate setting up a dev env with
     1. a web container
-        * runs drupal, nginx, php-fpm, mailhog, managed by supervisord
+        - runs drupal, nginx, php-fpm, mailhog, managed by supervisord
     2. a database container
     3. an ssh container
-        * allows you to ssh into any container
+        - allows you to ssh into any container
     4. a phpmyadmin container
-        * TODO: why is this separate container?
+        - TODO: why is this separate container?
     5. a router
-        * runs nginx
-        * binds to host machine ports, routes connections to those ports to the appropriate other container and handles SSL termination for the connections too
+        - runs nginx
+        - binds to host machine ports, routes connections to those ports to the
+          appropriate other container and handles SSL termination for the
+          connections too
     6. an optional solr container
-* it uses nginx-fpm by default but can use apache-fpm or apache-cgi
-* it constructs a docker-compose.yml in the .ddev dir
-
-
+- it uses nginx-fpm by default but can use apache-fpm or apache-cgi
+- it constructs a docker-compose.yml in the .ddev dir
 
 Commands
 
@@ -100,8 +106,8 @@ DNS fanciness
 Project can be reached at http://eoin-drupal-test-1.ddev.site http://127.0.0.1:32770
 ```
 
-`ddev.site` is registered in Google CLoud and will reply with `127.0.0.1` to an A record request  for _any_ subdomain under it e.g. `blah.ddev.site`.
-
+`ddev.site` is registered in Google CLoud and will reply with `127.0.0.1` to an
+A record request for _any_ subdomain under it e.g. `blah.ddev.site`.
 
 ## Command: ddev describe
 
@@ -146,7 +152,8 @@ DDEV ROUTER STATUS: healthy
 ssh-auth status: healthy
 ```
 
-"Installing" drupal makes only one change to the project's filesystem (adds a .htaccess file) - it seems to be mostly "installing" it into the database.
+"Installing" drupal makes only one change to the project's filesystem (adds a
+.htaccess file) - it seems to be mostly "installing" it into the database.
 
 ## Drupal development (post installation)
 
@@ -154,39 +161,41 @@ Drupal things:
 
 1. views
 1. blocks
-    * can be placed within regions in a theme
-    * have options that can be configured
+    - can be placed within regions in a theme
+    - have options that can be configured
 1. regions
-    * places in the theme HTML where blocks can be inserted
-    * every theme provides a different set of regions
+    - places in the theme HTML where blocks can be inserted
+    - every theme provides a different set of regions
 1. modules
-    * analagous to plugins in wordpress
-    * browse available modules at https://www.drupal.org/project/project_module
+    - analagous to plugins in wordpress
+    - browse available modules at https://www.drupal.org/project/project_module
 1. content types
-    * examples: page, article
-    * presumably you can make your own
+    - examples: page, article
+    - presumably you can make your own
 
 ## Themes
 
 live in `web/themes/themename` within the project
-* seem to have a `themename.theme` PHP file which they kick off from
-* mixture of
-    * PHP files (*.php, *.inc, *.theme)
-    * JS, CSS, SCSS
-    * Twig templates (*.twig)
-    * lots of yaml config files in the `mayo` theme at least
+
+- seem to have a `themename.theme` PHP file which they kick off from
+- mixture of
+    - PHP files (_.php, _.inc, \*.theme)
+    - JS, CSS, SCSS
+    - Twig templates (\*.twig)
+    - lots of yaml config files in the `mayo` theme at least
 
 ## Tools
 
-* Drupal Console
-    * The Drupal CLI. A tool to generate boilerplate code, interact with and debug Drupal
+- Drupal Console
+    - The Drupal CLI. A tool to generate boilerplate code, interact with and
+      debug Drupal
 
 ## Database abstraction layer
 
 PHP Data Objects
 
-* Built into PHP
-* Has drivers for most popular databases
+- Built into PHP
+- Has drivers for most popular databases
 
 > DO provides a data-access abstraction layer, which means that, regardless of
 > which database you're using, you use the same functions to issue queries and

@@ -1,5 +1,3 @@
-
-
 ```bash
 
 # if you have multiple redis instances you need to add the name as a suffix to the command e.g.

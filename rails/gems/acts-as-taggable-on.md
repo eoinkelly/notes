@@ -14,5 +14,5 @@ end
 Foo.tagged-with("some-value', on: :c1) # find Foos' based on a tag
 ```
 
-* each cX is a "tagging context" - a namespace for a set of tags
-* This lets you use tags for different purposes
+- each cX is a "tagging context" - a namespace for a set of tags
+- This lets you use tags for different purposes

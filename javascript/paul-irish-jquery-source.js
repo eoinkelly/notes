@@ -15,13 +15,11 @@ This immediately executing function is a popular pattern because:
 *   More info: http://www.youtube.com/watch?v=i_qE1iAmjFg
 */
 
-(function(window,document,undefined){
-
-})(this,this.document);
+(function (window, document, undefined) {})(this, this.document);
 // })(this,document); // also works
 
-setInterval(function(){
-    doStuff();
+setInterval(function () {
+  doStuff();
 }, 100); // Run the function every 100mS
 
 /*
@@ -30,9 +28,7 @@ This pattern is superior because it works ok if doStuff() takes longer thant 100
     doStuff() every 100mS
 */
 
-(function looper(){
-    doStuff();
-    setTimeout(looper,100);
+(function looper() {
+  doStuff();
+  setTimeout(looper, 100);
 })();
-
-

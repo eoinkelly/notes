@@ -4,13 +4,14 @@ Seems like a sort of "docker for AI models"
 
 ## Modelfile
 
-* works similar to `Dockerfile`
-* docs: https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md
-* You start with a base model and then can tweak it e.g.
-    * change parameters
-    * set a ssytem prompt
-    * set a template of the full prompt to be passed to the model
-        * should contain space for the system prompt (represented by `.System` variable)
+- works similar to `Dockerfile`
+- docs: https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md
+- You start with a base model and then can tweak it e.g.
+    - change parameters
+    - set a ssytem prompt
+    - set a template of the full prompt to be passed to the model
+        - should contain space for the system prompt (represented by `.System`
+          variable)
 
 ```bash
 ❯ ollama list

@@ -1,20 +1,23 @@
 # Linux stat command
 
-* comes from coreutils
-* displays filesystem status
-* exists as a shell builtin and standalone binary
-* why use it instead of `ls`?
-    * handy for shell scripts because you can control output formatting with format sequences
-    * gives more detail than `ls` by default:
-        * timestamps for atime, ctime, mtime shown with full accuracy
-            * Access time (atime) when contents of file were last accessed
-            * Modificaiton time (mtime) - when contents of file were last changed
-            * Change time (ctime) - when the inode was last modified
-            * Birth time - when the file was created (not well supported, waiting on kernel feature)
-        * how many hard links exist to the file
-        * what device the file lives on
-        * fie size but also number of blocks it takes up and IO block size
-* See below for details of how to get the file
+- comes from coreutils
+- displays filesystem status
+- exists as a shell builtin and standalone binary
+- why use it instead of `ls`?
+    - handy for shell scripts because you can control output formatting with
+      format sequences
+    - gives more detail than `ls` by default:
+        - timestamps for atime, ctime, mtime shown with full accuracy
+            - Access time (atime) when contents of file were last accessed
+            - Modificaiton time (mtime) - when contents of file were last
+              changed
+            - Change time (ctime) - when the inode was last modified
+            - Birth time - when the file was created (not well supported,
+              waiting on kernel feature)
+        - how many hard links exist to the file
+        - what device the file lives on
+        - fie size but also number of blocks it takes up and IO block size
+- See below for details of how to get the file
 
 ```bash
 $ ls -al .profile

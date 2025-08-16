@@ -1,6 +1,6 @@
 # structs
 
-* items in a struct are called _structure members_
+- items in a struct are called _structure members_
 
 ```c
 // create structure template (does not allocate any memory)
@@ -11,10 +11,13 @@ struct person
     int scores[5];
 }
 ```
-* _structure members_ are not necessairly stored contigiously in memory (so you shouldn't do pointer math with them)
-* First you create a structure template (but this does not allocate any memory)
-* `.` is the _member selection operator_
-* If you have a pointer to a struture you use `->` ?? operator to get at members.
+
+- _structure members_ are not necessairly stored contigiously in memory (so you
+  shouldn't do pointer math with them)
+- First you create a structure template (but this does not allocate any memory)
+- `.` is the _member selection operator_
+- If you have a pointer to a struture you use `->` ?? operator to get at
+  members.
 
 ```c
 struct person
@@ -33,6 +36,6 @@ printf("%s\n", (*perpoi).name); // dereference the pointer and call the member s
 printf("%s\n", perpoi->name);   // same thing (cleaner syntax)
 ```
 
-* (nested) structures can be initialized with `{ ... }` same way (nested) arrays can.
-* structures can be nested.
-
+- (nested) structures can be initialized with `{ ... }` same way (nested) arrays
+  can.
+- structures can be nested.

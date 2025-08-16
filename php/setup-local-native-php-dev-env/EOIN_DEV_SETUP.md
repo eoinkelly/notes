@@ -4,19 +4,22 @@
 
 ## Overview
 
-* PHP
-    * Managed by phpenv
-* phpenv
-    * Installed manually - see https://github.com/phpenv/phpenv
-* MySQL server
-    * Installed from docker
-* MySQL client
-    * Installed from homebrew: `brew install mysql` (this also installs the server but we don't start it so we can ignore it)
-* nginx
-    * Installed from homebrew
-    * every project gets it's own nginx master process
+- PHP
+    - Managed by phpenv
+- phpenv
+    - Installed manually - see https://github.com/phpenv/phpenv
+- MySQL server
+    - Installed from docker
+- MySQL client
+    - Installed from homebrew: `brew install mysql` (this also installs the
+      server but we don't start it so we can ignore it)
+- nginx
+    - Installed from homebrew
+    - every project gets it's own nginx master process
 
-I like to do dev in a split window terminal with all the relevant processes running under my direct control and (where possible) logging output and errors to the terminal window.
+I like to do dev in a split window terminal with all the relevant processes
+running under my direct control and (where possible) logging output and errors
+to the terminal window.
 
 ## Diagnose
 
@@ -44,7 +47,8 @@ export MYSQL_HOST="127.0.0.1"
 
 ## Step: Set up MySQL
 
-* See https://hub.docker.com/_/mysql for documentation of the env vars we pass in to the docker containers
+- See https://hub.docker.com/_/mysql for documentation of the env vars we pass
+  in to the docker containers
 
 ```bash
 # run latest MySQL on the standard port
@@ -120,7 +124,8 @@ $ npm i # or yarn install as required
 
 ### Create settings.php
 
-The best template for settings.php is the one in ansible, not in the standard drupal places
+The best template for settings.php is the one in ansible, not in the standard
+drupal places
 
 Add to sites/default/settings.php:
 
@@ -166,15 +171,16 @@ drush user-password user+1@localhost.localdomain --password="whatever"
 Options:
 
 1. phpenv
-    * see instructions below
-    * gives most control of versions but building requires wrangling fiddly C deps at build time
+    - see instructions below
+    - gives most control of versions but building requires wrangling fiddly C
+      deps at build time
 2. homebrew
-    * has most recent stable version of PHP in the `php` package
-    * lives in `/usr/local/bin/php`
-    * -- does not have xdebug enabled
+    - has most recent stable version of PHP in the `php` package
+    - lives in `/usr/local/bin/php`
+    - -- does not have xdebug enabled
 3. macOS built-in
-   * currently 7.3.9 but will probably never be updated
-   * lives in `/usr/bin/php`
+    - currently 7.3.9 but will probably never be updated
+    - lives in `/usr/bin/php`
 
 #### Step 1: Install PHP on macOS 10.15 (catalina) using phpenv
 
@@ -193,7 +199,8 @@ phpenv install 7.3.8
 
 #### Step 2: Set up VSCode XDebug integration
 
-Add the chunk below to your php.ini via `phpenv configure` (opens EDITOR with the current php.ini)
+Add the chunk below to your php.ini via `phpenv configure` (opens EDITOR with
+the current php.ini)
 
 ```ini
 [XDebug]

@@ -1,6 +1,7 @@
 # Web performance
 
-> When you want to be fast you have to give up the things which are keeping you slow
+> When you want to be fast you have to give up the things which are keeping you
+> slow
 
 Human perception research:
 
@@ -19,10 +20,10 @@ Example performance budget:
 
 ## Tools
 
--   http://www.webpagetest.org/
+- http://www.webpagetest.org/
 - Pagespeed insights (uses CRUX data under the hood)
--   https://developers.google.com/speed/pagespeed/insights/
-  - is good baseline but 1 month out of date
-  - is a generalisation of what I get in lighthouse
+- https://developers.google.com/speed/pagespeed/insights/
+- is good baseline but 1 month out of date
+- is a generalisation of what I get in lighthouse
 - Google search console
-  - uses CRUX data under the hood too
+    - uses CRUX data under the hood too

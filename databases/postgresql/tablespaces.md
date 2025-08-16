@@ -1,34 +1,40 @@
 # Tablespaces
 
-* allow the admin to control the disk layout of the postgres installation
-* you can specify a tablespace when creating database objects (tables, indexes, entire databases)
-* uses:
-    * if the partition/volume the DB data lives on runs out of space
-    * if you want to store some DB objects on fast disks and some on slow
-* restrictions
-    * they depend on metadata in the main data dir so:
-        * they cannot be used with a different Postgres instance
-        * you cannot back them up separately and have the data be meaningful
-        * putting a tablespace in somewhere volatile (e.g. RAM) could bork the whole cluster
-    * symlinks are used to implement tablespaces so they only work on systems that support symlinks
-        * e.g. probably won't work on windows
+- allow the admin to control the disk layout of the postgres installation
+- you can specify a tablespace when creating database objects (tables, indexes,
+  entire databases)
+- uses:
+    - if the partition/volume the DB data lives on runs out of space
+    - if you want to store some DB objects on fast disks and some on slow
+- restrictions
+    - they depend on metadata in the main data dir so:
+        - they cannot be used with a different Postgres instance
+        - you cannot back them up separately and have the data be meaningful
+        - putting a tablespace in somewhere volatile (e.g. RAM) could bork the
+          whole cluster
+    - symlinks are used to implement tablespaces so they only work on systems
+      that support symlinks
+        - e.g. probably won't work on windows
 
 #### Settings
 
-* `default_tablespace`
-    * when this variable is set it is used as an implicit TABLESPACE clause to CREATE statements
-* `temp_tablespaces` (note the plural)
-    * used to decide where to store temp tables and indexes and data created when sorting large datasets
-    * can be an array of dirs. In this case they are picked at random to be
-      used by the system - this lets you spread the load across multiple places
+- `default_tablespace`
+    - when this variable is set it is used as an implicit TABLESPACE clause to
+      CREATE statements
+- `temp_tablespaces` (note the plural)
+    - used to decide where to store temp tables and indexes and data created
+      when sorting large datasets
+    - can be an array of dirs. In this case they are picked at random to be used
+      by the system - this lets you spread the load across multiple places
 
 Two tablespaces are automatically created:
 
 1. `pg_default`
-    * the default tablespace of `template0` and `template1` databases
-        * newly created DBs are patterned off these so `pg_default` becomes the default tablespace for all new databases
+    - the default tablespace of `template0` and `template1` databases
+        - newly created DBs are patterned off these so `pg_default` becomes the
+          default tablespace for all new databases
 2. `pg_global`
-    * used for shared system "catalogs"
+    - used for shared system "catalogs"
 
 Show tablespace details:
 

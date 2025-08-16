@@ -1,9 +1,7 @@
-
-
-
 GPT = Generatively Pretrained Transformer
 
-When you ask chatgpt a question it looks as it's answer completing a sequence that you started  with your question
+When you ask chatgpt a question it looks as it's answer completing a sequence
+that you started with your question
 
 ## ChatGPT from scratch
 

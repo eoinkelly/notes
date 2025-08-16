@@ -2,8 +2,8 @@
 
 Good articles:
 
-* https://codeblog.jonskeet.uk/2019/03/27/storing-utc-is-not-a-silver-bullet/
-* https://tools.ietf.org/html/rfc5545#section-3.3.5
+- https://codeblog.jonskeet.uk/2019/03/27/storing-utc-is-not-a-silver-bullet/
+- https://tools.ietf.org/html/rfc5545#section-3.3.5
 
 ## Recommendation
 
@@ -19,9 +19,8 @@ In DB terms this would be
     human_time String
     timezone_id String
 
-Q: what postgres type is best to use for both these fields?
-Question: what does rails do out of the box?
-
+Q: what postgres type is best to use for both these fields? Question: what does
+rails do out of the box?
 
 ## The canonical Timezone database
 
@@ -33,20 +32,22 @@ https://www.iana.org/time-zones
 > political bodies to time zone boundaries, UTC offsets, and daylight-saving
 > rules.
 
-* IANA releases an updated Timezone database periodically (a few times a year)
-* Dataset
-    * is approx 500kb zipped
-    * a bunch of text files with dates and GMT offsets
-    * docs, helper scripts, helper C code
-* Programming environments reformat that DB for their own usage and import it
+- IANA releases an updated Timezone database periodically (a few times a year)
+- Dataset
+    - is approx 500kb zipped
+    - a bunch of text files with dates and GMT offsets
+    - docs, helper scripts, helper C code
+- Programming environments reformat that DB for their own usage and import it
 
 ## How operating systems manage TZ data
 
 ### Ubuntu
 
-* Ubuntu keeps the TZ data in `/usr/share/zoneinfo/`
-* The data is a bunch of binary files in `NZ: timezone data, version 2, 7 gmt time flags, 7 std time flags, no leap seconds, 156 transition times, 7 abbreviation chars` format.
-* `tzdata` package. `apt update && apt upgrade tzdata` to get latest version
+- Ubuntu keeps the TZ data in `/usr/share/zoneinfo/`
+- The data is a bunch of binary files in
+  `NZ: timezone data, version 2, 7 gmt time flags, 7 std time flags, no leap seconds, 156 transition times, 7 abbreviation chars`
+  format.
+- `tzdata` package. `apt update && apt upgrade tzdata` to get latest version
 
 ```
 # example on ubuntu when there is a tzdata upgrade available
@@ -104,18 +105,20 @@ Description: time zone and daylight-saving time data
 
 ### macOS
 
-* Apple will push updated info to your device periodically - see https://support.apple.com/en-us/HT206986
-* macOS requires a restart to accept it
-* macOS keeps the TZ data in `/usr/share/zoneinfo/`
+- Apple will push updated info to your device periodically - see
+  https://support.apple.com/en-us/HT206986
+- macOS requires a restart to accept it
+- macOS keeps the TZ data in `/usr/share/zoneinfo/`
 
 ### Windows
 
-* Presumably Windows does something similar to macOS
+- Presumably Windows does something similar to macOS
 
 ## How Elixir manages TZ data
 
-* https://github.com/lau/tzdata
-* The package will (at startup) do an automatic download of the new TZ database release when one is available
+- https://github.com/lau/tzdata
+- The package will (at startup) do an automatic download of the new TZ database
+  release when one is available
 
 ## How Ruby manages TZ data
 
@@ -123,11 +126,16 @@ Ruby uses the `tzinfo` gem
 
 ### tzinfo
 
-* https://github.com/tzinfo/tzinfo
+- https://github.com/tzinfo/tzinfo
 
-* TZInfo requires a source of time zone data. There are two options:
-    1. A zoneinfo directory containing timezone definition files. These files are generated from the [IANA Time Zone Database](https://www.iana.org/time-zones) using the `zic` utility. Most Unix-like systems include a zoneinfo directory.
-    2. The TZInfo::Data library (the tzinfo-data gem). TZInfo::Data contains a set of Ruby modules that are also generated from the IANA Time Zone Database.
+- TZInfo requires a source of time zone data. There are two options:
+    1. A zoneinfo directory containing timezone definition files. These files
+       are generated from the
+       [IANA Time Zone Database](https://www.iana.org/time-zones) using the
+       `zic` utility. Most Unix-like systems include a zoneinfo directory.
+    2. The TZInfo::Data library (the tzinfo-data gem). TZInfo::Data contains a
+       set of Ruby modules that are also generated from the IANA Time Zone
+       Database.
 
 By default, TZInfo will attempt to use TZInfo::Data. If TZInfo::Data is not
 available (i.e. if `require 'tzinfo/data'` fails), then TZInfo will search for a
@@ -147,21 +155,21 @@ raised when TZInfo is used.
 
 ### tzinfo-data gem
 
-* https://github.com/tzinfo/tzinfo-data
-* contains the tz database for ruby
-* releases new versions corresponding to the IANA DB releases
-* is automatically used by `tzinfo` if present
-* is not installed by Rails by default
+- https://github.com/tzinfo/tzinfo-data
+- contains the tz database for ruby
+- releases new versions corresponding to the IANA DB releases
+- is automatically used by `tzinfo` if present
+- is not installed by Rails by default
 
 ### Rails
 
-* Rails requires `tzinfo` via `activesupport` but does not include `tzinfo-data`
-* Seems to use the OS tz data by default
+- Rails requires `tzinfo` via `activesupport` but does not include `tzinfo-data`
+- Seems to use the OS tz data by default
 
 ## How JS manages TZ data
 
-* There seem to be a few options for TZ aware date calculations in Node
-* Example NPM packages for node:
-    * https://www.npmjs.com/package/timezonecomplete (a library which uses the data)
-    * https://www.npmjs.com/package/tzdata (the actualy tz data)
-
+- There seem to be a few options for TZ aware date calculations in Node
+- Example NPM packages for node:
+    - https://www.npmjs.com/package/timezonecomplete (a library which uses the
+      data)
+    - https://www.npmjs.com/package/tzdata (the actualy tz data)

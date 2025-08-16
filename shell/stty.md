@@ -1,8 +1,9 @@
 # stty
 
-* sets options for whichever terminal device interface is its STDIN
+- sets options for whichever terminal device interface is its STDIN
 
 stty flags
+
 ```
 $ stty
 
@@ -31,4 +32,4 @@ cchars: discard = ^O; dsusp = ^Y; eof = ^D; eol = <undef>;
 
 Flag meanings:
 
-* icrnl = map CR to NL on input
+- icrnl = map CR to NL on input

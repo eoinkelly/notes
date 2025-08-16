@@ -1,4 +1,3 @@
-
 ```
 SQL>help set sqlformat # list output formats
 SQL>show sqlformat
@@ -25,25 +24,29 @@ SQL>connect USERNAME AS
 # {username | /}[@connect_identifier] [edition={edition_name | DATABASE_DEFAULT}]
 ```
 
+- `v$version` is a special table name
 
-* `v$version` is a special table name
-
-* a schema is created in Oracle when a user is created.
-    * there is a `CREATE SCHEMA` statement but it just creates multiple objects at once
-
+- a schema is created in Oracle when a user is created.
+    - there is a `CREATE SCHEMA` statement but it just creates multiple objects
+      at once
 
 Multi-tenant
 
-* CBD = the "multitenant container DB"
-    * multitenant container database (CDB) that includes one or many customer-created pluggable databases (PDBs).
-* PDB = pluggable DB = the customer's DB
-    * you can set it up so when the customer connects they only see their PDB
-    * A PDB is a portable collection of schemas, schema objects, and nonschema objects that appears to an Oracle Net client as a non-CDB.
-* All Oracle databases before Oracle Database 12c were non-CDBs.
-* You can unplug a PDB from a CDB and plug it into a different CDB
+- CBD = the "multitenant container DB"
+    - multitenant container database (CDB) that includes one or many
+      customer-created pluggable databases (PDBs).
+- PDB = pluggable DB = the customer's DB
+    - you can set it up so when the customer connects they only see their PDB
+    - A PDB is a portable collection of schemas, schema objects, and nonschema
+      objects that appears to an Oracle Net client as a non-CDB.
+- All Oracle databases before Oracle Database 12c were non-CDBs.
+- You can unplug a PDB from a CDB and plug it into a different CDB
 
 To use `SQL*Plus`
 
-> on most platforms, ORACLE_SID and ORACLE_HOME must be set. In addition, it is advisable to set the PATH environment variable to include the ORACLE_HOME/bin directory.
+> on most platforms, ORACLE_SID and ORACLE_HOME must be set. In addition, it is
+> advisable to set the PATH environment variable to include the ORACLE_HOME/bin
+> directory.
 
-> UNIX and Linux installations come with two scripts, oraenv and coraenv, that you can use to easily set environment variables
+> UNIX and Linux installations come with two scripts, oraenv and coraenv, that
+> you can use to easily set environment variables

@@ -1,4 +1,3 @@
-
 # Get a new image from registry
 
 ```
@@ -62,3 +61,4 @@ docker build -t eoin-ruby-test-1 .
 
 docker history eoin-ruby-test-1       # show layers history
 docker inspect eoin-ruby-test-1 |jq . # JSON dump of image metadata
+```

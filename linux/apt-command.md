@@ -1,6 +1,6 @@
-
-* designed to be used by humans - don't use it for scripts because the interface might change
-* all features of it are avaialble in the underlying tools
+- designed to be used by humans - don't use it for scripts because the interface
+  might change
+- all features of it are avaialble in the underlying tools
 
 ```
 apt update
@@ -16,7 +16,6 @@ apt edit-sources
 
 ```
 
-
 ## listing packages
 
 ```
@@ -26,9 +25,8 @@ apt list --upgradable
 apt list --all-versions
 ```
 
-* similar to `dpkg-query --list`
-* supports glob patterns for package names
-
+- similar to `dpkg-query --list`
+- supports glob patterns for package names
 
 Output has the form:
 
@@ -70,4 +68,3 @@ update-notifier-common/bionic-updates 3.192.1.5 all [upgradable from: 3.192]
 util-linux/bionic-updates 2.31.1-0.4ubuntu3.3 amd64 [upgradable from: 2.31.1-0.4ubuntu3]
 uuid-runtime/bionic-updates 2.31.1-0.4ubuntu3.3 amd64 [upgradable from: 2.31.1-0.4ubuntu3]
 ```
-

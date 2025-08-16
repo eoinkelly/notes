@@ -1,4 +1,5 @@
 # Calculating checksums
+
 ```bash
 # NB the -n is very important, otherwise  you'll get a \n in the output
 echo -n "hello" | shasum # SHA-1 by default

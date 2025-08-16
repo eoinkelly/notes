@@ -1,37 +1,37 @@
 # Rack
 
-* Rack aims to provide a minimal API for connecting web servers and web frameworks
-* Avoids having web frameworks have different handlers for different servers
-* Rack is similar to Python WSGi
+- Rack aims to provide a minimal API for connecting web servers and web
+  frameworks
+- Avoids having web frameworks have different handlers for different servers
+- Rack is similar to Python WSGi
 
+- Web servers that can speak rack
+    - WEBRick
+    - Thin
+    - Passenger
+    - Puma
+    - Unicorn
+- Frameworks that can speak rack
+    - Rails
+    - Sinatra
+    - Mack
+    - Espresso
 
-* Web servers that can speak rack
-    * WEBRick
-    * Thin
-    * Passenger
-    * Puma
-    * Unicorn
-* Frameworks that can speak rack
-    * Rails
-    * Sinatra
-    * Mack
-    * Espresso
-
-Rack is both a spec *and* a middleware gem that implemnets the spec.
+Rack is both a spec _and_ a middleware gem that implemnets the spec.
 
 ## Rack the gem
 
-* divides up incoming HTTP requests into different pipelined stages
-* handles the stages in pieces until it sends back a response from the app
-* has a
-    * Handler (communicates with web server)
-    * Adapter (communicates with app)
+- divides up incoming HTTP requests into different pipelined stages
+- handles the stages in pieces until it sends back a response from the app
+- has a
+    - Handler (communicates with web server)
+    - Adapter (communicates with app)
 
-* middleware is in the _middle_ of the server and the application
+- middleware is in the _middle_ of the server and the application
 
 ## Rack Middlewares
 
-* Use `rake about` to see a list of the middleware in use on rails
+- Use `rake about` to see a list of the middleware in use on rails
 
 ```
 About your application's environment

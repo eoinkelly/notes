@@ -2,25 +2,26 @@
 
 # ==
 
-* test equality between two primitve C objects
-* tests whether two pointers are pointing at the same object
+- test equality between two primitve C objects
+- tests whether two pointers are pointing at the same object
 
-QUESTION: == seems to work right for NSString and NSArray too - how does this work?
-QUESTION:
+QUESTION: == seems to work right for NSString and NSArray too - how does this
+work? QUESTION:
 
 # isEqual
 
-* comes from NSObject
-* can and should be overridden in child classes
+- comes from NSObject
+- can and should be overridden in child classes
 
 # Testing hash keys for equality
 
-* You can use any object as a key provided it implements `hash` and `isEqual`. Consequences:
-    * `NSString` is a good choice:
-        * `hash` and `isEqual` is based on characters in string
-    * `NSObject` is a bad choice:
-        * pointer is the hash and == is the isEqual
-        * any subclasses of NSObject I create are also poor
+- You can use any object as a key provided it implements `hash` and `isEqual`.
+  Consequences:
+    - `NSString` is a good choice:
+        - `hash` and `isEqual` is based on characters in string
+    - `NSObject` is a bad choice:
+        - pointer is the hash and == is the isEqual
+        - any subclasses of NSObject I create are also poor
 
 ```objc
 #import <UIKit/UIKit.h>

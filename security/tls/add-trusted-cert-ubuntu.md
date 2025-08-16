@@ -1,4 +1,3 @@
-
 In ubuntu:
 
 1. Go to /usr/local/share/ca-certificates/

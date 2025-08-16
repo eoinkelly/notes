@@ -2,14 +2,11 @@
 
 ## Questions
 
-* it seems to load the mysql and sqlite gems as well as pg
-    in common_spree_depenendencies.rb
-    can we stop that?
-Does an engine's gemfile get loaded when it is mounted?
-    if not the ignore the above
+- it seems to load the mysql and sqlite gems as well as pg in
+  common_spree_depenendencies.rb can we stop that? Does an engine's gemfile get
+  loaded when it is mounted? if not the ignore the above
 
 ## Intro
-
 
 Solidus is made up of 5 gems
 
@@ -19,34 +16,32 @@ Solidus is made up of 5 gems
 4. solidus_core (Essential models, mailers, and classes)
 5. solidus_sample (Sample data)
 
-
 The 'solidus_auth_devise' is also used somehow???
 
 solidus is designed to be run as an rails engine
-
 
 what does it use for authorization?
 
 ## Solidus sample
 
-* a gem
-* a sample app
+- a gem
+- a sample app
 
 ## Deface
 
-* uses CSS style selectors to target overrides of parts of erb templates
-* https://guides.spreecommerce.com/developer/view.html
-
+- uses CSS style selectors to target overrides of parts of erb templates
+- https://guides.spreecommerce.com/developer/view.html
 
 # My thoughts on it
 
-* deface seems like a reasonable tool for inserting targetted overrides
-    * ??? does it make figuring out where your view code is comeing from very complex?
-        * how does one figure that out?
+- deface seems like a reasonable tool for inserting targetted overrides
+    - ??? does it make figuring out where your view code is comeing from very
+      complex?
+        - how does one figure that out?
 
-* you can override a whole view by just including the erb file in the correct place
-* you can override bits of a view using deface
-
+- you can override a whole view by just including the erb file in the correct
+  place
+- you can override bits of a view using deface
 
 ## Backend
 
@@ -112,25 +107,30 @@ Gem depends on
 
 ## About the dependencies
 
-* carmen
-    * Carmen- A repository of geographic regions for Ruby
-    * used to populate Spree::Country, Spree:State tables in the DB
-* friendly_id
-    * https://github.com/norman/friendly_id
-    * It allows you to create pretty URL’s and work with human-friendly strings as if they were numeric ids for ActiveRecord models
-    * FriendlyId is an add-on to Ruby's Active Record that allows you to replace ids in your URLs with strings:
-    * To the extent possible, FriendlyId lets you treat text-based identifiers like normal IDs. This means that you can perform finds with slugs just like you do with numeric ids:
-    * http://norman.github.io/friendly_id/file.Guide.html
-* rabl
-    * https://github.com/nesquena/rabl
-    * RABL (Ruby API Builder Language) is a Rails and Padrino ruby templating system for generating JSON, XML, MessagePack, PList and BSON.
-* cancancan
-    * used for authorization
-
+- carmen
+    - Carmen- A repository of geographic regions for Ruby
+    - used to populate Spree::Country, Spree:State tables in the DB
+- friendly_id
+    - https://github.com/norman/friendly_id
+    - It allows you to create pretty URL’s and work with human-friendly strings
+      as if they were numeric ids for ActiveRecord models
+    - FriendlyId is an add-on to Ruby's Active Record that allows you to replace
+      ids in your URLs with strings:
+    - To the extent possible, FriendlyId lets you treat text-based identifiers
+      like normal IDs. This means that you can perform finds with slugs just
+      like you do with numeric ids:
+    - http://norman.github.io/friendly_id/file.Guide.html
+- rabl
+    - https://github.com/nesquena/rabl
+    - RABL (Ruby API Builder Language) is a Rails and Padrino ruby templating
+      system for generating JSON, XML, MessagePack, PList and BSON.
+- cancancan
+    - used for authorization
 
 ## General notes
 
-* it loads seeds using the `db:load_dir` task which has to have `reenable` called on it first
-* it has the idea of "friendly id" for models that you can use
-* uses the http://getskeleton.com/ CSS framework
-* most of the models seem to be in core gem
+- it loads seeds using the `db:load_dir` task which has to have `reenable`
+  called on it first
+- it has the idea of "friendly id" for models that you can use
+- uses the http://getskeleton.com/ CSS framework
+- most of the models seem to be in core gem

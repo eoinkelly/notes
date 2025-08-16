@@ -2,45 +2,55 @@
 
 ## Cheatsheet
 
-* Always add a DB index to foreign key columns
-* Add `inverse_of` if the association is anything but a simple `has_one`, `has_many` or `belongs_to`
+- Always add a DB index to foreign key columns
+- Add `inverse_of` if the association is anything but a simple `has_one`,
+  `has_many` or `belongs_to`
 
-Since you can create models through associations you should always do it that way if possible rather than passing in the association ID as part of a mass assignment hash - it is safer.
+Since you can create models through associations you should always do it that
+way if possible rather than passing in the association ID as part of a mass
+assignment hash - it is safer.
 
-* is making an assication mass assignable an anti-pattern? he kind of implies it is ...
-    * does it yield up too much control to the controller?
-* CRUDing models through associations seems to be a good pattern
+- is making an assication mass assignable an anti-pattern? he kind of implies it
+  is ...
+    - does it yield up too much control to the controller?
+- CRUDing models through associations seems to be a good pattern
 
 ## visualising belongs_to
-belongs_to says "I have the id of the other side on me (it belongs to me) so I can find it"
-  imagining a person who has a "token" in their pocket that will identify the other person that they know about
+
+belongs_to says "I have the id of the other side on me (it belongs to me) so I
+can find it" imagining a person who has a "token" in their pocket that will
+identify the other person that they know about
 
 # working through associations as a good pattern
 
-you can build through an association to set it up at the same time
-card = deck.cards.new # works and automatically sets the deck_id to be the deck
-you can get around mass assigment protection by building the object through associated objects because you aren't explicitly setting the id of the associated model
+you can build through an association to set it up at the same time card =
+deck.cards.new # works and automatically sets the deck_id to be the deck you can
+get around mass assigment protection by building the object through associated
+objects because you aren't explicitly setting the id of the associated model
 
-you can find cards through an association which acts as a filter on the search, also security checking
+you can find cards through an association which acts as a filter on the search,
+also security checking
 
-deck.cards.find(2) vs Card.find(2) # the latter does not check that the card is associated with deck
+deck.cards.find(2) vs Card.find(2) # the latter does not check that the card is
+associated with deck
+
 # Assocations
 
 ## Association proxies
 
     http://api.rubyonrails.org/classes/ActiveRecord/Associations/CollectionProxy.html
 
-Association proxies in Active Record are middlemen between the object that
-holds the association and the actual associated object:
+Association proxies in Active Record are middlemen between the object that holds
+the association and the actual associated object:
 
 They allow AR to not load other objects from the DB until they are needed
 
-* @owner
-    * the object that holds the association
-* @target
-    * the actual associated object
-* @reflection
-    * The kind of association any proxy is about. That's an instance of the
+- @owner
+    - the object that holds the association
+- @target
+    - the actual associated object
+- @reflection
+    - The kind of association any proxy is about. That's an instance of the
       class ActiveRecord::Reflection::AssociationReflection.
 
 ```ruby
@@ -70,11 +80,9 @@ proxy = page.authors
 
 Proxies allow you to "scope" find and create operations
 
-p = Page.first
-p.authors.where(name: 'blah')
+p = Page.first p.authors.where(name: 'blah')
 
 http://pivotallabs.com/advanced-proxy-usage-part-i/
-
 
 ```ruby
 class CourseIntroduction < ActiveRecord::Base
@@ -97,10 +105,10 @@ Aside: neat way of implementing JS's 'arguments' in ruby
     args = method(__method__).parameters.map { |arg| arg[1] }
     puts "Method failed with " + args.map { |arg| "#{arg} = #{eval arg}" }.join(', ')
 
-=============================================
-=============================================
-=============================================
-=============================================
+# =============================================
+
+# =============================================
+
 There are 6 types of association
 
 1. belongs_to
@@ -110,25 +118,28 @@ There are 6 types of association
 1. has_many :through
 1. has_and_belongs_to_many
 
-* Associations are a set of macro-like **class methods** for tying objects
+- Associations are a set of macro-like **class methods** for tying objects
   together through foreign keys.
-    * => they exist on the model class, not on instances of the models
-    * `User.addresses` not `User#addresses`
-* They express relationships between object s
-* Each macro adds a number of methods to the **class** which are specialized
+    - => they exist on the model class, not on instances of the models
+    - `User.addresses` not `User#addresses`
+- They express relationships between object s
+- Each macro adds a number of methods to the **class** which are specialized
   according to the collection or association symbol and the options hash.
 
 ActiveRecord makes methods for you from the attributes in the database table
 These "generated attributes" are added to your model using an anonymous module.
 
-* Association methods are added to `Foo` class from a named `Foo::GeneratedAssociationMethods` module
-* The methods are **class** methods on this module (as they are class methods in `Foo`)
-* The "generated association" methods are added _after_ the "generated
+- Association methods are added to `Foo` class from a named
+  `Foo::GeneratedAssociationMethods` module
+- The methods are **class** methods on this module (as they are class methods in
+  `Foo`)
+- The "generated association" methods are added _after_ the "generated
   attribute" module so the association methods will override the attribute
   methods if there is a clash i.e. if you have an association `bar` and an
   attribute `bar` you will get the association every time.
 
-Generally `Foo::GeneratedAssociationMethods` will be the first ancestor in the `Foo.ancestors` chain
+Generally `Foo::GeneratedAssociationMethods` will be the first ancestor in the
+`Foo.ancestors` chain
 
 QUESTION: how do I get a reference in pry to something in the ancestor tree?
 
@@ -163,32 +174,33 @@ QUESTION: What does "cardinality" mean exactly?
 
 ## Caching
 
-The association methods are built on top of a cache that keeps the result of the most recent query available for further operations.
-You can discard this cache and force hitting the DB again by passing `true` to association methods
-Note that it does not just skip the cache as a one-time thing - it refereshes the cache too
+The association methods are built on top of a cache that keeps the result of the
+most recent query available for further operations. You can discard this cache
+and force hitting the DB again by passing `true` to association methods Note
+that it does not just skip the cache as a one-time thing - it refereshes the
+cache too
 
 ```ruby
 # get addresses and skip cache
 User.addresses(true)
 ```
 
-
 ### Customising associations
 
-Associations are built from Relations, and you can use the Relation syntax to customize them
+Associations are built from Relations, and you can use the Relation syntax to
+customize them
 
-what parasm dos the lambda get?
-what is self in the lambda? it seems to be the
+what parasm dos the lambda get? what is self in the lambda? it seems to be the
 does the lambda have to return a Relation ???
 
-Is it correct to say:
-    The return value of the lambda is expected to be a relation and it is simply merged with whatever relation the calling code has made
+Is it correct to say: The return value of the lambda is expected to be a
+relation and it is simply merged with whatever relation the calling code has
+made
 
-
-* passing a lambda to an association sets a "scope" on it
-    QUESTION: does it have to be lambda, can be proc?
-* the return value of the lambda is ??? an ActiveRecrod::Relation
-    QUESTION: does it have to be?
+- passing a lambda to an association sets a "scope" on it QUESTION: does it have
+  to be lambda, can be proc?
+- the return value of the lambda is ??? an ActiveRecrod::Relation QUESTION: does
+  it have to be?
 
 The returned ActiveRelation is combined with whatever query is going on when
 somebody asks for pages e.g.
@@ -205,9 +217,10 @@ Grouping.pages.where(name: 'foo').order(:position).includes(:app_layout)
 #
 ```
 
-* ActiveRecord is smart enough to not do the join if you don't need it
+- ActiveRecord is smart enough to not do the join if you don't need it
 
 http://api.rubyonrails.org/classes/ActiveRecord/Associations/ClassMethods.html#label-Customizing+the+query
+
 ```ruby
 class Grouping < ActiveRecord::Base
   acts_as_list
@@ -220,7 +233,8 @@ end
 
 # Scopes
 
-In old days Rails provided the find method and you could pass it a hash of conditions
+In old days Rails provided the find method and you could pass it a hash of
+conditions
 
 ```ruby
 Book.find(:all, {
@@ -231,7 +245,6 @@ Book.find(:all, {
 ```
 
 These were not reusable
-
 
 Rails 2.1 provided "named scopes" via `named_scope` This was improved because
 
@@ -254,13 +267,9 @@ end
 Author.published.by_first_name('bob')
 ```
 
-
-Rails 3
-    named_scope becomes scope
-    converted the options form the scope hash into sepearate "query methods"
-    :conditions becomes #where
-    :order becomes #order
-    all the query methods are still composable by chaining together
+Rails 3 named_scope becomes scope converted the options form the scope hash into
+sepearate "query methods" :conditions becomes #where :order becomes #order all
+the query methods are still composable by chaining together
 
 ```ruby
 # named scopes example
@@ -280,9 +289,10 @@ Author.published.by_first_name('bob')
 
 ### An example where using raw SQL is not ideal
 
-LIKE is case sensitive on Postgres but not other Dbs
-Postgres provides ILIKE for case insensitive search but other dbs do not support ILIKE
-So we should arel for queries involving LIKE to the x-db compliance - we need this especially if we are writing a library
+LIKE is case sensitive on Postgres but not other Dbs Postgres provides ILIKE for
+case insensitive search but other dbs do not support ILIKE So we should arel for
+queries involving LIKE to the x-db compliance - we need this especially if we
+are writing a library
 
 ```ruby
 # named scopes example
@@ -310,8 +320,8 @@ end
 Author.published.by_first_name('bob')
 ```
 
-
 An example of how raw SQL can break merging scopes
+
 ```ruby
 class Author < ActiveRecord::Base
     scope :by_name, ->(name) { where('name = ?', name) }

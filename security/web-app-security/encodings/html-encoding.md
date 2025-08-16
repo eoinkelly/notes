@@ -9,9 +9,9 @@ Characters can be added to an HTML document in 4 ways:
 3. entity decimal value
 4. entity hex value
 
-    <p>My name is Johnny "Bang" Johnson</p>
-    <p>My name is Johnny &quot;Bang&quot; Johnson</p>
-    <p>My name is Johnny &#34;Bang&#34; Johnson</p>
-    <p>My name is Johnny &#x0022;Bang&#x0022; Johnson</p>
+ <p>My name is Johnny "Bang" Johnson</p>
+ <p>My name is Johnny &quot;Bang&quot; Johnson</p>
+ <p>My name is Johnny &#34;Bang&#34; Johnson</p>
+ <p>My name is Johnny &#x0022;Bang&#x0022; Johnson</p>
 
 So there are 4 ways to add any given character to a HTML document

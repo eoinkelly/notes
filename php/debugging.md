@@ -1,4 +1,3 @@
-
 ??? what are my options for getting a php with xdebug?
 
 ```
@@ -7,7 +6,8 @@ pecl install xdebug # doesn't work on macos 2022
 
 ## Set up VSCode XDebug integration
 
-Add the chunk below to your php.ini via `phpenv configure` (opens EDITOR with the current php.ini)
+Add the chunk below to your php.ini via `phpenv configure` (opens EDITOR with
+the current php.ini)
 
 ```ini
 [XDebug]

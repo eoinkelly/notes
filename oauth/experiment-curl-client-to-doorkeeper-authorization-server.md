@@ -4,18 +4,22 @@ Following <https://github.com/doorkeeper-gem/doorkeeper/wiki/authorization-flow>
 
 ## Step 1: register my "client" with the "authorization server" (doorkeeper)
 
-* Visit http://localhost:3000/oauth/applications and use the UI there to create an application
-    * Use the special `urn:ietf:wg:oauth:2.0:oob` as the client redirect URL for testing
-        * this causes doorkeeper to show the URL rather than redirect to it
-        * this can be configured to be any string (or this no-redirect can be disabled)
-        * the given string seems at least conventional if not standard
-    * Doorkeeper calls the "client redirect URL" a "Callback URL"
-    * In doorkeeper and application contains
-        * application ID (called `client identifier` in the spec)
-        * application secret (called `client secret` in the spec)
-        * scopes (space sepearated string)
-        * callback URLs (note: plural)
-            * how do multiple callback URLs work? are they hit round-robin? all each time?
+- Visit http://localhost:3000/oauth/applications and use the UI there to create
+  an application
+    - Use the special `urn:ietf:wg:oauth:2.0:oob` as the client redirect URL for
+      testing
+        - this causes doorkeeper to show the URL rather than redirect to it
+        - this can be configured to be any string (or this no-redirect can be
+          disabled)
+        - the given string seems at least conventional if not standard
+    - Doorkeeper calls the "client redirect URL" a "Callback URL"
+    - In doorkeeper and application contains
+        - application ID (called `client identifier` in the spec)
+        - application secret (called `client secret` in the spec)
+        - scopes (space sepearated string)
+        - callback URLs (note: plural)
+            - how do multiple callback URLs work? are they hit round-robin? all
+              each time?
 
 ## Step 2: Authorise the client application with doorkeeper
 
@@ -29,7 +33,8 @@ http://localhost:3000/oauth/authorize?
     &response_type=code
 ```
 
-* response_type=code means that we are requesting to use the "authorization code" grant type
+- response_type=code means that we are requesting to use the "authorization
+  code" grant type
 
 This requests an authorization code. The user is asked to authenticate if they
 have not already done so and then you are shown a page with an "authorization
@@ -37,7 +42,8 @@ code"
 
 ## Step 3: Request an access token
 
-Take the authorization code from the previous step and use it to get an access token
+Take the authorization code from the previous step and use it to get an access
+token
 
 ```bash
 #!/bin/bash
@@ -100,7 +106,8 @@ X-Xss-Protection: 1; mode=block
 
 ## Step 4: Get the protected resource
 
-Note that the correct way to encode an access token as the HTTP Basic Auth header is
+Note that the correct way to encode an access token as the HTTP Basic Auth
+header is
 
 ```
 Authorization: Bearer <access token>
@@ -200,9 +207,11 @@ X-Xss-Protection: 1; mode=block
 
 # Getting a new access token using a refresh_token
 
-* the token refresh is POSTed to the same endpoint as the authorization grant was
-* refreshing a token is just using slightly different credentials (a refresh token instead of an authorization code) to get an access token
-* notice that we get back a new access token AND a new refresh token
+- the token refresh is POSTed to the same endpoint as the authorization grant
+  was
+- refreshing a token is just using slightly different credentials (a refresh
+  token instead of an authorization code) to get an access token
+- notice that we get back a new access token AND a new refresh token
 
 ```bash
 #!/bin/bash
@@ -263,5 +272,3 @@ X-Xss-Protection: 1; mode=block
     "token_type": "bearer"
 }
 ```
-
-

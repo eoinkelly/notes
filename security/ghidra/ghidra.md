@@ -1,13 +1,10 @@
 # Ghidra
 
-* a project oriented application
-* all work must be done in the context of a project
-* separate project window managed projects
+- a project oriented application
+- all work must be done in the context of a project
+- separate project window managed projects
 
-project: my-proj
-    my-proj.lock
-    my-proj.gpr
-    my-proj.rep/
+project: my-proj my-proj.lock my-proj.gpr my-proj.rep/
 
 You can create "folders" within your project but they are not folders on disk
 

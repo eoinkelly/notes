@@ -7,51 +7,60 @@ Using ubuntu bionic
 ## What makes a unix unix
 
 1. _Everything is a file_
-    * Greatly simplifies IO - you can use the same few system calls to do IO with all kinds of devices
-    * In Linux not _everything_ is a file but most things are (Aside: Plan9 really does have everything as a file)
+    - Greatly simplifies IO - you can use the same few system calls to do IO
+      with all kinds of devices
+    - In Linux not _everything_ is a file but most things are (Aside: Plan9
+      really does have everything as a file)
 2. Written in C
 3. Implements fast process creation with `fork()`
 
 ## Anatomy
 
-* Interrupt handlers
-* scheduler
-    * shares CPU time between multiple processes
-* Memory management system
-    * manages address space for processes
-* System services
-    * Networking
-    * IPC
+- Interrupt handlers
+- scheduler
+    - shares CPU time between multiple processes
+- Memory management system
+    - manages address space for processes
+- System services
+    - Networking
+    - IPC
 
 ## Spaces
 
 1. Kernel space
-    * code has full access to hardware
-    * access to a protected memory space
+    - code has full access to hardware
+    - access to a protected memory space
 2. User space
-    * no access to hardware (I think!)
-    * no access to protected memory area
+    - no access to hardware (I think!)
+    - no access to protected memory area
 
 ## Contexts
 
 The kernel has 3 contexts it can be in at any one time
 
 1. executing code in a process (user-space)
-2. In _process context_, executing code **on behalf of** a specific process (kernel-space)
-3. in _interrupt context_, executing code to handle a hardware interrupt (not associated with any process)
+2. In _process context_, executing code **on behalf of** a specific process
+   (kernel-space)
+3. in _interrupt context_, executing code to handle a hardware interrupt (not
+   associated with any process)
 
-This list covers all corner cases e.g. when kernel is idle it is is actually in _process context_ executing code for an "idle process"
+This list covers all corner cases e.g. when kernel is idle it is is actually in
+_process context_ executing code for an "idle process"
 
 ## System calls
 
-* Linux has 326 system calls (as of kernel 3.0)
-    * This low number is one of the reasons people describe unix as "simple"
-    * See http://man7.org/linux/man-pages/man2/syscalls.2.html
-* Applications rarely call system calls directly - the almost always use C library function wrappers
-    * some wrappers are thin and basically just invoke the system call e.g. `open()`
-    * some wrappers do a lot more e.g. `printf()` does buffering and formatting before eventually calling `write()`
-* Obviously not all functions in the C library are wrappers around system calls
-* When the kernel is executing a system call at an applications request it is said to be running in _process context_
+- Linux has 326 system calls (as of kernel 3.0)
+    - This low number is one of the reasons people describe unix as "simple"
+    - See http://man7.org/linux/man-pages/man2/syscalls.2.html
+- Applications rarely call system calls directly - the almost always use C
+  library function wrappers
+    - some wrappers are thin and basically just invoke the system call e.g.
+      `open()`
+    - some wrappers do a lot more e.g. `printf()` does buffering and formatting
+      before eventually calling `write()`
+- Obviously not all functions in the C library are wrappers around system calls
+- When the kernel is executing a system call at an applications request it is
+  said to be running in _process context_
 
 ```
 # Most commonly used system calls
@@ -70,11 +79,13 @@ fork()
 
 ## Interrupts
 
-* When hardware wants to communicate with the CPU it issues an interrupt with interrupts the CPU and the CPU then interrupts the Kernel
-* Each interrupt has a number and the kernel uses this to find the correct handler code to run in response
-    * Example: typing on keyboard issues interrupts
-* The kernel can disable all interrupts or just one specific interrupt number
-    * It does this to "provide synchronisation"
+- When hardware wants to communicate with the CPU it issues an interrupt with
+  interrupts the CPU and the CPU then interrupts the Kernel
+- Each interrupt has a number and the kernel uses this to find the correct
+  handler code to run in response
+    - Example: typing on keyboard issues interrupts
+- The kernel can disable all interrupts or just one specific interrupt number
+    - It does this to "provide synchronisation"
 
 ```
 root@ubuntu-bionic:/# cat /proc/interrupts
@@ -111,29 +122,30 @@ NPI:          0          0   Nested posted-interrupt event
 PIW:          0          0   Posted-interrupt wakeup event
 ```
 
-
 ## Proc & sysfs
 
 Proc filesystem
 
-* `man proc`
-* a process information pseudo-filesystem aka virtual filesystem
-* it is a read/write window into the kernel
-* userland tools think they are working with files so they issue normal "file" system calls. Under the hood the kernel knows what to do when it gets system calls to CRUD files under `/proc`
-* all files have size 0 bytes except:
-    * mtrr
-    * kcore
-    * self
-* mostly it contains numbered subdirs which represent processes
-    * each subdir contains a bunch of info about that process
-    * `cwd` is a link to the cwd of the process
-    * `exe` is a link to the executable that created the process
-    * `environ` a file containing the env of the process
-    * `cmdline` a file containing the command line used to run the process
-* mounted under `/proc`
-* Proc filesystem is common to many unixes
-* Linux added other stuff but later kernels moved that stuff to sysfs
-* contains runtime information about the kernel that can be queried by tools
+- `man proc`
+- a process information pseudo-filesystem aka virtual filesystem
+- it is a read/write window into the kernel
+- userland tools think they are working with files so they issue normal "file"
+  system calls. Under the hood the kernel knows what to do when it gets system
+  calls to CRUD files under `/proc`
+- all files have size 0 bytes except:
+    - mtrr
+    - kcore
+    - self
+- mostly it contains numbered subdirs which represent processes
+    - each subdir contains a bunch of info about that process
+    - `cwd` is a link to the cwd of the process
+    - `exe` is a link to the executable that created the process
+    - `environ` a file containing the env of the process
+    - `cmdline` a file containing the command line used to run the process
+- mounted under `/proc`
+- Proc filesystem is common to many unixes
+- Linux added other stuff but later kernels moved that stuff to sysfs
+- contains runtime information about the kernel that can be queried by tools
 
 ```
 $ lsmod
@@ -170,14 +182,13 @@ sda             6893r            1846w   sdb              177r               0w
 enp0s3      TX 541.79KiB     RX 29.37MiB      lo          TX 3.62KiB       RX 3.62KiB
 ```
 
-Q: how do i see the environment that a process has witout using htop?
-A: `cat /proc/PID/environ` or `ps e PID`
+Q: how do i see the environment that a process has witout using htop? A:
+`cat /proc/PID/environ` or `ps e PID`
 
 Sys filesystem
 
-* a virtual filesystem
-* mounted under `/sys`
-
+- a virtual filesystem
+- mounted under `/sys`
 
 ## Processes
 
@@ -251,7 +262,5 @@ vagrant@ubuntu-bionic:~$ ls -l /bin/bash
 
 htop says for the same bash process:
 
-VIRT 23160 (matches sum of 'Size' column in pmap output
-RES 5116 (matches sum of 'Rss' column in pmap output
-SHR 3400 how is this calcluated ???
-
+VIRT 23160 (matches sum of 'Size' column in pmap output RES 5116 (matches sum of
+'Rss' column in pmap output SHR 3400 how is this calcluated ???

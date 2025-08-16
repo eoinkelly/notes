@@ -15,14 +15,10 @@ mix phx.server
 iex -S mix phx.server
 ```
 
-
-
-
-
 Mix archives seem to contain two kinds of file: .beam, .app
 
-The `.app` file is plain text and has the name of the command you run to run the archive
-The beam files are compiled erlang modules
+The `.app` file is plain text and has the name of the command you run to run the
+archive The beam files are compiled erlang modules
 
 The package structure is
 

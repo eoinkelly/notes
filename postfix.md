@@ -1,14 +1,14 @@
 # Postfix
 
-* outbound mail stored in sub-directories of `/var/spool/postfix/`
-    * there are a bunch of dirs
-* inbound mail stored in
-    * `/var/spool/mail/<USERNAME>`
-        * `mbox` format (all mail in one text file, mails delimited by files starting with `From:`)
-    * `/var/mail/<USERNAME>`
-        * On RHEL this is a symlink to `var/spool/mail`
-* `mailq` is a postfix to sendmail compatibility layer
-
+- outbound mail stored in sub-directories of `/var/spool/postfix/`
+    - there are a bunch of dirs
+- inbound mail stored in
+    - `/var/spool/mail/<USERNAME>`
+        - `mbox` format (all mail in one text file, mails delimited by files
+          starting with `From:`)
+    - `/var/mail/<USERNAME>`
+        - On RHEL this is a symlink to `var/spool/mail`
+- `mailq` is a postfix to sendmail compatibility layer
 
 ```
 # check if it has been installed
@@ -59,4 +59,3 @@ postqueue -f # flush the queue
 # More
 # http://www.tech-g.com/2012/07/15/inspecting-postfixs-email-queue/
 ```
-

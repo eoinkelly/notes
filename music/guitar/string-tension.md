@@ -6,7 +6,8 @@ Elixir colours:
 
 ## Elixir green 10-52
 
-Source: https://www.elixirstrings.com/support/string-tension-for-tuning-guitar?v=Products
+Source:
+https://www.elixirstrings.com/support/string-tension-for-tuning-guitar?v=Products
 
 Numbers below based on 25.5" scale length and standard tuning.
 
@@ -86,31 +87,36 @@ If you pull from the full 10m you get much more give
 
 => a given string is more elastic the longer it is?
 
-This factor is very small given the differences in string lengths on a guitar headstock and other
-factors matter a lot more but it is small but perceptible for some people
+This factor is very small given the differences in string lengths on a guitar
+headstock and other factors matter a lot more but it is small but perceptible
+for some people
 
--   https://www.tdpri.com/threads/string-length-and-tension.926345/
--   https://www.youtube.com/watch?v=N46HGv0ehuQ
+- https://www.tdpri.com/threads/string-length-and-tension.926345/
+- https://www.youtube.com/watch?v=N46HGv0ehuQ
 
-> Does string length affect the feel of the strings ... yes. Does it in dictate a change in tension?
-> That's more complicated, but however tension is measured between nut and bridge, the total string
-> length will affect the compliance of the string.
+> Does string length affect the feel of the strings ... yes. Does it in dictate
+> a change in tension? That's more complicated, but however tension is measured
+> between nut and bridge, the total string length will affect the compliance of
+> the string.
 
-> what does change slightly is that you need to push just a bit further, and thus harder, to achieve
-> the required small increase in tension to give you the increase in pitch when there is more string
-> length beyond the nut. But it's a small effect that you'd probably have a hard time feeling. The
-> force for a given percentage pitch change only scales with the square root of the ratio of the
-> (tuning peg to saddle length) to (nut to saddle length) according to my back of the envelope
-> calculation. For realistic headstocks, that's a pretty weak effect.
+> what does change slightly is that you need to push just a bit further, and
+> thus harder, to achieve the required small increase in tension to give you the
+> increase in pitch when there is more string length beyond the nut. But it's a
+> small effect that you'd probably have a hard time feeling. The force for a
+> given percentage pitch change only scales with the square root of the ratio of
+> the (tuning peg to saddle length) to (nut to saddle length) according to my
+> back of the envelope calculation. For realistic headstocks, that's a pretty
+> weak effect.
 
 ## Elixir string coatings
 
--   green optiweb = thinnest, newest, not available in as many gauges as nanoweb
--   orange nanoweb = middle, largest range
--   blue polyweb = thickest, not available in as many gauges as nanoweb
+- green optiweb = thinnest, newest, not available in as many gauges as nanoweb
+- orange nanoweb = middle, largest range
+- blue polyweb = thickest, not available in as many gauges as nanoweb
 
 ## Ernie ball coated strings
 
 Ernie ball have coated strings too
 
-they call their process for putting down the layer of polymer an "Everlast" treatment
+they call their process for putting down the layer of polymer an "Everlast"
+treatment

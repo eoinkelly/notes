@@ -16,10 +16,10 @@ export interface Car {
 
 export const create = (): Car => {
   return {
-    make: "Something",
-    model: "other",
+    make: 'Something',
+    model: 'other',
     numWheels: 4,
-    numCylinders: 8,
+    numCylinders: 8
   };
 };
 

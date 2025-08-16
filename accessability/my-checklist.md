@@ -17,15 +17,18 @@
         ```
     - Notes
         - Lookup for country codes: https://r12a.github.io/app-subtags/
-2. If you have multiple languages on the page then their sections should have appropriate `lang` attrs set.
+2. If you have multiple languages on the page then their sections should have
+   appropriate `lang` attrs set.
     - Why:
-        - How browser localises things like quotes, hyphenation, how numbers are represented in forms
+        - How browser localises things like quotes, hyphenation, how numbers are
+          represented in forms
         - The accent and intonation used when the page is read out to user
         - Helps tools like Google translate
         - SEO
 3. Document should have good `<title>` element
     - Don't
-        - Use same title for all pages on site - user will get confused if they have multiple tabs open on your site
+        - Use same title for all pages on site - user will get confused if they
+          have multiple tabs open on your site
     - Why
         - SEO
         - Screen readers have specific shortcuts for reading the title
@@ -37,8 +40,8 @@
         ```
     - Why
         - Let people with low vision zoom your page
-5. Use ideal head element rendering order according to https://csswizardry.com/ct/
-
+5. Use ideal head element rendering order according to
+   https://csswizardry.com/ct/
     - Eoin's commentary: How big a deal is this actually?
     - Example
 
@@ -70,7 +73,7 @@
 
             <!-- CSS that includes @import -->
             <style>
-                @import "file.css";
+                @import 'file.css';
             </style>
 
             <!-- Synchronous JavaScript -->
@@ -97,19 +100,23 @@
 
 6. Make sure you have exactly one of the banner and contentinfo landmarks
 7. Make sure that only one main landmark is visible at a time
-8. Don't label `<header>`, `<main>`, and `<footer>` landmarks because they are supposed to be unique anyway and don't need a label.
-1. Wrap your navigation areas in `<nav>`
-   * Structuring the links as ul>li is recommended
+8. Don't label `<header>`, `<main>`, and `<footer>` landmarks because they are
+   supposed to be unique anyway and don't need a label.
+9. Wrap your navigation areas in `<nav>`
+    - Structuring the links as ul>li is recommended
 
 ## ARIA roles
 
--   Supplements HTML to make the page state (which might be dynamic) available to assistive technology
--   used to describe elements that don't natively exist in HTML or exist but don't yet have full browser support.
--   Add to html via `role="..."` attribute
--   Many HTML elements have an implicit role
--   Screen readers will often announce the role when they encounter the element
--   There are 88 roles.
--   Roles are [divided up into 6 categories](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles)
+- Supplements HTML to make the page state (which might be dynamic) available to
+  assistive technology
+- used to describe elements that don't natively exist in HTML or exist but don't
+  yet have full browser support.
+- Add to html via `role="..."` attribute
+- Many HTML elements have an implicit role
+- Screen readers will often announce the role when they encounter the element
+- There are 88 roles.
+- Roles are
+  [divided up into 6 categories](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles)
     1. Document structure roles
     2. Widget roles
     3. Landmark roles
@@ -126,8 +133,10 @@ Landmarks have
     - each landmark has an associated role
 2. An _accessible name_
     - All **interactive** elements must have an accessible name
-    - some elements get this from their content e.g. `<button>`, `<td>`, `<a>` use their inner text to set the accessible name
-    - other elements get their accessible name from the content of associated elements e.g.
+    - some elements get this from their content e.g. `<button>`, `<td>`, `<a>`
+      use their inner text to set the accessible name
+    - other elements get their accessible name from the content of associated
+      elements e.g.
         ```
         <textarea> gets accessible name from <label>
         <fieldset> gets accessible name from <legend>
@@ -135,7 +144,8 @@ Landmarks have
         ```
     - not all roles allow you to set an accessible name e.g. TODO
 
-Landmarks created implicitly by using the correct HTML element (when it exists) or explicitly by setting the `role` attribute
+Landmarks created implicitly by using the correct HTML element (when it exists)
+or explicitly by setting the `role` attribute
 
 > Use these sparingly. Too many landmark roles create "noise" in screen readers,
 > making it difficult to understand the overall layout of the page.
@@ -145,45 +155,54 @@ Landmarks created implicitly by using the correct HTML element (when it exists) 
 There are 8 landmark roles
 
 1.  banner `<header>`
-    -   contains mostly site-oriented rather than page specific content
-    -   should only be one per page
-    -   created implicitly by `<header>` tag or explicitly by `<div role="banner">`
-    -   `<header>` creates banner landmark unless it is nested inside an `<article>`, `<aside>`, `<main>`, `<nav>`, `<section>`
-        -   Implies you can have multiple `<header>` per page as long as they are nested within the tags above
+    - contains mostly site-oriented rather than page specific content
+    - should only be one per page
+    - created implicitly by `<header>` tag or explicitly by
+      `<div role="banner">`
+    - `<header>` creates banner landmark unless it is nested inside an
+      `<article>`, `<aside>`, `<main>`, `<nav>`, `<section>`
+        - Implies you can have multiple `<header>` per page as long as they are
+          nested within the tags above
 1.  navigation `<nav>`
 1.  main `<main>`
-    -   contains page's core content
-    -   should only be one **visible** per page at any one time
-    -   created implicitly by `<main>` tag
+    - contains page's core content
+    - should only be one **visible** per page at any one time
+    - created implicitly by `<main>` tag
 1.  region `<section>`
 1.  form `<form>`
 1.  search `<search>`
 1.  complementary `<aside>`
 1.  contentinfo `<footer>`
-    -   there should only be one contentinfo landmark per page
-    -   created implicitly by `<footer>` tag or explicitly by `<div role="contentinfo">
-    -   similar to `<header>`, the `<footer>` tag only creates the landmark if it is outside an `<article>`, `<aside>`, `<main>`, `<nav>`, `<section>`
-        -   so you can use multiple `<footer>` tags as long as they are nested within one of the tags above
+    - there should only be one contentinfo landmark per page
+    - created implicitly by `<footer>` tag or explicitly by
+      `<div role="contentinfo">
+    - similar to `<header>`, the `<footer>` tag only creates the landmark if it
+      is outside an `<article>`, `<aside>`, `<main>`, `<nav>`, `<section>`
+        - so you can use multiple `<footer>` tags as long as they are nested
+          within one of the tags above
 
 Landmarks should have a name that assistive tools can use
 
-The name can be set by an associated element e.g. `<label>` element or via attributes.
+The name can be set by an associated element e.g. `<label>` element or via
+attributes.
 
 Attributes which can set the name of an element:
 
--   `aria-label`
-    -   defines a label
-    -   overridden by `aria-labeled-by` if both are set
-    -   same purpose as `aria-labelledby`
--   `aria-labelledby`
-
-    -   same purpose as `aria-label`
-    -   The aria-labelledby property enables authors to reference other elements on the page to define an accessible name.
-    -   is the highest precedence way to set an accessible name - overrides all other methods of setting a name
-    -   references the DOM `id` of an element
-    -   if you can't find suitable content to reference use `aria-label`
-    -   you can give it a space separated list of DOM ids and it will combine their contents
-    -   Examples
+- `aria-label`
+    - defines a label
+    - overridden by `aria-labeled-by` if both are set
+    - same purpose as `aria-labelledby`
+- `aria-labelledby`
+    - same purpose as `aria-label`
+    - The aria-labelledby property enables authors to reference other elements
+      on the page to define an accessible name.
+    - is the highest precedence way to set an accessible name - overrides all
+      other methods of setting a name
+    - references the DOM `id` of an element
+    - if you can't find suitable content to reference use `aria-label`
+    - you can give it a space separated list of DOM ids and it will combine
+      their contents
+    - Examples
 
         ```html
         <span
@@ -207,18 +226,20 @@ Attributes which can set the name of an element:
         </p>
         ```
 
--   `alt`
--   `title`
-    -   use `aria-label` instead for accessibility purposes
--   `aria-description`
-    -   **It is not a substitute for `aria-label` or `title`!**
-    -   A string which describes the current element
-    -   More: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-description
-    -   Intended to be longer and more detailed than `aria-label`
--   `aria-describedby`
-
-    -   aria-describedby attribute lists the ids of the elements that describe the object. It is used to establish a relationship between widgets or groups and the text that describes them
-    -   Example
+- `alt`
+- `title`
+    - use `aria-label` instead for accessibility purposes
+- `aria-description`
+    - **It is not a substitute for `aria-label` or `title`!**
+    - A string which describes the current element
+    - More:
+      https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-description
+    - Intended to be longer and more detailed than `aria-label`
+- `aria-describedby`
+    - aria-describedby attribute lists the ids of the elements that describe the
+      object. It is used to establish a relationship between widgets or groups
+      and the text that describes them
+    - Example
         ```html
         <button aria-describedby="trash-desc">Move to trash</button>
         <p id="trash-desc">
@@ -228,9 +249,9 @@ Attributes which can set the name of an element:
 
 Screen readers can:
 
--   list all landmarks on a page
--   jump to specific landmarks directly
--   announce the landmarks on a page or section when entering it
+- list all landmarks on a page
+- jump to specific landmarks directly
+- announce the landmarks on a page or section when entering it
 
 ## Questions
 

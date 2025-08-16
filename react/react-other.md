@@ -1,20 +1,24 @@
 # React
 
-* you have to use `className` instead of `class` in JSX
-* `render()`
-    * can only return one element (cannot return sibling elements)
-    * you can work around it by wrapping in a `<React.Fragment></React.Fragment>` tag because that tag will not be rendered in the output
-* JSX
-    * `{}` in JSX means that we are opening a javascript context
-        * `{ // i am comment }` is how you do comments in JSX
-        * When passing in props you need to wrap any prop which is not a string in `{}`
-
+- you have to use `className` instead of `class` in JSX
+- `render()`
+    - can only return one element (cannot return sibling elements)
+    - you can work around it by wrapping in a
+      `<React.Fragment></React.Fragment>` tag because that tag will not be
+      rendered in the output
+- JSX
+    - `{}` in JSX means that we are opening a javascript context
+        - `{ // i am comment }` is how you do comments in JSX
+        - When passing in props you need to wrap any prop which is not a string
+          in `{}`
 
 ## react-rails gem
 
-It serialses the props you pass into the react component as JSON and then HTML quotes them
+It serialses the props you pass into the react component as JSON and then HTML
+quotes them
 
-e.g. when you use the `<%= react_component("compname", foo=..., bar=...) %>` rails view helper it renders something like:
+e.g. when you use the `<%= react_component("compname", foo=..., bar=...) %>`
+rails view helper it renders something like:
 
 ```
 <div
@@ -24,7 +28,8 @@ e.g. when you use the `<%= react_component("compname", foo=..., bar=...) %>` rai
 </div>
 ```
 
-When you compile react for production it seems to name all components `t` no matter which component it is
+When you compile react for production it seems to name all components `t` no
+matter which component it is
 
 ## React dependencies
 
@@ -47,29 +52,27 @@ When you compile react for production it seems to name all components `t` no mat
 }
 ```
 
-* react-scripts
-    * maintained by Facebook
-    * part of _Create React App_
-    * sets up a dev environment for React
-        * does webpack & babel under the hood
-
+- react-scripts
+    - maintained by Facebook
+    - part of _Create React App_
+    - sets up a dev environment for React
+        - does webpack & babel under the hood
 
 Dependencies
 
-* stylus
-* autoprefixer-stylus
-* prop-types
-    * used to be part of React
-    * lets you specify types for the properties you pass in
-* firebase
-    * hosted database
-* re-base
-    * lets us connect to firebase
-* react
-* react-dom
-* react-router-dom
-    * routing between URLs
-* react-transition-group
-    * animations
-* serve
-
+- stylus
+- autoprefixer-stylus
+- prop-types
+    - used to be part of React
+    - lets you specify types for the properties you pass in
+- firebase
+    - hosted database
+- re-base
+    - lets us connect to firebase
+- react
+- react-dom
+- react-router-dom
+    - routing between URLs
+- react-transition-group
+    - animations
+- serve

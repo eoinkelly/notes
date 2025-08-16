@@ -2,11 +2,9 @@
 
 ![Marshall Family Tree](./marshall-tree-3.jpg)
 
-
 JTM Era '62 - '67
 
 JMP Era
-
 
 - JCM 800 series
     - Introduced 1981

@@ -26,15 +26,13 @@ map.connect ':controller/:action/:id.:format'
 match ':controller(/:action(/:id(.:format)))', via: :any
 ```
 
+- Catch-all are not recommended in Rails 3+
 
-* Catch-all are not recommended in Rails 3+
-
-
-* :foo (anything that looks like a symbol) within a route is a `segment key` and
+- :foo (anything that looks like a symbol) within a route is a `segment key` and
   will match that segment in the URL
-* `:controller/:action/:id` will match the first section to a controller, the next
-  to an action and so on.
-* Rails routing 2.x does not mention query parameters - rails will put them in
+- `:controller/:action/:id` will match the first section to a controller, the
+  next to an action and so on.
+- Rails routing 2.x does not mention query parameters - rails will put them in
   the params hash but they are not part of the routing system
 
 # Globbing routes

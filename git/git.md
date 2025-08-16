@@ -1,8 +1,7 @@
 # Most important points
 
-when merging a feature branch into master always use --no-ff as we definitely want a merge commit
-
-
+when merging a feature branch into master always use --no-ff as we definitely
+want a merge commit
 
 ```sh
 git commit --amend
@@ -38,20 +37,22 @@ git checkout ek/some-work -- path/to/foo # checkout from a particular branch
 git remote show origin # see full details of the 'origin' remote
 
 git pull <remote>
+
 # is exactly the same as
-git fetch <remote>
-git merge <remote>/<current-branch>
+
+git fetch <remote> git merge <remote>/<current-branch>
 
 # you can rebase changes from a remote using
+
 git pull --rebase <remote>
 
 # you can configure git to always rebase with a pull
-git config --global branch.autosetuprebase always
-# vs
-git fetch origin
-git log --oneline master..origin/master
-git merge origin/master
 
+git config --global branch.autosetuprebase always
+
+# vs
+
+git fetch origin git log --oneline master..origin/master git merge origin/master
 
 ```
 
@@ -70,5 +71,3 @@ git reset --soft HEAD^
 
 :cquit in vim exits with non-zero which causes git to notice the failure and not create the commit
 ```
-
-

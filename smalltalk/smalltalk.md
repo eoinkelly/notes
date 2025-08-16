@@ -13,28 +13,23 @@ x at: 1.
 ```
 
 localVariable
-* starts w. lowercase
-* inner caps by convention
+
+- starts w. lowercase
+- inner caps by convention
 
 GlobalVariable
-* starts with uppercase
-* globals and constants
 
+- starts with uppercase
+- globals and constants
 
 Keywords
 
-self
-super
-nil
-true
-false
+self super nil true false
 
-"character literals"
-$a
+"character literals" $a
 
-'strings are single quotes'
-"comments are double quotes"
+'strings are single quotes' "comments are double quotes"
 
-#symbol
-#('an' 'array' 'of' 'strings')
-* note no commas between elements
+#symbol #('an' 'array' 'of' 'strings')
+
+- note no commas between elements

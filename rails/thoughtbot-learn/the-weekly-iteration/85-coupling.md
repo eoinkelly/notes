@@ -1,32 +1,34 @@
 ## Weekly Iternation 2: Types of coupling
 
-* coupling = the _degree_ to which components in a system rely on each other.
-    * Some coupling is unavoidable but we should be
+- coupling = the _degree_ to which components in a system rely on each other.
+    - Some coupling is unavoidable but we should be
         1. recognise the different types of coupling in code
-        2. rank the different types of coupling
-      so we can understand the trade-offs
+        2. rank the different types of coupling so we can understand the
+           trade-offs
 
-* coupling and cohesion
-    * cohesion = ???
-    * low coupling often correlates with high cohesion
+- coupling and cohesion
+    - cohesion = ???
+    - low coupling often correlates with high cohesion
 
-TODO: read up and think about on coupling http://en.wikipedia.org/wiki/Coupling_(computer_programming)
+TODO: read up and think about on coupling
+http://en.wikipedia.org/wiki/Coupling_(computer_programming)
 http://robots.thoughtbot.com/types-of-coupling
 
-* connaissaince ~= changes in B have a high likelyhood of requiring changes in A
-  * TODO: read up on connaissance
+- connaissaince ~= changes in B have a high likelyhood of requiring changes in A
+    - TODO: read up on connaissance
 
-* the system needs to have some coupling
-
+- the system needs to have some coupling
 
 three different types of coupling:
 
 1. Pathological Coupling,
-    * e.g. reaching across the encapsulation barrier with #instance_variable_set
-    * monkey patching falls into this category
+    - e.g. reaching across the encapsulation barrier with #instance_variable_set
+    - monkey patching falls into this category
 
 2. Global Coupling
-    * e.g. factory girl basically has a singleton factory that creates Users which means that I can't easily change that factory because so much depends on it. FactoryGirl uses a global repository for factories
+    - e.g. factory girl basically has a singleton factory that creates Users
+      which means that I can't easily change that factory because so much
+      depends on it. FactoryGirl uses a global repository for factories
 
 3. Control Coupling.
 
@@ -76,9 +78,9 @@ end
 # When considering two design decisions perfer the one that has lower coupling
 ```
 
-When  you feel tempted to pass in a boolean flag to a method it is a smell especially if you then use that in a conditional.
+When you feel tempted to pass in a boolean flag to a method it is a smell
+especially if you then use that in a conditional.
 
-classes are objects in ruby and their public API is inheritance
-if you monkey patch a class you are not using its public API, you are reaching right in there (similar to using #instance_variable_set on object instances)
-
-
+classes are objects in ruby and their public API is inheritance if you monkey
+patch a class you are not using its public API, you are reaching right in there
+(similar to using #instance_variable_set on object instances)

@@ -3,10 +3,9 @@
 Heroku offers 2 tiers of free new relic integration
 
 1. Wayne
-    * unlimited dynos but has less features
+    - unlimited dynos but has less features
 2. Stark
-    * all features but limited to monthly average of 1.5 dynos
-
+    - all features but limited to monthly average of 1.5 dynos
 
 Adding "stark" in heroku adds the following in new relic
 
@@ -15,4 +14,3 @@ Adding "stark" in heroku adds the following in new relic
     Insights None
     Browser Lite
     Synthetics Lite
-

@@ -2,7 +2,6 @@
 
 Q: What is the optimal JVM params for running jmeter on Ubuntu?
 
-
 For load testing, you must run JMeter in this mode (Without the GUI) to get the
 optimal results from it. To do so, use the following command options:
 

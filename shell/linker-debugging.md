@@ -1,13 +1,12 @@
-
 # Show which shared libs are being loaded by a binary at runtime
 
 Sources:
 
-* http://www.bnikolic.co.uk/blog/linux-ld-debug.html
+- http://www.bnikolic.co.uk/blog/linux-ld-debug.html
 
 Overview
 
-* You can get this info from `strace` on Linux but this is more efficient
+- You can get this info from `strace` on Linux but this is more efficient
 
 ```bash
 # macos

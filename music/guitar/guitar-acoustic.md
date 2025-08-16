@@ -2,10 +2,11 @@
 
 ## Guitar: Acoustic action height
 
-For acoustic guitars, our recommendation bumps up to 7/64th of an inch (2.78mm) on the bass side and 5/64th of an inch (1.98mm) on the treble side.
+For acoustic guitars, our recommendation bumps up to 7/64th of an inch (2.78mm)
+on the bass side and 5/64th of an inch (1.98mm) on the treble side.
 
-A comfortable ball park action set for me with an acoustic is around 5/64s Low E 4/64s high E. I use 12 gauge strings
-
+A comfortable ball park action set for me with an acoustic is around 5/64s Low E
+4/64s high E. I use 12 gauge strings
 
 ```sh
 # String Height at the 12th Fret:
@@ -38,13 +39,12 @@ Billy strings currently playing with action at 6/64" and 4/64" at the 12th fret.
 
 Based on Martin Guitar's 80/20 bronze acoustic guitar strings:
 
-* Extra light: `E .010; B .014; G .023; D .030; A .039; E .047`
-* Custom light: `E .011; B .015; G .023; D .032; A .042; E .052`
-* Light: `E .012; B .016; G .025; D .032; A .042; E .054`
-* Medium: `E .013; B .017; G .026; D .035; A .045; E .056`
-* Extra light 12-string: `E .010/.010; B .014/.014; G .023/.010; D .030/.012; A .039/.018; E .047/.027`
-
-
+- Extra light: `E .010; B .014; G .023; D .030; A .039; E .047`
+- Custom light: `E .011; B .015; G .023; D .032; A .042; E .052`
+- Light: `E .012; B .016; G .025; D .032; A .042; E .054`
+- Medium: `E .013; B .017; G .026; D .035; A .045; E .056`
+- Extra light 12-string:
+  `E .010/.010; B .014/.014; G .023/.010; D .030/.012; A .039/.018; E .047/.027`
 
 ```bash
 # In the elixir line of 80/20 bronze strings:
@@ -86,17 +86,17 @@ med = 13-56
 
 ## String types
 
-* 80/20 bronze
-    * corrodes faster than phosphor
-    * technically brass string
-    * scooped mids sound - can be good to leave space for vocals
-    * where the only option for decades
-* phosphor bronze
-    * 92% copper, 8% tin, trace phosphorus
-    * last longer, corrode slower
-    * more pronounced mids
-    * are more popular now
-    * doesn't leave the 1-3k frequencies as free for vocals as 80/20
+- 80/20 bronze
+    - corrodes faster than phosphor
+    - technically brass string
+    - scooped mids sound - can be good to leave space for vocals
+    - where the only option for decades
+- phosphor bronze
+    - 92% copper, 8% tin, trace phosphorus
+    - last longer, corrode slower
+    - more pronounced mids
+    - are more popular now
+    - doesn't leave the 1-3k frequencies as free for vocals as 80/20
 
 ## Acoustic guitar research
 
@@ -116,7 +116,6 @@ High e 12 fret 60 thou = 1.524 mm
 
 Action too low can have buzzing and you lose sound projection
 
-
 ## Neck relief
 
 Procedure to measure:
@@ -124,13 +123,14 @@ Procedure to measure:
 1. capo on first fret
 1. guitar in playing position
 1. hold down near last fret
-    * some say hold at fret where neck joins body (or just always at 12th fret)
-        * I think this might make more sense if the guitar has no cutaway because the body joint is kinda the last usable fret so that's the portion of the neck you care about
-2. measure under 6th string
+    - some say hold at fret where neck joins body (or just always at 12th fret)
+        - I think this might make more sense if the guitar has no cutaway
+          because the body joint is kinda the last usable fret so that's the
+          portion of the neck you care about
+1. measure under 6th string
 
 The targets can differ depending on which fret you hold down
 
     music nomad say target = 0.008 (0.2 mm) if you hold at 12th, measure at 6th
-
 
 You can also measure with a straight-edge instead of the string

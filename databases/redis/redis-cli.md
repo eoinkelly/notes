@@ -2,33 +2,31 @@
 
 Tools
 
-* redis-cli
-    * comes with redis server
-* https://redisdesktop.com/
-    * paid
-        * $15 from mac/microsoft app store
-        * free on linux
-* https://www.redsmin.com/
-    * subscription but has a free tier
+- redis-cli
+    - comes with redis server
+- https://redisdesktop.com/
+    - paid
+        - $15 from mac/microsoft app store
+        - free on linux
+- https://www.redsmin.com/
+    - subscription but has a free tier
 
 Installing `redis-cli`
 
-* macOS: `brew install redis`
-    * comes with the server
-    * server config file location: `/usr/local/etc/redis.conf`
-* Ubuntu linux: `apt install redis-tools`
-
-
+- macOS: `brew install redis`
+    - comes with the server
+    - server config file location: `/usr/local/etc/redis.conf`
+- Ubuntu linux: `apt install redis-tools`
 
 what's the deail with redis "db numbers"?
 
 ElastiCache
 
-* as of 2020-09-30 latest Redis version is 5.0.6 (Locally I have 6.0.8)
-* Configures Redis with parameter groups
-    * Parameter group has 171 settings for Redis 5
-    * Default parameter group is not editiable but you can create custom groups
-* latency for elasticache seems to ba round 1sec - that's not great :-(
+- as of 2020-09-30 latest Redis version is 5.0.6 (Locally I have 6.0.8)
+- Configures Redis with parameter groups
+    - Parameter group has 171 settings for Redis 5
+    - Default parameter group is not editiable but you can create custom groups
+- latency for elasticache seems to ba round 1sec - that's not great :-(
 
 ### Configuring for Sidekiq vs Rails cache
 
@@ -36,12 +34,13 @@ ElastiCache
     lru_clock:7582386
     maxmemory_policy:volatile-lru
 
-The Elasticache defaults are good for Rails cache but `maxmemory_policy` should be changed for Sidekiq
+The Elasticache defaults are good for Rails cache but `maxmemory_policy` should
+be changed for Sidekiq
 
 Sidekiq recommends setting `maxmemory_policy noeviction`
 
-* https://github.com/mperham/sidekiq/wiki/Using-Redis#memory
-* https://redis.io/topics/lru-cache (details of various policies)
+- https://github.com/mperham/sidekiq/wiki/Using-Redis#memory
+- https://redis.io/topics/lru-cache (details of various policies)
 
 ## Commands
 

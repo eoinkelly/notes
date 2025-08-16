@@ -1,6 +1,7 @@
 # Elm
 
-> uses the convention that the data structure is always the last argument across the ecosystem
+> uses the convention that the data structure is always the last argument across
+> the ecosystem
 
 There is not boolean in Elm, just the union type
 
@@ -18,6 +19,7 @@ type MyType = String | Int
 
 -- I want to have a type which can be a String or an Int
 ```
+
 Install
 
 ```
@@ -149,16 +151,14 @@ Nothing : Maybe.Maybe a
 
 Number types
 
-* uses spaces for function application
-    * args separated by whitespace not comma
-* boolean values: `True` and `False`
-
+- uses spaces for function application
+    - args separated by whitespace not comma
+- boolean values: `True` and `False`
 
 # elm-repl
 
-* `elm-repl`
-* cannot parse type annotations
-
+- `elm-repl`
+- cannot parse type annotations
 
 Types
 
@@ -171,16 +171,15 @@ it has type variables
 
 Type aliases
 
-* very handy for naming a particular kind of record
-
+- very handy for naming a particular kind of record
 
 Union types (aka tagged unions, algebraic data types)
 
 type Msg = Reset | Increment | Change String
 
-* there are three constructors of a Msg
+- there are three constructors of a Msg
 
-* Reset is a function that takes no args and returns a Msg
-* Reset is a constructor for User values
-* Reset is also a type of value
-* I think elm creates both for you at the same time ???
+- Reset is a function that takes no args and returns a Msg
+- Reset is a constructor for User values
+- Reset is also a type of value
+- I think elm creates both for you at the same time ???

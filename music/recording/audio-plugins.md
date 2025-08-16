@@ -32,7 +32,8 @@ native => CPU does the work not some outboard gear
 4. Avid: Real time AudioSuite (RTAS)
     - Pro-tools 10 and earlier only
 5. Standalone
-    - :question: presumably these are one of those underlying plugin format wrapped in an app?
+    - :question: presumably these are one of those underlying plugin format
+      wrapped in an app?
 
 ## AudioUnits (AU) format plugin
 

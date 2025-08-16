@@ -1,4 +1,3 @@
-
 To manually load factory_girl e.g. if does not exist in dev
 
     require 'factory_girl'

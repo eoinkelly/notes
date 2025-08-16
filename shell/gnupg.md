@@ -1,4 +1,3 @@
-
 ```
 # note the space at start of line to avoid putting it in history
  echo "somesecretthing" | gpg -e -a > output_file.gpg.asc
@@ -6,10 +5,10 @@
 
 ```
 
-what is "locally signing" a key?
-local signatures are used when I cannot verify the key is really from the person
-* a local signature will not be exported off the computer it was created on
+what is "locally signing" a key? local signatures are used when I cannot verify
+the key is really from the person
 
+- a local signature will not be exported off the computer it was created on
 
 ```
 # create a key pair

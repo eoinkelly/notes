@@ -9,7 +9,7 @@ ssh pi@192.168.1.74
 
 ### Sources
 
-* https://www.raspberrypi.org/forums/viewtopic.php?t=132674
+- https://www.raspberrypi.org/forums/viewtopic.php?t=132674
 
 ### Instructions
 
@@ -117,3 +117,4 @@ To get `eth0` to forward to `tun0` instead of `wlan0`
 sudo iptables -t nat -A POSTROUTING -o tun0 -j MASQUERADE
 ```
 
+````

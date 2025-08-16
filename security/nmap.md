@@ -1,10 +1,10 @@
 # Basic network scan (nmap -sn)
 
-* does a ping scan (not a port scan)
-* was `-sP` in older nmap versions
-* more reliable than pinging the broadcast address as many hosts don't respond
+- does a ping scan (not a port scan)
+- was `-sP` in older nmap versions
+- more reliable than pinging the broadcast address as many hosts don't respond
   to that
-    * TODO: find out more about pinging broadcast address
+    - TODO: find out more about pinging broadcast address
 
 The default host discovery done with -sn consists of sending four things
 
@@ -15,9 +15,9 @@ The default host discovery done with -sn consists of sending four things
 
 by default.
 
-* When executed by an unprivileged user, only SYN packets are sent (using a
+- When executed by an unprivileged user, only SYN packets are sent (using a
   connect call) to ports 80 and 443 on the target.
-* When a privileged user tries to scan targets on a local ethernet network, ARP
+- When a privileged user tries to scan targets on a local ethernet network, ARP
   requests are used unless --send-ip was specified.
 
 ```
@@ -58,17 +58,17 @@ Nmap done: 256 IP addresses (4 hosts up) scanned in 30.66 seconds
 
 # OS detection (nmap -O IP_ADDRESS)
 
-* does OS fingerprinting by TCP/IP stack fingerprinting
-    * sends a series of TCP and UDP packets and carefully analyzes results
-        * TCP ISN
-        * TCP Options support
-        * TCP ordering
-        * IP ID sampling
-        * initial window size check
-        * TCP Sequence Predictability Classification
-* uses TCP timestamp option to _guess_ when machine was rebooted
-    * compares results to built-in db of OS variants
-* takes approx 20 sec to fingerprint a host on my home lan
+- does OS fingerprinting by TCP/IP stack fingerprinting
+    - sends a series of TCP and UDP packets and carefully analyzes results
+        - TCP ISN
+        - TCP Options support
+        - TCP ordering
+        - IP ID sampling
+        - initial window size check
+        - TCP Sequence Predictability Classification
+- uses TCP timestamp option to _guess_ when machine was rebooted
+    - compares results to built-in db of OS variants
+- takes approx 20 sec to fingerprint a host on my home lan
 
 ```
 $ nmap -O 192.168.1.254
@@ -92,4 +92,3 @@ Network Distance: 1 hop
 OS detection performed. Please report any incorrect results at https://nmap.org/submit/ .
 Nmap done: 1 IP address (1 host up) scanned in 20.12 seconds
 ```
-

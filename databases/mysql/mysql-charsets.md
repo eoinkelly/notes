@@ -1,5 +1,3 @@
-
-
 # MySQL & MariaDB character sets and collations
 
 If you set the charset then the default collation for that charset will be used
@@ -50,28 +48,32 @@ The modern choice: `utf8mb4_general_ci` collation in `utf8mb4` charset
 
 > utf8mb4, available since MySQL 5.5.3.
 
-* MySQL 5.7
-    * default charset is latin1
-    * default collation is latin1_swedish_ci
-* MySQL 8.0
-    * changed default charset and collation to `utf8mb4` and `utf8mb4_0900_ai_ci`
-        * can be overridden in `my.cnf`
-        * might be overriden if the server was upgraded from 5.7 or older
+- MySQL 5.7
+    - default charset is latin1
+    - default collation is latin1_swedish_ci
+- MySQL 8.0
+    - changed default charset and collation to `utf8mb4` and
+      `utf8mb4_0900_ai_ci`
+        - can be overridden in `my.cnf`
+        - might be overriden if the server was upgraded from 5.7 or older
 
-* MariaDB 10.4 docker: `latin1` and `latin1_swedish_ci`
-* MariaDB 10.5 docker: `utf8mb4` and `utf8mb4_general_ci`
-* MariaDB 10.6 docker: `utf8mb4` and `utf8mb4_general_ci`
-* MariaDB 10.8 docker: `utf8mb4` and `utf8mb4_general_ci`
+- MariaDB 10.4 docker: `latin1` and `latin1_swedish_ci`
+- MariaDB 10.5 docker: `utf8mb4` and `utf8mb4_general_ci`
+- MariaDB 10.6 docker: `utf8mb4` and `utf8mb4_general_ci`
+- MariaDB 10.8 docker: `utf8mb4` and `utf8mb4_general_ci`
 
-It _seems_ like the default MariaDB character set is still `latin1` but that some distros will change that (source: https://mariadb.com/kb/en/character-set-and-collation-overview/). The official mariadb docker image changed the default in 10.5
+It _seems_ like the default MariaDB character set is still `latin1` but that
+some distros will change that (source:
+https://mariadb.com/kb/en/character-set-and-collation-overview/). The official
+mariadb docker image changed the default in 10.5
 
 I think the TL;DR is that you can't rely on the server or database defaults
 
 ## Rails
 
-The key place to choose utf8mb4 in Rails in your `config/database.yml`. If it
-is set there **before** you create your database or run migrations then you
-will get `utf8mb4` as a default for everything.
+The key place to choose utf8mb4 in Rails in your `config/database.yml`. If it is
+set there **before** you create your database or run migrations then you will
+get `utf8mb4` as a default for everything.
 
 ```yaml
 # config/database.yml
@@ -86,7 +88,8 @@ production:
   collation: utf8mb4_unicode_ci
 ```
 
-You can specify the charset as an option to `create_table` if you can't change it for the whole DB
+You can specify the charset as an option to `create_table` if you can't change
+it for the whole DB
 
 ```ruby
 create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
@@ -98,9 +101,9 @@ end
 
 ### Gotcha: column length change
 
-> That changes the maximum length a column or index can hold. So if a column was a varchar(256) in utf8, it should now be a varchar(191) in utf8mb4.
+> That changes the maximum length a column or index can hold. So if a column was
+> a varchar(256) in utf8, it should now be a varchar(191) in utf8mb4.
 
 https://jibai31.wordpress.com/2017/05/04/how-to-choose-your-mysql-encoding-and-collation/
-https://railsmachine.com/articles/2017/05/19/converting-a-rails-database-to-utf8mb4.html suggests it might not be straightforward to convert existing tables
-
-
+https://railsmachine.com/articles/2017/05/19/converting-a-rails-database-to-utf8mb4.html
+suggests it might not be straightforward to convert existing tables

@@ -1,4 +1,3 @@
-
 ```bash
 be rake dynamoid:ping
 be rake dynamoid:create_tables

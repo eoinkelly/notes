@@ -1,8 +1,9 @@
 # Cocoapods
 
-* http://guides.cocoapods.org/
+- http://guides.cocoapods.org/
 
-Good explanation of what it really does at end of http://guides.cocoapods.org/using/using-cocoapods.html
+Good explanation of what it really does at end of
+http://guides.cocoapods.org/using/using-cocoapods.html
 
 To get going after `gem install cocoapods` I had to:
 

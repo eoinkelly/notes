@@ -13,5 +13,3 @@ aws s3 sync # sync dirs
 aws s3 mb # make bucket
 aws s3 rb # remove bucket
 ```
-
-

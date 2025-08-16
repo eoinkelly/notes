@@ -2,51 +2,51 @@
 
 ## Tools
 
--   Kafka-ui
-    -   web based, runs in docker
-    -   best I've found so far
--   kcat
+- Kafka-ui
+    - web based, runs in docker
+    - best I've found so far
+- kcat
     ```sh
     # kcat (rust, from homebrew, does what you expect)
     kcat -b localhost:9092 -L
     ```
--   Kadeck
-    -   GUI app, bit fiddly but ok, some features require paid upgrade
--   Kafka Magic
-    -   Runs locally but runs in background and opens browser for GUI
-    -   -- fiddly to quit
-    -   UI is basic. Kadeck is slightly better
+- Kadeck
+    - GUI app, bit fiddly but ok, some features require paid upgrade
+- Kafka Magic
+    - Runs locally but runs in background and opens browser for GUI
+    - -- fiddly to quit
+    - UI is basic. Kadeck is slightly better
 
 ## Background
 
--   a **distributed** event streaming platform
--   runs on JVM
--   uses
-    -   data pipelines,
-    -   streaming analytics,
-    -   data integration
--   distributed, highly scalable, elastic, fault-tolerant, and secure
--   goals
+- a **distributed** event streaming platform
+- runs on JVM
+- uses
+    - data pipelines,
+    - streaming analytics,
+    - data integration
+- distributed, highly scalable, elastic, fault-tolerant, and secure
+- goals
     1. To publish (write) and subscribe to (read) streams of events, including continuous
        import/export of your data from other systems.
     2. To store streams of events durably and reliably for as long as you want.
     3. To process streams of events as they occur or retrospectively.
--   client server model
--   communicates with it's own protocol over TCP
--   servers run in a cluster
--   clusters can span data centers or cloud regions
--   server roles
+- client server model
+- communicates with it's own protocol over TCP
+- servers run in a cluster
+- clusters can span data centers or cloud regions
+- server roles
     1. Broker servers
         - the storage layer
     2. Kafka Connect servers
         - continuously import/export data as event streams
         - each connector runs as a separate process
--   Internally messages are untyped byte steams
--   Retention
-    -   Record streams are persistent in Kafka as Kafka acts as a record store.
-    -   Kafka does not remove records once consumers process them.
-    -   You rather configure record retention periods.
-    -   When the record retention period expires, Kafka removes the records.
+- Internally messages are untyped byte steams
+- Retention
+    - Record streams are persistent in Kafka as Kafka acts as a record store.
+    - Kafka does not remove records once consumers process them.
+    - You rather configure record retention periods.
+    - When the record retention period expires, Kafka removes the records.
 
 ## Partitions
 
@@ -55,9 +55,9 @@ single log file where Kafka writes records in an append-only fashion.
 
 ## Consumer groups
 
--   each `groupId` should only be used with a single application
--   Consumers can self identify as being part of a "group"
--   Admin can describe the group to see membership
+- each `groupId` should only be used with a single application
+- Consumers can self identify as being part of a "group"
+- Admin can describe the group to see membership
 
 ## Confluent
 
@@ -67,12 +67,12 @@ They package up OSS Kafka into a cloud offering
 
 ## Topics
 
--   Each event has a topic Consumers can subscribe to a topic
--   messages have a topic and a partition
+- Each event has a topic Consumers can subscribe to a topic
+- messages have a topic and a partition
 
 ## Events
 
--   also called records or messages
+- also called records or messages
 
 ## Schema registry
 
@@ -80,55 +80,55 @@ They package up OSS Kafka into a cloud offering
 
 ## Clients
 
--   JS/TS client: https://kafka.js.org/docs
--   Kafka ships with clients for some languages, others are community provided
--   There are multiple kinds of clients:
+- JS/TS client: https://kafka.js.org/docs
+- Kafka ships with clients for some languages, others are community provided
+- There are multiple kinds of clients:
     1. Producer client
     2. Consumer client
     3. Admin client
--   Most (all?) Kafka libs include both
--   The official Kafka download comes with shell scripts to do basic admin
--   There are many ways to interact with Kafka
+- Most (all?) Kafka libs include both
+- The official Kafka download comes with shell scripts to do basic admin
+- There are many ways to interact with Kafka
     1. Use the producers/consumers API to created and read messages and topics
     2. Use the Steams API to transform messages as they pass through Kafka
     3. Use Kafka Connect
 
 ## Transactions
 
--   If you send messages within a transaction then a "transactionally aware" consumer will only read
-    messages which are committed
--   Note: Kafka requires that the transactional producer have the following configuration to
-    guarantee EoS ("Exactly-once-semantics"):
-    -   The producer must have a max in flight requests of 1
-    -   The producer must wait for acknowledgement from all replicas (acks=-1)
-    -   The producer must have unlimited retries
+- If you send messages within a transaction then a "transactionally aware" consumer will only read
+  messages which are committed
+- Note: Kafka requires that the transactional producer have the following configuration to guarantee
+  EoS ("Exactly-once-semantics"):
+    - The producer must have a max in flight requests of 1
+    - The producer must wait for acknowledgement from all replicas (acks=-1)
+    - The producer must have unlimited retries
 
 ## Kafka-Connect
 
--   Kinda akin to logstash in Elasticsearch
--   a framework and toolset for building and running data pipelines between Apache Kafka and other
-    data systems.
--   an engine that can run a number of different components, which can stream Kafka messages into
-    databases, Lambda functions, S3 buckets, or apps like Elasticsearch or Snowflake.
--   Good for bulk IO
--   Connecters available for many common sources and sinks of data
+- Kinda akin to logstash in Elasticsearch
+- a framework and toolset for building and running data pipelines between Apache Kafka and other
+  data systems.
+- an engine that can run a number of different components, which can stream Kafka messages into
+  databases, Lambda functions, S3 buckets, or apps like Elasticsearch or Snowflake.
+- Good for bulk IO
+- Connecters available for many common sources and sinks of data
 
 ## Kafka Streams API
 
--   Java only API - you must use a JVM language (Java/Scala etc.) to use the streams API
--   A higher level of abstraction than using the producer/consumer API
--   Use it when you would have to write too much boilerplate code using the producer/consumer API
--   Can do stateful or stateless transformations
--   Streams implements exactly once processing semantics
--   has flexible windowing support
--   no separate processing cluster required - the streams code runs inside your application
--   seems to be some effort to have an equivalent for JS:
-    https://www.npmjs.com/package/kafka-streams (warning: this is not used a lot)
--   a Java API for processing and transforming data inside Kafka topics.
--   The processing work happens in your (JVM based) app, not within the Kafka cluster
--   distributed as a jar file
--   you can write code to process or transform individual messages, one-by-one, and then publish
-    those modified messages to a new Kafka topic, or to an external system.
+- Java only API - you must use a JVM language (Java/Scala etc.) to use the streams API
+- A higher level of abstraction than using the producer/consumer API
+- Use it when you would have to write too much boilerplate code using the producer/consumer API
+- Can do stateful or stateless transformations
+- Streams implements exactly once processing semantics
+- has flexible windowing support
+- no separate processing cluster required - the streams code runs inside your application
+- seems to be some effort to have an equivalent for JS: https://www.npmjs.com/package/kafka-streams
+  (warning: this is not used a lot)
+- a Java API for processing and transforming data inside Kafka topics.
+- The processing work happens in your (JVM based) app, not within the Kafka cluster
+- distributed as a jar file
+- you can write code to process or transform individual messages, one-by-one, and then publish those
+  modified messages to a new Kafka topic, or to an external system.
 
 Stream processing frameworks like Kafka Streams or Apache Flink offer several key features that
 enable real-time data processing and analytics:

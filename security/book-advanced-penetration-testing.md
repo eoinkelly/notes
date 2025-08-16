@@ -2,8 +2,8 @@
 
 ## Introduction
 
-> “When your organization experiences a serious security incident (and it
-> will), it's your level of preparedness based on the understanding of the
+> “When your organization experiences a serious security incident (and it will),
+> it's your level of preparedness based on the understanding of the
 > inevitability of such an event that will guide a successful recovery.”
 
 > “What differentiates an APT from a more traditional intrusion is that it is
@@ -14,31 +14,38 @@
 Phases of an APT:
 
 1. Initial compromise
-    * usually has a technical and a social aspect i.e. a technical flaw combined with a good social pretext to help exploit it.
-    * examples
-        * MS word runs VBA script which is potentially insecure (technical flaw) + creating a social situtation where a user will enable Macros on a word doc and run your malicious code (social engineering aspect)
+    - usually has a technical and a social aspect i.e. a technical flaw combined
+      with a good social pretext to help exploit it.
+    - examples
+        - MS word runs VBA script which is potentially insecure (technical
+          flaw) + creating a social situtation where a user will enable Macros
+          on a word doc and run your malicious code (social engineering aspect)
 1. Establish beachhead
-    * Ensure access to the compromised assets without having to repeat the intial compromise (i.e. setup C2 infrastructure)
-    * Once this is done, the attacker's activity will not appear in many audit logs e.g. login activity
+    - Ensure access to the compromised assets without having to repeat the
+      intial compromise (i.e. setup C2 infrastructure)
+    - Once this is done, the attacker's activity will not appear in many audit
+      logs e.g. login activity
 1. Escalate privileges
-    * Get local admin privileges
-    * Get domain admin privileges if possible
+    - Get local admin privileges
+    - Get domain admin privileges if possible
 1. Internal reconnisance
-    * Collect info on
-        * surrounding network infrastructure (what's out there?)
-        * trust relationships (who trusts the compromised host?)
-        * Windows domain structure
+    - Collect info on
+        - surrounding network infrastructure (what's out there?)
+        - trust relationships (who trusts the compromised host?)
+        - Windows domain structure
 1. Network colonization (lateral movement)
-    * Exploit other hosts from the initial compromised host
+    - Exploit other hosts from the initial compromised host
 1. Persist
-    * Make sure C2 continues to work across reboots
+    - Make sure C2 continues to work across reboots
 1. Complete mission
-    * exfiltrate stolen data
+    - exfiltrate stolen data
 
 APT actors
 
-* have a good understanding of how existing security products work and how to avoid them
-* capable of creating their own tools to avoid these products (customised tool for each target seems totally workable given enough budget)
+- have a good understanding of how existing security products work and how to
+  avoid them
+- capable of creating their own tools to avoid these products (customised tool
+  for each target seems totally workable given enough budget)
 
 He thinks
 
@@ -49,69 +56,96 @@ He thinks
 
 Explain?
 
-
 Charactersitcs of good C2
 
-* its traffic looks legit
-* its traffic should be secure
+- its traffic looks legit
+- its traffic should be secure
 
 SSH traffic fits all of these requirements on most networks
 
 Misconceptions about APT
 
 1. I will see elevated logins at strange times and from strange places
-    * Once the intial compromise has happened the attacker will not uses _audited_ login routes anymore - they will have their own C2 infrastructure which will completely bypass standard login to the system
+    - Once the intial compromise has happened the attacker will not uses
+      _audited_ login routes anymore - they will have their own C2
+      infrastructure which will completely bypass standard login to the system
 1. Finding widespread backdoor trojans
-    * A less experienced attacker may use these but APT won't rely on on off-the-shelf backdoor trojans so these may be decoys
+    - A less experienced attacker may use these but APT won't rely on on
+      off-the-shelf backdoor trojans so these may be decoys
 1. Unexpected information flows
-    * The attacker will access all other hosts from the compromised host so you might not notice strange IPs accessing your important resources
+    - The attacker will access all other hosts from the compromised host so you
+      might not notice strange IPs accessing your important resources
 1. Unexpected data bundles lying around
-    * Only if they are super sloppy
+    - Only if they are super sloppy
 1. Detecting "pass-the-hash" hacking tools
-    * _pass the hash_:
-        * exploits a weakness in the authentication protocol where the hash remains the same between sessions (until the password is changed)
-        * attacker finds the hash of a credential but not the plaintext. If other services/hosts allow you to send that hash then it can be used as effectively as the plaintext credential.
-    * common against NTLM authentication
-    * Only visible if attacker is sloppy
+    - _pass the hash_:
+        - exploits a weakness in the authentication protocol where the hash
+          remains the same between sessions (until the password is changed)
+        - attacker finds the hash of a credential but not the plaintext. If
+          other services/hosts allow you to send that hash then it can be used
+          as effectively as the plaintext credential.
+    - common against NTLM authentication
+    - Only visible if attacker is sloppy
 
 END INTRODUCTION
 
 ## Chapter 1
 
-* APT Threat Modelling is a branch of pen testing
-    * attacks focus on end users to achieve initial compromise (rather than on vulnerable Internet facing infrastructure)
-    * can be
-        * preventative: part of a pen testing exercise (most common)
-            * can be short-term (fulltime over a few weeks) or long-term (1hr per day over months)
-                * long-term engagements can be foiled by clients wanting regular updates which lets them fix holes mid-engagement
-        * postmortem: part of a post incident forensics report to indicate how the intruder could have gained access
-
+- APT Threat Modelling is a branch of pen testing
+    - attacks focus on end users to achieve initial compromise (rather than on
+      vulnerable Internet facing infrastructure)
+    - can be
+        - preventative: part of a pen testing exercise (most common)
+            - can be short-term (fulltime over a few weeks) or long-term (1hr
+              per day over months)
+                - long-term engagements can be foiled by clients wanting regular
+                  updates which lets them fix holes mid-engagement
+        - postmortem: part of a post incident forensics report to indicate how
+          the intruder could have gained access
 
 ### Aside Malicious VBA payloads
 
 There are many options for creating a malicious VBA
 
-1. Option: Have VBA script create a thread directly and move the shellcode into the memory of that thread
-    * -- You call functions `VirtualAlloc`, `RtlMoveMemory`, `CreateThread` and AV will flag it almost every time
-1. Option: Have the VBA script write a VBS script to disk and then shell out to run it (aka create a VBA/VBS "dual stager")
-    * ++ The VBA looks more benign as it just shells out to run `wscript` binary which has legit uses
-    * VBS is a general purpose scripting language (like python, ruby etc) and is often used for legitmate purposes so cannot be automatically locked down as much
+1. Option: Have VBA script create a thread directly and move the shellcode into
+   the memory of that thread
+    - -- You call functions `VirtualAlloc`, `RtlMoveMemory`, `CreateThread` and
+      AV will flag it almost every time
+1. Option: Have the VBA script write a VBS script to disk and then shell out to
+   run it (aka create a VBA/VBS "dual stager")
+    - ++ The VBA looks more benign as it just shells out to run `wscript` binary
+      which has legit uses
+    - VBS is a general purpose scripting language (like python, ruby etc) and is
+      often used for legitmate purposes so cannot be automatically locked down
+      as much
 
 Author tips
 
-* Author recommends doing code obfucation (e.g. XOR) but not pulling in a third party lib to do it as AV scanners will likely pick it up.
-* Author recommends not running your code on document open becuase it looks suspicious to AV scanners. Instead create a button which the user will click to run the code (this makes it harder to spot by AV)
+- Author recommends doing code obfucation (e.g. XOR) but not pulling in a third
+  party lib to do it as AV scanners will likely pick it up.
+- Author recommends not running your code on document open becuase it looks
+  suspicious to AV scanners. Instead create a button which the user will click
+  to run the code (this makes it harder to spot by AV)
 
 Other techniques
 
-* main VBA can be clean but store the malicious content in forms within the document which the main VBA reads and writes its payload to disk
-* MS Word has different file format for documents without macros (docx) and with macros (docm)
-* In general, MS Word opens files based on the file data, not based on the file name extension. So long as MS Word can identify the data structure, it will open the file correctly. This means you can rename .docx files to .rtf and word will open it just fine.
-* renaming a `.docm` to `.docx` will prevent it from opening (which is a good thing)
+- main VBA can be clean but store the malicious content in forms within the
+  document which the main VBA reads and writes its payload to disk
+- MS Word has different file format for documents without macros (docx) and with
+  macros (docm)
+- In general, MS Word opens files based on the file data, not based on the file
+  name extension. So long as MS Word can identify the data structure, it will
+  open the file correctly. This means you can rename .docx files to .rtf and
+  word will open it just fine.
+- renaming a `.docm` to `.docx` will prevent it from opening (which is a good
+  thing)
 
 #### Aside: msfvenom
 
-Metasploit will create a VBA snippet for you that encodes binary of your choice as a decimal encoded shellcode `msfvenom`. It is functional but basic and will be caught by many AV scanners because it encodes the payload directly in the VBA code (as decimal shellcode)
+Metasploit will create a VBA snippet for you that encodes binary of your choice
+as a decimal encoded shellcode `msfvenom`. It is functional but basic and will
+be caught by many AV scanners because it encodes the payload directly in the VBA
+code (as decimal shellcode)
 
 ```bash
 $ ls
@@ -165,45 +199,50 @@ End Sub
 
 #### Aside: shikata-na-gai encoder
 
-* a _polymorphic XOR additive feedback encoder_
-* links
-    * https://www.rapid7.com/db/modules/encoder/x86/shikata_ga_nai
-    * https://github.com/rapid7/metasploit-framework/blob/master/modules/encoders/x86/shikata_ga_nai.rb
-* generates different output on each run
-* the output can only be recognised by actually running the code in a VM or sandbox
-
+- a _polymorphic XOR additive feedback encoder_
+- links
+    - https://www.rapid7.com/db/modules/encoder/x86/shikata_ga_nai
+    - https://github.com/rapid7/metasploit-framework/blob/master/modules/encoders/x86/shikata_ga_nai.rb
+- generates different output on each run
+- the output can only be recognised by actually running the code in a VM or
+  sandbox
 
 ### Charactersitcs of a good C2
 
 1. Egress connectivity
-    * The client must be able to initiate connections back to the C2 server
-    * needs to do this in a way to minimize firewall interference
+    - The client must be able to initiate connections back to the C2 server
+    - needs to do this in a way to minimize firewall interference
 1. Stealth - avoid detection by host IDS or network IDS
 1. Remote filesystem access
-    * be able to copy files to/from the compromised system
+    - be able to copy files to/from the compromised system
 1. Remote command execution on the compromised system
 1. Secure communications
-    * traffic between C2 client and server should be encrypted to prevent responders from seeing what actions have been taken
+    - traffic between C2 client and server should be encrypted to prevent
+      responders from seeing what actions have been taken
 1. Persistence
-    * C2 client must be able to survive reboots
+    - C2 client must be able to survive reboots
 1. Port forwarding
-    * We want to be able to redirect traffic bi-directionally via the compromised host
+    - We want to be able to redirect traffic bi-directionally via the
+      compromised host
 1. Control thread
-    * Ensure that connection to the C2 server is re-established in the event of reboot or network connectivity problem
+    - Ensure that connection to the C2 server is re-established in the event of
+      reboot or network connectivity problem
 
-The author recommends SSH protocol to satisfy all the above and in particular statically linking `libssh` into your payload (`libssh` is cross platform and has some niceities e.g. a control thread)
-
+The author recommends SSH protocol to satisfy all the above and in particular
+statically linking `libssh` into your payload (`libssh` is cross platform and
+has some niceities e.g. a control thread)
 
 C2 Server
 
-* run it on port 443 - it is probably open on the firewall and encrypted traffic on it is not unusual
-* modify the ssh-server config to allow "remotely forwarded tunnels" ???
-* chroot jail to contain the ssh server
-    * why?
+- run it on port 443 - it is probably open on the firewall and encrypted traffic
+  on it is not unusual
+- modify the ssh-server config to allow "remotely forwarded tunnels" ???
+- chroot jail to contain the ssh server
+    - why?
 
 C2 client (aka the payload of the initial compromise)
 
-* starts an SSH server listening on a non-standard port
-* has an SSH client which can connect to the C2 ssh server
-* implements ssh tunnels (both local and dynamic ???) over the ssh client
-    * allows the C2 server access to the filesystem and processes - how???
+- starts an SSH server listening on a non-standard port
+- has an SSH client which can connect to the C2 ssh server
+- implements ssh tunnels (both local and dynamic ???) over the ssh client
+    - allows the C2 server access to the filesystem and processes - how???

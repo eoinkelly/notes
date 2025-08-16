@@ -2,19 +2,23 @@
 
 Questions I have
 
-1. how to get the full size on disk of a docker image (including all ancestor layers)?
-    * `docker image ls` or `docker images` will show full size
-    * `docker image history IMAGE_ID_OR_TAG` or `docker history IMAGE_ID_OR_TAG` will show each layer size if you need it
+1. how to get the full size on disk of a docker image (including all ancestor
+   layers)?
+    - `docker image ls` or `docker images` will show full size
+    - `docker image history IMAGE_ID_OR_TAG` or `docker history IMAGE_ID_OR_TAG`
+      will show each layer size if you need it
 1. how to see the memory usage of a docker container
-    * Use `docker stats`
-    * Linux Containers rely on control groups which not only track groups of processes, but also expose metrics about CPU, memory, and block I/O usage.
-    * stats shows `PIDS` which is the number of pids **within** the container
+    - Use `docker stats`
+    - Linux Containers rely on control groups which not only track groups of
+      processes, but also expose metrics about CPU, memory, and block I/O usage.
+    - stats shows `PIDS` which is the number of pids **within** the container
 1. what processes run on the host to run a container.
-    * it seems to be that for each running container we have:
-        * 1 x containerd-shim for each container
-        * 1 x docker-proxy process for each port binding to host
-        * 1 x `docker run` command
-1. how does `docker exec` work? if PID 1 is not a shell how do we add more processes?
+    - it seems to be that for each running container we have:
+        - 1 x containerd-shim for each container
+        - 1 x docker-proxy process for each port binding to host
+        - 1 x `docker run` command
+1. how does `docker exec` work? if PID 1 is not a shell how do we add more
+   processes?
 
 ```
 # processes running on rhel7 with docker-latest and no containers running
@@ -96,7 +100,6 @@ docker ps
 CONTAINER ID        IMAGE                 COMMAND                  CREATED             STATUS              PORTS               NAMES
 5a60b5b7162c        docker.io/memcached   "docker-entrypoint.sh"   3 minutes ago       Up 3 minutes        11211/tcp           eointest
 ```
-
 
 but if there are many container running via systemd we see
 

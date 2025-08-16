@@ -1,75 +1,76 @@
 # htop
 
-
 ## Stats
 
 Interpreting load averages
-* Tasks = processes
+
+- Tasks = processes
 
 ## Usage graphs
 
 1. CPU usage
-    * purple: low-priority
-    * green: normal
-    * red: kernel
-    * blue: virtualiz
+    - purple: low-priority
+    - green: normal
+    - red: kernel
+    - blue: virtualiz
 2. Memory usage
-    * green: used
-    * purple: buffers
-    * yellow: disk cache
+    - green: used
+    - purple: buffers
+    - yellow: disk cache
 3. Swap usage
-    * red bars indicated swap (file/partition) used
+    - red bars indicated swap (file/partition) used
 
 ## Columns
 
-* PID
-    * Process ID
-* USER = User
-    * username who owns the process
-* PRI = Priority
-    * ??? positive integer
-    * on my mac, default value seems to be 17
-    * on ubuntu xenial, default value seems to be 20
-* NI = Nice
-    * nice value of the process
-    * defaults to 0 and will usuall be 0
-* VIRT = Memory size
-* RES = Memory resident
-* SHR = Memory share
-    * not visible on macOs
-* S = State
-    * R running
-    * S sleeping
-    * T traced/stopped
-    * Z zombie
-    * D disk sleep
-        * QUESTION: what does this mean?
-* percent CPU
-* percent Mem
-* Time
-* Command
-    * the name of the command
-    * `p` to toggle full path
-    * can highlight basename of command in setup screen
+- PID
+    - Process ID
+- USER = User
+    - username who owns the process
+- PRI = Priority
+    - ??? positive integer
+    - on my mac, default value seems to be 17
+    - on ubuntu xenial, default value seems to be 20
+- NI = Nice
+    - nice value of the process
+    - defaults to 0 and will usuall be 0
+- VIRT = Memory size
+- RES = Memory resident
+- SHR = Memory share
+    - not visible on macOs
+- S = State
+    - R running
+    - S sleeping
+    - T traced/stopped
+    - Z zombie
+    - D disk sleep
+        - QUESTION: what does this mean?
+- percent CPU
+- percent Mem
+- Time
+- Command
+    - the name of the command
+    - `p` to toggle full path
+    - can highlight basename of command in setup screen
 
 ## Setup options
 
-* "show custom thread names" ???
+- "show custom thread names" ???
 
 ## Questions
 
     H    Hide user threads: on systems that represent them differently  than ordinary  processes  (such  as recent NPTL-based systems)
     QUESTION: which systems do that?
 
-* Not all systems represent threads differently to processes.
-    * linux seems to
-    * macOs does not seem to
+- Not all systems represent threads differently to processes.
+    - linux seems to
+    - macOs does not seem to
 
 ### Aside: macOs swap
 
-* mac uses swap files not partition
-* swap files and sleepimage lives in `/private/var/vm`
-* swap space is usually split across multiple files e.g. my laptop has 2 x 1GB swap files
+- mac uses swap files not partition
+- swap files and sleepimage lives in `/private/var/vm`
+- swap space is usually split across multiple files e.g. my laptop has 2 x 1GB
+  swap files
 
 ```
 /private/var/vm $ ls -lh
@@ -226,10 +227,10 @@ Numbers
 > disk cache, so in total almost the entire memory is in use by the kernel. I
 > believe the number displayed by htop is a more meaningful metric of resources
 > used: the number corresponds to the green bars; the blue and brown bars
-> correspond to buffers and cache, respectively (as explained in the Help
-> screen accessible through the F1 key). Numeric data about these is also
-> available when configuring the memory meter to display as text (in the Setup
-> screen, F2).
+> correspond to buffers and cache, respectively (as explained in the Help screen
+> accessible through the F1 key). Numeric data about these is also available
+> when configuring the memory meter to display as text (in the Setup screen,
+> F2).
 >
 > Why doesn't htop feature a SWAP column, like top?
 >

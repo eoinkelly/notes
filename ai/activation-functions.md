@@ -1,6 +1,7 @@
 # Activation functions
 
-Activation functions are used to "squishify" the weighted sum of activations + bias of the node
+Activation functions are used to "squishify" the weighted sum of activations +
+bias of the node
 
 ## ReLU Rectified Linear Unit
 
@@ -8,8 +9,10 @@ $$y = max(0, x)$$
 
 ![ReLU](activation-function-relu.png)
 
--   Most popular activation function in neural networks
--   Gradient descent requires a derivative for all points and technically ReLU does not have a derivative where it is bent at 0. We work around this by simply defining the derivative at the bent part to be 0 or 1.
+- Most popular activation function in neural networks
+- Gradient descent requires a derivative for all points and technically ReLU
+  does not have a derivative where it is bent at 0. We work around this by
+  simply defining the derivative at the bent part to be 0 or 1.
 
 ### Why is ReLU so popular
 
@@ -25,9 +28,9 @@ https://stats.stackexchange.com/questions/226923/why-do-we-use-relu-in-neural-ne
 
 > They are simple, fast to compute, and don't suffer from vanishing gradients,
 > like sigmoid functions (logistic, tanh, erf, and similar). The simplicity of
-> implementation makes them suitable for use on GPUs, which are very common today
-> due to being optimised for matrix operations (which are also needed for 3D
-> graphics).
+> implementation makes them suitable for use on GPUs, which are very common
+> today due to being optimised for matrix operations (which are also needed for
+> 3D graphics).
 
 https://datascience.stackexchange.com/questions/23493/why-relu-is-better-than-the-other-activation-functions
 

@@ -1,30 +1,30 @@
 # Sources
 
-* https://www.youtube.com/watch?v=f_0QlhYlS8g
-* Seven more langs in seven weeks book
+- https://www.youtube.com/watch?v=f_0QlhYlS8g
+- Seven more langs in seven weeks book
 
 > Factor belongs to the family of concatenative languages: this means that, at
 > the lowest level, a Factor program is a series of words (functions) that
 > manipulate a stack of references to dynamically-typed values.
 
-* Functions are called _words_.
-* Things on the stack are dynamically typed.
-* Has a garbage collector
-* Compiled to native code (but also has REPL)
-* Whitespace is used to separate words (factor doesn't care what kind of
+- Functions are called _words_.
+- Things on the stack are dynamically typed.
+- Has a garbage collector
+- Compiled to native code (but also has REPL)
+- Whitespace is used to separate words (factor doesn't care what kind of
   whitespace you use .e.g.
-* Uses postfix notation (so called reverse polish notation) so has not operator
-  precedence
-The stack is used to organise calls to words, not as a data structure
+- Uses postfix notation (so called reverse polish notation) so has not operator
+  precedence The stack is used to organise calls to words, not as a data
+  structure
 
-* Includes a GUI toolkit based on OpenGL
-* Has a HTTP server, web framework and DB adapters
-* Uses an image a bit like smalltalk - compiled code and data are stored into
-* the image and then the image is saved
-    * Has a special tool for building a minimal image when deploying a
-    * stand-alone application
-* Is typed
-* Has an FFI for interfacing with C etc.
+- Includes a GUI toolkit based on OpenGL
+- Has a HTTP server, web framework and DB adapters
+- Uses an image a bit like smalltalk - compiled code and data are stored into
+- the image and then the image is saved
+    - Has a special tool for building a minimal image when deploying a
+    - stand-alone application
+- Is typed
+- Has an FFI for interfacing with C etc.
 
 > Expressing yourself with pure composition and without locals or named
 > arguments is the key. It's extremely succinct with no syntactic overhead.
@@ -61,12 +61,12 @@ clear   = clear the stack
 length  = replace any "sequence" at top of stack with its length
 ```
 
-* comments begin with `! ` (the space is important)
+- comments begin with `! ` (the space is important)
 
 ### Stack effect
 
-* An annotation for functions
-* A description of what the word (function) does to the stack
+- An annotation for functions
+- A description of what the word (function) does to the stack
 
 ```
 ( things-off -- things-on )
@@ -76,7 +76,7 @@ the things can be named anything to help document the word
 
 ### Vocabularies
 
-* Words are organised into _Vocabularies_ (as functions are organised into
+- Words are organised into _Vocabularies_ (as functions are organised into
   modules in other langs)
 
 From that google tech talk:
@@ -91,8 +91,8 @@ range out of them.
 factorial 100
 ```
 
-* code is data in factor - you can quote words to prevent them from being
+- code is data in factor - you can quote words to prevent them from being
   executed and instead pass them around like data
-* words that take other words as arguments are called _combinators_
-* There are no control flow keywords in factor - all control flow is done using
-* _combinators_
+- words that take other words as arguments are called _combinators_
+- There are no control flow keywords in factor - all control flow is done using
+- _combinators_

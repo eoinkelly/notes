@@ -16,18 +16,18 @@ $ jhs # runs a local web server console
 $ jqt # runs a QT based console
 ```
 
-* array based
-* kind of an ASCII friendly APL
-* written in C but seems to have some Java GUI stuff
-* filetype is `.ijs`
-* comment marker is `NB.`
-* adjacency is important
-* calls data "nouns"
-* calls functions "verbs"
-* negative numbers have underscore prefix rather than dash e.g. `-2` is `_2` in J
-* `%` is the division symbol because APL used `/` to represent fold
-* strings are single quote delimited
-
+- array based
+- kind of an ASCII friendly APL
+- written in C but seems to have some Java GUI stuff
+- filetype is `.ijs`
+- comment marker is `NB.`
+- adjacency is important
+- calls data "nouns"
+- calls functions "verbs"
+- negative numbers have underscore prefix rather than dash e.g. `-2` is `_2` in
+  J
+- `%` is the division symbol because APL used `/` to represent fold
+- strings are single quote delimited
 
 ```j
 
@@ -65,5 +65,3 @@ NB. folding a noun with +
 +/ 2 3 4
 NB. 9
 ```
-
-

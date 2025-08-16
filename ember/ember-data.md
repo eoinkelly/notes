@@ -2,109 +2,117 @@
 
 Existing docs:
 
-* http://emberjs.com/blog/2014/03/18/the-road-to-ember-data-1-0.html
-* http://codebrief.com/2013/07/10-things-you-can-do-with-epf/
-* http://emberjs.com/guides/models/
+- http://emberjs.com/blog/2014/03/18/the-road-to-ember-data-1-0.html
+- http://codebrief.com/2013/07/10-things-you-can-do-with-epf/
+- http://emberjs.com/guides/models/
 
 Alternatives:
 
-* http://epf.io/
-    * diff: has no state machine backing each model
-    * supports REST backends, streaming still TODO
-    * last touched july 2014
-* Plain old $.ajax
-    * Discourse uses it.
-    * QUESTION: Where is its sweet spot?
-    * QUESTION: how to use it in such a way that you can grow into ember-data or others?
-* Ember-model https://github.com/ebryn/ember-model
-    * Intentional limited feature set - provides primitves on $.ajax
-    * created by @ebryn
-    * 483 stars, last touched very recently
-* Emu https://github.com/charlieridley/emu
-    * Untouched since oct 2013 - ignore
+- http://epf.io/
+    - diff: has no state machine backing each model
+    - supports REST backends, streaming still TODO
+    - last touched july 2014
+- Plain old $.ajax
+    - Discourse uses it.
+    - QUESTION: Where is its sweet spot?
+    - QUESTION: how to use it in such a way that you can grow into ember-data or
+      others?
+- Ember-model https://github.com/ebryn/ember-model
+    - Intentional limited feature set - provides primitves on $.ajax
+    - created by @ebryn
+    - 483 stars, last touched very recently
+- Emu https://github.com/charlieridley/emu
+    - Untouched since oct 2013 - ignore
 
 Size comparison of the alternatives
 
- metric     | $.ajax    | EPF   | Ember-model   | Ember-data
- -----------|-----------|-------|---------------|-----------
- lines      | 0         |       | 2036          | 12944
- bytes      | 0         |       |               | 394 kb
+| metric | $.ajax | EPF | Ember-model | Ember-data |
+| ------ | ------ | --- | ----------- | ---------- |
+| lines  | 0      |     | 2036        | 12944      |
+| bytes  | 0      |     |             | 394 kb     |
 
 # Features to compare on
 
-What are the things that we should compare persistence frameworks against each other:
+What are the things that we should compare persistence frameworks against each
+other:
 
-* A model API for the rest of the app to use.
-    * ideally this should wrap all persistence related stuff so the persistence layer could be changed easily
-    * QUESTION: how easily is it to match the semantics of the different peristence options?
-* side loading
-* relationships
-    * embedded or "reference by id"
-        * is having both a bad thing?
-* how does it handle asynchrony
-    * probably making everything return a promise all the time is a good idea
-* performance
-    * speed
-    * memory usage
-* REST and/or real-time
-    * Is hiding this as an implementation detail form the rest of the app a good idea?
+- A model API for the rest of the app to use.
+    - ideally this should wrap all persistence related stuff so the persistence
+      layer could be changed easily
+    - QUESTION: how easily is it to match the semantics of the different
+      peristence options?
+- side loading
+- relationships
+    - embedded or "reference by id"
+        - is having both a bad thing?
+- how does it handle asynchrony
+    - probably making everything return a promise all the time is a good idea
+- performance
+    - speed
+    - memory usage
+- REST and/or real-time
+    - Is hiding this as an implementation detail form the rest of the app a good
+      idea?
 
 ### The Store
 
-* there is exactly one instance of `DS.Store` in the app
-* models do **not** have data themselves - they just define the structure
-    * is it bad/even possible to add default values to models ??
-* you refer to it:
-    * it is available as `this.store` in route objects
-* memoizes records
-    * the second time you load a record, the store will give you the cached version
-    * you will get back the *exact same instance* that you got the last time
-    * this feature is known as "identity map"
-    * it means that any changes you make in one part of the app will be
+- there is exactly one instance of `DS.Store` in the app
+- models do **not** have data themselves - they just define the structure
+    - is it bad/even possible to add default values to models ??
+- you refer to it:
+    - it is available as `this.store` in route objects
+- memoizes records
+    - the second time you load a record, the store will give you the cached
+      version
+    - you will get back the _exact same instance_ that you got the last time
+    - this feature is known as "identity map"
+    - it means that any changes you make in one part of the app will be
       propagated to others - this is much easier than managing multiple
       instances of a record in memory at the same time
-* `find()` always returns a promise immediately
+- `find()` always returns a promise immediately
 
 ### Records (instances of models)
-* are instances of models
-* identified by
+
+- are instances of models
+- identified by
 
 1. a **globally unique** id and
-    * can be generated client side.
-        ???
+    - can be generated client side. ???
 2. model name
 
 ### The Adapter
 
-* system has a single apdater
-* it is a translator
-* translates calls from the model layer into the appropraite storage/server calls
-* the system will ask the adapter for models that it doesn't have cached already
+- system has a single apdater
+- it is a translator
+- translates calls from the model layer into the appropraite storage/server
+  calls
+- the system will ask the adapter for models that it doesn't have cached already
 
 ### The Serializer
 
-* converts between JSON and record objects (instances of models)
-* could also convert between binary data if you needed it to
-
+- converts between JSON and record objects (instances of models)
+- could also convert between binary data if you needed it to
 
 ### Model naming
 
-photo           App.Photo
-userProfile     App.UserProfile
+photo App.Photo userProfile App.UserProfile
 
 ### Attributes
 
-attributes `DS.attr()` control how the JSON string representation is turned into a real JS object (and vice versa)
-* passing a type to `DS.attr()` controls what kind of property will be corerced into
-* default attrs: string, number, boolean, date
+attributes `DS.attr()` control how the JSON string representation is turned into
+a real JS object (and vice versa)
 
+- passing a type to `DS.attr()` controls what kind of property will be corerced
+  into
+- default attrs: string, number, boolean, date
 
 # relationships
-hasMany relationship expects an array of ids in the JSON
-belongsTo expects a single id
 
-You
-You can add computed properties to models that depend on primitive properties
+hasMany relationship expects an array of ids in the JSON belongsTo expects a
+single id
+
+You You can add computed properties to models that depend on primitive
+properties
 
 You can sideload more records in the same JSON response
 
@@ -122,17 +130,17 @@ Ember.Inflector.uncountable('advice'); // ???
 ```
 
 Expects JSON:
-* camelCased attribute names
-* the primary record being returned should be in a named root e.g. `GET
-  /people/12` should return
-  ```
-  { person: {
-      name: 'Eoin'
-    }
-  }
-  ```
-* irregular keys can be mapped with a custom serializer
 
+- camelCased attribute names
+- the primary record being returned should be in a named root e.g.
+  `GET /people/12` should return
+    ```
+    { person: {
+        name: 'Eoin'
+      }
+    }
+    ```
+- irregular keys can be mapped with a custom serializer
 
 # How do you tell the store to empty records from its cache?
 
@@ -144,20 +152,19 @@ record.transitionTo('deleted.saved');
 
 # Problems with it
 
-as of july 2013
-    transactions are not promises
-    can't do complex transactions between relationships
-    data is "locked" while it is being saved - if you try to touch a model while it is in-flight it will throw an error
-        this prevents you from "optimistically assuming that the operation will succeed
-        this makes it hard for write heavy apps
-    limited error handling
-    lots of corner cases
-
+as of july 2013 transactions are not promises can't do complex transactions
+between relationships data is "locked" while it is being saved - if you try to
+touch a model while it is in-flight it will throw an error this prevents you
+from "optimistically assuming that the operation will succeed this makes it hard
+for write heavy apps limited error handling lots of corner cases
 
 # why do they have client-id as well as the id from the server
 
-If you send a parent and X children to be saved to the server and you get back the parent and X children you don't know whether it is the same X children - they server might have rejected one child but had a new one from another source to send you. THis is why they use unique client-id as well as the id from the server
-
+If you send a parent and X children to be saved to the server and you get back
+the parent and X children you don't know whether it is the same X children -
+they server might have rejected one child but had a new one from another source
+to send you. THis is why they use unique client-id as well as the id from the
+server
 
 # Ember data models internal state machine
 

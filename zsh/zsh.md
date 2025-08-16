@@ -1,24 +1,25 @@
 # Zsh
 
-* anytime you are doing stuff at the prompt in zsh you are interacting with the
+- anytime you are doing stuff at the prompt in zsh you are interacting with the
   _Zsh line editor_ or _zle_ for short
-    * so your the text you type on the line and any shortcuts all go to the
+    - so your the text you type on the line and any shortcuts all go to the
       shell - when you hit return the shell
         1. parses the text you just entered
         2. figures out which commands to run
-        3. backgrounds itself and runs those commands, plumbing their stdin, stdout, stderr as you have instructed in your command
-* zsh is very close in functionality to ksh
+        3. backgrounds itself and runs those commands, plumbing their stdin,
+           stdout, stderr as you have instructed in your command
+- zsh is very close in functionality to ksh
 
 ## Things the shell provides
 
-* globbing ("global replacement")
-* completion
-* aliases for common commands
-* a full scripting environment
-* ability to run commands from
-    * other binaries
-    * commands built-in to itself (called "builtins")
-    * functions and aliases defined by you in startup files
+- globbing ("global replacement")
+- completion
+- aliases for common commands
+- a full scripting environment
+- ability to run commands from
+    - other binaries
+    - commands built-in to itself (called "builtins")
+    - functions and aliases defined by you in startup files
 
 ## Ways of invoking zsh
 
@@ -39,10 +40,11 @@ zsh -l # tell zsh to start as a "login shell"
 The main difference between login and interactive shells
 
 1. different sets of startup files are sourced for each kind of shell
-1. you can type 'logout' to exit a login shell (`exit` will exit all shell types)
+1. you can type 'logout' to exit a login shell (`exit` will exit all shell
+   types)
 
-Aside: `bye` is an alias for `exit` but isn't standard across shells so
-probably not worth remembering.
+Aside: `bye` is an alias for `exit` but isn't standard across shells so probably
+not worth remembering.
 
 The order of startup scripts on mac is
 
@@ -61,14 +63,16 @@ Starting .zlogin (run when entering a zsh login shell)
 Finished .zlogin
 ```
 
-The reason that both `.zprofile` and `.zlogin` exist is that they run before and after `.zshrc` which gives you options for customising the shell when you don't control the environment or all the startup scripts
+The reason that both `.zprofile` and `.zlogin` exist is that they run before and
+after `.zshrc` which gives you options for customising the shell when you don't
+control the environment or all the startup scripts
 
 ## Scripting environment provide by zsh
 
-* zsh calls variables "parameters" which isn't at all confusing, no siree
-* you can use single quotes or double quoates
-    * single quotes
-        * ++ they escape everything including newlines up to next single quote
+- zsh calls variables "parameters" which isn't at all confusing, no siree
+- you can use single quotes or double quoates
+    - single quotes
+        - ++ they escape everything including newlines up to next single quote
 
 ```zsh
 print hi there # works without quotes
@@ -132,11 +136,14 @@ do_thing # invoke the function
 
 ## Options
 
-* zsh options are boolean
-* can be written upper or lower case e.g. `foobar` is same as `FOOBAR` is same as `FoOBaR`
-* can have any number of `_` in them e.g. `FOOBAR` is same as `FOO_BAR` is same as `_F_OO_B_AR_`
-* most options should be set in `.zshrc` so they only affect interactive shells - you might get weird side effects if they also set for scripts
-* many options also have single letter variants
+- zsh options are boolean
+- can be written upper or lower case e.g. `foobar` is same as `FOOBAR` is same
+  as `FoOBaR`
+- can have any number of `_` in them e.g. `FOOBAR` is same as `FOO_BAR` is same
+  as `_F_OO_B_AR_`
+- most options should be set in `.zshrc` so they only affect interactive
+  shells - you might get weird side effects if they also set for scripts
+- many options also have single letter variants
 
 zsh provides a simple way to inspect current options:
 
@@ -145,7 +152,6 @@ $ setopt # show options which are set
 $ set -o # does same as setopt, compatible with ksh (note set without -o passes positional params and does not set options i.e. is is totally different)
 $ unsetopt # show options which are unset
 ```
-
 
 ## Startup files on macs
 
@@ -183,12 +189,13 @@ if [ -x /usr/libexec/path_helper ]; then
 fi
 ```
 
-
 ## signals
 
-Ctrl-c sends SIGINT
-if you start a background job and then exit the shell before the job finishes zsh will send SIGHUP to the job process unless you set the NO_HUP option
+Ctrl-c sends SIGINT if you start a background job and then exit the shell before
+the job finishes zsh will send SIGHUP to the job process unless you set the
+NO_HUP option
 
 If NO_HUP is set then zsh won't send SIGHUP to the background job
 
-QUESTION: does that mean I could use this to leave a job running on a server I login to without using `screen` or `tumx`?
+QUESTION: does that mean I could use this to leave a job running on a server I
+login to without using `screen` or `tumx`?

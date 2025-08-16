@@ -1,6 +1,5 @@
 # fzf
 
-
 ```
 kill <tab>
 vim $(fzf)

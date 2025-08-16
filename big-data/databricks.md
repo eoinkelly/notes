@@ -4,80 +4,100 @@ https://www.databricks.com/
 
 ## Comparing with AWS
 
--   (++ ) DB much more integrated. A lot less setup complexity and dev/ops time & complexity
-    -   AWS have come at it by building a bunch of separate services and then loosely integrating them
-    -   Databricks are building a single product
-    -   You will need developers a lot less with Databricks
-    -   > For example, to achieve features similar to Databricks (specifically Databricks' data engineering, business intelligence, and machine learning features), I would need to host the following on AWS: IAM, EC2, EMR, Glue, S3, Hive, VPCs, CloudWatch, Lambdas, and SageMaker. If there is poor integration between these services, or a configuration is missing, then parts of the custom-built data platform will stop working. https://www.reddit.com/r/dataengineering/comments/10kjilb/comment/j5thfh4/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
--   (++ AWS) if you only use a narrow subset of what Databricks does for you then you might be better on AWS
--   (++ DB) Databricks works exactly the same on any cloud
--   (++ AWS) if you want to use tools that are not bundled in DB - AWS lets you run almost anything.
-    -   ?? how much does this matter to data analysts?
--   (==) because storage layer is separate, you can run other compute on it if you want
-    -   ?? is that true - can I just point some other tool at a delta-lake table and it will just work?
+- (++ ) DB much more integrated. A lot less setup complexity and dev/ops time &
+  complexity
+    - AWS have come at it by building a bunch of separate services and then
+      loosely integrating them
+    - Databricks are building a single product
+    - You will need developers a lot less with Databricks
+    - > For example, to achieve features similar to Databricks (specifically
+      > Databricks' data engineering, business intelligence, and machine
+      > learning features), I would need to host the following on AWS: IAM, EC2,
+      > EMR, Glue, S3, Hive, VPCs, CloudWatch, Lambdas, and SageMaker. If there
+      > is poor integration between these services, or a configuration is
+      > missing, then parts of the custom-built data platform will stop working.
+      > https://www.reddit.com/r/dataengineering/comments/10kjilb/comment/j5thfh4/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
+- (++ AWS) if you only use a narrow subset of what Databricks does for you then
+  you might be better on AWS
+- (++ DB) Databricks works exactly the same on any cloud
+- (++ AWS) if you want to use tools that are not bundled in DB - AWS lets you
+  run almost anything.
+    - ?? how much does this matter to data analysts?
+- (==) because storage layer is separate, you can run other compute on it if you
+  want
+    - ?? is that true - can I just point some other tool at a delta-lake table
+      and it will just work?
 
 ## Overview
 
--   Self describes as a "Data Intelligence Platform"
--   Built on lakehouse architecture
+- Self describes as a "Data Intelligence Platform"
+- Built on lakehouse architecture
+    - compute and storage layers are decoupled and you have access to and
+      control of each layer
+    - Snowflake and DB have similar architectures but Snowflake historically had
+      a much tighter grip on the storage layer.
+        - Since 2022 (so, recent) Snowflake now supports Iceberg (OSS competitor
+          to the OSS Delta lake)
 
-    -   compute and storage layers are decoupled and you have access to and control of each layer
-    -   Snowflake and DB have similar architectures but Snowflake historically had a much tighter grip on the storage layer.
-        -   Since 2022 (so, recent) Snowflake now supports Iceberg (OSS competitor to the OSS Delta lake)
-
--   Built on open source and open standards
--   Built on spark but has proprietary extensions
-    -   > The Databricks Runtime includes additional optimizations and
-        > proprietary features that build on and extend Apache Spark, including
-        > Photon, an optimized version of Apache Spark rewritten in C++.
--   Runs on all major cloud providers
--   Features
-    -   Notebooks:
-        -   SQL
-        -   Python
-        -   Scala
-        -   R
-    -   IDEs
-        -   VSCode
-        -   PyCharm
-        -   RStudio
-        -   JupyterLab
-    -   "Unity" data catalog
-    -   Plays well with any other big-data tools e.g.
-        -   Power BI
-        -   Pandas
-        -   Tableaou
-        -   Spark
-    -   Has a marketplace where you can get addons, data sets etc.
-        -   Things in the marketplace communicate via delta sharing
-    -   Does ETL
-        -   can ingest from anything e.g. Salesforce, Google Analytics, without extra dev
-        -   built-in ETL using their SQL
-        -   Partners with FiveTran to let you import through FiveTran
-            -   Few clicks to connect. FiveTran will have a Databricks destination setup
-            -   Fivetran supports ingestion from heaps of places
-    -   Visualisations (within notebooks)
-        -   https://docs.databricks.com/en/notebooks/bamboolib.html
-        -   lets you use ipywidgets to create visualisations in notebooks
-        -   for more complex stuff you probably want to use Power BI
-    -   Dashboards
-        -   can create dashboards which execute stuff in HTML or IPython
-        -   https://docs.databricks.com/en/notebooks/dashboards.html
-    -   Workflows
-        -   has a fully managed orchestration service
-        -   > define, manage and monitor multitask workflows for ETL, analytics
-            > and machine learning pipelines. With a wide range of supported task
-            > types, deep observability capabilities and high reliability
-        -   Integrates with other workflow things
-            -   Azure data factory
-            -   Apache Airflow
-            -   FiveTran
-            -   dbt labs
-            -   arcion
-            -   matillion
-    -   Git repos
-        -   you can connect Github/Gitlab and let Databricks operate on the repo data
--   Foundations - Apache Spark - Delta Lake (a file format which adds features to parquet) - MLFlow - Delta sharing (a way to realtime share changes between data stores) - Can share data sets, models, dashboards and notebooks - Can share across regions, clouds, platforms
+- Built on open source and open standards
+- Built on spark but has proprietary extensions
+    - > The Databricks Runtime includes additional optimizations and proprietary
+      > features that build on and extend Apache Spark, including Photon, an
+      > optimized version of Apache Spark rewritten in C++.
+- Runs on all major cloud providers
+- Features
+    - Notebooks:
+        - SQL
+        - Python
+        - Scala
+        - R
+    - IDEs
+        - VSCode
+        - PyCharm
+        - RStudio
+        - JupyterLab
+    - "Unity" data catalog
+    - Plays well with any other big-data tools e.g.
+        - Power BI
+        - Pandas
+        - Tableaou
+        - Spark
+    - Has a marketplace where you can get addons, data sets etc.
+        - Things in the marketplace communicate via delta sharing
+    - Does ETL
+        - can ingest from anything e.g. Salesforce, Google Analytics, without
+          extra dev
+        - built-in ETL using their SQL
+        - Partners with FiveTran to let you import through FiveTran
+            - Few clicks to connect. FiveTran will have a Databricks destination
+              setup
+            - Fivetran supports ingestion from heaps of places
+    - Visualisations (within notebooks)
+        - https://docs.databricks.com/en/notebooks/bamboolib.html
+        - lets you use ipywidgets to create visualisations in notebooks
+        - for more complex stuff you probably want to use Power BI
+    - Dashboards
+        - can create dashboards which execute stuff in HTML or IPython
+        - https://docs.databricks.com/en/notebooks/dashboards.html
+    - Workflows
+        - has a fully managed orchestration service
+        - > define, manage and monitor multitask workflows for ETL, analytics
+          > and machine learning pipelines. With a wide range of supported task
+          > types, deep observability capabilities and high reliability
+        - Integrates with other workflow things
+            - Azure data factory
+            - Apache Airflow
+            - FiveTran
+            - dbt labs
+            - arcion
+            - matillion
+    - Git repos
+        - you can connect Github/Gitlab and let Databricks operate on the repo
+          data
+- Foundations - Apache Spark - Delta Lake (a file format which adds features to
+  parquet) - MLFlow - Delta sharing (a way to realtime share changes between
+  data stores) - Can share data sets, models, dashboards and notebooks - Can
+  share across regions, clouds, platforms
 
 ## Uploading files
 
@@ -88,16 +108,16 @@ Requires a SQL warehouse or a cluster with Databricks Runtime 10.3 and above
 Supported file formats: .csv, .tsv, .tab, .json, .jsonl, .avro, .parquet, .txt, or .xml
 ```
 
--   "SQL Warehouse" is what clusters are calle din the UI
--   Each one has
-    -   a size
-    -   a type
-        -   pro:
-        -   classic:
-        -   Scaling
-        -   Channle
-        -   Spot instance policy
-        -   Auto stop - when to stop the cluster after inactivity
+- "SQL Warehouse" is what clusters are calle din the UI
+- Each one has
+    - a size
+    - a type
+        - pro:
+        - classic:
+        - Scaling
+        - Channle
+        - Spot instance policy
+        - Auto stop - when to stop the cluster after inactivity
 
 needs to be started for you to upload data
 
@@ -105,20 +125,23 @@ needs to be started for you to upload data
 
 I see the following in S3
 
--   `1446305435358672` is a parent of many paths - I think it's my organisation number maybe? it's in all the URLs of the UI as an `o` query param
--   jobs data
-    -   SQL plans
-        -   seem to all be quite small files
-    -   SQL result somethings
-        -   when I come back to the UI, the old query data loads very quickly so I think the full query result is being cached
-        -   files vary in size a lot
-    -   notebook revisions
--   catalogs
-    -   parquet file holding the CSV I uploaded
-    -   various files in `_delta_log/` presumably which extend the parquet to be a delta table
-    -   catalogs have a uuid which maps to a dir
-    -   tables have a uuid which maps to a dir
--   temp dir
+- `1446305435358672` is a parent of many paths - I think it's my organisation
+  number maybe? it's in all the URLs of the UI as an `o` query param
+- jobs data
+    - SQL plans
+        - seem to all be quite small files
+    - SQL result somethings
+        - when I come back to the UI, the old query data loads very quickly so I
+          think the full query result is being cached
+        - files vary in size a lot
+    - notebook revisions
+- catalogs
+    - parquet file holding the CSV I uploaded
+    - various files in `_delta_log/` presumably which extend the parquet to be a
+      delta table
+    - catalogs have a uuid which maps to a dir
+    - tables have a uuid which maps to a dir
+- temp dir
 -
 
 ```
@@ -193,103 +216,109 @@ https://docs.databricks.com/en/release-notes/runtime/14.3lts.html
 
 A combination of
 
--   Ubuntu
--   Java (Zulu)
--   Scala
--   Python
--   R
--   Delta Lake
--   A bunch of data focused python, java, R libraries
--   Apache Spark
--   Photon
+- Ubuntu
+- Java (Zulu)
+- Scala
+- Python
+- R
+- Delta Lake
+- A bunch of data focused python, java, R libraries
+- Apache Spark
+- Photon
 
 ## Other ways of access
 
 All these methods below are sugar for the REST API
 
--   Aside: Thrift
-    -   https://thrift.apache.org/
-    -   API codegen from a thrift definition file. Can codegen into most common languages
--   Databricks CLI
-    -   written in go
-    -   https://github.com/databricks/cli
-    -   https://docs.databricks.com/en/dev-tools/cli/index.html
-    -   hits the Databricks HTTP rest API, nicer to use than curl
-    -   install
+- Aside: Thrift
+    - https://thrift.apache.org/
+    - API codegen from a thrift definition file. Can codegen into most common
+      languages
+- Databricks CLI
+    - written in go
+    - https://github.com/databricks/cli
+    - https://docs.databricks.com/en/dev-tools/cli/index.html
+    - hits the Databricks HTTP rest API, nicer to use than curl
+    - install
         ```bash
         $ brew tap databricks/tap
         $ brew install databricks
         $ databricks -v
         Databricks CLI v0.215.0
         ```
--   SQL connectors for many languages: Go, Python, JS, Java
-    -   Python
-        -   https://github.com/databricks/databricks-sql-python
-        -   doesn't use ODBC or JDBC
-        -   Connects via Thrift API
-        -   Uses Arrow as the data exchange format
-        -   Conforms to https://peps.python.org/pep-0249/ (DB API spec)
-    -   Node
-        -   https://github.com/databricks/databricks-sql-nodejs
-        -   Fork of Hive Driver
-        -   Connects via Thrift API
--   ODBC driver
-    -   https://www.databricks.com/spark/odbc-drivers-archive
--   Terraform provider
--   VSCode extension
--   SDK for Java, Go, Python
-    -   https://github.com/databricks/databricks-sdk-py
-    -   sugar for using the HTTP API
--   HTTP API
-    -   https://docs.databricks.com/api/workspace/introduction
-    -   looks quite complete
+- SQL connectors for many languages: Go, Python, JS, Java
+    - Python
+        - https://github.com/databricks/databricks-sql-python
+        - doesn't use ODBC or JDBC
+        - Connects via Thrift API
+        - Uses Arrow as the data exchange format
+        - Conforms to https://peps.python.org/pep-0249/ (DB API spec)
+    - Node
+        - https://github.com/databricks/databricks-sql-nodejs
+        - Fork of Hive Driver
+        - Connects via Thrift API
+- ODBC driver
+    - https://www.databricks.com/spark/odbc-drivers-archive
+- Terraform provider
+- VSCode extension
+- SDK for Java, Go, Python
+    - https://github.com/databricks/databricks-sdk-py
+    - sugar for using the HTTP API
+- HTTP API
+    - https://docs.databricks.com/api/workspace/introduction
+    - looks quite complete
 
 ## SQL warehouses
 
--   only allow the execution of SQL
--   most users will use the warehouses defined by their admins
--   compute resources that let you query and explore data
--   notebooks can be attached to warehouses but only to do SQL
--   you can make JDBC/ODBC connections to them e.g. this is how Tableau/PowerBI connects to them
--   they will autostart in some scenarios
+- only allow the execution of SQL
+- most users will use the warehouses defined by their admins
+- compute resources that let you query and explore data
+- notebooks can be attached to warehouses but only to do SQL
+- you can make JDBC/ODBC connections to them e.g. this is how Tableau/PowerBI
+  connects to them
+- they will autostart in some scenarios
 
 ?? It seems you can run SQL queries on general compute. How?
 
 ## Other compute
 
--   You want to run python/R/etc scripts - this is serviced by general compute
+- You want to run python/R/etc scripts - this is serviced by general compute
 
 ## Jobs
 
--   has a fancy job runner
--   allows non pro-devs to create ETL logic using tools they know
--   job can contain multiple tasks
--   can have multiple schedules and triggers
--   tasks can have depend on each ohter
-    -   run later tasks only if previous one/all succeeded or various cases of failure
--   tasks
-    -   task code can come from many sources: Notebook, python script, jar, python wheel, sql, dbt, spark submit among others
-    -   can control which cluster, what params required
-    -   can load libs from PyPI/Maven/CRAN/local/S3/DBFS
-    -   can set what notifications happen
-    -   can set thresholds for duration and retries
+- has a fancy job runner
+- allows non pro-devs to create ETL logic using tools they know
+- job can contain multiple tasks
+- can have multiple schedules and triggers
+- tasks can have depend on each ohter
+    - run later tasks only if previous one/all succeeded or various cases of
+      failure
+- tasks
+    - task code can come from many sources: Notebook, python script, jar, python
+      wheel, sql, dbt, spark submit among others
+    - can control which cluster, what params required
+    - can load libs from PyPI/Maven/CRAN/local/S3/DBFS
+    - can set what notifications happen
+    - can set thresholds for duration and retries
 
 ## Databricks runtime
 
 https://docs.databricks.com/en/release-notes/runtime/index.html
 
-* It includes
-    * Ubuntu
-    * Spark (and their proprietary C++ reimplementation called Photon)
-    * Delta lake
-    * Java & libs
-    * Scala & libs
-    * Python & libs
-    * R & libs
-    * GPU libs for GPU enabled clusters
-* It integrates with databricks services e.g. notebooks, jobs, cluster management
+- It includes
+    - Ubuntu
+    - Spark (and their proprietary C++ reimplementation called Photon)
+    - Delta lake
+    - Java & libs
+    - Scala & libs
+    - Python & libs
+    - R & libs
+    - GPU libs for GPU enabled clusters
+- It integrates with databricks services e.g. notebooks, jobs, cluster
+  management
 
-Example list of what it contains: https://docs.databricks.com/en/release-notes/runtime/14.3lts.html#system-environment
+Example list of what it contains:
+https://docs.databricks.com/en/release-notes/runtime/14.3lts.html#system-environment
 
 ### Spark
 
@@ -299,28 +328,31 @@ https://docs.databricks.com/en/spark/index.html
 > features that build on and extend Apache Spark, including Photon, an optimized
 > version of Apache Spark rewritten in C++.
 
-> You don’t need to configure or initialize a Spark context or Spark session, as these are managed for you by Databricks.
+> You don’t need to configure or initialize a Spark context or Spark session, as
+> these are managed for you by Databricks.
 
 ### Living with databricks
 
 https://docs.databricks.com/en/compute/configure.html
 
-When you add "general purpose" compute, you default to allocating at least 2 instances:
+When you add "general purpose" compute, you default to allocating at least 2
+instances:
 
-1 x Driver instance
-N-M Worker instances
+1 x Driver instance N-M Worker instances
 
 what should Driver intance size compared to workers?
 
-> A driver node runs the main function and executes various parallel operations on the worker nodes. The worker nodes read and write from and to the data sources
+> A driver node runs the main function and executes various parallel operations
+> on the worker nodes. The worker nodes read and write from and to the data
+> sources
 
-
-Some jobs/notebooks will require more of the driver, others will require more of the worker(s)
-    ?? when does the driver have a lot of heavy compute?
+Some jobs/notebooks will require more of the driver, others will require more of
+the worker(s) ?? when does the driver have a lot of heavy compute?
 
 - Types of compute
     1. Single node
-        - driver and worker run on same instance (1 core reserved for driver, all other cores allocated to worker tasks)
+        - driver and worker run on same instance (1 core reserved for driver,
+          all other cores allocated to worker tasks)
     2. Multi-node
         - 1 dedicated driver node
         - 1-N worker nodes (cannot be 0 worker nodes)
@@ -334,17 +366,20 @@ Some jobs/notebooks will require more of the driver, others will require more of
     - maintains the SparkContext
     - interprets all the commands you run from a notebook or a libon the compute
     - runs the Spark master that coordinates with the Spark executors
-    - use a bigger driver instance if you are planning to `collect()` a lot of data from Spark workers and analyze them in the notebook
+    - use a bigger driver instance if you are planning to `collect()` a lot of
+      data from Spark workers and analyze them in the notebook
     - detach unused notebooks from the driver to free up resources
 
-- Graviton instances
-    - only partially supported
-    - https://docs.databricks.com/en/compute/configure.html#graviton-limitations
-> [!WARN]
-> Delta Live Tables is not supported on Graviton-enabled compute.
-    Why?
+- Graviton instances - only partially supported -
+  https://docs.databricks.com/en/compute/configure.html#graviton-limitations
+    > [!WARN] Delta Live Tables is not supported on Graviton-enabled compute.
+        Why?
 
-Compute consists of one driver node and zero or more worker nodes. You can pick separate cloud provider instance types for the driver and worker nodes, although by default the driver node uses the same instance type as the worker node. Different families of instance types fit different use cases, such as memory-intensive or compute-intensive workloads.
+Compute consists of one driver node and zero or more worker nodes. You can pick
+separate cloud provider instance types for the driver and worker nodes, although
+by default the driver node uses the same instance type as the worker node.
+Different families of instance types fit different use cases, such as
+memory-intensive or compute-intensive workloads.
 
 You can also select a pool to use as the worker or driver node.
 
@@ -354,21 +389,22 @@ It takes approx ? mins to start a cluster on AWS
 
 The ongoing cost of a cluster is
 
-* NAT Gateway cost
-* S3 storage
+- NAT Gateway cost
+- S3 storage
 
 I suspect that the public IP of the NatG is baked into your workspace config on
 databricks.com somehow - when I deleted and recreated a NG it broke access to
 the cluster. All the AWS API stuff worked (starting and stopping instances etc.)
 but Databricks could not communicate with the started instances
 
-=> You probably have to leave that NatG in place for the lifetime of your cluster.
-    I could maybe delete it and keep the EIP but I haven't tested this idea.
-
+=> You probably have to leave that NatG in place for the lifetime of your
+cluster. I could maybe delete it and keep the EIP but I haven't tested this
+idea.
 
 #### Inside the Databricks driver VM
 
-You can get a web terminal from the Databricks UI as a tab on the details of the compute it is a driver for
+You can get a web terminal from the Databricks UI as a tab on the details of the
+compute it is a driver for
 
 ```sh
 /Volumes
@@ -421,12 +457,17 @@ systemd
 
 #### Git integration
 
-- When you add a repo to your Databricks workspace, it is cloned into `sydney-prod/45523396836864.jobs/workspace-files/` in my S3 bucket
-    - The filenames in S3 are uuids - it does not use the filenames from your git repo
-- You have to explicitly create a git commit and push any changes you make to the repo in Databricks
-- You have to explicitly pull changes in - they don't get pulled in automatically
+- When you add a repo to your Databricks workspace, it is cloned into
+  `sydney-prod/45523396836864.jobs/workspace-files/` in my S3 bucket
+    - The filenames in S3 are uuids - it does not use the filenames from your
+      git repo
+- You have to explicitly create a git commit and push any changes you make to
+  the repo in Databricks
+- You have to explicitly pull changes in - they don't get pulled in
+  automatically
     - maybe this could be automated via Databricks API from a Github action
-- Databricks is an ok web based code editor - it can edit files other than notebooks
+- Databricks is an ok web based code editor - it can edit files other than
+  notebooks
 
 #### VSCode integration
 
@@ -440,15 +481,20 @@ You cannot use all-purpose compute to run SQL ?
 
 ## Hive metastore
 
-- each workspace has a built-in hive metastore which is (confusingly) represented as a catalog in the Unity Catalog
-- Databricks consider this legacy now and want you to use their Unity Catalog metastore
+- each workspace has a built-in hive metastore which is (confusingly)
+  represented as a catalog in the Unity Catalog
+- Databricks consider this legacy now and want you to use their Unity Catalog
+  metastore
 - not managed by Unity Catalog
-- The hive metastore is not available until you have running SQL warehouse compute
+- The hive metastore is not available until you have running SQL warehouse
+  compute
 -
+
 ## Unity catalog
 
 - governance for both data and AI on Databricks
-- your user management and metastore are not per workspace anymore - they are shared across workspaces
+- your user management and metastore are not per workspace anymore - they are
+  shared across workspaces
 - central place to
     - administer your data and AI models
     - audit access
@@ -482,9 +528,10 @@ Default Catalogs
 - Metastores
     - registers metadata about data and AI assets
     - registers permissions for the assets
-    - Best practice: Create one metastore for each region you operate in. Assign that metastore to all workspaces in that regions
+    - Best practice: Create one metastore for each region you operate in. Assign
+      that metastore to all workspaces in that regions
 - Catalogs
-  - first layer of the Unity Catalog 3 layer `catalog.schema.*` namespace
+    - first layer of the Unity Catalog 3 layer `catalog.schema.*` namespace
 - Schemas
     - Akin to databases
     - second layer of the Unity Catalog 3 layer `catalog.schema.*` namespace
@@ -509,14 +556,14 @@ Default Catalogs
 - Views
     - read-only views across multipel tables and other views
 - Volumnes
-  - siblings to tables and views
-  - contain directoryies and files in any format
-  - provide non-tabular access tod ata
-  - files in volumes cannot be registered as tables
-  - types
-    1. Managed
-        - files stored in the default location for the Unity Catalog
-    2. External
-        - files stored elsewhere
+    - siblings to tables and views
+    - contain directoryies and files in any format
+    - provide non-tabular access tod ata
+    - files in volumes cannot be registered as tables
+    - types
+        1. Managed
+            - files stored in the default location for the Unity Catalog
+        2. External
+            - files stored elsewhere
 - Models
-  - ML model registered in the _MLFlow Model Registry_
+    - ML model registered in the _MLFlow Model Registry_

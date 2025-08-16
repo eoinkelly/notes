@@ -1,30 +1,32 @@
 # dig
 
-* Apparently stands for _Domain information groper_
-* WARNING: does not use the macOS system DNS stuff so you might get different answers from dig and that
-* uses nameservers in `/etc/resolv.conf` by default
-* `type` option
-    * can be any valid query type supported by BIND9
-    * `type` defaults to A record
-    * types
-        * A address records
-        * MX mail records
-        * ANY All records
-        * PTR used for reverse lookup
-        * SOA zone of authority (TODO: what is this)
-* most useful query options
-    * add `+norecurse` to prevent recursive lookups
-    * add `+trace` to trace the recursive lookups
-* default query class is `IN` (internet addresses)
-    * other query classes
-        * HS Hesiod record
-        * CH Chaosnet record
-* Zone transfers
-    * almost never work from an arbitrary client these days
-    * You can request zone transfer by setting type to AXFR
-    * You can request incremental zone transfer by setting type to IXFR
+- Apparently stands for _Domain information groper_
+- WARNING: does not use the macOS system DNS stuff so you might get different
+  answers from dig and that
+- uses nameservers in `/etc/resolv.conf` by default
+- `type` option
+    - can be any valid query type supported by BIND9
+    - `type` defaults to A record
+    - types
+        - A address records
+        - MX mail records
+        - ANY All records
+        - PTR used for reverse lookup
+        - SOA zone of authority (TODO: what is this)
+- most useful query options
+    - add `+norecurse` to prevent recursive lookups
+    - add `+trace` to trace the recursive lookups
+- default query class is `IN` (internet addresses)
+    - other query classes
+        - HS Hesiod record
+        - CH Chaosnet record
+- Zone transfers
+    - almost never work from an arbitrary client these days
+    - You can request zone transfer by setting type to AXFR
+    - You can request incremental zone transfer by setting type to IXFR
 
-Aside: `dig +trace` uses your local resolver to ask it the address of the root servers - `dig` doesn't seem to have root servers hard-coded in
+Aside: `dig +trace` uses your local resolver to ask it the address of the root
+servers - `dig` doesn't seem to have root servers hard-coded in
 
 Examples
 
@@ -43,9 +45,9 @@ dig @8.8.8.8 -x <IP_ADDRESS>
 
 This automatically:
 
-* converts the ip address from `A.B.C.D` to `D.C.B.A.in-addr.arpa`
-* sets query type to PTR
-* sets class to IN
+- converts the ip address from `A.B.C.D` to `D.C.B.A.in-addr.arpa`
+- sets query type to PTR
+- sets class to IN
 
 ## ANY queries (not always supported)
 
@@ -58,12 +60,17 @@ Cloudflare no longer supports ANY queries.
 
 ## TTL values in dig responses
 
-Sometimes `dig` responses contain the TTL in the answer section, sometimes they do not. why?
+Sometimes `dig` responses contain the TTL in the answer section, sometimes they
+do not. why?
 
-* If the server is authoritative, the number is the raw TTL of the record
-* If the server is not authoritative, it shows time remaining until the next refresh. You will get a different answer on the next request as the counter counts down
+- If the server is authoritative, the number is the raw TTL of the record
+- If the server is not authoritative, it shows time remaining until the next
+  refresh. You will get a different answer on the next request as the counter
+  counts down
 
-Note that for servers where one IP is multiple servers e.g. `@8.8.8.8` then you'll get the time of the server you are talking to so might get a different answer on the next request.
+Note that for servers where one IP is multiple servers e.g. `@8.8.8.8` then
+you'll get the time of the server you are talking to so might get a different
+answer on the next request.
 
 ```
 $ dig www.cst.cam.ac.uk
@@ -92,14 +99,11 @@ tm-128-232-132-21.tm.uis.cam.ac.uk. 3593 IN A	128.232.132.21
 
 ## How to tell a response is from an authoritative server
 
-You should see `;; AUTHORITY SECTION:` in the response
-But cloudflare doesn't seem to do this for some reason?
+You should see `;; AUTHORITY SECTION:` in the response But cloudflare doesn't
+seem to do this for some reason?
 
-AA              Authoritative Answer - this bit is valid in responses,
-                and specifies that the responding name server is an
-                authority for the domain name in question section.
-
-
+AA Authoritative Answer - this bit is valid in responses, and specifies that the
+responding name server is an authority for the domain name in question section.
 
 ## How to get the info for all authoritative name servers of a domain
 

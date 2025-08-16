@@ -1,5 +1,4 @@
-
-export default function() {
+export default function () {
   console.log('i am default');
   return 1223;
 }

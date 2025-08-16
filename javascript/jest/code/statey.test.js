@@ -1,4 +1,4 @@
-import {inc, dec, counter} from './statey'
+import { inc, dec, counter } from './statey';
 
 test('test stateful module transipling', () => {
   console.log('Counter:', counter);

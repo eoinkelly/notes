@@ -1,15 +1,14 @@
-CSS Rounding
-============
+# CSS Rounding
+
 http://meyerweb.com/eric/thoughts/2010/02/10/rounding-off/
 http://www.positioniseverything.net/round-error.html
 
 https://bugzilla.mozilla.org/show_bug.cgi?id=63336
-    http://robert.ocallahan.org/2007/02/units-patch-landed_07.html
-    http://robert.ocallahan.org/2007/10/tale-of-two-zooms_19.html
+http://robert.ocallahan.org/2007/02/units-patch-landed_07.html
+http://robert.ocallahan.org/2007/10/tale-of-two-zooms_19.html
 
-
-http://css-tricks.com/percentage-bugs-in-webkit/
-    Like some others explained at the top, there are 3 types of calculation for sub-pixels.
+http://css-tricks.com/percentage-bugs-in-webkit/ Like some others explained at
+the top, there are 3 types of calculation for sub-pixels.
 
     IE-Method:
 
@@ -29,8 +28,7 @@ http://css-tricks.com/percentage-bugs-in-webkit/
     –>http://elasticss.com/determination-of-algorithms-used-for-percentage-based-rounding-divs-on-browsers-and-css-frameworks/
     – leads to the best result for layouts, but its not transparent which div gets which exact size.
 
-aspen site
-    full site width 100% = 1015px
+aspen site full site width 100% = 1015px
 
     .primary
         chrome 804px

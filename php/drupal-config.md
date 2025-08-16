@@ -1,16 +1,17 @@
 # Drupal config
 
-* intended for storing values you want to migrate between systems
-* use the State API if you want some state for just a single environment that should be thrown away outside that environment
-* stored in yml and in the db
-* Drupal Core has the idea of "Configuration storage"
-    * active storage is in the database
-    * you can export and import form it
-    * the config is also cached
-    * you also have "sync storage" which is on the filesystem
-    * exporting from DB to files wipes all files first and then replaces them with data from DB
-    * importing from files to DB is **merged** - it is not a wipe and replace
-
+- intended for storing values you want to migrate between systems
+- use the State API if you want some state for just a single environment that
+  should be thrown away outside that environment
+- stored in yml and in the db
+- Drupal Core has the idea of "Configuration storage"
+    - active storage is in the database
+    - you can export and import form it
+    - the config is also cached
+    - you also have "sync storage" which is on the filesystem
+    - exporting from DB to files wipes all files first and then replaces them
+      with data from DB
+    - importing from files to DB is **merged** - it is not a wipe and replace
 
 When the app requests some config it goes through the following layers:
 
@@ -36,24 +37,28 @@ DB storage -> Config filters layer -> Sync storage(s) on filesystem
 ## Database Tables
 
 1. `cache_config`
-    * not sure what this is for. if the config is already in the DB why also cache it?
-    * the `config_*` tables don't have any indexes. this one has indexes on expiry and created timestamps
-    * `created` timestamp stored as `DECIMAL(14,3)` - why???
+    - not sure what this is for. if the config is already in the DB why also
+      cache it?
+    - the `config_*` tables don't have any indexes. this one has indexes on
+      expiry and created timestamps
+    - `created` timestamp stored as `DECIMAL(14,3)` - why???
 2. `config`
-    * stores the "active" config
-    * this table is imported/exported via one of
-      * drush commands
-      * drupal console
-      * "Configuration manager" module (a core Drupal module which provides admin GUI for working with config)
+    - stores the "active" config
+    - this table is imported/exported via one of
+        - drush commands
+        - drupal console
+        - "Configuration manager" module (a core Drupal module which provides
+          admin GUI for working with config)
 3. `config_import`
 4. `config_export`
 5. `config_snapshot`
 
-The `config_*` tables seem to have different row counts but all have the same schema
+The `config_*` tables seem to have different row counts but all have the same
+schema
 
 ### cache_config
 
-* mostly key value pairs where the value is a PHP serialized class
+- mostly key value pairs where the value is a PHP serialized class
 
 ```sql
 CREATE TABLE `cache_config` (
@@ -69,7 +74,6 @@ CREATE TABLE `cache_config` (
   KEY `created` (`created`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Storage for the cache API.'
 ```
-
 
 ### config
 
@@ -117,65 +121,73 @@ CREATE TABLE `config_snapshot` (
 
 ## Config sync directory
 
-* this dir is where drush will export your config to **and** import your config from
-    * so you could ftp files into the sync dir and then import them from there
-* drupal uses `sites/default/files/config_HASH` as the sync dir by default
-* you can move it out of web root and are recommended to do so
-* Pantheon puts it in `sites/default/config` because they have secured that dir (presumably in their nginx config)
+- this dir is where drush will export your config to **and** import your config
+  from
+    - so you could ftp files into the sync dir and then import them from there
+- drupal uses `sites/default/files/config_HASH` as the sync dir by default
+- you can move it out of web root and are recommended to do so
+- Pantheon puts it in `sites/default/config` because they have secured that dir
+  (presumably in their nginx config)
 
-
-* When a module/distribution/theme is **enabled** it's configuration is copied from its `config/install` directory into the drupal configuration.
-    * Drupal only reads from the directory **once**, **when the module is first enabled!**
-    * the yaml files in `config/install` are
+- When a module/distribution/theme is **enabled** it's configuration is copied
+  from its `config/install` directory into the drupal configuration.
+    - Drupal only reads from the directory **once**, **when the module is first
+      enabled!**
+    - the yaml files in `config/install` are
         1. converted to assoc arrays
         1. have a `uuid` field added
         1. sometimes have a `new_revision` fields added ???
-        1. PHP serialized into the `config` table with the YAML filename as the key
+        1. PHP serialized into the `config` table with the YAML filename as the
+           key
 
-* Site UUID
-    * stored in the `system.site` config item (i.e. `config/sync/system.site.yml`)
-    * can also read with `drush cget system.site`
-    * Drupal doe some kind of check of this UUID before importing new config
-        * ??? not sure what exactly this is
-        * ??? I presume all envs of the same site have the same UUID?
+- Site UUID
+    - stored in the `system.site` config item (i.e.
+      `config/sync/system.site.yml`)
+    - can also read with `drush cget system.site`
+    - Drupal doe some kind of check of this UUID before importing new config
+        - ??? not sure what exactly this is
+        - ??? I presume all envs of the same site have the same UUID?
 
 Module: config_readonly
 
-* https://www.drupal.org/project/config_readonly
-* prevent anybody from making config changes to config via the GUI
-* locked in `settings.php`
-* intended for you to lock production to force config changes to happen in a pre-prod env
+- https://www.drupal.org/project/config_readonly
+- prevent anybody from making config changes to config via the GUI
+- locked in `settings.php`
+- intended for you to lock production to force config changes to happen in a
+  pre-prod env
 
 Module: config_filter
 
-* https://www.drupal.org/project/config_filter
-* https://events.drupal.org/vienna2017/sessions/advanced-configuration-management-config-split-et-al
-* inserts a fake storage between DB and sync storage (files) - essentially becomes a MITM for both export and import
-* basis for other config modules
+- https://www.drupal.org/project/config_filter
+- https://events.drupal.org/vienna2017/sessions/advanced-configuration-management-config-split-et-al
+- inserts a fake storage between DB and sync storage (files) - essentially
+  becomes a MITM for both export and import
+- basis for other config modules
 
 Module: config_split
 
-* https://www.drupal.org/project/config_split
-* https://events.drupal.org/vienna2017/sessions/advanced-configuration-management-config-split-et-al
-* uses config_filter to split config into different sync stores
+- https://www.drupal.org/project/config_split
+- https://events.drupal.org/vienna2017/sessions/advanced-configuration-management-config-split-et-al
+- uses config_filter to split config into different sync stores
 
 Module: config_ignore
 
-* builds on config_filter
-* https://events.drupal.org/vienna2017/sessions/advanced-configuration-management-config-split-et-al
-* https://www.drupal.org/project/config_ignore
+- builds on config_filter
+- https://events.drupal.org/vienna2017/sessions/advanced-configuration-management-config-split-et-al
+- https://www.drupal.org/project/config_ignore
 
-There is a version of the drupal installer which will install from a set of configuration files
+There is a version of the drupal installer which will install from a set of
+configuration files
 
 ## Config overrides in settings.php
 
-* Configuration read from the DB can be overridden by `$config['settings']...` in `settings.php`
-    * bit limited - you cannot add
-        * new config fields
-        * disable modules (pity)
-    * you can override any of the config_* modules with this
-    * all config flows through this from the DB before your app uses it
-
+- Configuration read from the DB can be overridden by `$config['settings']...`
+  in `settings.php`
+    - bit limited - you cannot add
+        - new config fields
+        - disable modules (pity)
+    - you can override any of the config\_\* modules with this
+    - all config flows through this from the DB before your app uses it
 
 ## exclude modules from settings import/export in settings.php
 

@@ -46,12 +46,12 @@ so all the types in the feature are sharable within the feature
 
 // public static method
 export const publicStaticIsh = (): void => {
-  console.log("publicStaticIsh");
+  console.log('publicStaticIsh');
 };
 
 // private static method
 export const privateStaticIsh = (): void => {
-  console.log("privateStaticIsh");
+  console.log('privateStaticIsh');
 };
 
 interface Thing {
@@ -63,7 +63,7 @@ export const construct = (a: number, b: number): Thing => {
   console.log(a, b);
   return {
     a: a,
-    b: b,
+    b: b
   };
 };
 
@@ -75,7 +75,7 @@ export const greet = (self: Thing): void => {
 
 // private instance method
 export const generateGreeting = (self: Thing): string => {
-  return "Greetings from: ";
+  return 'Greetings from: ';
 };
 
 // public class variable (constant)

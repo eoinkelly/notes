@@ -1,17 +1,18 @@
-
 Tasks
 
 - [ ] Memorise scale and mode patterns below
-- [ ] Learn to draw a complete circle of 5ths diagram. For each segment include note, relative minor, key signature (be able to recite which notes are sharp/flat)
+- [ ] Learn to draw a complete circle of 5ths diagram. For each segment include
+      note, relative minor, key signature (be able to recite which notes are
+      sharp/flat)
 - [ ] Memorise major scale chords and natural minor chords
 
 Major
+
 ```
 W W H W W W H
 2 2 1 2 2 2 1
 whole whole half whole whole whole half
 ```
-
 
 Natural minor
 
@@ -58,7 +59,6 @@ Modes
 | Aeolian    | 6               | 2 1 2 2 2 1 2 | **exactly** the natural minor scale                    |
 | Locrian    | 7               | 1 2 2 2 1 2 2 | sounds unusual, unused for centuries, used in Jazz now |
 
-
 Major scale chords
 
 ```
@@ -67,7 +67,6 @@ major minor minor major major minor diminished
 ```
 
 Minor scale chords
-
 
 ```
 # natural minor scale chords (rotation of the major scale)

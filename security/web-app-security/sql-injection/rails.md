@@ -4,7 +4,7 @@ Key takeaways for avoiding SQLi in my work
 
 1. Use prepareed statements always
 1. Input scrubbing is hard to get right
-    * they can encode as hex in UTF-8 or other text encoding
+    - they can encode as hex in UTF-8 or other text encoding
 
 ```ruby
 # Demonstrate a basic SQLi attack
@@ -29,9 +29,10 @@ pass = "' OR '1'='1' --"
 
 ## Prepared statements in Rails and Postgres
 
-* since Rails 3.1 ActiveRecord has used prepared statements for its queries
-* prepared statements are enabled by default for Postgres
-* I'm unsure about MySQL - they were not enabled by default for a long time because of perf problems
+- since Rails 3.1 ActiveRecord has used prepared statements for its queries
+- prepared statements are enabled by default for Postgres
+- I'm unsure about MySQL - they were not enabled by default for a long time
+  because of perf problems
 
 ```ruby
 ActiveRecord::Base.connection                   # => instance of ActiveRecord::ConnectionAdapters::PostgreSQLAdapter

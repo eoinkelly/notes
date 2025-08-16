@@ -17,7 +17,6 @@ WHERE c.relkind IN ('r','p','v','m','S','f','')
 ORDER BY 1,2;
 ```
 
-
 \dt becomes:
 
 ```sql
@@ -48,5 +47,3 @@ FROM pg_catalog.pg_database d
 ORDER BY 1;
 
 ```
-
-

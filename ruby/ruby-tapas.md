@@ -1,12 +1,10 @@
-
-
 # 227
 
-* `begin ... end` can be used to group statements in ruby
-    * they are a general purpose langauge feature
-    * they are not _just_ for exceptions!
-    * the return value is the value of the last statement
-    * it does *not* introduce a new variable scope
+- `begin ... end` can be used to group statements in ruby
+    - they are a general purpose langauge feature
+    - they are not _just_ for exceptions!
+    - the return value is the value of the last statement
+    - it does _not_ introduce a new variable scope
 
 ```ruby
 # make a do-while with begin

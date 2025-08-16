@@ -1,5 +1,3 @@
-
-
 ```bash
 # capture a backup for safety
 HEROKU_APP=myapp heroku pg:backups:capture

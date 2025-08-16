@@ -2,75 +2,76 @@
 
 ## Exam
 
-* you can use the k8s docs in the exam
-    * you can use the docs as a starter for creating complex yaml in the exam
-
+- you can use the k8s docs in the exam
+    - you can use the docs as a starter for creating complex yaml in the exam
 
 ## Overview
 
-* the glibc version gives the container it's "identity" much more than the kernel
-    * a "centos" libc makes it a centos container, even if running on an ubuntu kernel
+- the glibc version gives the container it's "identity" much more than the
+  kernel
+    - a "centos" libc makes it a centos container, even if running on an ubuntu
+      kernel
 
 ## Registries
 
-* Docker hub
-    * docker hub registry is the default registry in k8s
-* Quay.io
-    * Run by RedHat
+- Docker hub
+    - docker hub registry is the default registry in k8s
+- Quay.io
+    - Run by RedHat
 
 Containers depend on following linux kernel features:
 
-* Kernel namespaces
-* isolation
-* Kernel CGroups
-* resource allocation and limits
+- Kernel namespaces
+- isolation
+- Kernel CGroups
+- resource allocation and limits
 
 ## Container solutions
 
-* Docker
-    * used everywhere
-* Podman
-    * parts
-        * buildah = managed container images
-        * podman = run containers directly on cri-o (no daemon required)
-    * used in Redhat environments
-    * RHEL 8 dropped support for docker and supports Podman only
-* LXC
-    * old-school
-* systemd-nspawn
-    * offers containers integrated in systemd
-
+- Docker
+    - used everywhere
+- Podman
+    - parts
+        - buildah = managed container images
+        - podman = run containers directly on cri-o (no daemon required)
+    - used in Redhat environments
+    - RHEL 8 dropped support for docker and supports Podman only
+- LXC
+    - old-school
+- systemd-nspawn
+    - offers containers integrated in systemd
 
 Kubernetes
 
-* name means "pilot of the ship"
-* k8s owned by CNCF which is within Linux Foundation
-* is the core of an ecosystem rather than a standalone thing
-* things in the ecosystem
-    * networking
-    * ingress
-    * monitoring
-    * packaging
-* defines Resources using it's API
-* distributions
-    * vanilla k8s
-        * built from source code hosted by CNCF
-    * Google Anthos
-    * RedHat OpenShift
-    * Suse Rancher
-    * Canonical Kubernetes
-* new release every 3 months
-* deprecated features are dropped after 2 releases - quite aggressive
-* k8s came from Borg
-    * Borg was also the origin of CGroups and namespace features in the Linux kernel
+- name means "pilot of the ship"
+- k8s owned by CNCF which is within Linux Foundation
+- is the core of an ecosystem rather than a standalone thing
+- things in the ecosystem
+    - networking
+    - ingress
+    - monitoring
+    - packaging
+- defines Resources using it's API
+- distributions
+    - vanilla k8s
+        - built from source code hosted by CNCF
+    - Google Anthos
+    - RedHat OpenShift
+    - Suse Rancher
+    - Canonical Kubernetes
+- new release every 3 months
+- deprecated features are dropped after 2 releases - quite aggressive
+- k8s came from Borg
+    - Borg was also the origin of CGroups and namespace features in the Linux
+      kernel
 
-* k8s API
-* some of the jobs that a server would do in the past for your app are now done by the k8s control layer
-* accessing k8s
-    * `kubectl` (only thing required for CKAD)
-    * direct HTTP API access
-    * web dashboard
-
+- k8s API
+- some of the jobs that a server would do in the past for your app are now done
+  by the k8s control layer
+- accessing k8s
+    - `kubectl` (only thing required for CKAD)
+    - direct HTTP API access
+    - web dashboard
 
 ```bash
 # create a new deployment (3 nginx pods? containers?)
@@ -129,9 +130,10 @@ kubectl expose deployment eoin-2 --port 8888 --target-port 80 --name something-c
 
 ### kubectl proxy
 
-* creates app level gateway between localhost and th ek8s API server
+- creates app level gateway between localhost and th ek8s API server
 
-    Q: can it be used to see web traffic from one of your pods? or is that terrible idea?
+    Q: can it be used to see web traffic from one of your pods? or is that
+    terrible idea?
 
 ```bash
 kubectl proxy
@@ -170,9 +172,7 @@ kubectl proxy # this takes over terminal
     Q: what does the kubectlproxy command do exactly?
     Q: is the idea that you would keep a dir of yaml which acts a bit like terraform config?
 
-
 On each node
-
 
 ```bash
 # manager node stack
@@ -197,21 +197,24 @@ kubelet
 
 ### Pod
 
-* a pod is an abstraction of a server
-    * provides everything required to run a single application
-    * k8s need extra metadata to manage a container beyond what is in the container itself
-* all containers in pod run in a single namespace
-* pod exposes a single IP address
-* k8s does not manage individual containers, it managed pods
-* adds features required in the cloud to run the all the containers that contain the app
-    * pod priority, resources, affinity, anti-affinity
-* normally pods always started via a deployment
-* but you can run "naked" pods but shouldn't in prod
-* naked pods
-    * -- not rescheduled in case of failure
-    * -- rolling updates don't apply - you can only bring it up and down with new settings
-    * -- cannot be scaled
-    * -- cannot be replaced automatically
+- a pod is an abstraction of a server
+    - provides everything required to run a single application
+    - k8s need extra metadata to manage a container beyond what is in the
+      container itself
+- all containers in pod run in a single namespace
+- pod exposes a single IP address
+- k8s does not manage individual containers, it managed pods
+- adds features required in the cloud to run the all the containers that contain
+  the app
+    - pod priority, resources, affinity, anti-affinity
+- normally pods always started via a deployment
+- but you can run "naked" pods but shouldn't in prod
+- naked pods
+    - -- not rescheduled in case of failure
+    - -- rolling updates don't apply - you can only bring it up and down with
+      new settings
+    - -- cannot be scaled
+    - -- cannot be replaced automatically
 
 ```bash
 kubectl run mypod --image nginx
@@ -259,8 +262,8 @@ cat 1/cmdline
 
 ### Logs
 
-* you can send cluster logs to something else to view them all
-* STDOUT is sent to the k8s cluster
+- you can send cluster logs to something else to view them all
+- STDOUT is sent to the k8s cluster
 
 ```bash
 # see logs for a single pod
@@ -289,8 +292,8 @@ spec:
         - name: eoin1
           image: busybox
           command:
-            - sleep
-            - "3600"
+              - sleep
+              - '3600'
           args:
           env:
         - name: eoin2
@@ -298,7 +301,6 @@ spec:
 # status field exists when you export yaml out of k8s but I susepect you might never set it
 status:
 ```
-
 
 ```yaml
 # example of a k8s yaml defining multiple objects
@@ -310,87 +312,91 @@ items:
     - apiVersion: v1
     - apiVersion: v1
 metadata:
-  resourceVersion: ""
-  selfLink: ""
+    resourceVersion: ''
+    selfLink: ''
 ```
 
-* multiple containers per pod is possible but **it is not common**
-    * use-cases for multicontainer pods:
+- multiple containers per pod is possible but **it is not common**
+    - use-cases for multicontainer pods:
         1. sidecar container
-            * provides additional functionality for the main container
-            * main and sidecar have access to shared resources e.g. shared volumes
-           * e.g. logging, monitoring, syncing
-           * e.g. Istio
+            - provides additional functionality for the main container
+            - main and sidecar have access to shared resources e.g. shared
+              volumes
+            - e.g. logging, monitoring, syncing
+            - e.g. Istio
         1. ambassador container
-           * re-resents the primary container to the outside world
+            - re-resents the primary container to the outside world
         1. adapter container
-           * transforms the data flowing in/out of the main container
+            - transforms the data flowing in/out of the main container
         1. init container pattern
-           * a container which is started first, does some work, and the main container is only started if the init succeeded
-           * k8s has explicit support for this in the `initContainers` key which is a peer of `containers` key in YAML
-           * can have shared volumes between the main container and the init container(s)
-           * they can run tasks that happen at app boot
-           * **k8s will wait for all the init contaienrs to finish before it will start the main container(s)**
-                * main containers will be put in the "waiting" state
-    * these patterns do not exist explicitly in k8s API
-* there are 2 ways to work with 8s
+            - a container which is started first, does some work, and the main
+              container is only started if the init succeeded
+            - k8s has explicit support for this in the `initContainers` key
+              which is a peer of `containers` key in YAML
+            - can have shared volumes between the main container and the init
+              container(s)
+            - they can run tasks that happen at app boot
+            - **k8s will wait for all the init contaienrs to finish before it
+              will start the main container(s)**
+                - main containers will be put in the "waiting" state
+    - these patterns do not exist explicitly in k8s API
+- there are 2 ways to work with 8s
     1. imperative way
-        * everybody works on the command line
+        - everybody works on the command line
     1. declarative way
-        * your team create a git repo of yaml files for your infra
-        * k8s can generate yaml files from the CLI via `--dry-run=client -o yml > my.yml`
-            * this is recommened over writing yaml from scratch
-
-
+        - your team create a git repo of yaml files for your infra
+        - k8s can generate yaml files from the CLI via
+          `--dry-run=client -o yml > my.yml`
+            - this is recommened over writing yaml from scratch
 
 ### Deploy
 
-* represents the app itself
-* takes care of the replicaset, which in turn takes care of the pods
+- represents the app itself
+- takes care of the replicaset, which in turn takes care of the pods
 
 ### ReplicaSet
 
-* take care of scalability by managing "replicas"  of **Pods** (aka instances)
-* not normally managed as an independent resource
+- take care of scalability by managing "replicas" of **Pods** (aka instances)
+- not normally managed as an independent resource
 
 ### Service
 
-* lets you expose the Deploy to users
+- lets you expose the Deploy to users
 
 ### ConfigMap
 
-* config for your apps
+- config for your apps
 
 ### Secrets
 
-* secret version of ConfigMap
+- secret version of ConfigMap
 
 ### PersistentVolume
 
-* lets you store data long-term
+- lets you store data long-term
 
 ### Managing k8s yaml
 
 https://kubernetes.io/docs/concepts/configuration/overview/
 
 > This does imply an ordering requirement - any Service that a Pod wants to
-> access must be created before the Pod itself, or else the environment variables
-> will not be populated.
+> access must be created before the Pod itself, or else the environment
+> variables will not be populated.
 
-Option: Put all your yamls in one dir and apply it all together
-    * ?? what about the ordering requiremetn between services and pods? how to ensure services created first?
-    * can work around this by using DNS for service discovery instead
+Option: Put all your yamls in one dir and apply it all together _ ?? what about
+the ordering requiremetn between services and pods? how to ensure services
+created first? _ can work around this by using DNS for service discovery instead
 
 ### NameSpace (the k8s one,not the linux one)
 
-* linux namespaces proved resource isolation
-* k8s can use a namespace across multiple hosts
-* k8s NameSpace uses linux namespaces under the hood
-* can think of NameSpace as "directories" to apply security settings
-    * RBAC defines rights and quotas for a user in a namespace
-* you can config a default namespace but it can lead you to errors
-* operators create a dedicated namespace
-* you can use k8s namespace to set quota or RBAC
+- linux namespaces proved resource isolation
+- k8s can use a namespace across multiple hosts
+- k8s NameSpace uses linux namespaces under the hood
+- can think of NameSpace as "directories" to apply security settings
+    - RBAC defines rights and quotas for a user in a namespace
+- you can config a default namespace but it can lead you to errors
+- operators create a dedicated namespace
+- you can use k8s namespace to set quota or RBAC
 
 ```bash
 kubectl create namespace my-namespace
@@ -452,16 +458,16 @@ kubernetes-dashboard   replicaset.apps/kubernetes-dashboard-764b4dd7         1  
 
 ### Port forwarding (debugging technique)
 
-* for troubleshooting only - not for regular use
-* lets you forward a port from the kubectl host to the pod so you can debug
-* regular access to pod ports is through 1) services and 2) ingress
-* you don't have to have done anything special setup with ports on the pod for this to work
+- for troubleshooting only - not for regular use
+- lets you forward a port from the kubectl host to the pod so you can debug
+- regular access to pod ports is through 1) services and 2) ingress
+- you don't have to have done anything special setup with ports on the pod for
+  this to work
 
 ```bash
 kubectl port-forward <pod-name> <post-on-kubectl-host>:<port-on-pod-container>
 kubectl port-forward my-pod 8080:80
 ```
-
 
 ### Networking
 
@@ -470,78 +476,95 @@ kubectl port-forward my-pod 8080:80
 ![Networking](./network.png)
 
 1. Pod network
-    * all pods in cluster are on a single "pod network"
-    * each pod has an IP on that network
-    * ?? all pods can talk to each other on this network
-    * ?? there is no outside access for pods on this network
-    * ?? how do pods get outside access e.g. to pull down a new apt package?
-    * ?? how does this work with them being on diff hosts?
+    - all pods in cluster are on a single "pod network"
+    - each pod has an IP on that network
+    - ?? all pods can talk to each other on this network
+    - ?? there is no outside access for pods on this network
+    - ?? how do pods get outside access e.g. to pull down a new apt package?
+    - ?? how does this work with them being on diff hosts?
 2. Cluster network
-    * nodes are connected to the cluster network
-    * Services are connected to the cluster network
-    * because nodes are on both the "real" node network and the internal cluster network, they can act as a proxy for traffic from the node network to the cluster network (this is called NodePort)
+    - nodes are connected to the cluster network
+    - Services are connected to the cluster network
+    - because nodes are on both the "real" node network and the internal cluster
+      network, they can act as a proxy for traffic from the node network to the
+      cluster network (this is called NodePort)
 3. Node network
-    * this is the network that connects the nodes together
-    * I presume:
-        * in AWS this would be your VPC network
-    * external users come in through this "real" network
+    - this is the network that connects the nodes together
+    - I presume:
+        - in AWS this would be your VPC network
+    - external users come in through this "real" network
 
 #### Service
 
-* services as used as an _API based internal load balancer_
-* each application in your cluster would have a service/load-balancer
-* the service takes requests from the _cluster network_ and distributes them to a set of pods on the _pod network_
-* an API resource used to expose a logical set of pods
-* apply a round-robin load balancing to forward traffic to a specific set of Pods
-* set of Pods targetted by a Service is determined by a selector (which is a label)
-* kube-controller-manager runs in your cluster and continuously scans for pods which match the selector label and will add them to the Service
-* if pods are added/removed they will show up in the Service after kube-controller-manager has run
-* Services exist independently from the applications they provide access to
-    * deleting your pods won't delete the service
-    * the only thing they do is
-* Once service can provide access to Pods in multiple Deployments - is used to do canary deployments
-* kube-proxy
-  * runs on each node
-      * remember that the Service needs to send the packets to the correct node as well as correct Pod on that node
-      * so kube-proxy is required to make that happen
-  * watches the k8s API for new Services and endpoints (endpoints = Pods on that node which have correct label)
-  * after creation, it opens random ports an listens for traffic to the Service port on the node's cluster IP address
-      * it then redirects traffic to a Pod that is specified as an endpoint
-  * works in background
-  * does not typically require any config
-* types of service
+- services as used as an _API based internal load balancer_
+- each application in your cluster would have a service/load-balancer
+- the service takes requests from the _cluster network_ and distributes them to
+  a set of pods on the _pod network_
+- an API resource used to expose a logical set of pods
+- apply a round-robin load balancing to forward traffic to a specific set of
+  Pods
+- set of Pods targetted by a Service is determined by a selector (which is a
+  label)
+- kube-controller-manager runs in your cluster and continuously scans for pods
+  which match the selector label and will add them to the Service
+- if pods are added/removed they will show up in the Service after
+  kube-controller-manager has run
+- Services exist independently from the applications they provide access to
+    - deleting your pods won't delete the service
+    - the only thing they do is
+- Once service can provide access to Pods in multiple Deployments - is used to
+  do canary deployments
+- kube-proxy
+    - runs on each node
+        - remember that the Service needs to send the packets to the correct
+          node as well as correct Pod on that node
+        - so kube-proxy is required to make that happen
+    - watches the k8s API for new Services and endpoints (endpoints = Pods on
+      that node which have correct label)
+    - after creation, it opens random ports an listens for traffic to the
+      Service port on the node's cluster IP address
+        - it then redirects traffic to a Pod that is specified as an endpoint
+    - works in background
+    - does not typically require any config
+- types of service
     1. ClusterIP
-        * default service type
-        * exposes the service on an internal cluster IP address
-        * has IP on the cluster net
-        * lets you load balance traffic from one part of the cluster to another
-        * e.g. if you have pods for your front-end app and pods for a back-end
-        service. You want to expose a load balancer for the backend pods to the
-        front-end pods - Cluster IP service/load-balancer is how you do it.
+        - default service type
+        - exposes the service on an internal cluster IP address
+        - has IP on the cluster net
+        - lets you load balance traffic from one part of the cluster to another
+        - e.g. if you have pods for your front-end app and pods for a back-end
+          service. You want to expose a load balancer for the backend pods to
+          the front-end pods - Cluster IP service/load-balancer is how you do
+          it.
     2. NodePort
-        * exposes a high port on each node e.g. 32000
-        * the exposed port on the node will forward traffic to the node-port Service behind it
-        * this is still not for general user access
-        * use cases:
-        * ???
-        * the Ingress uses the services directly, it does not need a node-port
+        - exposes a high port on each node e.g. 32000
+        - the exposed port on the node will forward traffic to the node-port
+          Service behind it
+        - this is still not for general user access
+        - use cases:
+        - ???
+        - the Ingress uses the services directly, it does not need a node-port
     3. LoadBalancer
-        * currently implemented in public clouds only
+        - currently implemented in public clouds only
     4. ExternalName
-        * works on DNS names
-        * redirection happens at the DNS level
-        * useful for migration
-* ClusterIP and NodePort are most important for the CKAD exam
+        - works on DNS names
+        - redirection happens at the DNS level
+        - useful for migration
+- ClusterIP and NodePort are most important for the CKAD exam
 
-* when you expose a Deployment, you actually expose the Pods as endpoints
-* you don't actually "expose" the deployment, k8s just uses the deployment label to find endpoints
-    * Pods created within a Deployment will have a `app=<name-of-deployment>` label
-* ports
-    * targetPort = the port on the container that the services addresses
-    * port = the port on which the Service itself is available
-        * is a property of the Service itself
-        * each Service has a dedicated ip address so you don't need to pick obscure ports you can use the default ports
-    * nodeport = the port that is exposed externally when using the NodePort service type
+- when you expose a Deployment, you actually expose the Pods as endpoints
+- you don't actually "expose" the deployment, k8s just uses the deployment label
+  to find endpoints
+    - Pods created within a Deployment will have a `app=<name-of-deployment>`
+      label
+- ports
+    - targetPort = the port on the container that the services addresses
+    - port = the port on which the Service itself is available
+        - is a property of the Service itself
+        - each Service has a dedicated ip address so you don't need to pick
+          obscure ports you can use the default ports
+    - nodeport = the port that is exposed externally when using the NodePort
+      service type
 
 ![Networking](./network-2.png)
 
@@ -561,21 +584,21 @@ kubectl create service
 kubectl get all --selector app=eoin-app-server -o wide
 ```
 
-pods can come and go and their replicas can come and go
-so if your pods need to access other pods, they need to depend on something that will stick around - services are this
-    they represent a "load balanced service where consumers of that service (consumers usually other parts of the cluster) can access the service wihtout knowing how many replicas/pods there are behind the service
+pods can come and go and their replicas can come and go so if your pods need to
+access other pods, they need to depend on something that will stick around -
+services are this they represent a "load balanced service where consumers of
+that service (consumers usually other parts of the cluster) can access the
+service wihtout knowing how many replicas/pods there are behind the service
 
 A service can be "headless" i.e. does not have a cluster IP
 
-k8s has an internal DNS service
-    it is authoritative for the services in the cluster
-when you create service it automatically registers itself with this DNS server
-all pods are configured to use the DNS service as a resolver
-    so they will automatically find services
-    from a pod you can always access a service by name
+k8s has an internal DNS service it is authoritative for the services in the
+cluster when you create service it automatically registers itself with this DNS
+server all pods are configured to use the DNS service as a resolver so they will
+automatically find services from a pod you can always access a service by name
 
-The dns server is implmeented via the coredns pod
-and it sits behind the `service/kube-dns` service in the `kube-system` namespace
+The dns server is implmeented via the coredns pod and it sits behind the
+`service/kube-dns` service in the `kube-system` namespace
 
 ```bash
 ❯ kubectl get svc,pods -n kube-system
@@ -668,76 +691,86 @@ Server Version: version.Info{Major:"1", Minor:"22", GitVersion:"v1.22.5", GitCom
 
 https://thenewstack.io/ingress-controllers-the-swiss-army-knife-of-kubernetes/
 
-* ingress controller =
-    * a load balancer which connects to the k8s nodes
-    * an API resource so it can access services directly
-        * the API resource contains the spec for the load balancer
-        * the load balancer actually implements the spec it gets from the Ingress resources
-    * incoming requests are forwarded from the "load balancer" part to the "API" part
-* can be implemented by many load balancers
-* k8s has no default ingress solution - ingress depends on the installation env of the k8s cluster
-* used to provide external access sto internal k8s cluster resources
-* uses a load balancer which is present on the external cluster
-    * is implemented by the Ingress controller
-* has 2 phases
-    * 1. load balancer
-    * 2. API resource
-* Ingress expose HTTP and HTTPS
-* Traffic routing is controlled by rules defined on the Ingres  resource
-* Ingress features
-    * Give services externally reachable URLs
-    * Load balance traffic
-    * Terminate TLS
-    * Offer "name based virtual hosting"
-* Ingress resources are not same as ingress controller
-* ingress resources hav 1+ rules which map URLs to `<service-name>:<port>` tuples
-* Many ingress controllers exist
-    * The setup of different controllers is quite different
-    * they don't all have same features e.g.
-        * protocol support TCP/UDP and gRPC?
-        * canary deployments
-        * circuit breakers
-        * rate limiting
-    * examples
+- ingress controller =
+    - a load balancer which connects to the k8s nodes
+    - an API resource so it can access services directly
+        - the API resource contains the spec for the load balancer
+        - the load balancer actually implements the spec it gets from the
+          Ingress resources
+    - incoming requests are forwarded from the "load balancer" part to the "API"
+      part
+- can be implemented by many load balancers
+- k8s has no default ingress solution - ingress depends on the installation env
+  of the k8s cluster
+- used to provide external access sto internal k8s cluster resources
+- uses a load balancer which is present on the external cluster
+    - is implemented by the Ingress controller
+- has 2 phases
+    -   1. load balancer
+    -   2. API resource
+- Ingress expose HTTP and HTTPS
+- Traffic routing is controlled by rules defined on the Ingres resource
+- Ingress features
+    - Give services externally reachable URLs
+    - Load balance traffic
+    - Terminate TLS
+    - Offer "name based virtual hosting"
+- Ingress resources are not same as ingress controller
+- ingress resources hav 1+ rules which map URLs to `<service-name>:<port>`
+  tuples
+- Many ingress controllers exist
+    - The setup of different controllers is quite different
+    - they don't all have same features e.g.
+        - protocol support TCP/UDP and gRPC?
+        - canary deployments
+        - circuit breakers
+        - rate limiting
+    - examples
         1. nginx
-            * seems to be the recommended way to do ingress with docker-desktop
-            * https://kubernetes.github.io/ingress-nginx/deploy/#docker-desktop
-            * on AWS you can put this behind a network load balancer
-            * I think
-            * runs nginx in a pod
-            * magically updates the nginx config as your cluster changes
-            * doesn't have has many advanced features as the others but is less to configure as a result
-            * only ingress controller maintained by k8s team
+            - seems to be the recommended way to do ingress with docker-desktop
+            - https://kubernetes.github.io/ingress-nginx/deploy/#docker-desktop
+            - on AWS you can put this behind a network load balancer
+            - I think
+            - runs nginx in a pod
+            - magically updates the nginx config as your cluster changes
+            - doesn't have has many advanced features as the others but is less
+              to configure as a result
+            - only ingress controller maintained by k8s team
         2. haproxy
         3. traefik
         4. kong
         5. contour
         6. minikube ingress controller
         7. aws-load-balancer-controller
-            * https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.4/how-it-works/
-            * will manage AWS ALB/NLBs for you based on what you put in your k8s config
-            * this controller manages AWS load balancers as if they were k8s resources
-            * actual user HTTP requests go through the AWS ELB and then to a NodePort on a node which then sends the req to the container
+            - https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.4/how-it-works/
+            - will manage AWS ALB/NLBs for you based on what you put in your k8s
+              config
+            - this controller manages AWS load balancers as if they were k8s
+              resources
+            - actual user HTTP requests go through the AWS ELB and then to a
+              NodePort on a node which then sends the req to the container
         8. Istio
         9. Ambassador
 
+Having ingress controllers be middlemen between your app(s) and the outside
+world opens up a lot of opportunties
 
-Having ingress controllers be middlemen between your app(s) and the outside world opens up a lot of opportunties
-
-* controller knows when app is slow or down - is a natural choke point for monitoring an observability e.g. hook Prometheus in here
-* can do as much fancy load balancing based on health/whatever as you like
-* service meshes live here too
-* security monitoring tools can observe traffic esp. if the ingress controller terminates TLS
-* can function as an API gateway
-* can do rate-limiting, restarts, timeouts
-* can do fine grained access control
-* blue/green, canary, other fancy deployment options
-* routing for newer protocols e.g. gRPC
-* HTTP header and response manipulation
-* can integrate WAF
-* SNI routing
-* advanced routing based on whatever you like
-* enforce mTLS
+- controller knows when app is slow or down - is a natural choke point for
+  monitoring an observability e.g. hook Prometheus in here
+- can do as much fancy load balancing based on health/whatever as you like
+- service meshes live here too
+- security monitoring tools can observe traffic esp. if the ingress controller
+  terminates TLS
+- can function as an API gateway
+- can do rate-limiting, restarts, timeouts
+- can do fine grained access control
+- blue/green, canary, other fancy deployment options
+- routing for newer protocols e.g. gRPC
+- HTTP header and response manipulation
+- can integrate WAF
+- SNI routing
+- advanced routing based on whatever you like
+- enforce mTLS
 
 Questions
 
@@ -773,88 +806,96 @@ Annotations:  <none>
 Events:       <none>
 ```
 
-You can setup an Ingress with rules that send different URLs to different Services
-Rules in the Ingress point at services
-Do packets actually flow through the Service or do they flow directly to the Pods in the Service?
-
+You can setup an Ingress with rules that send different URLs to different
+Services Rules in the Ingress point at services Do packets actually flow through
+the Service or do they flow directly to the Pods in the Service?
 
 Ingress Rule
 
 1. An optional host
-    * if no host specified, the rule applies to all inbound HTTP traffic
+    - if no host specified, the rule applies to all inbound HTTP traffic
 2. A list of paths
-    * each path has it's own backend
-    * paths can be a POSIX regex
+    - each path has it's own backend
+    - paths can be a POSIX regex
 3. The backend
-    * one of two types
+    - one of two types
         1. Service backend
-            * a k8s service
+            - a k8s service
         2. Resource backend
-            * often used to refer to cloud based object storage
-            * not on CKAD examp
-    * you can setup a default backend so that traffic that doesn't match a path will go somewhere
-* Path types `pathType`
-    * two types:
+            - often used to refer to cloud based object storage
+            - not on CKAD examp
+    - you can setup a default backend so that traffic that doesn't match a path
+      will go somewhere
+
+- Path types `pathType`
+    - two types:
         1. Exact = an exact match should occur
         2. Prefix = only the prefix needs to match
-    * ingress will set this by default for you to `Exact` if you omit it
-* Ingress types
+    - ingress will set this by default for you to `Exact` if you omit it
+- Ingress types
     1. Ingress backed by a single Service
-        * one rule defines access to one backend service
-        * e.g. `kubectl create ing my-single --rule="/files=filesservice:80"`
+        - one rule defines access to one backend service
+        - e.g. `kubectl create ing my-single --rule="/files=filesservice:80"`
     1. Simple fanout
-        * two or more ules definign paths to different services
-        * e.g. `kubectl create ing my-fanout --rule="/files=files:80" --rule="/db:dbsvc:2345"`
+        - two or more ules definign paths to different services
+        - e.g.
+          `kubectl create ing my-fanout --rule="/files=files:80" --rule="/db:dbsvc:2345"`
     1. Name-based virtual hosting
-        * two or more rules that route requests based on `Host` header
-        * each Host must be in DNS
-        e.g. `kubectl create ing my-multihost --rule="files.me.com/=files:80" --rule "db.me.com/=dbsvc:2345"`
+        - two or more rules that route requests based on `Host` header
+        - each Host must be in DNS e.g.
+          `kubectl create ing my-multihost --rule="files.me.com/=files:80" --rule "db.me.com/=dbsvc:2345"`
 
 ### IngressClass
 
-* you create an `IngressClass` resource
-  * contains config info for that class of ingress e.g. which controller should implement it
-  * it's kind of like a profile for a ingress controller
-* when you create an `Ingress` resource you reference the class that it should be configured by
-* new in k8s 1.22
-    * paving a cow-path in use by controllers already using annotations
-* can set a specific ingress controller as the cluster default with the `ingressclass.kubernetes.io/is-default-class: "true"` annotation
+- you create an `IngressClass` resource
+    - contains config info for that class of ingress e.g. which controller
+      should implement it
+    - it's kind of like a profile for a ingress controller
+- when you create an `Ingress` resource you reference the class that it should
+  be configured by
+- new in k8s 1.22
+    - paving a cow-path in use by controllers already using annotations
+- can set a specific ingress controller as the cluster default with the
+  `ingressclass.kubernetes.io/is-default-class: "true"` annotation
 
 Network policies
 
-* by default there are no restrictions on network traffic in K8s!
-* Pods can always communicate even if they are in other NameSpaces
-* to limit this Network Policies are used
-* Network Policies must be supported bye the _network plugin_
-* network plugin
-    * https://kubernetes.io/docs/concepts/extend-kubernetes/compute-storage-net/network-plugins/
-    * conforms to the Container Network Interface spec (CNI)
-    * the plugin provides the `NetworkPlugin` interface
-    * options:
-        * cni
-        * kubenet
-            * simple network plugin, linux only
-        * AWS VPC CNI plugin
-            * https://docs.aws.amazon.com/eks/latest/userguide/pod-networking.html
-    * minikube
-        * minikube network plugin does not support
-        * you have to start minikube with `--cni=calico` to use the calico network plugin
-        * note that calico doesn't work well with minikube
-* If a network policy is in use then traffic which doesn't match is denied by default
-* If a network policy is not in use the all traffic is allowed by default
-* A NetworkPolicy can be _pod based_ or _namespace based_
-* A selector label is used to specify which traffic is allowed to/from the Pods that match the selector
-* labels are important
-* In network policies, 3 different identifiers can be used to match network traffic
+- by default there are no restrictions on network traffic in K8s!
+- Pods can always communicate even if they are in other NameSpaces
+- to limit this Network Policies are used
+- Network Policies must be supported bye the _network plugin_
+- network plugin
+    - https://kubernetes.io/docs/concepts/extend-kubernetes/compute-storage-net/network-plugins/
+    - conforms to the Container Network Interface spec (CNI)
+    - the plugin provides the `NetworkPlugin` interface
+    - options:
+        - cni
+        - kubenet
+            - simple network plugin, linux only
+        - AWS VPC CNI plugin
+            - https://docs.aws.amazon.com/eks/latest/userguide/pod-networking.html
+    - minikube
+        - minikube network plugin does not support
+        - you have to start minikube with `--cni=calico` to use the calico
+          network plugin
+        - note that calico doesn't work well with minikube
+- If a network policy is in use then traffic which doesn't match is denied by
+  default
+- If a network policy is not in use the all traffic is allowed by default
+- A NetworkPolicy can be _pod based_ or _namespace based_
+- A selector label is used to specify which traffic is allowed to/from the Pods
+  that match the selector
+- labels are important
+- In network policies, 3 different identifiers can be used to match network
+  traffic
     1. podSelector
-        * allows access to a pod with a matching selector label
+        - allows access to a pod with a matching selector label
     2. namespaceSelector
-        * allows incoming traffic from namespaces with the matching selector label
+        - allows incoming traffic from namespaces with the matching selector
+          label
     3. ipBLock
-        * allows access from a range of cluster-external IPs
-* NetworkPOlicies are additive, they do not conflict
-    * traffic blocked by default, first match allows traffic through
-
+        - allows access from a range of cluster-external IPs
+- NetworkPOlicies are additive, they do not conflict
+    - traffic blocked by default, first match allows traffic through
 
 ### Storage
-

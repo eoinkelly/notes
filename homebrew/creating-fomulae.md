@@ -1,5 +1,3 @@
-
-
 ## Experiment 1
 
 ```
@@ -68,6 +66,7 @@ Please run `brew audit --new osv-detector-ex-1` before submitting, thanks.
 Editing /opt/homebrew/Library/Taps/homebrew/homebrew-core/Formula/osv-detector-ex-1.rb
 code /opt/homebrew/Library/Taps/homebrew/homebrew-core/Formula/osv-detector-ex-1.rb
 ```
+
 ```ruby
 # Documentation: https://docs.brew.sh/Formula-Cookbook
 #                https://rubydoc.brew.sh/Formula

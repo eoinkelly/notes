@@ -1,5 +1,3 @@
-
-
 ```ruby
 page.class # => Capybara::Session
 # these are the same, default maximum wait is 2 secs, can be changed

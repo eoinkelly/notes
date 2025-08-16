@@ -2,7 +2,7 @@
 
 Sources
 
-* https://graphql.org/learn/queries/
+- https://graphql.org/learn/queries/
 
 ## Questions
 
@@ -10,20 +10,22 @@ what is the deal with nodes and edges as key names?
 
 ## Overview
 
-> A GraphQL service is created by defining types and fields on those types,
-> then providing functions for each field on each type.
+> A GraphQL service is created by defining types and fields on those types, then
+> providing functions for each field on each type.
 
-
-In GraphQL, every field and nested object can get its own set of arguments, making GraphQL a complete replacement for making multiple API fetches. You can even pass arguments into scalar fields, to implement data transformations once on the server, instead of on every client separately
+In GraphQL, every field and nested object can get its own set of arguments,
+making GraphQL a complete replacement for making multiple API fetches. You can
+even pass arguments into scalar fields, to implement data transformations once
+on the server, instead of on every client separately
 
 ## Operations
 
 The operation type is either
 
 1. query
-    * can be run in parallel
+    - can be run in parallel
 1. mutation
-    * run in series
+    - run in series
 1. subscription
 
 The operation type is required unless you're using the query shorthand syntax,
@@ -32,8 +34,8 @@ operation.
 
 ## Short-hand syntax
 
-* you can use short-hand if your operation is `query`
-* names are required in a multi-operation document
+- you can use short-hand if your operation is `query`
+- names are required in a multi-operation document
 
 ```
 # long hand
@@ -62,25 +64,28 @@ fragment <FRAGMENT_NAME> on <TYPENAME> {
 }
 ```
 
-* can be declared with a name or declared inline
-* fragments can reference variables by `$varname` - the variables are defined in the query/mutation/subscription definiton
+- can be declared with a name or declared inline
+- fragments can reference variables by `$varname` - the variables are defined in
+  the query/mutation/subscription definiton
 
 ## Variables
 
-* graphql lets you pass variables separately (similar idea to how the Postgres protocol allows)
-* you pass a dictionary (JSON object ish) of variables
-* they want to avoid doing string interpolation on the client
-* make variables required with !
-* variables can have default values
-* variables must be on eof
+- graphql lets you pass variables separately (similar idea to how the Postgres
+  protocol allows)
+- you pass a dictionary (JSON object ish) of variables
+- they want to avoid doing string interpolation on the client
+- make variables required with !
+- variables can have default values
+- variables must be on eof
     1. scalar
     1. enum
     1. "input object type"
 
 # Directives
 
-* `fieldName @include(if: $booleanVar) `
-* `fieldName @skip(if: $booleanVar) `
+- `fieldName @include(if: $booleanVar) `
+- `fieldName @skip(if: $booleanVar) `
+
 ```
 query Hero($episode: Episode, $withFriends: Boolean!) {
   hero(episode: $episode) {
@@ -94,55 +99,50 @@ query Hero($episode: Episode, $withFriends: Boolean!) {
 
 ## Types
 
-* types have a _kind_
-* the kind decides what fields area available to describe that type
-    * scalars have
+- types have a _kind_
+- the kind decides what fields area available to describe that type
+    - scalars have
         1. name
         1. description
-    * enums
+    - enums
         1. name
         1. description
         1. the values of the enum
-    * Objects
+    - Objects
         1. name
         1. description
         1. the fields in the object
-    * Interfaces
+    - Interfaces
         1. name
         1. description
         1. the fields in the object
         1. the concrete object types possible at runtime
-    * Union types
+    - Union types
         1. the concrete object types possible at runtime
-    * Lists
-        * ???
-    * NonNull
-        * ???
-    * InputObject
+    - Lists
+        - ???
+    - NonNull
+        - ???
+    - InputObject
 
-    SCALAR
-    Indicates this type is a scalar.
+    SCALAR Indicates this type is a scalar.
 
-    OBJECT
-    Indicates this type is an object. fields and interfaces are valid fields.
+    OBJECT Indicates this type is an object. fields and interfaces are valid
+    fields.
 
-    INTERFACE
-    Indicates this type is an interface. fields and possibleTypes are valid fields.
+    INTERFACE Indicates this type is an interface. fields and possibleTypes are
+    valid fields.
 
-    UNION
-    Indicates this type is a union. possibleTypes is a valid field.
+    UNION Indicates this type is a union. possibleTypes is a valid field.
 
-    ENUM
-    Indicates this type is an enum. enumValues is a valid field.
+    ENUM Indicates this type is an enum. enumValues is a valid field.
 
-    INPUT_OBJECT
-    Indicates this type is an input object. inputFields is a valid field.
+    INPUT_OBJECT Indicates this type is an input object. inputFields is a valid
+    field.
 
-    LIST
-    Indicates this type is a list. ofType is a valid field.
+    LIST Indicates this type is a list. ofType is a valid field.
 
-    NON_NULL
-    Indicates this type is a non-null. ofType is a valid field.
+    NON_NULL Indicates this type is a non-null. ofType is a valid field.
 
 `__TypeKind` enum
 
@@ -180,14 +180,13 @@ query MyQuery {
 
 ## Interfaces
 
-* is an abstract type
-* a common set of fields that can be part of multiple types
-
+- is an abstract type
+- a common set of fields that can be part of multiple types
 
 ## Union types
 
-* is an abstract type
-* A type which represents `A | B`
+- is an abstract type
+- A type which represents `A | B`
 
 ```
 query HeroForEpisode($ep: Episode!) {
@@ -205,6 +204,7 @@ query HeroForEpisode($ep: Episode!) {
 
 ## Meta fields
 
-* graphql has a few metadata files you can use to introspect the objects you get back from the server
+- graphql has a few metadata files you can use to introspect the objects you get
+  back from the server
 
 `__typename`

@@ -1,4 +1,3 @@
-
 ```
 sudo apt install aide
 [sudo] password for deploy:
@@ -16,8 +15,7 @@ Need to get 2094 kB of archives.
 After this operation, 7004 kB of additional disk space will be used.
 ```
 
-the postfix config wanted me to make choices aobut where mail is sent - how does that work non-interactively?
+the postfix config wanted me to make choices aobut where mail is sent - how does
+that work non-interactively?
 
-Why does it install so much mail stuff?
-    postfix and mailx?
-
+Why does it install so much mail stuff? postfix and mailx?

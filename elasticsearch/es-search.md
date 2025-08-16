@@ -2,9 +2,9 @@
 
 https://www.elastic.co/guide/en/elasticsearch/reference/7.17/query-dsl.html
 
--   returns 10 results by default
--   Sends GET requests with a body
--   Form is
+- returns 10 results by default
+- Sends GET requests with a body
+- Form is
     ```sh
     GET /_search # search all indexes in the cluster
     GET /{index name}/_search
@@ -49,38 +49,45 @@ GET /movies/_search?q=title:blah
 GET /movies/_search?q=+year:>2010+title:trek
 ```
 
--   Handy for quick searches but don't use in prod
--   ++ it's short and concise
--   -- query params must be URL encoded - annoying for some params
--   -- queries can be cryptic
--   -- the query is in the URL so can be logged
--   -- don't ever ever allow end users to pass in the query string - equivalent of SQLi
+- Handy for quick searches but don't use in prod
+- ++ it's short and concise
+- -- query params must be URL encoded - annoying for some params
+- -- queries can be cryptic
+- -- the query is in the URL so can be logged
+- -- don't ever ever allow end users to pass in the query string - equivalent of
+  SQLi
 
 https://www.elastic.co/guide/en/elasticsearch/reference/7.17/query-dsl-query-string-query.html
 
--   seems to overlap with the `match` query a lot
-    -   When should you use each?
--   It is tempting to let users type this syntax into your site and just pass it on to ES but this is bad because
-    -   Your users are now tied to the query_string DSL and any changes which might happen to it
-    -   You cannot easily tune queries e.g. add boosting
-    -   Your users can DoS you pretty easily
--   `query`
-
-    -   uses a DSL to allow searches to be performed on one line because this is basically the JSON version of the putting the query inline in the URL via `q=...`
-    -   it gets a series of _terms_ (NB term doesn't mean exactly the same thing as the normal ES use of the word) and _operators_
-    -   term
-        -   can be single word or `"multiple words surrounded by quotes"`
-        -   matches if the term is **contained** in the field - it is not an exact match
-    -   supports wildcards
-    -   supports regular expressions
-    -   supports a unique fuziness operator `~` which uses Damerau-Levenshtein distance
-        -   `~` is shorthand for `~2` (setting the edit distance to 2)
-        -   `~1` is also available
-        -   http://en.wikipedia.org/wiki/Damerau-Levenshtein_distance
-    -   supports boosting
-    -   supports explicit boolean operators `AND`, `OR`, `NOT`
-    -   supports grouping with `()`
-    -   examples
+- seems to overlap with the `match` query a lot
+    - When should you use each?
+- It is tempting to let users type this syntax into your site and just pass it
+  on to ES but this is bad because
+    - Your users are now tied to the query_string DSL and any changes which
+      might happen to it
+    - You cannot easily tune queries e.g. add boosting
+    - Your users can DoS you pretty easily
+- `query`
+    - uses a DSL to allow searches to be performed on one line because this is
+      basically the JSON version of the putting the query inline in the URL via
+      `q=...`
+    - it gets a series of _terms_ (NB term doesn't mean exactly the same thing
+      as the normal ES use of the word) and _operators_
+    - term
+        - can be single word or `"multiple words surrounded by quotes"`
+        - matches if the term is **contained** in the field - it is not an exact
+          match
+    - supports wildcards
+    - supports regular expressions
+    - supports a unique fuziness operator `~` which uses Damerau-Levenshtein
+      distance
+        - `~` is shorthand for `~2` (setting the edit distance to 2)
+        - `~1` is also available
+        - http://en.wikipedia.org/wiki/Damerau-Levenshtein_distance
+    - supports boosting
+    - supports explicit boolean operators `AND`, `OR`, `NOT`
+    - supports grouping with `()`
+    - examples
 
         ```sh
         # where the status field contains "active"
@@ -99,9 +106,9 @@ https://www.elastic.co/guide/en/elasticsearch/reference/7.17/query-dsl-query-str
         _exists_:title
         ```
 
--   fields = what fields to search
--   default operator
-    -   the default boolean operator to use to combine
+- fields = what fields to search
+- default operator
+    - the default boolean operator to use to combine
 
 ```json
 {
@@ -121,39 +128,40 @@ https://www.elastic.co/guide/en/elasticsearch/reference/7.17/query-dsl-query-str
 
 https://www.elastic.co/guide/en/elasticsearch/reference/7.17/query-dsl-simple-query-string-query.html
 
--   more limited version of `query_string` but safer for it
--   doesn't return errors for invalid syntax
--   is designed for the use case where you want to provide and advanced query syntax for users with minimal work
-    -   Caution: this assumes you trust your users
+- more limited version of `query_string` but safer for it
+- doesn't return errors for invalid syntax
+- is designed for the use case where you want to provide and advanced query
+  syntax for users with minimal work
+    - Caution: this assumes you trust your users
 
 ### Search query anatomy
 
--   Leaf clause
-    -   used to compare a field against the query string
-    -   Queries:
+- Leaf clause
+    - used to compare a field against the query string
+    - Queries:
         1. match_all
         1. match
         1. multi_match
         1. query_string
         1. simple_query_string
-    -   Filters:
+    - Filters:
         1. range
         1. term
         1. terms
         1. exists
         1. missing
--   Compound clause
-    -   used to combine other query clauses (both leaf and other compound clauses)
-    -   Queries:
+- Compound clause
+    - used to combine other query clauses (both leaf and other compound clauses)
+    - Queries:
         1. bool
-    -   Filters:
+    - Filters:
         1. bool
 
 ### Queries
 
--   Queries match with a relevance score (floating point between 0.0 -> 1.0)
--   Wrapped in a `"query": { ... }` block
--   You can nest filters inside queries and nest queries inside filters
+- Queries match with a relevance score (floating point between 0.0 -> 1.0)
+- Wrapped in a `"query": { ... }` block
+- You can nest filters inside queries and nest queries inside filters
 
 #### match_all
 
@@ -165,26 +173,35 @@ https://www.elastic.co/guide/en/elasticsearch/reference/7.17/query-dsl-simple-qu
 }
 ```
 
--   all results receive a neutral score of `1` because they are all equally relevant
+- all results receive a neutral score of `1` because they are all equally
+  relevant
 
 #### match
 
 https://www.elastic.co/guide/en/elasticsearch/reference/7.17/query-dsl-match-query.html
 
--   searches a single field - see `multi_match` for searching more than one field at once
--   The query will be analysed by
-    -   The analyser setup for the field, falling back to the default analyser for the index.
-        -   This helps ensure that your query will be analysed in the same way your indexed text was
--   Query text is analysed and the terms created by analysis are used to create a `boolean` query
-    -   The default operator is `OR`
-    -   Example:
-        -   When you give it a query `Hello There boo boo` it will by default search for `hello OR there OR boo OR boo`
--   good for _full text search_ OR _exact value_ search depending on the type of the field:
-    -   full text field
-        -   => use the defined _analyzer_ for that field
-        -   it will find substrings
-    -   exact field e.g. number, date, boolean, _not_analyzed_ string => do an exact match
-        -   NOTE: for exact matches you probably want a filter clause (see instead because it will be faster and cached
+- searches a single field - see `multi_match` for searching more than one field
+  at once
+- The query will be analysed by
+    - The analyser setup for the field, falling back to the default analyser for
+      the index.
+        - This helps ensure that your query will be analysed in the same way
+          your indexed text was
+- Query text is analysed and the terms created by analysis are used to create a
+  `boolean` query
+    - The default operator is `OR`
+    - Example:
+        - When you give it a query `Hello There boo boo` it will by default
+          search for `hello OR there OR boo OR boo`
+- good for _full text search_ OR _exact value_ search depending on the type of
+  the field:
+    - full text field
+        - => use the defined _analyzer_ for that field
+        - it will find substrings
+    - exact field e.g. number, date, boolean, _not_analyzed_ string => do an
+      exact match
+        - NOTE: for exact matches you probably want a filter clause (see instead
+          because it will be faster and cached
 
 ```js
 // { "match": { "fieldName": "field value" }}
@@ -228,14 +245,19 @@ GET /eoin-test-1/_search
 
 https://www.elastic.co/guide/en/elasticsearch/reference/7.17/query-dsl-match-query-phrase.html
 
--   analyzes the given query text and creates a "phrase query"
--   the phrase query matches terms up to a configurable `slop` number (defaults to 0)
-    -   transposed terms have a slop of 2
-    -   you can use slop to control whether the phrase has to be in the exact order
-    -   slop controls how far you are willing to let a term move from it's position and still be matched
--   you can configure which analyzer is used
-    -   the default is to use whatever analyzer is set for the field and to fall back to the default search analyzer if not explicit field mapping set
--   if you set a high slop value you can use `match_phrase` to implement proximity search
+- analyzes the given query text and creates a "phrase query"
+- the phrase query matches terms up to a configurable `slop` number (defaults
+  to 0)
+    - transposed terms have a slop of 2
+    - you can use slop to control whether the phrase has to be in the exact
+      order
+    - slop controls how far you are willing to let a term move from it's
+      position and still be matched
+- you can configure which analyzer is used
+    - the default is to use whatever analyzer is set for the field and to fall
+      back to the default search analyzer if not explicit field mapping set
+- if you set a high slop value you can use `match_phrase` to implement proximity
+  search
 
 ```json
 GET /_search
@@ -254,7 +276,7 @@ GET /_search
 
 #### multi_match
 
--   run the same query on multiple fields
+- run the same query on multiple fields
 
 ```jsonc
 {
@@ -285,7 +307,7 @@ GET /movies/_search
 
 #### prefix
 
--   https://www.elastic.co/guide/en/elasticsearch/reference/7.17/query-dsl-prefix-query.html
+- https://www.elastic.co/guide/en/elasticsearch/reference/7.17/query-dsl-prefix-query.html
 
 ```jsonc
 GET /movies/_search
@@ -317,7 +339,7 @@ GET /movies/_search
 
 #### regexp
 
--   https://www.elastic.co/guide/en/elasticsearch/reference/7.17/query-dsl-regexp-query.html
+- https://www.elastic.co/guide/en/elasticsearch/reference/7.17/query-dsl-regexp-query.html
 
 ```jsonc
 GET /movies/_search
@@ -335,9 +357,9 @@ GET /movies/_search
 
 ### Filters
 
--   Filters match with a yes/no
--   Wrapped in a `"filter": { ... }` block
--   You can nest filters inside queries and nest queries inside filters
+- Filters match with a yes/no
+- Wrapped in a `"filter": { ... }` block
+- You can nest filters inside queries and nest queries inside filters
 
 #### range
 
@@ -354,8 +376,9 @@ GET /movies/_search
 
 #### term
 
--   search by exact value
--   `term` query does no analysis of text (does not run any analyzer) so will always find exact match
+- search by exact value
+- `term` query does no analysis of text (does not run any analyzer) so will
+  always find exact match
 
 ```jsonc
 { "term": { "age":    26           }}
@@ -366,8 +389,8 @@ GET /movies/_search
 
 #### terms
 
--   same as `term` but allows multiple exact match values
--   can be used to do searches for accented and unaccented values
+- same as `term` but allows multiple exact match values
+- can be used to do searches for accented and unaccented values
 
 ```jsonc
 { "terms": { "tag": ["search", "full_text", "nosql"] } }
@@ -375,8 +398,8 @@ GET /movies/_search
 
 #### exists
 
--   roughly equivalent to SQL IS NOT NULL
--   matches if the given field is not `null` in the document
+- roughly equivalent to SQL IS NOT NULL
+- matches if the given field is not `null` in the document
 
 ```jsonc
 {
@@ -388,8 +411,8 @@ GET /movies/_search
 
 #### missing
 
--   roughly equivalent to SQL IS NULL
--   matches if the given field is `null` in the document
+- roughly equivalent to SQL IS NULL
+- matches if the given field is `null` in the document
 
 ```jsonc
 {
@@ -401,20 +424,23 @@ GET /movies/_search
 
 ### bool (both a Query and a Filter)
 
--   combines other queries
--   takes the following arguments:
-    -   must
-        -   clauses which must match for the document to be included
-    -   must_not
-        -   clauses which must not match for the document to be included
-    -   should
-        -   if these queries matches we increase the score
-        -   If there are no `must` clauses, at least one `should` clause has to match. However, if there is at least one `must` clause, no `should` clauses are required to match.
-    -   filter
-        -   these clauses **must** match but don't contribute to the score
-        -   useful when you don't want a particular criteria to contribute to the score
--   a `bool` query can be nested within a `filter`, `should` of another `bool`
--   combines scores together to return a single score
+- combines other queries
+- takes the following arguments:
+    - must
+        - clauses which must match for the document to be included
+    - must_not
+        - clauses which must not match for the document to be included
+    - should
+        - if these queries matches we increase the score
+        - If there are no `must` clauses, at least one `should` clause has to
+          match. However, if there is at least one `must` clause, no `should`
+          clauses are required to match.
+    - filter
+        - these clauses **must** match but don't contribute to the score
+        - useful when you don't want a particular criteria to contribute to the
+          score
+- a `bool` query can be nested within a `filter`, `should` of another `bool`
+- combines scores together to return a single score
 
 Bool queries can be used in two contexts
 
@@ -423,9 +449,12 @@ Bool queries can be used in two contexts
     - faster than scoring queries
 2. query context: how well does this query match our documents?
     - aka "scoring query"
-    - calculates how relevant each document is to the given query and gives it a `_score` which is then used to sort the results by relevance
+    - calculates how relevant each document is to the given query and gives it a
+      `_score` which is then used to sort the results by relevance
 
-You can combine both kinds of query for best performance. First filter out the documents you don't want and then use scoring query to calculate relevance of that subset.
+You can combine both kinds of query for best performance. First filter out the
+documents you don't want and then use scoring query to calculate relevance of
+that subset.
 
 ```jsonc
 GET /movies/_search
@@ -452,17 +481,20 @@ GET /movies/_search
 
 ### Relevancy
 
--   ES provides multiple algorithms for calculating relevancy
--   The default relevancy algorithm is _Term Frequency - Inverse Document Frequency_ (TF-IDF)
--   Term Frequency
-    -   How often the term appears in a given document
-    -   The more times a word you are looking for appears in a document the higher the score
--   Document Frequency
-    -   How often a term appears in all documents in the index
--   Inverse Document Frequency
-    -   The weight of each word is higher if the word is uncommon across documents
--   You can manually "boost" the score of a particular field when searching
-    -   This lets you weight certain fields more than others when calculating relevancy
+- ES provides multiple algorithms for calculating relevancy
+- The default relevancy algorithm is _Term Frequency - Inverse Document
+  Frequency_ (TF-IDF)
+- Term Frequency
+    - How often the term appears in a given document
+    - The more times a word you are looking for appears in a document the higher
+      the score
+- Document Frequency
+    - How often a term appears in all documents in the index
+- Inverse Document Frequency
+    - The weight of each word is higher if the word is uncommon across documents
+- You can manually "boost" the score of a particular field when searching
+    - This lets you weight certain fields more than others when calculating
+      relevancy
 
 $$Rel = TF \cdot \frac{1}{DF}$$
 
@@ -472,45 +504,53 @@ https://www.elastic.co/guide/en/elasticsearch/reference/7.17/mapping-boost.html
 
 You can apply a boost parameter (many/most/all ???) queries
 
--   A boost is a floating point number used to decrease or increase the relevance scores of a query.
--   You can use the boost parameter to adjust relevance scores for searches containing **two or more queries**.
--   The boost is applied only for term queries (prefix, range and fuzzy queries are not boosted).
--   Boost values are relative to the default value of 1.0.
--   A boost value between 0 and 1.0 decreases the relevance score.
--   A value greater than 1.0 increases the relevance score.
--   Pre 5.0 you could apply boost at index time but that is deprecated now
-    -   Query time boost can be changed at will without re-indexing
+- A boost is a floating point number used to decrease or increase the relevance
+  scores of a query.
+- You can use the boost parameter to adjust relevance scores for searches
+  containing **two or more queries**.
+- The boost is applied only for term queries (prefix, range and fuzzy queries
+  are not boosted).
+- Boost values are relative to the default value of 1.0.
+- A boost value between 0 and 1.0 decreases the relevance score.
+- A value greater than 1.0 increases the relevance score.
+- Pre 5.0 you could apply boost at index time but that is deprecated now
+    - Query time boost can be changed at will without re-indexing
 
 ### Fuzziness
 
--   The _Lenvenshtein edit distance_ i.e. the number of **one character changes** (where a change is a substitution, insertion or deletion) needed to make one string be the same as another string
--   Levenshtein distance accounts for (each has an edit distance of 1):
-    -   Substitutions of characters: `interstallar` -> `intersteller`
-    -   Insertions of character: `interstellar` -> `intersterllar`
-    -   Deletion of characters: `interstellar` -> `interstelar`
--   defaults to 0
--   increasing fuzziness increases the number of results you get but can decrease how relevant those results are
-    -   e.g. if I set fuzziness to 2 and search for a 2 character query then it will always match every record (because 2 edits can turn it into any other 2 character string)
-    -   => you should probably use `"AUTO"` as the value for fuzziness
--   Sources
-    -   https://www.elastic.co/guide/en/elasticsearch/reference/7.17/common-options.html#fuzziness
-    -   https://en.wikipedia.org/wiki/Levenshtein_distance
--   Use-cases:
-    -   handling typos and misspellings in search queries
--   Queries which support fuzziness:
+- The _Lenvenshtein edit distance_ i.e. the number of **one character changes**
+  (where a change is a substitution, insertion or deletion) needed to make one
+  string be the same as another string
+- Levenshtein distance accounts for (each has an edit distance of 1):
+    - Substitutions of characters: `interstallar` -> `intersteller`
+    - Insertions of character: `interstellar` -> `intersterllar`
+    - Deletion of characters: `interstellar` -> `interstelar`
+- defaults to 0
+- increasing fuzziness increases the number of results you get but can decrease
+  how relevant those results are
+    - e.g. if I set fuzziness to 2 and search for a 2 character query then it
+      will always match every record (because 2 edits can turn it into any other
+      2 character string)
+    - => you should probably use `"AUTO"` as the value for fuzziness
+- Sources
+    - https://www.elastic.co/guide/en/elasticsearch/reference/7.17/common-options.html#fuzziness
+    - https://en.wikipedia.org/wiki/Levenshtein_distance
+- Use-cases:
+    - handling typos and misspellings in search queries
+- Queries which support fuzziness:
     1. match
     2. ???
--   Possible values of `fuzziness`:
-    -   A number between 0-2 (inclusive)
-    -   `"auto"` (which is shorthand for `"auto:3,6")
-        -   is the preferred value
-    -   `"auto:low,high"`
-        -   Generates an edit distance based on the length of the term
-        -   value "AUTO" is shorthand for "AUTO:3,6"
-        -   When the value is AUTO then for lengths
-            -   0..2 must match exactly
-            -   3..5 one edit allowed
-            -   > 5 two edits allowed
+- Possible values of `fuzziness`:
+    - A number between 0-2 (inclusive)
+    - `"auto"` (which is shorthand for `"auto:3,6")
+        - is the preferred value
+    - `"auto:low,high"`
+        - Generates an edit distance based on the length of the term
+        - value "AUTO" is shorthand for "AUTO:3,6"
+        - When the value is AUTO then for lengths
+            - 0..2 must match exactly
+            - 3..5 one edit allowed
+            - > 5 two edits allowed
 
 ```jsonc
 GET /movies/_search
@@ -533,7 +573,8 @@ If I search for bicycle" I want results from "cycling" "bicyclist", "bicyclists"
 
 ### Highlighting
 
--   ES can mark sections of field values as highlighted because they are relevant for the search result
+- ES can mark sections of field values as highlighted because they are relevant
+  for the search result
 
 ### Suggesters
 
@@ -541,10 +582,13 @@ Faster than normal queries for autocomplete use-cases
 
 ### Pagination
 
--   The `from` query param controls where the results returned should start from. `from` counts from 0
--   The `size` query param controls how big the returned page of results is
--   Deep pagination can **kill performance** because to get page 500 ES has to find collect and sort the first 499 pages before it can return the result.
--   You can work around this by setting an upper bound on the number of returned results
+- The `from` query param controls where the results returned should start from.
+  `from` counts from 0
+- The `size` query param controls how big the returned page of results is
+- Deep pagination can **kill performance** because to get page 500 ES has to
+  find collect and sort the first 499 pages before it can return the result.
+- You can work around this by setting an upper bound on the number of returned
+  results
 
 ```jsonc
 GET /movies/_search
@@ -569,12 +613,13 @@ GET /movies/_search?from=2&size=10
 
 #### Query-time search as you type
 
-Implement search as you type using the query syntax e.g. create a `match_phase_prefix` query with a high `slop` value (e.g. 10)
-
+Implement search as you type using the query syntax e.g. create a
+`match_phase_prefix` query with a high `slop` value (e.g. 10)
 
 ### Searching and aggregating across indexes
 
-You can run search and aggregation queries against multiple indexes at the same query
+You can run search and aggregation queries against multiple indexes at the same
+query
 
 1. Search all documents in all indexes
 

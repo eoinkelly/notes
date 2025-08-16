@@ -1,28 +1,33 @@
 # OpenID Connect (OIDC)
 
-* Based on OAuth 2.0
-* OpenID Connect is effectively version 3 of the OpenID specification
-* OIDC assumes you’ll identify people using email addresses
-    * OpenID 2 assumed a URL
-* in practice there are a few big OIDC ID providers (IDP) at the moment
-    * Microsoft
-    * Salesforce
-    * Google
-* Facebook is an identity provider but does not use OIDC
-* OIDC is a "framework"
-* a simple identity layer on top of the OAuth 2.0 protocol
-* replaces OpenID 2.0 protocol
-* the client is called the "relying party"
-* the identity provider is the IDP or the "Open ID Connect Provider" OP
-* wants apps to redirect users to a real browser for auth - it does not recommend webviews as they can be snooped
-    * -- is quite "browser-centric" in its world view
-* OIDC says nothing about *how* a user should be authenticated - that is up to the IDP
-* Client apps receive the user’s identity encoded in a secure JSON Web Token (JWT), called ID token.
-* Clients use OAuth 2.0 flows to obtain ID tokens
-    * scope in the OAuth requests contains `openid` which indicates that the client wants access to their identity token
-* Ruby lib: https://github.com/nov/openid_connect
-* Client does the normal OAuth2 thing to get the authorization code and then you exchange the code for an access token AND the users identity token
-* Client should then undo the base64 encoding and validate the token
+- Based on OAuth 2.0
+- OpenID Connect is effectively version 3 of the OpenID specification
+- OIDC assumes you’ll identify people using email addresses
+    - OpenID 2 assumed a URL
+- in practice there are a few big OIDC ID providers (IDP) at the moment
+    - Microsoft
+    - Salesforce
+    - Google
+- Facebook is an identity provider but does not use OIDC
+- OIDC is a "framework"
+- a simple identity layer on top of the OAuth 2.0 protocol
+- replaces OpenID 2.0 protocol
+- the client is called the "relying party"
+- the identity provider is the IDP or the "Open ID Connect Provider" OP
+- wants apps to redirect users to a real browser for auth - it does not
+  recommend webviews as they can be snooped
+    - -- is quite "browser-centric" in its world view
+- OIDC says nothing about _how_ a user should be authenticated - that is up to
+  the IDP
+- Client apps receive the user’s identity encoded in a secure JSON Web Token
+  (JWT), called ID token.
+- Clients use OAuth 2.0 flows to obtain ID tokens
+    - scope in the OAuth requests contains `openid` which indicates that the
+      client wants access to their identity token
+- Ruby lib: https://github.com/nov/openid_connect
+- Client does the normal OAuth2 thing to get the authorization code and then you
+  exchange the code for an access token AND the users identity token
+- Client should then undo the base64 encoding and validate the token
 
 ```
 // example of a google identity token
@@ -40,20 +45,24 @@
 
 ## JSON Web Tokens (Identity token)
 
-* The _Identity token_ is a JWT
-* a compact, URL safe way of transferring "claims" between two parties
-* just to be confusing, OAuth2 has a Json Web Token _profile_ that allows you to use JWTs with OAuth 2
-* format is JWT (JSON)
-* http://tools.ietf.org/html/rfc7519
-* represents an "identity card"
-* to get an identity token the client sends the user to their IDP with an authorization request
-* required fields shown below but identity tokens may also contain
-    * subject name
-    * email address
-* emails are not suitable for use as unique ids for the user - you should use the `sub` key instead
-* is always digitally signed by the IDP
-* may be encrypted
-* the whole signed (and optionally encrypted) token is base64 encoded so it can be embedded in a URL
+- The _Identity token_ is a JWT
+- a compact, URL safe way of transferring "claims" between two parties
+- just to be confusing, OAuth2 has a Json Web Token _profile_ that allows you to
+  use JWTs with OAuth 2
+- format is JWT (JSON)
+- http://tools.ietf.org/html/rfc7519
+- represents an "identity card"
+- to get an identity token the client sends the user to their IDP with an
+  authorization request
+- required fields shown below but identity tokens may also contain
+    - subject name
+    - email address
+- emails are not suitable for use as unique ids for the user - you should use
+  the `sub` key instead
+- is always digitally signed by the IDP
+- may be encrypted
+- the whole signed (and optionally encrypted) token is base64 encoded so it can
+  be embedded in a URL
 
 ```
 // an identity token contains at least:
@@ -71,14 +80,16 @@
 
 ## Discovery document
 
-* A JSON document at a well known location hosted by an IDP that tells you all the URLs you need to use OpenID
-* examples
-    * google https://accounts.google.com/.well-known/openid-configuration
-    * Salesforce https://login.salesforce.com/.well-known/openid-configuration
-    * Micorsoft Azure https://login.windows.net/common/.well-known/openid-configuration
-    * Facebook does not use OIDC - it uses its own extension to OAuth instead
-* The idea is that an OIDC client library would hard-code the discovery
-  document URL only and use it to discover all the other URLs it needed
+- A JSON document at a well known location hosted by an IDP that tells you all
+  the URLs you need to use OpenID
+- examples
+    - google https://accounts.google.com/.well-known/openid-configuration
+    - Salesforce https://login.salesforce.com/.well-known/openid-configuration
+    - Micorsoft Azure
+      https://login.windows.net/common/.well-known/openid-configuration
+    - Facebook does not use OIDC - it uses its own extension to OAuth instead
+- The idea is that an OIDC client library would hard-code the discovery document
+  URL only and use it to discover all the other URLs it needed
 
 ```
 // https://accounts.google.com/.well-known/openid-configuration
@@ -131,12 +142,12 @@
 }
 ```
 
-
 ## Aside: JSON Web Keys
 
-* A JSON data structure to represent a cryptographic key
-* https://tools.ietf.org/html/rfc7517
-* basically it specifies the property names for key data with a bunch of metadata that describes the key data
+- A JSON data structure to represent a cryptographic key
+- https://tools.ietf.org/html/rfc7517
+- basically it specifies the property names for key data with a bunch of
+  metadata that describes the key data
 
 ```
 // example of a JWK

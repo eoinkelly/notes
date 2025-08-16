@@ -6,7 +6,8 @@ It could be drivers (kexts), network or disk activity.
 
 https://apple.stackexchange.com/questions/178281/how-to-investigate-high-kernel-task-memory-usage/178353#178353
 
-> Apparently when the CPU heats up the ACPI_SMC_PlatformPlugin.kext will take up CPU cycles in an attempt to reduce actual CPU load.
+> Apparently when the CPU heats up the ACPI_SMC_PlatformPlugin.kext will take up
+> CPU cycles in an attempt to reduce actual CPU load.
 
 ## Tool: kextstat
 
@@ -29,7 +30,8 @@ kextstat | grep -v com.apple
 
 Background
 
-The kextstat utility displays the status of any kexts currently loaded in the kernel.
+The kextstat utility displays the status of any kexts currently loaded in the
+kernel.
 
 Columns:
 
@@ -64,5 +66,3 @@ sudo fs_usage | grep -v 0.0000
 
 sudo fs_usage | grep -v -e '0.0000' -e 'iTerm2' -e 'grep'
 ```
-
-

@@ -1,5 +1,3 @@
-
-
 ```sh
 # via brew
 wasmtime --version

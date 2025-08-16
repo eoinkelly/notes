@@ -9,5 +9,4 @@ a(?=b)i   # matches "a" only if it is followed by a "b" (positive lookahead)
 
 Oddities
 
-* JS regexps do not support negative lookahead/lookbehind
-
+- JS regexps do not support negative lookahead/lookbehind

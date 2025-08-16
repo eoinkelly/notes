@@ -1,4 +1,3 @@
-
 ```
 # TODO: create a new db from cmdline
 rake db:drop:all

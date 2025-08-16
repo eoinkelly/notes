@@ -1,25 +1,20 @@
 There are a number of values that evaluate falsy
 
-* FALSE
-* false
-* 0
-* NO
+- FALSE
+- false
+- 0
+- NO
 
 And to truthy:
 
-* true
-* TRUE
-* 1
-* YES
+- true
+- TRUE
+- 1
+- YES
 
-* An uninitialized boolean defaults to FALSE
+- An uninitialized boolean defaults to FALSE
 
-What is diff between the types?
-    BOOL
-    bool
-    Boolean
-    Boolean_t
-
+What is diff between the types? BOOL bool Boolean Boolean_t
 
 ```objc
 

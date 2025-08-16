@@ -1,5 +1,5 @@
-import { stateObj } from "./lib.js";
-import { mutateStateObj } from "./lib2.js";
+import { stateObj } from './lib.js';
+import { mutateStateObj } from './lib2.js';
 
 // Fails
 // stateObj = { a: 1 }; // TypeError: Assignment to constant variable.
@@ -9,6 +9,6 @@ import { mutateStateObj } from "./lib2.js";
 // stateObj.a = 1;
 // console.log(stateObj); // { a: 1 }
 
-console.log("index.js: before", stateObj); // {}
+console.log('index.js: before', stateObj); // {}
 mutateStateObj();
-console.log("index.js: after", stateObj); // {}
+console.log('index.js: after', stateObj); // {}

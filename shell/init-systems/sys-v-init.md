@@ -4,13 +4,13 @@ From it we get run levels etc.
 
 QUESTION: is this used in _any_ modern linux? when did it stop being used?
 
-* scripts stored in `/etc/init.d`
-* links in `/etc/rc0.d` through `/etc/rc6.d`
-* each script is a shell script with a particular LSB comment in header between
+- scripts stored in `/etc/init.d`
+- links in `/etc/rc0.d` through `/etc/rc6.d`
+- each script is a shell script with a particular LSB comment in header between
   `BEGIN INIT INFO` and `END INIT INFO`
-    * https://wiki.debian.org/LSBInitScripts
-    * the header provides metadata for which run-levels the script should be run in
-
+    - https://wiki.debian.org/LSBInitScripts
+    - the header provides metadata for which run-levels the script should be run
+      in
 
 ```
 #!/bin/sh

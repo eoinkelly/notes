@@ -2,7 +2,7 @@
 
 Questions
 
-* Do it in the web layer or within the context?
+- Do it in the web layer or within the context?
 
 Options
 
@@ -15,6 +15,7 @@ Options
 
 ## Rolling your own
 
-1. create a Plug which finds the "current user" and checks if it can perform the requested action. If not it halts processing the conn
+1. create a Plug which finds the "current user" and checks if it can perform the
+   requested action. If not it halts processing the conn
 
 q: how do I do this without having an `/authenticated` prefix?

@@ -1,8 +1,9 @@
 # Vim Autocomplete
 
-* Autocomplete is triggered from insert mode
+- Autocomplete is triggered from insert mode
 
-There are many types of autocomplete in vim and each is opened with a different key chord
+There are many types of autocomplete in vim and each is opened with a different
+key chord
 
     C-n         generic keyword autocomplete (includes buffer list, included files, tag files)
     C-p         generic keyword autocomplete (includes buffer list, included files, tag files)
@@ -31,4 +32,5 @@ Navigating the popup
     C-y close popup, resets text to what it was before popup
     Typing any other character exits the popup and puts that char in the buffer
 
-Great Tip: Type C-n C-p together to make the autocomplete list filter as you type
+Great Tip: Type C-n C-p together to make the autocomplete list filter as you
+type

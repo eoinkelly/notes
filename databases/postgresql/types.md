@@ -1,11 +1,14 @@
 # Postgres data types
 
-* Postgres type names
-    * are case insensitive unless quoted (like all other identifiers)
-    * can have spaces in the name which is confusing to me sometimes
-* Each data type has an internal representation and has one or more external representations.
-* Each external representation is decided by which input and output function you use.
-* Some input and output functions for a type are not "invertible" i.e. you might lose precision if you put data in and out of Postgres via these functions
+- Postgres type names
+    - are case insensitive unless quoted (like all other identifiers)
+    - can have spaces in the name which is confusing to me sometimes
+- Each data type has an internal representation and has one or more external
+  representations.
+- Each external representation is decided by which input and output function you
+  use.
+- Some input and output functions for a type are not "invertible" i.e. you might
+  lose precision if you put data in and out of Postgres via these functions
 
 Postgres has 40+ built-in data types
 
@@ -26,27 +29,29 @@ Postgres has 40+ built-in data types
 
 General points about numeric types
 
-* There are nine numeric types
-* attempts to store data outside of range results in an error
+- There are nine numeric types
+- attempts to store data outside of range results in an error
 
 Numeric type
 
-* the `numeric` type can store very large values precisely
-    * recommended for storing large amounts of money
-    * ++ calculations are precise
-    * -- calculations are slow
+- the `numeric` type can store very large values precisely
+    - recommended for storing large amounts of money
+    - ++ calculations are precise
+    - -- calculations are slow
 
-
-          QUESTION: how do i use the numeric type?
+            QUESTION: how do i use the numeric type?
 
 ### serial types
 
-* `serial` is not a real type!
-* serial types are just syntax sugar for doing the following
-    1. create a column of type `integer NOT NULL nextval('sertest_id_seq'::regclass)`
-    2. create a sequence named `{tablename}_{columnname}_seq` with the owner set to the column (so the sequence is dropped if the colum is dropped)
-* note: serial type does not add PRIMARY KEY or any uniqueness constraint
-* when you use a serial "type" PG creates a sequence and makes the column its owner (so seq is dropped if col is dropped)
+- `serial` is not a real type!
+- serial types are just syntax sugar for doing the following
+    1. create a column of type
+       `integer NOT NULL nextval('sertest_id_seq'::regclass)`
+    2. create a sequence named `{tablename}_{columnname}_seq` with the owner set
+       to the column (so the sequence is dropped if the colum is dropped)
+- note: serial type does not add PRIMARY KEY or any uniqueness constraint
+- when you use a serial "type" PG creates a sequence and makes the column its
+  owner (so seq is dropped if col is dropped)
 
 #### Bit string types
 
@@ -63,16 +68,17 @@ Numeric type
 12. bytea   binary data ("byte array")
 ```
 
-* use this for storing "raw bytes"
-* allows storing of arbitrary binary strings (including null bytes and other sequences not allowed by the DB character sets)
+- use this for storing "raw bytes"
+- allows storing of arbitrary binary strings (including null bytes and other
+  sequences not allowed by the DB character sets)
 
+          Q: Why no BLOB type?
 
-        Q: Why no BLOB type?
+The SQL standard defines a different binary string type, called BLOB or BINARY
+LARGE OBJECT.
 
-
-The SQL standard defines a different binary string type, called BLOB or BINARY LARGE OBJECT.
-
-The input format is different from `bytea`, but the provided functions and operators are mostly the same.
+The input format is different from `bytea`, but the provided functions and
+operators are mostly the same.
 
 #### Boolean type
 
@@ -90,12 +96,14 @@ The input format is different from `bytea`, but the provided functions and opera
 16. character varying[(n)]   varchar[(n)]    variable-length character string
 ```
 
-* `text` and `varchar` and `character varying` (note the lack of limits on the varchar) are exactly the same
-    * they are all implemented as a `varlea` http://www.varlena.com/varlena.php
-* The database character set determines the character set used to store textual values
-* character types measure length in characters not bytes
-* values of type `character` are padded with spaces to the specified width
-* Pro-tip: don't use `character` in postgres
+- `text` and `varchar` and `character varying` (note the lack of limits on the
+  varchar) are exactly the same
+    - they are all implemented as a `varlea` http://www.varlena.com/varlena.php
+- The database character set determines the character set used to store textual
+  values
+- character types measure length in characters not bytes
+- values of type `character` are padded with spaces to the specified width
+- Pro-tip: don't use `character` in postgres
     > character(n) has performance advantages in some other database systems,
     > there is no such advantage in PostgreSQL; in fact character(n) is usually
     > the slowest of the three because of its additional storage costs. In most
@@ -165,9 +173,11 @@ There are also two internal textual types
 39. money         currency amount
 ```
 
-* the money type depends on the `lc_monetary` DB setting (`SHOW lc_monetary`)
-* if you dump a DB and restore it to a DB with a different lc_monetary setting can cause problems
-* The only numeric type you should cast `money` to is `numeric` (not `float` etc.) to ensure you keep precision!
+- the money type depends on the `lc_monetary` DB setting (`SHOW lc_monetary`)
+- if you dump a DB and restore it to a DB with a different lc_monetary setting
+  can cause problems
+- The only numeric type you should cast `money` to is `numeric` (not `float`
+  etc.) to ensure you keep precision!
 
 ### Casting
 

@@ -1,4 +1,3 @@
-
 # C
 
 Rust has decent C interop but not c++ interop
@@ -19,5 +18,5 @@ An attempt: https://github.com/rust-qt/cpp_to_rust
 
 Depending on the C++ compiler the compiled code may use
 
-* different name mangling
-* different calling convention
+- different name mangling
+- different calling convention

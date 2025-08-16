@@ -1,4 +1,3 @@
-
 ```
 # Steps to run app in production mode locally
 $ RAILS_ENV=production bundle exec rake assets:precompile

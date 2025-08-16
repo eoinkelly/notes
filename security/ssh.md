@@ -4,20 +4,25 @@ TODO: dig into how you can tunnel ssh within DNS, HTTP or raw ICMP traffic
 
 ## Basics
 
-* SSH server has a key-pair
-* SSH client has a key-pair
-* When the connection is setup the server and client negotiate a single-use keypair for use in just this connection and then use that to negotiate a shared symmetric key
-    * The symmetric key is used because it is more efficent for encrypting/decrypting large amounts of data
-    * The assymetric key pairs are used because they avoid having to communicate and store a shared secret for use in all connections
-* You can used `Match` statements in `sshd_config` and `ssh_config` to limit configuration to certain users, hostnames, IP addresses, networks
-    * `Match` statements should be at the end of the file
+- SSH server has a key-pair
+- SSH client has a key-pair
+- When the connection is setup the server and client negotiate a single-use
+  keypair for use in just this connection and then use that to negotiate a
+  shared symmetric key
+    - The symmetric key is used because it is more efficent for
+      encrypting/decrypting large amounts of data
+    - The assymetric key pairs are used because they avoid having to communicate
+      and store a shared secret for use in all connections
+- You can used `Match` statements in `sshd_config` and `ssh_config` to limit
+  configuration to certain users, hostnames, IP addresses, networks
+    - `Match` statements should be at the end of the file
 
-
-Aside: On macOS the SSH server is enabled by enabling remote login in System Preferences.
+Aside: On macOS the SSH server is enabled by enabling remote login in System
+Preferences.
 
 ## ~/.ssh
 
-* file perms on ~/.ssh should be 0600
+- file perms on ~/.ssh should be 0600
 
 ```
 # ssh1 key pair:
@@ -31,7 +36,8 @@ Aside: On macOS the SSH server is enabled by enabling remote login in System Pre
 
 ## ~/.ssh/config
 
-A SSH config that will stop me getting booted off servers after (too!) short periods of inactivity
+A SSH config that will stop me getting booted off servers after (too!) short
+periods of inactivity
 
 ```bash
 # ~/.ssh/config
@@ -52,8 +58,8 @@ Host *
 From `ssh-keygen` man page
 
 > ssh-keygen can create RSA keys for use by SSH protocol version 1 and DSA,
-> ECDSA or RSA keys for use by SSH protocol version 2.  The type of key to be
-> generated is specified with the -t option.  If invoked without any arguments,
+> ECDSA or RSA keys for use by SSH protocol version 2. The type of key to be
+> generated is specified with the -t option. If invoked without any arguments,
 > ssh-keygen will generate an RSA key for use in SSH protocol 2 connections.
 
 > 2048 bit keys are made by default
@@ -61,19 +67,18 @@ From `ssh-keygen` man page
 Naming your key `id_rsa` is useful because `ssh` looks for it by default. You
 have to specify name if you use a different name.
 
-From stackoverflow http://security.stackexchange.com/questions/45193/in-what-ways-does-increasing-ssh-host-key-length-increase-security
+From stackoverflow
+http://security.stackexchange.com/questions/45193/in-what-ways-does-increasing-ssh-host-key-length-increase-security
 
-> 768 bit RSA key was successfully bruteforced in 2010 and it was predicted
-> that with computational advances 1024 bit will become weak in upcoming
-> decade. Hence, it is advisable to increase key strength to 2048 in near
-> future.
-
+> 768 bit RSA key was successfully bruteforced in 2010 and it was predicted that
+> with computational advances 1024 bit will become weak in upcoming decade.
+> Hence, it is advisable to increase key strength to 2048 in near future.
 
 ssh-keygen supports 3 formats for import/export:
 
 1. RFC4716 (RFC 4716/SSH2 public or private key)
-2. PKCS8   (PEM PKCS8 public key)
-3. PEM     (PEM public key)
+2. PKCS8 (PEM PKCS8 public key)
+3. PEM (PEM public key)
 
 The default conversion format is `RFC4716`.
 
@@ -116,18 +121,21 @@ ssh deploy@example.com 'hostname; uptime'
 
 ## On a mac
 
-* On any platform `ssh-agent` needs to be started when a user logs in
-* macOS does this for you - launchd will start it and re-start it if it is killed
-    * => you can't easily kill `ssh-agent` on macOS
-* `ssh-add -A` will find the key provided the password appears as an "application password" with the
-      "account" field set to the path of to the private key and the title
-      prefixed by "SSH:"
-* Apple has patched `ssh-agent` and `ssh-add` to support OSX Keychain
-* Launchd creates a unix domain socket and stores path to it in SSH_AUTH_SOCK
-    * other process owned by the current user (TODO: check this) can communicate with the agent via this
-    * TO CHECK: osx creates the unix socket but only starts ssh-agent the first time somebody accesses it
+- On any platform `ssh-agent` needs to be started when a user logs in
+- macOS does this for you - launchd will start it and re-start it if it is
+  killed
+    - => you can't easily kill `ssh-agent` on macOS
+- `ssh-add -A` will find the key provided the password appears as an
+  "application password" with the "account" field set to the path of to the
+  private key and the title prefixed by "SSH:"
+- Apple has patched `ssh-agent` and `ssh-add` to support OSX Keychain
+- Launchd creates a unix domain socket and stores path to it in SSH_AUTH_SOCK
+    - other process owned by the current user (TODO: check this) can communicate
+      with the agent via this
+    - TO CHECK: osx creates the unix socket but only starts ssh-agent the first
+      time somebody accesses it
 
-* TODO: figure out how to remove keys from it after a timeout
+- TODO: figure out how to remove keys from it after a timeout
 
 ## Port forwarding
 
@@ -135,42 +143,58 @@ Content from this taken from a few different SSH books
 
 > you can put any TCP/IP traffic inside SSH
 
-* You can create a SocksV5 proxy with SSH.
-* SocksV5 supports TCP or UDP over IPv4 or IPv6.
-* I don't think you can send arbitrary IP packets over SocksV5
+- You can create a SocksV5 proxy with SSH.
+- SocksV5 supports TCP or UDP over IPv4 or IPv6.
+- I don't think you can send arbitrary IP packets over SocksV5
 
+Some applications misbehave when their network connection is through an SSH
+tunnel:
 
-Some applications misbehave when their network connection is through an SSH tunnel:
-
-* use `netcat` or similar to troubleshoot the tunnel separate to the application
-* sometimes adding a `hosts` file entry will make the app happier
+- use `netcat` or similar to troubleshoot the tunnel separate to the application
+- sometimes adding a `hosts` file entry will make the app happier
 
 Three kinds of port forwarding
 
 1. Local ("listen on local side")
-    * common uses
+    - common uses
         1. to wrap an unencrypted service in encryption e.g. POP or SMTP
-    * a port on the client is forwarded to a port on the server
-    * the "listening" happens on the local/client side
-    * causes the ssh-client to start listening on a local port. when a connection is made to that local port the ssh-client will forward the traffic through the ssh-tunnel to and the ssh-server will then make a connection to the given remote-port and send the traffic to that port on behalf of the ssh-client
+    - a port on the client is forwarded to a port on the server
+    - the "listening" happens on the local/client side
+    - causes the ssh-client to start listening on a local port. when a
+      connection is made to that local port the ssh-client will forward the
+      traffic through the ssh-tunnel to and the ssh-server will then make a
+      connection to the given remote-port and send the traffic to that port on
+      behalf of the ssh-client
 1. Remote ("listen on remote side")
-    * common uses
+    - common uses
         1. to access a service behind a firewall
-    * a port on the server is forwarded to a port on the client.
-    * the "listening" happens on the remote/server side
-    * this reversal of the role of client and server is whey this is sometimes called a "reverse tunnel"
-    * typically when an SSH client connects to an SSH server, it is the client which is issuing commands to run on the server. With a remote tunnel you can allow the server to create a shell on the client and send it commands
-    * causes the ssh-server to start listening on a given port on its side. when anything makes a connection to that port, the ssh-server will forward that traffic to the ssh-client. The ssh-client will then forward that data to a given local port on its side
-    * example you can configure your ssh-server to listen on 127.0.0.1:2222 on its side and any connection made to that will be forwarded to 127.0.0.1:22 on the client side.
-        * it will seem to the ssh-server on the client side that somebody from localhost is connecting to it.
+    - a port on the server is forwarded to a port on the client.
+    - the "listening" happens on the remote/server side
+    - this reversal of the role of client and server is whey this is sometimes
+      called a "reverse tunnel"
+    - typically when an SSH client connects to an SSH server, it is the client
+      which is issuing commands to run on the server. With a remote tunnel you
+      can allow the server to create a shell on the client and send it commands
+    - causes the ssh-server to start listening on a given port on its side. when
+      anything makes a connection to that port, the ssh-server will forward that
+      traffic to the ssh-client. The ssh-client will then forward that data to a
+      given local port on its side
+    - example you can configure your ssh-server to listen on 127.0.0.1:2222 on
+      its side and any connection made to that will be forwarded to 127.0.0.1:22
+      on the client side.
+        - it will seem to the ssh-server on the client side that somebody from
+          localhost is connecting to it.
 1. Dynamic
-    * creates a SOCKSv5 proxy on the ssh-client side
-    * tunnels any requests to that proxy to the ssh-server. The server then completes those requests as its own access permits and send replies back through the tunnel
-    * kind of creates a proxy with two sides, one on either side of the tunnel
-    * the ssh-client can now access anything the ssh-server can access
-    * socks clients
-        * most web browsers can be socks clients
-        * TODO: need to tell the client to forward all its DNS requests through the proxy
+    - creates a SOCKSv5 proxy on the ssh-client side
+    - tunnels any requests to that proxy to the ssh-server. The server then
+      completes those requests as its own access permits and send replies back
+      through the tunnel
+    - kind of creates a proxy with two sides, one on either side of the tunnel
+    - the ssh-client can now access anything the ssh-server can access
+    - socks clients
+        - most web browsers can be socks clients
+        - TODO: need to tell the client to forward all its DNS requests through
+          the proxy
 
 ### Local (listen on the local/client side) forwarding
 
@@ -207,7 +231,8 @@ Host something.example.com
 
 ### Remote (listen on the remote/server side) forwarding
 
-If you want an ssh-server process to listen on an interface that isn't localhost then you need to explicitly enable that in `sshd_config`
+If you want an ssh-server process to listen on an interface that isn't localhost
+then you need to explicitly enable that in `sshd_config`
 
 ```bash
 # in sshd_config (the server configuration)
@@ -250,7 +275,9 @@ Host something.example.com
 
 ### Dynamic (setup SOCKSv5 proxy on client) forwarding
 
-* You might want to have the local Socksv5 proxy listen on something other than `localhost` if you want to turn your machine into a proxy that others on your network can use.
+- You might want to have the local Socksv5 proxy listen on something other than
+  `localhost` if you want to turn your machine into a proxy that others on your
+  network can use.
 
 ```bash
 # 127.0.0.1 and localhost are synonyms
@@ -282,12 +309,15 @@ Host something.example.com
 #### Use-case: browsing a website hosted by the server from the server
 
 1. Setup dynamic forwarding as above
-1. In firefox, go to `about:preferences#general` (a special URL) and open the connection settings
-1. Choose to use a SocksV5 proxy with hostname `127.0.0.1` and port of whatever you picked for your port in step 1.
+1. In firefox, go to `about:preferences#general` (a special URL) and open the
+   connection settings
+1. Choose to use a SocksV5 proxy with hostname `127.0.0.1` and port of whatever
+   you picked for your port in step 1.
 1. Tick the box for "Proxy DNS when using SocksV5"
 1. Remove the rules which skip the proxy for `127.0.0.1,localhost`
 1. Save settings
-1. Browse to `http://localhost/` in Firefox - you are now seeing the site as you would if you ran `curl http://localhost/` on the server.
+1. Browse to `http://localhost/` in Firefox - you are now seeing the site as you
+   would if you ran `curl http://localhost/` on the server.
 
 ### Useful flags to go with forwarding of all kinds
 
@@ -318,7 +348,8 @@ PermitOpen localhost:25 localhost:10
 
 ### Controlling what port forwarding is allowed via client config
 
-The client can control which of its ports can be bound to during local port forwarding.
+The client can control which of its ports can be bound to during local port
+forwarding.
 
 ```bash
 # ssh_config
@@ -337,30 +368,47 @@ ExitOnForwardFailure no # values=yes|no, default=no
 There are 3 ways of keeping an SSH connection alive
 
 1. Run something like `top` which will keep data folowing
-    * ++ doesn't require you to change any settings
-    * -- you have to remember to do it every time
+    - ++ doesn't require you to change any settings
+    - -- you have to remember to do it every time
 1. Configure TCP keepalives
-    * not as configurable as SSH keep-alives but sufficent for many uses
-    * not part of the SSH protocol - TCP keepalives are features of the client and the server
-    * just involves sending some ping/pong packets on a regular basis
-    * OpenSSH sends TCP keepalives by default - can be turned off with `TcpKeepAlive no`
-    * Client and server (or both) can send keepalive TCP packets
-    * TCP keepalives are **not** sent in the encrypted channel - they are visible to anybody on the network who can see the traffic and so they can be spoofed.
+    - not as configurable as SSH keep-alives but sufficent for many uses
+    - not part of the SSH protocol - TCP keepalives are features of the client
+      and the server
+    - just involves sending some ping/pong packets on a regular basis
+    - OpenSSH sends TCP keepalives by default - can be turned off with
+      `TcpKeepAlive no`
+    - Client and server (or both) can send keepalive TCP packets
+    - TCP keepalives are **not** sent in the encrypted channel - they are
+      visible to anybody on the network who can see the traffic and so they can
+      be spoofed.
 1. Configure "SSH keepalives"
-    * Sent within the encrypted channel
-    * More information rich - TCP keepalive just tells the other end that the TCP connection is still open, SSH keepalive tells the other end that the SSH session is still viable.
-    * Clients send "client alive" messages
-    * Servers send "server alive" messages
-    * OpenSSH does not use SSH keepalives by default
-    * Putty does not support SSH keepalives
+    - Sent within the encrypted channel
+    - More information rich - TCP keepalive just tells the other end that the
+      TCP connection is still open, SSH keepalive tells the other end that the
+      SSH session is still viable.
+    - Clients send "client alive" messages
+    - Servers send "server alive" messages
+    - OpenSSH does not use SSH keepalives by default
+    - Putty does not support SSH keepalives
 
-Note that TCP connection timeouts ultimately control the SSH session - if you cannot maintain a TCP session between client and server then nothing which happens at the SSH layer will matter.
+Note that TCP connection timeouts ultimately control the SSH session - if you
+cannot maintain a TCP session between client and server then nothing which
+happens at the SSH layer will matter.
 
-For managing an SSH server you should at least have one of TCP keepalives or SSH keepalives - without one of them the SSH server will have no way of knowing when a client goes away so it will keep running an SSH session for that connection. Ultimately this will cause you to run out of resources.
+For managing an SSH server you should at least have one of TCP keepalives or SSH
+keepalives - without one of them the SSH server will have no way of knowing when
+a client goes away so it will keep running an SSH session for that connection.
+Ultimately this will cause you to run out of resources.
 
-From the server point of view we want to kick off dead clients in a timely manner to preserve resources - some of this is taken care of by the TCP connection anyway which is presumably why SSh keepalives default to disabled on the server side.
+From the server point of view we want to kick off dead clients in a timely
+manner to preserve resources - some of this is taken care of by the TCP
+connection anyway which is presumably why SSh keepalives default to disabled on
+the server side.
 
-The fact taht TCPKeepAlive is enabled on the server by default means that the server will disconnect if anything happens to the TCP session - this makes SSH brittle to flaky networks - use Mosh if you have to maintain a shell over a very flaky connection.
+The fact taht TCPKeepAlive is enabled on the server by default means that the
+server will disconnect if anything happens to the TCP session - this makes SSH
+brittle to flaky networks - use Mosh if you have to maintain a shell over a very
+flaky connection.
 
 ```bash
 # sshd_config
@@ -465,7 +513,7 @@ TCPKeepAlive
 
 ## Managing SSH in the middle of a terminal session
 
-* The escape key is `~`
+- The escape key is `~`
 
 ```
 $ ~?
@@ -492,19 +540,24 @@ ssh>-KD9999 # cancel the previous port forwarding
 
 ## SSH as VPN
 
-* SSH can function as a VPN
-* OpenBSD has the best support (PuTTY has none)
-* SSH can function as a VPN but isn't a great choice. TCP packets tunneled inside TCP packets mucks with the congestion and retransmission algorithms built-in to TCP and amplifies the effects of any packet loss making them unreliable.
-    * TL;DR - prefer OpenVPN over SSH for a VPN
-* it works by
-    * creating a "tunnel interface" (aka a "tun interface")
-    * the tun interface sits _above_ some other interface
-    * the tun interface gets a device number like other interfaces e.g. `tun0`
-* point-to-point tunnles are your best option
-* you can tunnel ethernet traffic over SSH but you should avoid it if you can
-    * SSH tunnels are already suseptible to congestion, sending layer2 traffic over them makes that even worse
-* Using an SSH VPN requires root privileges on both the client **and** the server (you need to create network devices)
-* You run the SSH server as root **and** you must login as root
+- SSH can function as a VPN
+- OpenBSD has the best support (PuTTY has none)
+- SSH can function as a VPN but isn't a great choice. TCP packets tunneled
+  inside TCP packets mucks with the congestion and retransmission algorithms
+  built-in to TCP and amplifies the effects of any packet loss making them
+  unreliable.
+    - TL;DR - prefer OpenVPN over SSH for a VPN
+- it works by
+    - creating a "tunnel interface" (aka a "tun interface")
+    - the tun interface sits _above_ some other interface
+    - the tun interface gets a device number like other interfaces e.g. `tun0`
+- point-to-point tunnles are your best option
+- you can tunnel ethernet traffic over SSH but you should avoid it if you can
+    - SSH tunnels are already suseptible to congestion, sending layer2 traffic
+      over them makes that even worse
+- Using an SSH VPN requires root privileges on both the client **and** the
+  server (you need to create network devices)
+- You run the SSH server as root **and** you must login as root
 
 ```bash
 # sshd_config

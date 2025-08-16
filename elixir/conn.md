@@ -1,7 +1,5 @@
-
-* The connection object in phoenix
-* part of Plug
-
+- The connection object in phoenix
+- part of Plug
 
 ```
 # Handy methods

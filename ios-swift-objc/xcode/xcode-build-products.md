@@ -138,17 +138,17 @@ The build products dir contains `Intermediates` and `Products`
 
 File types:
 
-* `.nib`
-    * compiled `.xib`
-* `.dat`
-* `.hmap`
-    * binary data
-* `.linkFileList`
+- `.nib`
+    - compiled `.xib`
+- `.dat`
+- `.hmap`
+    - binary data
+- `.linkFileList`
 
 Every `.m` source file in the project generates:
 
-* `.d`
-* `.o`
-* `.dia`
+- `.d`
+- `.o`
+- `.dia`
 
 TODO: find out more about these files

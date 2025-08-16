@@ -13,29 +13,37 @@ socat ~/Library/Containers/com.docker.docker/Data/vms/0/console.sock -,rawer
 
 ## filesystem perf on macos
 
-* https://mobile.twitter.com/marcan42/status/1494213855387734019
-* https://mjtsai.com/blog/2022/02/17/apple-ssd-benchmarks-and-f_fullsync/
-* https://twitter.com/rosyna/status/1494248499067514883
-* https://github.com/docker/roadmap/issues/7
-    * has a command you can run in the moby vm to tell linux to not issue the command to the disk to write cache to stable storage
-    * this apparently really helps when you are running imports/exports of data from an RDBMS
-    * I think we usually avoid this by just keeping the data in a volume or in the container
+- https://mobile.twitter.com/marcan42/status/1494213855387734019
+- https://mjtsai.com/blog/2022/02/17/apple-ssd-benchmarks-and-f_fullsync/
+- https://twitter.com/rosyna/status/1494248499067514883
+- https://github.com/docker/roadmap/issues/7
+    - has a command you can run in the moby vm to tell linux to not issue the
+      command to the disk to write cache to stable storage
+    - this apparently really helps when you are running imports/exports of data
+      from an RDBMS
+    - I think we usually avoid this by just keeping the data in a volume or in
+      the container
 
-* linux fsync
-    * how it works:
+- linux fsync
+    - how it works:
         1. flush writes to the drive
         2. ask drive to flush its write cache to stable storage
-    * has 46 IOPS when it should be of the order of 40K IOPS
-    * lots of linux software written to assume tha fsync makes your data safe
+    - has 46 IOPS when it should be of the order of 40K IOPS
+    - lots of linux software written to assume tha fsync makes your data safe
 
-* macos fsync
-    * how it works
+- macos fsync
+    - how it works
         1. flush writes to the drive
-    * F_FULLSYNC operation to ask drive to flush its write cache to stable storage using F_FULLSYNC is **very** slow
-    * If you run without F_FULLSYNC then you might lose data if the kernel panics or power is suddenly removed (less of a problem in laptops but real for desktops)
-    * Apple's drives have faster IOPS perf when compared without flushing but with flushing turned on they are the slowest of what he compared
+    - F_FULLSYNC operation to ask drive to flush its write cache to stable
+      storage using F_FULLSYNC is **very** slow
+    - If you run without F_FULLSYNC then you might lose data if the kernel
+      panics or power is suddenly removed (less of a problem in laptops but real
+      for desktops)
+    - Apple's drives have faster IOPS perf when compared without flushing but
+      with flushing turned on they are the slowest of what he compared
 
-I'm not sure whether the above discussion impacts the PHP use case or just the RDBMS use case?
+I'm not sure whether the above discussion impacts the PHP use case or just the
+RDBMS use case?
 
 Docker desktop uses gRPC FUSE
 
@@ -45,29 +53,29 @@ https://docs.docker.com/storage/storagedriver/select-storage-driver/
 
 Docker images can use a variety of overlay filesystems:
 
-* `overlay2`
-  * preferred and the default
-* `aufs`
-    * deprecated, recommend overlay2 instead
-    * was default until docker 18.06
-* `overlay`
-    * legacy version of `overlay2` which supports old linux kernels
-    * deprecated and will be removed in later release of Docker
-        * what about whatever k8s uses?
+- `overlay2`
+    - preferred and the default
+- `aufs`
+    - deprecated, recommend overlay2 instead
+    - was default until docker 18.06
+- `overlay`
+    - legacy version of `overlay2` which supports old linux kernels
+    - deprecated and will be removed in later release of Docker
+        - what about whatever k8s uses?
 
 Overlay2 needs 4 paths on the host filesystem:
 
 1. _LowerDir_
-    * this is the read-only layer
-    * it can be built from a number of "diff"s (see below)
-    * presumably each diff represents a layer built into the docker image
+    - this is the read-only layer
+    - it can be built from a number of "diff"s (see below)
+    - presumably each diff represents a layer built into the docker image
 1. _UpperDir_
-    * changes made by the running container/OS will be made on this layer
+    - changes made by the running container/OS will be made on this layer
 1. _WorkDir_
-    * an internal temp working dir for overlay2
-    * you must specify it but it shouldn't have existing files
+    - an internal temp working dir for overlay2
+    - you must specify it but it shouldn't have existing files
 1. _MergedDir_
-    * this is where the merged view of the filesystem will be available
+    - this is where the merged view of the filesystem will be available
 
 ```bash
 ❯ docker inspect memcached-1 | jq '.[].GraphDriver'
@@ -122,11 +130,11 @@ Overlay2 needs 4 paths on the host filesystem:
 
 Docker desktop can setup k8s
 
-* Installing docker for mac
-    * installs `kubectl`
-* Enabling kubernetes in docker for mac does the following:
-    * Starts 18 containers
-    * Causes docker for mac to use approx 4.15 GB memory on my laptop ...
+- Installing docker for mac
+    - installs `kubectl`
+- Enabling kubernetes in docker for mac does the following:
+    - Starts 18 containers
+    - Causes docker for mac to use approx 4.15 GB memory on my laptop ...
 
 ```
 # image     start-command
@@ -154,9 +162,9 @@ Why so many "pause containers
 
 > Every Kubernetes Pod includes an empty pause container, which bootstraps the
 > pod to establish all of the cgroups, reservations, and namespaces before its
-> individual containers are created. The pause container image is always present,
-> so the pod resource allocation happens instantaneously as containers are
-> created.
+> individual containers are created. The pause container image is always
+> present, so the pod resource allocation happens instantaneously as containers
+> are created.
 
 It creates the following containers:
 
@@ -194,4 +202,3 @@ users:
     client-certificate-data: <redacted>
     client-key-data: <redacted>
 ```
-

@@ -1,9 +1,9 @@
 # jq
 
-* expressions usually need to be single quoted to avoid your shell mangling them
-* filters are either a map or a reduce
-* can also construct objects as well as filtering them
-* as well as filters it has a set of built-in operators and functions
+- expressions usually need to be single quoted to avoid your shell mangling them
+- filters are either a map or a reduce
+- can also construct objects as well as filtering them
+- as well as filters it has a set of built-in operators and functions
 
 ```bash
 
@@ -37,3 +37,4 @@ jq '.[0] | .commit.message'
 
 # exctract the commit message and build a new JSON object for it with newStuff as a key
 jq '.[0] | { newStuff: .commit.message }'
+```

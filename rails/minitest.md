@@ -1,26 +1,26 @@
 # Minitest
 
-* replaced Test::Unit as default test framework bundled with Ruby in 1.9
-* backwards compatible API with Test::Unit
-* available via `minitest` gem on ruby 1.8
+- replaced Test::Unit as default test framework bundled with Ruby in 1.9
+- backwards compatible API with Test::Unit
+- available via `minitest` gem on ruby 1.8
 
     gem 'minitest', "~> 4.0"
 
     # Mocking and stubbing library with JMock/SchMock syntax, which allows
+
     # mocking and stubbing of methods on real (non-mock) classes.
+
     gem 'mocha', '0.13.3', :require => false
 
     gem 'webmock', '1.10.0'
+
     # WebMock allows stubbing HTTP requests and setting expectations on HTTP requests.
 
     gem 'minitest-reporters'
+
     # Death to haphazard monkey-patching! Extend Minitest through simple hooks.
 
-minitest/unit
-minitest/spec
-minitest/pride
-minitest/mock
-
+minitest/unit minitest/spec minitest/pride minitest/mock
 
 ## In rails
 
@@ -59,23 +59,18 @@ assert_not {some expression that evaluates to truthy or falsy}, {some optional m
 
 # running
 
-Output:
-    . = passing test
-    E = test error
-    F = test failure
+Output: . = passing test E = test error F = test failure
 
 Can easily run all specs in a file
 
     rake test /path/to/test.rb
 
-Stop rails filtering out lines form the backgrace
-    BACKTRACE=1 bin/rake test test/models/article_test.rb
+Stop rails filtering out lines form the backgrace BACKTRACE=1 bin/rake test
+test/models/article_test.rb
 
 Cannot easily run just a single test (see m and testrbl)
 
-
 # run a single test
-
 
 add something to the test name very unique like:
 

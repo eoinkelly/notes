@@ -1,10 +1,10 @@
 # Readline
 
-* a unix lib which provides a single line editor
-* used by bash, irb (optionally) and others
-* Customized with ~/.inputrc
-* Readline like shortcuts are somewhat in common with macOS shortcuts
-* Cheatsheet: http://readline.kablamo.org/emacs.html
+- a unix lib which provides a single line editor
+- used by bash, irb (optionally) and others
+- Customized with ~/.inputrc
+- Readline like shortcuts are somewhat in common with macOS shortcuts
+- Cheatsheet: http://readline.kablamo.org/emacs.html
 
 Ways of entering the "meta" key e.g. `Meta-b` on macOS
 

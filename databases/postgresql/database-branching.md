@@ -1,12 +1,15 @@
 # Database branching in Postgres
 
-Database branching is coming (using your database like git). Might not be ready in 2023 but next few years.
+Database branching is coming (using your database like git). Might not be ready
+in 2023 but next few years.
 
 The phrase can mean:
 
-* Just schema branching
-* Schema + data branching
-  * https://planetscale.com/ (MySQL only) talks about "database branching" == "schema only branching" and now have "data branching" which is full database branching
+- Just schema branching
+- Schema + data branching
+    - https://planetscale.com/ (MySQL only) talks about "database branching" ==
+      "schema only branching" and now have "data branching" which is full
+      database branching
 
 Projects/companies working on branching postgres:
 

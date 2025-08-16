@@ -1,25 +1,24 @@
-
 ## for...of
 
-* syntax designed to work with _iterable_ objects
-    * iterable objects are
-        * iterators created by generator functions
-        * built-in iterables
-        * objects implementing the iterable protocol
-* many JS built-in objects are iterable e.g Array, String, Map, Set, NodeList
+- syntax designed to work with _iterable_ objects
+    - iterable objects are
+        - iterators created by generator functions
+        - built-in iterables
+        - objects implementing the iterable protocol
+- many JS built-in objects are iterable e.g Array, String, Map, Set, NodeList
 
 ```js
 // Basic example
 // *************
-const things = [1, 2, 3, 4]
+const things = [1, 2, 3, 4];
 
-for(const thing of things) {
+for (const thing of things) {
     console.log(thing);
 }
 
 // Early returns
 // *************
-for(const thing of things) {
+for (const thing of things) {
     // trigger an early finish of the iterator with:
     // break
     // throw
@@ -29,13 +28,13 @@ for(const thing of things) {
 
 // Generator example
 // *************
-function *myGenerator() {
+function* myGenerator() {
     yield 1;
     yield 2;
     yield 3;
 }
 
-for(const x of myGenerator()) {
+for (const x of myGenerator()) {
     console.log(x);
 }
 
@@ -48,40 +47,41 @@ const myObj = {
             i: 0,
             next() {
                 if (this.i < 3) {
-                    return { value: this.i++, done: false }
+                    return { value: this.i++, done: false };
                 }
-                return { value: undefined, done: true }
+                return { value: undefined, done: true };
             }
-        }
+        };
     }
+};
 
-}
-
-for(const a of myObj) {
+for (const a of myObj) {
     console.log(x);
 }
 ```
 
 ## for await...of
 
-* An async version of `for...of`
+- An async version of `for...of`
 
 ## for...in
 
-* iterates over the **enumerable properties** of an object **in an arbitrary order**
-* can give surprising results if you are expecting to just get the keys in an object iself or the values in an array
-* You can use `for...in` on all JS objects but if the object supports it, then you usually want `for...of`
+- iterates over the **enumerable properties** of an object **in an arbitrary
+  order**
+- can give surprising results if you are expecting to just get the keys in an
+  object iself or the values in an array
+- You can use `for...in` on all JS objects but if the object supports it, then
+  you usually want `for...of`
 
 ```js
-Object.prototype.customOnObject = "custom on Object"
-Array.prototype.customOnArray = "custom on Array"
+Object.prototype.customOnObject = 'custom on Object';
+Array.prototype.customOnArray = 'custom on Array';
 
-let things = [11, 12, 13, 14]
-things.foo = "bar"
-
+let things = [11, 12, 13, 14];
+things.foo = 'bar';
 
 for (const i in things) {
-  console.log("property name:", i, ", property value:", things[i]);
+    console.log('property name:', i, ', property value:', things[i]);
 }
 // property name: 0 , property value: 11
 // property name: 1 , property value: 12
@@ -91,12 +91,11 @@ for (const i in things) {
 // property name: customOnArray , property value: custom on Array
 // property name: customOnObject , property value: custom on Object
 
-
 for (const i in things) {
-  // filter out properties from higher up in the prototype chain
-  if (things.hasOwnProperty(i)) {
-    console.log("property name:", i, ", property value:", things[i]);
-  }
+    // filter out properties from higher up in the prototype chain
+    if (things.hasOwnProperty(i)) {
+        console.log('property name:', i, ', property value:', things[i]);
+    }
 }
 // property name: 0 , property value: 11
 // property name: 1 , property value: 12
@@ -107,21 +106,20 @@ for (const i in things) {
 
 ## forEach
 
-* `Array` and `Map` have a `forEach` method which does what you would expect.
+- `Array` and `Map` have a `forEach` method which does what you would expect.
 
 ## for
 
-* old-school C style for loop
+- old-school C style for loop
 
 ```js
-let things = [1,2,3,5];
+let things = [1, 2, 3, 5];
 
 for (let i = 0, len = things.length; i < len; i++) {
-  console.log(things[i]);
+    console.log(things[i]);
 }
 // 1
 // 2
 // 3
 // 5
 ```
-

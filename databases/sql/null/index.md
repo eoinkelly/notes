@@ -1,3 +1,3 @@
 # NULL
 
-* `NULL` is not equal to `NULL`
+- `NULL` is not equal to `NULL`

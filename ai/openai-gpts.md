@@ -7,9 +7,8 @@ GPTS seem to be a "low code" way to build assistants.
 
 Pros/cons
 
-* ++ very easy to build and upload files to
-* -- you can share the link but only paid OpenAI accounts can use the GPT
-
+- ++ very easy to build and upload files to
+- -- you can share the link but only paid OpenAI accounts can use the GPT
 
 ```
 Questions

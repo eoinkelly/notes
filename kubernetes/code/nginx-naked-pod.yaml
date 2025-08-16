@@ -7,9 +7,9 @@ metadata:
   name: eoin-server-2
 spec:
   containers:
-  - image: nginx
-    name: eoin-server-2
-    resources: {}
+    - image: nginx
+      name: eoin-server-2
+      resources: {}
   dnsPolicy: ClusterFirst
   restartPolicy: Always
 status: {}

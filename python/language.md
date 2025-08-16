@@ -10,12 +10,11 @@ management protocol. This protocol consists of two special methods:
     .__enter__() is called by the with statement to enter the runtime context.
     .__exit__() is called when the execution leaves the with code block.
 
-
 # Misc unsorted
 
-* `(a, b, c)` creates a tuple in python (tuples are immutable, value objects, efficent because they aren't copied around)
-* `[a, b, c]` creates a list in python (lists are mutable)
-
+- `(a, b, c)` creates a tuple in python (tuples are immutable, value objects,
+  efficent because they aren't copied around)
+- `[a, b, c]` creates a list in python (lists are mutable)
 
 ```python
 import numpy as np

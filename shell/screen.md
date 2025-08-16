@@ -1,6 +1,6 @@
 # Screen
 
-* http://aperiodic.net/screen/quick_reference
+- http://aperiodic.net/screen/quick_reference
 
 ```
 # run screen with new session

@@ -1,4 +1,3 @@
-
 ## clang-format
 
 ```
@@ -17,6 +16,5 @@ or you can set values in a `.clang-format` file in cwd or a parent of cwd.
 
 VS Code
 
-* uses `.clang-format` if it exists
-* falls back to `Visual Studio` style otherwise
-
+- uses `.clang-format` if it exists
+- falls back to `Visual Studio` style otherwise

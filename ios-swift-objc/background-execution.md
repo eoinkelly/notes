@@ -15,12 +15,10 @@ There are 3 categories of "background support" provided by iOS
    continues
 3. App needs to run in the background to support specific kinds of tasks can
    _declare_ their support for one or more _background execution modes_
-    * The system maps the modes you declare to sets of events that it will wake
+    - The system maps the modes you declare to sets of events that it will wake
       your app in response to.
 
-
 # code sample
-
 
 ```objc
 __block id tself = self;
@@ -35,11 +33,12 @@ dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
 ```
 
 dispatch_async(queue, block)
-* puts the given block on the given queue
-* returns immediately
-* part of GCD
+
+- puts the given block on the given queue
+- returns immediately
+- part of GCD
 
 dispatch_get_global_queue(identifier, flags)
 
-* returns a global concurrent queue that executes at the given quality-of-service class
-
+- returns a global concurrent queue that executes at the given
+  quality-of-service class

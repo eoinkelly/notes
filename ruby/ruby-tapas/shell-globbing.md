@@ -1,4 +1,3 @@
-
 ```sh
 
 ls **/*.rb # find all ruby files under current dir

@@ -1,4 +1,3 @@
-
 ```sql
 -- get estimate of num rows of big tables
 -- if db name begins with blah

@@ -1,10 +1,11 @@
+This policy, when applied to an IAM user, will allow the Transmit app by Panic
+to let a user manage named bucket as that user.
 
-This policy, when applied to an IAM user,  will allow the Transmit app by Panic to let a user manage named bucket as that user.
-
-* Transmit requires the `s3:ListAllMyBuckets` permission to let the user see the bucket in the Transmit UI to click on it.
-    * this action is naturally scoped to an AWS account
-    * and cannot be scoped to a particular bucket or object i.e. the resource must be '*'
-
+- Transmit requires the `s3:ListAllMyBuckets` permission to let the user see the
+  bucket in the Transmit UI to click on it.
+    - this action is naturally scoped to an AWS account
+    - and cannot be scoped to a particular bucket or object i.e. the resource
+      must be '\*'
 
 ```json
 {
@@ -26,4 +27,3 @@ This policy, when applied to an IAM user,  will allow the Transmit app by Panic 
     ]
 }
 ```
-

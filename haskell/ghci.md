@@ -7,4 +7,3 @@ Getting info on stuff
 :k x -- show kind of x
 :info x -- show type of x and line it was defined on
 ```
-

@@ -33,28 +33,30 @@ puts "Result is: #{f.addtastic}"
 Rust provides 4 componound data types
 
 1. tuple
-    * an ordered list of a fixed size
-    * the structure has no name
-    * the elements have no names
-    * elements are retrieved by destructuring
+    - an ordered list of a fixed size
+    - the structure has no name
+    - the elements have no names
+    - elements are retrieved by destructuring
 2. struct
-    * the structure has a name
-    * each element has a nane
-    * elements are retrieved based on name
-    * `struct` with `impl` mimics what we have in ruby as class syntax
+    - the structure has a name
+    - each element has a nane
+    - elements are retrieved based on name
+    - `struct` with `impl` mimics what we have in ruby as class syntax
 3. tuple-struct
-    * the structure has a name
-    * the elements have no names
-    * it is almost always better to use a real struct instead of a tuple-struct
-    * the main use case for tuple-structs is to alias one type with another
+    - the structure has a name
+    - the elements have no names
+    - it is almost always better to use a real struct instead of a tuple-struct
+    - the main use case for tuple-structs is to alias one type with another
 4. enum
-    * a "sum type" i.e. type X is exactly one of the values from the provided set
-    * can be simple set of values
-    * each value can take parameters
-    * `match` expression can destructure the values contained in an enum value
-    * can be used to implement option type
+    - a "sum type" i.e. type X is exactly one of the values from the provided
+      set
+    - can be simple set of values
+    - each value can take parameters
+    - `match` expression can destructure the values contained in an enum value
+    - can be used to implement option type
 
-`=` in rust reads as _take what is on the RHS and bind to the LHS breaking apart the structure of the RHS as required to make it happen_
+`=` in rust reads as _take what is on the RHS and bind to the LHS breaking apart
+the structure of the RHS as required to make it happen_
 
 ```rust
 // create a tuple
@@ -99,21 +101,22 @@ A function within an `impl` block is an instance method if it takes one of
 
 1. `self`
 2. `&self`
-    * most common
+    - most common
 3. `mut &self`
 
 as its first parameter. When you call `thing.do_something(a,b);` it actually
 passes a reference to `thing` as the first parameter to `do_something`
 
-QUESTION: what is the difference between them?
-    it seems like the `.` syntax is just sugar for calling functions and the normal rules of references and borrowing apply (i don't yet understand those rules so cannot be sure)
+QUESTION: what is the difference between them? it seems like the `.` syntax is
+just sugar for calling functions and the normal rules of references and
+borrowing apply (i don't yet understand those rules so cannot be sure)
 
 ## Extras
 
-* Can I have multiple `impl` blocks for a single `struct`?
-    * Yes.
-* Can I override methods defined in a previous `impl` block?
-    * No - compiler error.
+- Can I have multiple `impl` blocks for a single `struct`?
+    - Yes.
+- Can I override methods defined in a previous `impl` block?
+    - No - compiler error.
 
 # How can I implement ruby block syntax in rust?
 
@@ -133,7 +136,6 @@ end
 
 ```
 
-
 ```rust
 fn simple_wrap(a: int, b: int, f: |int| ) {
     println!("Header: {}", a);
@@ -145,8 +147,6 @@ simple_wrap(4i, 5i, |x| { println!("Body: {}", x); }
 ```
 
 TODO: finish this
-
-
 
 # How do I do ruby class inheritance in rust
 
@@ -197,4 +197,3 @@ end
 ```
 
     TODO: do this
-

@@ -2,30 +2,33 @@
 
 ### Overview
 
-* extends the **rake DSL** with methods for running commands on remote servers (over SSH)
-* In general it does
+- extends the **rake DSL** with methods for running commands on remote servers
+  (over SSH)
+- In general it does
     1. connect to the given server over SSH
     1. run the command (or sequence of commands) you give it
-* it auto loads any custom rake tasks you have defined in `lib/capistrano/tasks`
-* it can symlink secret config files from your app dir to a secrets dir - this keeps the secrets out of your git repo.
-* use cases
-    * deploy apps
-    * run audits on multiple machines
-    * setup machines by driving things like `chef-solo`
-* it supports rails really well
-* it can only do deploys with git (or similar source control)
+- it auto loads any custom rake tasks you have defined in `lib/capistrano/tasks`
+- it can symlink secret config files from your app dir to a secrets dir - this
+  keeps the secrets out of your git repo.
+- use cases
+    - deploy apps
+    - run audits on multiple machines
+    - setup machines by driving things like `chef-solo`
+- it supports rails really well
+- it can only do deploys with git (or similar source control)
 
 ### How it organises servers
 
-* roles
-    * groups servers into "roles"
-* server
-    * if you only have one server you can define it directly without using a role
-
+- roles
+    - groups servers into "roles"
+- server
+    - if you only have one server you can define it directly without using a
+      role
 
 ### Where the config lives
 
 In your rails app
+
 ```
 Capfile
 # execution of the 'cap stage cmd' begins here
@@ -40,42 +43,46 @@ config/deploy.rb
 config/deploy/envname.rb # envname specific config here
 ```
 
-
 ### Configuring a rails app
 
 The following roles are part of how capistrano works by default
 
 1. `:all`
-    * you cannot change this, it is automatically added as a role to all servers
-    * e.g. `capistrano-bundler` runs for servers with the `:all` role by default
-    * e.g. `capistrano-rbenv` runs for servers with the `:all` role by default
-        * you can tweak this by changing `:rbenv_roles` attribute
+    - you cannot change this, it is automatically added as a role to all servers
+    - e.g. `capistrano-bundler` runs for servers with the `:all` role by default
+    - e.g. `capistrano-rbenv` runs for servers with the `:all` role by default
+        - you can tweak this by changing `:rbenv_roles` attribute
 1. `:app`
-    * intended for _rails_ servers
+    - intended for _rails_ servers
 1. `:db`
-    * intended for hosts that run your databases (on the assumption they may not be the same as those running your rails servers)
-    * the primary server in this role (which is either the first one, or the one with the `:primary` attribute set) is the only server that migrations are run on by default
+    - intended for hosts that run your databases (on the assumption they may not
+      be the same as those running your rails servers)
+    - the primary server in this role (which is either the first one, or the one
+      with the `:primary` attribute set) is the only server that migrations are
+      run on by default
 1. `:web`
-    * intended for your _web_ servers e.g. nginx, apache etc.
-    * all servers with this role get asset precompilation
+    - intended for your _web_ servers e.g. nginx, apache etc.
+    - all servers with this role get asset precompilation
 
-capistrano-rails has some custom settings which depend on capistrano built-in name convention roles
+capistrano-rails has some custom settings which depend on capistrano built-in
+name convention roles
 
-* `assets_roles`
-    * servers in any roles in this array get asset precompiliation
-    * is plural, there can be many roles which need asset precompilation
-    * defaults to `[:web]`
-* `migration_role`
-    * defaults to `:db`
-    * is singular - there is only one "migration role"
-* `migration_servers`
-    * Defaults to the primary server in the `migration_role` (The primary server in each group is considered to be the first unless any hosts have the primary property set)
-    * can be one-many servers
-
+- `assets_roles`
+    - servers in any roles in this array get asset precompiliation
+    - is plural, there can be many roles which need asset precompilation
+    - defaults to `[:web]`
+- `migration_role`
+    - defaults to `:db`
+    - is singular - there is only one "migration role"
+- `migration_servers`
+    - Defaults to the primary server in the `migration_role` (The primary server
+      in each group is considered to be the first unless any hosts have the
+      primary property set)
+    - can be one-many servers
 
 ### how to let cap get at the git repo
 
-####  option 1: ssh agent forwarding
+#### option 1: ssh agent forwarding
 
 i.e. use our own ssh key to auth ourselves _from_ the server _to_ the git repo
 
@@ -83,23 +90,25 @@ i.e. use our own ssh key to auth ourselves _from_ the server _to_ the git repo
 ssh -A deploy@one-of-my-servers.com 'git ls-remote git@github.com:rabid/repo.git'
 ```
 
-The above is the check that cap does internally to make sure this will work. You might have to add the git host to the list of known hosts on the server
-
+The above is the check that cap does internally to make sure this will work. You
+might have to add the git host to the list of known hosts on the server
 
     TODO: this is very vague, improve.
 
 #### option 2: HTTP auth + HTTPS
 
-* can be prompted for a username and password or use Oauth token
+- can be prompted for a username and password or use Oauth token
 
 ## how to let cap ssh onto our servers
 
-It uses ssh so provided you can ssh in to the box as your `deploy` user then cap can too.
+It uses ssh so provided you can ssh in to the box as your `deploy` user then cap
+can too.
 
-Note: none of the default cap recipes expect sudo to be available
-    passwordless sudo is probably a bad idea
+Note: none of the default cap recipes expect sudo to be available passwordless
+sudo is probably a bad idea
 
-You also need to make sure that the user you ssh in as has sufficient permissions to setup the app.
+You also need to make sure that the user you ssh in as has sufficient
+permissions to setup the app.
 
 ## Running capistrano on the command line
 
@@ -147,10 +156,9 @@ cap deploy:updating                # Update server(s) by setting up a new releas
 cap install                        # Install Capistrano, cap install STAGES=staging,production
 ```
 
-
 ## capistrano-rails
 
-* adds support for
+- adds support for
 
 1. asset pipeline
 2. migrations
@@ -163,15 +171,15 @@ Usage
 
 # Where do DSL methods come from
 
-* Rake
-    * desc
-    * task
-* SSHKit
-    * on
-    * roles
-    * test
-    * info
-    * error
+- Rake
+    - desc
+    - task
+- SSHKit
+    - on
+    - roles
+    - test
+    - info
+    - error
 
 # Flows
 

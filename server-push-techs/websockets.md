@@ -5,16 +5,17 @@
 Tools in descending order of usefulness:
 
 1. Chrome dev tools
-    * ++ lets you see headers AND messages from server
-    * ++ can send messages to server in console if you can get hold of the WebSocket object
+    - ++ lets you see headers AND messages from server
+    - ++ can send messages to server in console if you can get hold of the
+      WebSocket object
 2. `wscat`
-    * -- cannot see any handshake headers
-    * ++ can see messages AND send messages
-    * ++ can enable slash commands to interactively send control frames
+    - -- cannot see any handshake headers
+    - ++ can see messages AND send messages
+    - ++ can enable slash commands to interactively send control frames
 3. curl
-    * ++ can see handshake headers
-    * ++ can see messages from server
-    * -- cannot send messages
+    - ++ can see handshake headers
+    - ++ can see messages from server
+    - -- cannot send messages
 
 ### wscat example
 
@@ -38,6 +39,5 @@ curl
  http://localhost:3000/cable
 ```
 
-* `-i` is `--include` i.e. include protocol headers in the output
-* `-N` is `--no-buffer` i.e. disablings buffering ofthe output stream
-
+- `-i` is `--include` i.e. include protocol headers in the output
+- `-N` is `--no-buffer` i.e. disablings buffering ofthe output stream

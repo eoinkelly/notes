@@ -10,49 +10,49 @@
 /* state machine styles */
 
 rect.selection {
-    stroke          : gray;
-    stroke-dasharray: 4px;
-    stroke-opacity  : 0.5;
-    fill            : transparent;
+  stroke: gray;
+  stroke-dasharray: 4px;
+  stroke-opacity: 0.5;
+  fill: transparent;
 }
 
 g.state circle {
-    stroke  : gray;
-    cursor  : pointer;
+  stroke: gray;
+  cursor: pointer;
 }
 
 g.state circle.inner {
-    fill    : white;
+  fill: white;
 }
 
 g.state.hover circle.inner {
-    fill : aliceblue;
+  fill: aliceblue;
 }
 
 g.state circle.outer {
-    stroke-width    : 0px;
-    stroke-dasharray: 4px;
-    stroke-opacity  : 0.5;
-    fill            : transparent;
+  stroke-width: 0px;
+  stroke-dasharray: 4px;
+  stroke-opacity: 0.5;
+  fill: transparent;
 }
 
 g.state.selected circle.outer {
-    stroke-width    : 1px;
+  stroke-width: 1px;
 }
 
 g.state text {
-    font                : 12px sans-serif;
-    font-weight         : bold;
-    pointer-events      : none;
+  font: 12px sans-serif;
+  font-weight: bold;
+  pointer-events: none;
 }
 
 path.transition,
 path.dragline {
-    fill        : none;
-    stroke      : #000;
-    stroke-width: 1px;
-    cursor      : default;
-    marker-end  : url(#end-arrow);
+  fill: none;
+  stroke: #000;
+  stroke-width: 1px;
+  cursor: default;
+  marker-end: url(#end-arrow);
 }
 
 path.dragline {
@@ -60,18 +60,18 @@ path.dragline {
 }
 
 path.dragline.hidden {
-    stroke-width: 0;
+  stroke-width: 0;
 }
 
-    /* disable text selection */
+/* disable text selection */
 svg *::selection {
-    background : transparent;
+  background: transparent;
 }
 
 svg *::-moz-selection {
-    background:transparent;
+  background: transparent;
 }
 
 svg *::-webkit-selection {
-    background:transparent;
+  background: transparent;
 }

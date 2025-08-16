@@ -1,4 +1,3 @@
-
 # Updating rails
 
 http://railsapps.github.io/updating-rails.html
@@ -25,4 +24,3 @@ bundle outdated | grep default
 # update rails configuration and binstubs
 rake rails:update
 ```
-

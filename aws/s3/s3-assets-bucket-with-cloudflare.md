@@ -1,8 +1,13 @@
+If you are building `example.com` and want assets served from
+`assets.example.com` then:
 
-If you are building `example.com` and want assets served from `assets.example.com` then:
-
-1. Create an s3 bucket named `assets.example.com` - the bucket name **must** match the fully qualified domain name of the assets domain. Note that **you do not need to enable _Website hosting_ on the S3 bucket**.
-1. Add an S3 bucket policy which allows Cloudflare IP addresses to read objects from the bucket without authentication. The IP addresses in the example below are taken from https://www.cloudflare.com/ips/ . Don't forget you need to put your bucket name in the example below:
+1. Create an s3 bucket named `assets.example.com` - the bucket name **must**
+   match the fully qualified domain name of the assets domain. Note that **you
+   do not need to enable _Website hosting_ on the S3 bucket**.
+1. Add an S3 bucket policy which allows Cloudflare IP addresses to read objects
+   from the bucket without authentication. The IP addresses in the example below
+   are taken from https://www.cloudflare.com/ips/ . Don't forget you need to put
+   your bucket name in the example below:
     ```js
     // The IP addresses here are taken from https://www.cloudflare.com/ips/
     {
@@ -45,11 +50,13 @@ If you are building `example.com` and want assets served from `assets.example.co
         ]
     }
     ```
-1. In cloudflare setup a CNAME from your assets subdomain to the domain of the S3 bucket e.g.
+1. In cloudflare setup a CNAME from your assets subdomain to the domain of the
+   S3 bucket e.g.
     ```
     assets.example.com CNAME assets.example.com.s3.ap-southeast-2.amazonaws.com
     ```
-1. Make sure that you have enabled proxying on the CNAME you just created i.e. the little cloud icon should be orange
+1. Make sure that you have enabled proxying on the CNAME you just created i.e.
+   the little cloud icon should be orange
 
 You can now test your setup by running
 
@@ -59,5 +66,6 @@ curl -v https://assets.example.com/path/to/some/asset.jpg
 
 which should work.
 
-Now change your app to serve asset URLs of the form `https://assets.example.com/path/to/some/asset.jpg` - in Rails you'll want to have a look at the `asset_host` config value.
-
+Now change your app to serve asset URLs of the form
+`https://assets.example.com/path/to/some/asset.jpg` - in Rails you'll want to
+have a look at the `asset_host` config value.

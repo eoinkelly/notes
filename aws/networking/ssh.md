@@ -1,4 +1,5 @@
-To jump to an EC2 instance in a private subnet through an instance in a public subnet:
+To jump to an EC2 instance in a private subnet through an instance in a public
+subnet:
 
 ```
 # * 'ubuntu' user for ubuntu boxes only

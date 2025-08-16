@@ -1,5 +1,3 @@
-
-
 Full list of ruby global variables
 
 ```
@@ -63,4 +61,3 @@ $7
 $8
 $9
 ```
-

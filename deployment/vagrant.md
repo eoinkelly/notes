@@ -1,6 +1,7 @@
 # Vagrant
 
 Quick start
+
 ```
 cd /somewhere/you/want/to/share/with/vm
 vagrant init ubuntu/trusty64
@@ -9,7 +10,8 @@ vagrant init ubuntu/trusty64
 vagrant ssh
 ```
 
-Vagrant shares a directory at /vagrant with the directory on the host containing your Vagrantfile,
+Vagrant shares a directory at /vagrant with the directory on the host containing
+your Vagrantfile,
 
 ## Automatic provisioning
 
@@ -29,7 +31,6 @@ Vagrant.configure("2") do |config|
   config.vm.network :forwarded_port, host: 4567, guest: 80
 end
 ```
-
 
 ```
 vagrant up                          # will run provisioning
@@ -56,13 +57,12 @@ Vagrant can
 
 the VM
 
-
 ## Providers
 
 Providers are vagrants name for "things that provide virtual machines" e.g.
 
-* Virtualbox
-* Vmware
-* AWS
+- Virtualbox
+- Vmware
+- AWS
 
-Vagrant uses virtualbox by default but has plugins for  others
+Vagrant uses virtualbox by default but has plugins for others

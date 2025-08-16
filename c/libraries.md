@@ -1,12 +1,10 @@
-
-
 Common useful C libraries
 
-* libcURL
-* libGlib
-* libGSL
-* libSQLite3
-* libXML2
+- libcURL
+- libGlib
+- libGSL
+- libSQLite3
+- libXML2
 
 ```
 # ubuntu 18 package names
@@ -32,7 +30,8 @@ libsqlite3-dev - SQLite 3 development files
 libxml2-dev - Development files for the GNOME XML library
 ```
 
-To use a library, you have to tell the compiler that you will be importing functions from the library twice:
+To use a library, you have to tell the compiler that you will be importing
+functions from the library twice:
 
 1. once for the compilation
 1. once for the linker.
@@ -43,4 +42,3 @@ For a library in a standard location, the two declarations happen via:
 
 1. an #include in the text of the program
 1. a l flag on the compiler line.
-

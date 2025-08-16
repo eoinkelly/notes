@@ -1,20 +1,20 @@
 http://webmasters.stackexchange.com/questions/20838/how-to-find-web-hosting-that-meets-my-requirements?newsletter=1&nlcode=23596%7c7cdb
-        iserver permissions questions & research
-        figure out how much SSL hosting would be wiht each
-        come up with a list of questions for hosting providers and do a survey - see wp security doc
-        ella happy for me to spend 3hrs doing a hosting provider survey
+iserver permissions questions & research figure out how much SSL hosting would
+be wiht each come up with a list of questions for hosting providers and do a
+survey - see wp security doc ella happy for me to spend 3hrs doing a hosting
+provider survey
 
         how good/bad an idea is using a VPS for all our sites?
 
         current payments
         	orcon
-	        	no limits plan $81.65 (spam portection and mssql db charged separately) per month
-	        	ella currently has 104 domains
-	        web widgets
-	        	19 active sites
-	        	paying either 25/mon or 40/mon for each site (depending on bandwidth and features)
-	        	does WP provide all web widgets features?
-	        	what markup does she have on each client here?
+            	no limits plan $81.65 (spam portection and mssql db charged separately) per month
+            	ella currently has 104 domains
+            web widgets
+            	19 active sites
+            	paying either 25/mon or 40/mon for each site (depending on bandwidth and features)
+            	does WP provide all web widgets features?
+            	what markup does she have on each client here?
 
 
         orcon

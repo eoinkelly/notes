@@ -1,6 +1,6 @@
 # Drupal 7 from the database POV
 
-* 74 tables
+- 74 tables
 
 ```
 +-----------------------------+

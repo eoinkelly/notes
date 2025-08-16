@@ -1,6 +1,7 @@
 # Katana 55 Effects Types
 
-Effects are also documented in the Boss GT-100 Boss Tone Studio also used to control the GT-100
+Effects are also documented in the Boss GT-100 Boss Tone Studio also used to
+control the GT-100
 
 ## Booster Type
 
@@ -47,9 +48,10 @@ There are two positions in the chain to load these effects (Mod and FX)
 13. Touch Wah
     - modelled on Boss TW-1
     - basically an envelope filter
-    - up = act as high pass filter (removes all lower frequencies and gradually adds them back in
-      based on guitar volume)
-    - down = low pass filter (remove all high frequencies, gradually add them back in)
+    - up = act as high pass filter (removes all lower frequencies and gradually
+      adds them back in based on guitar volume)
+    - down = low pass filter (remove all high frequencies, gradually add them
+      back in)
         - rarely used
 14. Auto Wah
 15. Pedal Wah

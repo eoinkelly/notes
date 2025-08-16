@@ -1,4 +1,1 @@
-
-
-
 module.exports = 'public'

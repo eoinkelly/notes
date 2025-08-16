@@ -1,33 +1,39 @@
 # Ruby debug gem
 
-* installed by default in ruby 3.1+
-* supports back to Ruby 2.6
-* supports VSCode integration
-* create break
-  ```ruby
-  binding.break
-  binding.b
-  debugger
-  ```
-* you can run a ruby script under `rdbg myfile.rb` and it will drop into the debugger after an exception is raised
-* has ability to record and replay
-  * TODO: can this be used in rails?
-* is faster than other debuggers - No performance penalty on non-stepping mode and non-breakpoints.
-* supports remote debugging
-* is the default in Rails 7
+- installed by default in ruby 3.1+
+- supports back to Ruby 2.6
+- supports VSCode integration
+- create break
+    ```ruby
+    binding.break
+    binding.b
+    debugger
+    ```
+- you can run a ruby script under `rdbg myfile.rb` and it will drop into the
+  debugger after an exception is raised
+- has ability to record and replay
+    - TODO: can this be used in rails?
+- is faster than other debuggers - No performance penalty on non-stepping mode
+  and non-breakpoints.
+- supports remote debugging
+- is the default in Rails 7
 
 ### My experience with debug vs pry-byebug
 
 ++ is for ways it debug is better than pry-byebug, -- is for the reverse
 
-* ++ debug has color output in backtraces
-* ++ Backtrace in debug contains values of method call or block arguments
-* ++ de bug has single letter commands by default
-* -- new command shortcuts to learn
-* ++ debug shows you the first two lines of backtrace when you drop into the debugger - handy
-* ++ very expressive ways to drop into debugger - can watch ivars, stop on lines or class#method or based on conditional logic
-* -- I had to install the iterm2 shell integration to make mouse scrolling work in debug (this might just be an iterm thing)
-* ++ debug supports running things under Procfile like Rails 7 wants to do by default
+- ++ debug has color output in backtraces
+- ++ Backtrace in debug contains values of method call or block arguments
+- ++ de bug has single letter commands by default
+- -- new command shortcuts to learn
+- ++ debug shows you the first two lines of backtrace when you drop into the
+  debugger - handy
+- ++ very expressive ways to drop into debugger - can watch ivars, stop on lines
+  or class#method or based on conditional logic
+- -- I had to install the iterm2 shell integration to make mouse scrolling work
+  in debug (this might just be an iterm thing)
+- ++ debug supports running things under Procfile like Rails 7 wants to do by
+  default
 
 ```
 # key commands

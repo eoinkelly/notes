@@ -2,23 +2,22 @@
 
 Source
 
-* https://learning.oreilly.com/videos/nullology/9781491908822/9781491908822-video182157
+- https://learning.oreilly.com/videos/nullology/9781491908822/9781491908822-video182157
 
-* Nullology is the study of the _empty set_
-* Empty set is the analog of zero in arithmetic
-* Empty set is a very useful edge-case when testing theorems etc.
+- Nullology is the study of the _empty set_
+- Empty set is the analog of zero in arithmetic
+- Empty set is a very useful edge-case when testing theorems etc.
 
 ## Topics in the video
 
-* Empty relation bodies aka "empty relations"
-* Empty relation headings
-* Empty sets of operaands
-* Empty subsets of headings
-* Empty LHSs in FDs and empty keys
-* Empty types
+- Empty relation bodies aka "empty relations"
+- Empty relation headings
+- Empty sets of operaands
+- Empty subsets of headings
+- Empty LHSs in FDs and empty keys
+- Empty types
 
 Aside: SQL fails in all these areas
-
 
 relvar = short of "relation variable"
 
@@ -46,10 +45,8 @@ Union/intersection/difference
     S {CITY} INTERSECT P {CITY}
     S {CITY} MINUS P {CITY}
 
-Join
-    S JOIN SP
-    S JOIN P
-    # must have one attribute with the same (name, type) in both relations
+Join S JOIN SP S JOIN P # must have one attribute with the same (name, type) in
+both relations
 
 Extend
 

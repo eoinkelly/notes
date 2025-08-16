@@ -29,31 +29,28 @@ git log -p # see a patch (the diff) of each commit
 
 ### How to see the diff history of a single file?
 
-* You can do this by passing a file path to git log e.g.
+- You can do this by passing a file path to git log e.g.
 
 ```
 # include -p to show patch for each commit
 git log -p path/to/file.ext
 ```
 
-* Option:
-    * `gitk path/to/file.ext &`
-    * `gitk --follow path/to/file.ext &`
-        * follows past file renames
-    * ++ works great
-    * -- requires gui and gitk to be installed
-
+- Option:
+    - `gitk path/to/file.ext &`
+    - `gitk --follow path/to/file.ext &`
+        - follows past file renames
+    - ++ works great
+    - -- requires gui and gitk to be installed
 
 ### --stat
 
 Terminology
 
-
-* A "deletion" is the removal of stuff from a file
-    * can be removal of a whole line or just part of one
-* An "insertion" is the addtion of content to a file
-    * can be part of a line or a whole line
-
+- A "deletion" is the removal of stuff from a file
+    - can be removal of a whole line or just part of one
+- An "insertion" is the addtion of content to a file
+    - can be part of a line or a whole line
 
 ```sh
 # format:

@@ -1,0 +1,9 @@
+
+node_modules
+*.yml
+*.json
+*.html
+*.es
+
+# some invalid js files in here I can't be bothered to fix right now
+ember/**/*.js

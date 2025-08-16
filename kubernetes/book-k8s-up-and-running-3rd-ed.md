@@ -1,2 +1,1 @@
 # Kubernetes up and running
-

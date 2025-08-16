@@ -2,11 +2,11 @@
 
 Consider an example where we have Channels and Products
 
-* A Channel
-    * has many Products
-    * uses its `name` column as the primary key
-* A Product
-    * has one Channel
+- A Channel
+    - has many Products
+    - uses its `name` column as the primary key
+- A Product
+    - has one Channel
 
 ```ruby
 class AddChannelsAndProducts < ActiveRecord::Migration

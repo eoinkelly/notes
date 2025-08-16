@@ -1,4 +1,3 @@
-
 php.ini mail configuration:
 
 ```bash

@@ -4,12 +4,11 @@ https://docs.microsoft.com/en-us/azure/quantum/concepts-overview
 
 What is it for?
 
+- computational tasks which would either be too slow or require too much memory
+  using a conventional computer
 
-* computational tasks which would either be too slow or require too much memory using a conventional computer
-
-> quantum algorigthmic thinking
-quantum algorithms are very different from classical algorithms
-we compute by manipulating quantum interference
+> quantum algorigthmic thinking quantum algorithms are very different from
+> classical algorithms we compute by manipulating quantum interference
 
 you need to know vectors and matrices to understand quantum computing
 
@@ -18,30 +17,30 @@ you need to know vectors and matrices to understand quantum computing
 The SDK depends on dotnet 3. dotnet 5 is latest and is what homebrew has.
 
 1. Open VS Code
-1. From blue menu, choose "Re-open in container" (or accept the prompt on bottom left)
+1. From blue menu, choose "Re-open in container" (or accept the prompt on bottom
+   left)
 
-This directory is mapped to `/workspace` in the container
-Extensions are installed when the container is created by vs code
-    VS code runs the docker commands for you
-VS-Code has a docker-compose.yml that can override your normal one
+This directory is mapped to `/workspace` in the container Extensions are
+installed when the container is created by vs code VS code runs the docker
+commands for you VS-Code has a docker-compose.yml that can override your normal
+one
 
-
-* project names allow you to use kebab case but it breaks things - stick to PascalCase
+- project names allow you to use kebab case but it breaks things - stick to
+  PascalCase
 
 This is the log from the start up
 
 Interesting things in the log:
 
-* docker-compose supports being passed multiple docker-compose.yml files
-* docker-compose has a command to show you the merged config of multiple config files
+- docker-compose supports being passed multiple docker-compose.yml files
+- docker-compose has a command to show you the merged config of multiple config
+  files
+
     ```
     docker-compose -f /Users/eoinkelly/Dropbox/Eoin/Notes/on-github/quantum-computing/docker-compose.yml -f /Users/eoinkelly/Dropbox/Eoin/Notes/on-github/quantum-computing/.devcontainer/docker-compose.yml config
     ```
 
-* it creates files in
-    /home/jovyan/.vscode-server
-    /var/vscode-server
-
+- it creates files in /home/jovyan/.vscode-server /var/vscode-server
 
 ```
 [440 ms] Remote-Containers 0.202.5 in VS Code 1.61.2 (6cba118ac49a1b88332f312a8f67186f7f3c1643).

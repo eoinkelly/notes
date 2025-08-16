@@ -2,8 +2,12 @@
 
 # Install
 
-1. Download and `dd` to SD card the latest raspbian https://www.raspberrypi.org/downloads/raspbian/ (Note to self: I chose lite edition)
-1. `dd` it to an SD card following https://www.raspberrypi.org/documentation/installation/installing-images/mac.md
+1. Download and `dd` to SD card the latest raspbian
+   https://www.raspberrypi.org/downloads/raspbian/ (Note to self: I chose lite
+   edition)
+1. `dd` it to an SD card following
+   https://www.raspberrypi.org/documentation/installation/installing-images/mac.md
+
     ```bash
     diskutil list
 
@@ -12,14 +16,14 @@
     # note use of rdiskN not diskN below (for speed)
     dd if=raspbian.img of=/dev/rdiskN bs=1m conv=sync
     ```
+
 1. At this point you will need to login locally
 1. Use `rasbpi-config` command to complete setup. Configure:
-    * locale
-    * wifi
-    * turn on SSH server
+    - locale
+    - wifi
+    - turn on SSH server
 
 All further steps can be completed via ssh.
-
 
 ## Download updates
 
@@ -96,7 +100,8 @@ PARTUUID=f116e4fe-01 /media/backups exfat defaults,nofail 0 0
 
 ## Setup samba (time machine backup)
 
-Time machine uses SMB shares so setup Samba. Instructions: https://www.raspberrypi.org/documentation/remote-access/samba.md
+Time machine uses SMB shares so setup Samba. Instructions:
+https://www.raspberrypi.org/documentation/remote-access/samba.md
 
 Samba since 4.8 can be a time machine network share
 
@@ -145,5 +150,8 @@ sudo apt-get install libsystemd-dev
 
 ```
 
-
-/usr/lib/jvm/jdk-8-oracle-arm32-vfp-hflt/jre/bin/java -Dfile.encoding=UTF-8 -Djava.awt.headless=true -Dapple.awt.UIElement=true -Xmx1024M -XX:+ExitOnOutOfMemoryError -XX:+CrashOnOutOfMemoryError -XX:ErrorFile=/usr/lib/unifi/logs/hs_err_pid%p.log -jar /usr/lib/unifi/lib/ace.jar start
+/usr/lib/jvm/jdk-8-oracle-arm32-vfp-hflt/jre/bin/java -Dfile.encoding=UTF-8
+-Djava.awt.headless=true -Dapple.awt.UIElement=true -Xmx1024M
+-XX:+ExitOnOutOfMemoryError -XX:+CrashOnOutOfMemoryError
+-XX:ErrorFile=/usr/lib/unifi/logs/hs_err_pid%p.log -jar
+/usr/lib/unifi/lib/ace.jar start

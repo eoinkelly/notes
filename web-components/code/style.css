@@ -1,9 +1,9 @@
 app-drawer {
-	/* you can style the elements themselves because they are in the main DOM */
-	border: 3px solid red;
+  /* you can style the elements themselves because they are in the main DOM */
+  border: 3px solid red;
 }
 
 h1 {
-	color: #bada55;
-	background-color: blue;
+  color: #bada55;
+  background-color: blue;
 }

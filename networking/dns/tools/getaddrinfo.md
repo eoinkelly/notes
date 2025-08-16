@@ -1,17 +1,17 @@
 # getaddrinfo()
 
-
-* `man getaddrinfo`
-    * says nothing about *how* it works
-* part of POSIX.1 spec
-* does a **lot** https://jameshfisher.com/2018/02/03/what-does-getaddrinfo-do/
-    * it operates differently on different operating systems
-* it does a DNS request as **part** of it's operation but it will also
-    * read /etc/hosts
-    * try to use nscd (a name lookup cache server) if it exists (don't install it, it's bit shit)
-    * try to use mDNS if it exists (somehow??)
-* is blocking (be careful calling if you are in a green threads context)
-* part of libc
+- `man getaddrinfo`
+    - says nothing about _how_ it works
+- part of POSIX.1 spec
+- does a **lot** https://jameshfisher.com/2018/02/03/what-does-getaddrinfo-do/
+    - it operates differently on different operating systems
+- it does a DNS request as **part** of it's operation but it will also
+    - read /etc/hosts
+    - try to use nscd (a name lookup cache server) if it exists (don't install
+      it, it's bit shit)
+    - try to use mDNS if it exists (somehow??)
+- is blocking (be careful calling if you are in a green threads context)
+- part of libc
 
 ## caching
 
@@ -29,9 +29,9 @@ $ sudo killall -HUP mDNSResponder
 
 Underlying systems:
 
-* DNS
-* mDNS
-* /etc/hosts
+- DNS
+- mDNS
+- /etc/hosts
 
 ## macOS
 

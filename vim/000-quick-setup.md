@@ -1,5 +1,3 @@
-
-
 ```ruby
 # you might need to ':set modeline' to turn on modeline support
 # vim: tabstop=2:softtabstop=2:shiftwidth=2:noexpandtab

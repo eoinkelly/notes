@@ -1,23 +1,24 @@
-
-
 `xcodebuild`
 
-* command line access to XCode IDE
+- command line access to XCode IDE
 
-* a tool for batching work on a project or workspace - not really designed for fine-grained
+- a tool for batching work on a project or workspace - not really designed for
+  fine-grained
 
 ```
 $ cd /path/to/code/Xcode/projectdir
 $ xcodebuild # equivalent of Cmd-R in GUI
 ```
 
+Xcode has its own version of the command line compiler and linker tools in its
+bundle e.g.
+`/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang`
 
-Xcode has its own version of the command line compiler and linker tools in its bundle e.g. `/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang`
+I presume the "xcode command line tools" install is what gives me
+`/usr/bin/clang` ?
 
-I presume the "xcode command line tools" install is what gives me `/usr/bin/clang` ?
-
-You can use `xcrun` to find or run versions of the tools installed inside Xcode e.g.
-
+You can use `xcrun` to find or run versions of the tools installed inside Xcode
+e.g.
 
 ```
 $ xcrun --find nm
@@ -37,7 +38,6 @@ c++               codesign_allocate flex              ld                m4      
 c89               cpp               flex++            lex               mig               rebase            swift             what
 c99               ctags             gcov              libtool           mkdep             redo_prebinding   swift-demangle    yacc
 ```
-
 
 To dump all the build settings for a particular target use:
 

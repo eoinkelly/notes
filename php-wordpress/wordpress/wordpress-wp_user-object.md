@@ -1,17 +1,7 @@
-(
-    [data] => stdClass Object
-        (
-            [ID] => 1
-            [user_login] => eoin
-            [user_pass] => $P$BP5.nFmKk4GNcD1JSiVQF477UEYMLe1
-            [user_nicename] => eoin
-            [user_email] => eoin@alittlelightisblinking.co.nz
-            [user_url] =>
-            [user_registered] => 2012-01-09 23:17:56
-            [user_activation_key] =>
-            [user_status] => 0
-            [display_name] => eoin
-        )
+( [data] => stdClass Object ( [ID] => 1 [user_login] => eoin [user_pass] =>
+$P$BP5.nFmKk4GNcD1JSiVQF477UEYMLe1 [user_nicename] => eoin [user_email] =>
+eoin@alittlelightisblinking.co.nz [user_url] => [user_registered] => 2012-01-09
+23:17:56 [user_activation_key] => [user_status] => 0 [display_name] => eoin )
 
     [ID] => 1
     [caps] => Array
@@ -113,5 +103,5 @@
         )
 
     [filter] =>
-)
- END ALLIB DEBUG DUMP -->
+
+) END ALLIB DEBUG DUMP -->

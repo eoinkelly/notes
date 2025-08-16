@@ -25,20 +25,20 @@ BlogPost
 
 Notes:
 
-* Do all the below using test first (have a failing test before implementing the functionality)
-* Use message sending style for everything
+- Do all the below using test first (have a failing test before implementing the
+  functionality)
+- Use message sending style for everything
 
 Instructions:
 
 1. create all instance variables and getters/setters manually
-    * make a copy of authors for memory safety
-3. re-implement them with `@property` syntax
-4. create all instance methods and class methods
-5. use `#pragma mark - section` to make nice sections
-6. Refactor the code to use dot notation
-
+    - make a copy of authors for memory safety
+2. re-implement them with `@property` syntax
+3. create all instance methods and class methods
+4. use `#pragma mark - section` to make nice sections
+5. Refactor the code to use dot notation
 
 TO SOLVE
 
-* how to test a private method in objC
-* how to test that an object takes a copy of a provided NSString or NSArray
+- how to test a private method in objC
+- how to test that an object takes a copy of a provided NSString or NSArray

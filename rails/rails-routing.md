@@ -4,42 +4,42 @@ Has 2 purposes
 
 1. map HTTP requests to controller actions
 2. create methods for dynamic URL generation
-    * these all return a string representing a URL or path
-    * these methods just generate URLs - they don't care about HTTP verb - this
+    - these all return a string representing a URL or path
+    - these methods just generate URLs - they don't care about HTTP verb - this
       means a helper URL can be re-used with multiple verbs e.g. in a
       `resources :books` collection the `book_path` helper is used to make four
       routes:
-      ```
-      GET book_path(id)     -> books#show
-      PUT book_path(id)     -> books#update
-      PATCH book_path(id)   -> books#update
-      DELETE book_path(id)  -> books#destroy
-      ```
-
+        ```
+        GET book_path(id)     -> books#show
+        PUT book_path(id)     -> books#update
+        PATCH book_path(id)   -> books#update
+        DELETE book_path(id)  -> books#destroy
+        ```
 
 ## routes.rb
 
 `config/routes.rb` contains a list of _rules_ called routes.
-* eash route is a method call that takes a hash
-* the first _key: value_ in the hash has this form:
-    * The key
-        * is made up of 3 types of thing:
-          1. `/` matches literal `/` in the URL
-          2. segment keys e.g. `:id`
-              * they look like symbols but aren't
-              * optional segment keys are enclosed in `()`
-          3. static strings
-        * provides the pattern for
-          1. matching the URL (recognition)
-          2. creating the URL in the helper (generation)
-    * The value
-        * is usually a string of the form `controller#action`
-        * is a rack endpoint.
-    * Q ??? can the value contain segment keys? I thik so?
-        * I think the `:controller` and `:action` key segments might have special
-        meaning
 
-* The URLs crated by the helpers only make sense to the routing system that
+- eash route is a method call that takes a hash
+- the first _key: value_ in the hash has this form:
+    - The key
+        - is made up of 3 types of thing:
+            1. `/` matches literal `/` in the URL
+            2. segment keys e.g. `:id`
+                - they look like symbols but aren't
+                - optional segment keys are enclosed in `()`
+            3. static strings
+        - provides the pattern for
+            1. matching the URL (recognition)
+            2. creating the URL in the helper (generation)
+    - The value
+        - is usually a string of the form `controller#action`
+        - is a rack endpoint.
+    - Q ??? can the value contain segment keys? I thik so?
+        - I think the `:controller` and `:action` key segments might have
+          special meaning
+
+- The URLs crated by the helpers only make sense to the routing system that
   created them - they are not necessairly human understandable.
 
 The format of a route is a method call:
@@ -57,16 +57,17 @@ get({'recipes/:ingredient' => 'recipes#index'})
 # match
 ```
 
-* The methods declare which HTTP verb this route should match (or any verb if it
+- The methods declare which HTTP verb this route should match (or any verb if it
   is `match`)
 
 Routes have a rich syntax. A single route has to provide enough info to match an
 existing URL and create a new one (with the helper method)
 
+All routes are defined inside a block passed to the
+`Rails.application.routes.draw` method.
 
-All routes are defined inside a block passed to the `Rails.application.routes.draw` method.
-
-Q: can you add routes to rails from outside routes.rb? Probably a bad idea but ...
+Q: can you add routes to rails from outside routes.rb? Probably a bad idea but
+...
 
 ```sh
 [3] pry(main)> Rails.application.routes.class
@@ -103,36 +104,36 @@ Rails.application.routes.draw do
 end
 ```
 
-
-* You can add any arbitrary parameters to the routing methods. If they are not
+- You can add any arbitrary parameters to the routing methods. If they are not
   recognised as _special_ by the routing system, they are just copied into the
   `params` hash.
-* The special params are
-    * via
-        * constrain which of the 5 supported HTTP verbs (GET, POST, PUT, PATCH,
+- The special params are
+    - via
+        - constrain which of the 5 supported HTTP verbs (GET, POST, PUT, PATCH,
           DELETE) this route will match
-    * as
-        * lets you set a name prefix for the helper methods that the route will
+    - as
+        - lets you set a name prefix for the helper methods that the route will
           create
-        * has nothing to do with the contents of the URL - it is *not* an alias
+        - has nothing to do with the contents of the URL - it is _not_ an alias
           for the route.
-    * ???
-* `match` will match any HTTP verb - use one of the more specifc methods to
+    - ???
+- `match` will match any HTTP verb - use one of the more specifc methods to
   match a single verb or use `via: [:get, :put]` to match multiple verbs (but
   not all)
-* The routing block is evaluated inside `ActionDispatch::Routing::Mapper` class at
-runtime.
+- The routing block is evaluated inside `ActionDispatch::Routing::Mapper` class
+  at runtime.
 
 ## Segment keys
 
-* `:foo` in a route pattern
-* optional segment keys are wrapped in parens `/products/:id(.:format)/`
+- `:foo` in a route pattern
+- optional segment keys are wrapped in parens `/products/:id(.:format)/`
 
 ## link_to
 
 The raw form of `link_to` provides values for all the segment keys in the route.
-* segment keys are passed to the controller in `params`
-* `link_to` does the same top to bottom search that happens during route
+
+- segment keys are passed to the controller in `params`
+- `link_to` does the same top to bottom search that happens during route
   _recognition_ - it stops when it finds the first thing that will let it make a
   URL
 
@@ -142,15 +143,14 @@ link_to "Some stuff", controller: "products", action: "show", id: 1
 
 ```
 
-Q: i think `things#do` is just sugar for `controller: 'things', action: 'do'`
-    is this true?
+Q: i think `things#do` is just sugar for `controller: 'things', action: 'do'` is
+this true?
 
-Q: can I use link_to to make a route that doesn't exist in routes.rb?
-    it seems not
+Q: can I use link_to to make a route that doesn't exist in routes.rb? it seems
+not
 
-* `link_to` does not have any special understanding of what routes exist - it is
+- `link_to` does not have any special understanding of what routes exist - it is
   just a pure function that takes some args and builds a string.
-
 
 ## Redirect routes
 
@@ -177,21 +177,22 @@ match "/api/v1/:api",
       via: :any
 ```
 
-* `redriect` method returns `ActionDispatch::Routing::Redirect` which is a
+- `redriect` method returns `ActionDispatch::Routing::Redirect` which is a
   _simple Rack endpoint_.
 
-Q: what is a simple rack endpoint?
-    I think it is any thing that returns `[status, headers, [body]]`
+Q: what is a simple rack endpoint? I think it is any thing that returns
+`[status, headers, [body]]`
 
-Q: what is the story with this `match "/foo/:id", :to => redirect("/bar/%{id}s")`
+Q: what is the story with this
+`match "/foo/:id", :to => redirect("/bar/%{id}s")`
 
 ## The :format field
 
-* segment named `:format` has a special meaning to the `respond_to` method of
+- segment named `:format` has a special meaning to the `respond_to` method of
   the controller.
-* `respond_to` checks `:format` to decide which of the provided blocks to run in
+- `respond_to` checks `:format` to decide which of the provided blocks to run in
   your controller.
-* Rails will throw an exception if you specify a format that isn't covered by
+- Rails will throw an exception if you specify a format that isn't covered by
   `respond_to` in the controller
 
 ```ruby
@@ -204,14 +205,14 @@ end
 
 ## How router and controllers are coupled
 
-TL;DR The router runs rack endpoints. Controllers have #action which wraps
-their methods as an endpoint.
+TL;DR The router runs rack endpoints. Controllers have #action which wraps their
+methods as an endpoint.
 
-* the argument to `to:` is a rack endpoint.
-* Rails controllers have an #action method that returns a _rack endpoint_ that
+- the argument to `to:` is a rack endpoint.
+- Rails controllers have an #action method that returns a _rack endpoint_ that
   executes the specified action i.e.
-* The `controller#actionname` syntax just runs this #action method.
-* so the router and controllers are loosely coupled.
+- The `controller#actionname` syntax just runs this #action method.
+- so the router and controllers are loosely coupled.
 
 ```ruby
 xx = UsersController.action(:show)
@@ -238,27 +239,21 @@ mount SinatraAppMainClass, at: '/some-path'
 mount SinatraAppMainClass => '/some-path' # same as above
 ```
 
-
 up to 2.2.10
-
 
 ## How the 7 actions map to CRUD
 
-* presentation centric:
+- presentation centric:
     1. index -> R
     2. show -> R
     3. new -> R
-* persistence centric:
-    4. create -> C
-    5. edit -> U
-    6. update -> U
-    7. destroy -> D
+- persistence centric: 4. create -> C 5. edit -> U 6. update -> U 7. destroy ->
+  D
 
-* When you use `resources :foos` _every_ route gets a path helper created for it
-* Routing matches the order given in the routes file (put wildcards lower down
+- When you use `resources :foos` _every_ route gets a path helper created for it
+- Routing matches the order given in the routes file (put wildcards lower down
   so they don't match too early)
-    * Rails stops looking for thorugh the routes when it finds the first match.
-
+    - Rails stops looking for thorugh the routes when it finds the first match.
 
 ```ruby
 # Implment exactly what resources :decks would do
@@ -277,18 +272,18 @@ resources :decks
 
 `resources :plural` creates 7 routes and 4 path helpers named as follow
 
-1. new_singular_(path|url)
-2. edit_singular_(path|url)
-3. singular_(path|url)
-4. plural_(path|url)
+1. new*singular*(path|url)
+2. edit*singular*(path|url)
+3. singular\_(path|url)
+4. plural\_(path|url)
 
-### Setting the base URL for *_url helpers
+### Setting the base URL for \*\_url helpers
 
-* By default it is taken from the request (??? check this)
-* You can tweak it by defining #default_url_options in your controllers
-    * #default_url_options returns a hash of options, not a string
-    * Put it in ApplicationController to tweak it everywhere or in a specific controller to just tweak it in those views
-
+- By default it is taken from the request (??? check this)
+- You can tweak it by defining #default_url_options in your controllers
+    - #default_url_options returns a hash of options, not a string
+    - Put it in ApplicationController to tweak it everywhere or in a specific
+      controller to just tweak it in those views
 
 ### The many types of args that path helpers can take
 
@@ -307,32 +302,30 @@ app.deck_path(x)
 
 Rails controller and view methods like:
 
-* form_for
-* link_to
-* redirect_to
-* url_for
-    * passing a record (e.g. an ActiveRecord object)
+- form_for
+- link_to
+- redirect_to
+- url_for
+    - passing a record (e.g. an ActiveRecord object)
 
-* all internally use `#polymorphic_url` under the hood (you can get at it via
-* `app.polymorphic_url` or `app.polymorphic_path` in rails console).
-* It takes almost anything railsey and figures out what the path to it would be.
+- all internally use `#polymorphic_url` under the hood (you can get at it via
+- `app.polymorphic_url` or `app.polymorphic_path` in rails console).
+- It takes almost anything railsey and figures out what the path to it would be.
 
-* app.polymorphic_url(foo, options)
-* options
-    * routing_type: :url|:path
-    * action nil|:new|:edit
-* foo = record or hash or array
-* it expects its second arg to be an options hash so if you have nested routes you need to pass them in an array
+- app.polymorphic_url(foo, options)
+- options
+    - routing_type: :url|:path
+    - action nil|:new|:edit
+- foo = record or hash or array
+- it expects its second arg to be an options hash so if you have nested routes
+  you need to pass them in an array
 
-* `polymorphic_path(foo)` is just `polymorphic_url(foo, routing_type: :path)`
+- `polymorphic_path(foo)` is just `polymorphic_url(foo, routing_type: :path)`
 
-*  foo could be
-    * A model class name e.g. `User`
-    * An instance of an active_record model `User.find(1)`
-    * An array of models or classes or ids (for nested resources)
-
-
-
+- foo could be
+    - A model class name e.g. `User`
+    - An instance of an active_record model `User.find(1)`
+    - An array of models or classes or ids (for nested resources)
 
 ```ruby
 # all these do the same because #link_to uses #polymorphic_path under the hood
@@ -346,7 +339,6 @@ Rails controller and view methods like:
 # we can't remove the *_path method here as polymorphic path will give you back the URL for displaying what you give it, not editing it
 = link_to 'Edit a deck', edit_deck_path(@deck)
 ```
-
 
 ```ruby
 app.polymorphic_path(User) # => "/users"
@@ -374,11 +366,13 @@ resources :foos do
   resources :bars
 end
 ```
-* creates the normal 7 foo resources
-* creates the normal 7 bar resources except for 2 differences:
+
+- creates the normal 7 foo resources
+- creates the normal 7 bar resources except for 2 differences:
     1. the bar _paths_ are nested within a single foo path `foos/:id`
     2. the path helpers are named with `foo_bar` not with `bar`
-* the foo resources are placed *after* the bar resources so that a bar will match first
+- the foo resources are placed _after_ the bar resources so that a bar will
+  match first
 
 ```
       Prefix Verb   URI Pattern                           Controller#Action
@@ -402,16 +396,16 @@ edit_foo_bar GET    /foos/:foo_id/bars/:id/edit(.:format) bars#edit
 
 ## The core methods of the rails routing DSL
 
-* #resource
-* #resources
-* #get
-* #put
-* #patch
-* #delete
-* #post
-* #root
-* #concern
-* #namespace
+- #resource
+- #resources
+- #get
+- #put
+- #patch
+- #delete
+- #post
+- #root
+- #concern
+- #namespace
 
 ## Concerns
 
@@ -465,13 +459,11 @@ resources :pages, concern: :commentable
 
 That doesn't seem like it would be too hard to handle manually ????
 
-
 # TODO
 
 what does resource (singluar) do?
 
 figure out namespaces, collection
-
 
 # Neat trick
 

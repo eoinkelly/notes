@@ -1,20 +1,23 @@
 # Ember Components (Ember in Action Chapter 7)
 
-Q: what is the right granularity for a component?
-    * EIA book advocates for very small components with one job - very SRP
+Q: what is the right granularity for a component? \* EIA book advocates for very
+small components with one job - very SRP
 
-Q: what are the criteria to consider when deciding between a view and a component?
-    * will this view be reused in different templates in your app? = medium for component
-    * Will this view be reused across apps = strong  for component
-    * Does this view require access to a lot of state from the app? = ???
-    * Does this view need to exchange messages with other views/components in the app? = ???
+Q: what are the criteria to consider when deciding between a view and a
+component? _ will this view be reused in different templates in your app? =
+medium for component _ Will this view be reused across apps = strong for
+component _ Does this view require access to a lot of state from the app? = ???
+_ Does this view need to exchange messages with other views/components in the
+app? = ???
 
 Q: is there a performance penalty to compoents vs views?
 
 Q: Is there a performance penalty to using lots of components?
 
 Q: Should _everything_ be injected into a component?
-  * Can it know about your route names? EIA seems ok with this - it hard codes route names in components
+
+- Can it know about your route names? EIA seems ok with this - it hard codes
+  route names in components
 
 Q: At what point would you not use a component and use a view instead?
 
@@ -22,22 +25,24 @@ Q: How many injections can you have before component is the wrong thing?
 
 Q: How do you avoid all the passing out of messages I had to do in polytech?
 
-Q: How (if at all) do Ember components handle encapsulating CSS like web components will?
+Q: How (if at all) do Ember components handle encapsulating CSS like web
+components will?
 
-What is a component?
-    * part of your app that you can reuse in _multiple_ places _without modification_.
-        * multiple places!
-        * without modification!
+What is a component? _ part of your app that you can reuse in *multiple* places
+*without modification*. _ multiple places! \* without modification!
 
 component = template + JS object
-* the JS object has two roles
+
+- the JS object has two roles
     1. view (it is the target for DOM events from template)
     2. controller (it is target for actions from template)
 
 ## Naming
 
-* template name must begin with `components/` and also contain a `-` e.g. `components/my-awesome-thing`
-* the dash is designed to prevent a name clash with the final web components spec
+- template name must begin with `components/` and also contain a `-` e.g.
+  `components/my-awesome-thing`
+- the dash is designed to prevent a name clash with the final web components
+  spec
 
 A component is both a view and a controller so has
 
@@ -123,7 +128,6 @@ willClearRender
 parentViewDidChange (is this the thing that includes the component???)
 ```
 
-
 # QUESTION: when I sendAction from a nested component does it go to parent component or controller?
 
 ANSWER:
@@ -132,61 +136,61 @@ They go to the controller by default but you can override the `targetObject`
 property of the component to be the `parentView` (which is the including
 component).
 
-QUESTION: is this a recommended practice?
-    -- component is aware of its surroundings (it is no longer totally generalized)
+QUESTION: is this a recommended practice? -- component is aware of its
+surroundings (it is no longer totally generalized)
 
 ```js
-
 App = Ember.Application.create();
 
 App.ApplicationController = Ember.Controller.extend({
-  actions: {
-    handleAction: function() {
-      alert('Handled in ApplicationController');
+    actions: {
+        handleAction: function () {
+            alert('Handled in ApplicationController');
+        }
     }
-  }
 });
 
 App.Level1Component = Ember.Component.extend({
-  action: 'handleAction',
-  actions: {
-    handleAction: function() {
-      alert('Handled in Level 1');
-      this.sendAction();
+    action: 'handleAction',
+    actions: {
+        handleAction: function () {
+            alert('Handled in Level 1');
+            this.sendAction();
+        }
     }
-  }
 });
 
 App.Level2Component = Ember.Component.extend({
-  action: 'handleAction',
-  targetObject: Em.computed.alias('parentView'),
-  actions: {
-    handleAction: function() {
-      alert('Handled in Level 2');
-      this.sendAction();
+    action: 'handleAction',
+    targetObject: Em.computed.alias('parentView'),
+    actions: {
+        handleAction: function () {
+            alert('Handled in Level 2');
+            this.sendAction();
+        }
     }
-  }
 });
 ```
 
 ```hbs
-<script type="text/x-handlebars">
-      {{#level-1}}
+<script type='text/x-handlebars'>
+    {{#level-1}}
         {{#level-2}}
-          <button {{action 'handleAction'}}>
+            <button
+            {{action 'handleAction'}}>
         {{/level-2}}
-      {{/level-1}}
-  </script>
+    {{/level-1}}
+</script>
 
-  <script type="text/x-handlebars" data-template-name="components/level-1">
+<script type='text/x-handlebars' data-template-name='components/level-1'>
     <h1>Level 1</h1>
     {{yield}}
-  </script>
+</script>
 
-    <script type="text/x-handlebars" data-template-name="components/level-2">
+<script type='text/x-handlebars' data-template-name='components/level-2'>
     <h2>Level 2</h2>
     {{yield}}
-  </script>
+</script>
 ```
 
 # QUESTION: What is difference between {{yield}} and {{outlet}}

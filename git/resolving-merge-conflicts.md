@@ -17,4 +17,3 @@ git add path/to/conflicting/file.ext
 #    the merge this will throw them away)
 git merge --abort
 ```
-

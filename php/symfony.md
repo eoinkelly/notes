@@ -1,4 +1,3 @@
-
 ```bash
 # after installing symfony, do:
 ~/.symfony/bin/symfony new --full symfony-test-1

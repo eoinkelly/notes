@@ -1,24 +1,27 @@
 # Cloud-init Notes
 
-An advantage of coud-init yaml is that it can do a box restart if required and then continue iwht the provisioning
+An advantage of coud-init yaml is that it can do a box restart if required and
+then continue iwht the provisioning
 
 ## How often does cloud-init run?
 
 Each module can be annotated to run
 
-* once,
-* once per-instance,
-* always.
+- once,
+- once per-instance,
+- always.
 
 ```yaml
 cloud_final_modules:
-- [scripts-user, always]
+    - [scripts-user, always]
 ```
 
 ## Waiting on cloud init from script
 
-> For scripts external to cloud-init looking to wait until cloud-init finished, the cloud-init status subcommand can help block external scripts until cloud-init is done without having to write your own systemd units dependency chains
-=> i can tell when cloud init finishes in a script
+> For scripts external to cloud-init looking to wait until cloud-init finished,
+> the cloud-init status subcommand can help block external scripts until
+> cloud-init is done without having to write your own systemd units dependency
+> chains => i can tell when cloud init finishes in a script
 
     cloud-init status --wait
 
@@ -27,14 +30,18 @@ At launch AWS runs
 1. User data scripts
 1. Cloud init directives
 
-* You can configure it to run those at restart too - is that useful for us?
-    * https://aws.amazon.com/premiumsupport/knowledge-center/execute-user-data-ec2/
+- You can configure it to run those at restart too - is that useful for us?
+    - https://aws.amazon.com/premiumsupport/knowledge-center/execute-user-data-ec2/
 
 Logs go to `/var/log/cloud-init-output.log`
 
-* When a user data script is processed, it is copied to and executed from /var/lib/cloud/instances/instance-id/.
-* The script is not deleted after it is run.
-    * Be sure to delete the user data scripts from /var/lib/cloud/instances/instance-id/ before you create an AMI from the instance. Otherwise, the script will exist in this directory on any instance launched from the AMI.
+- When a user data script is processed, it is copied to and executed from
+  /var/lib/cloud/instances/instance-id/.
+- The script is not deleted after it is run.
+    - Be sure to delete the user data scripts from
+      /var/lib/cloud/instances/instance-id/ before you create an AMI from the
+      instance. Otherwise, the script will exist in this directory on any
+      instance launched from the AMI.
 
 The "user data" field can contain either
 
@@ -43,9 +50,10 @@ The "user data" field can contain either
 
 The instance uses the first line to decide which kind of script it has
 
-* A `#cloud-config` line at the top identifies this user data as cloud init directives
-  * it must be valid YAML
-* A `#!/some/path` line at the top identifies this user data as shell script
+- A `#cloud-config` line at the top identifies this user data as cloud init
+  directives
+    - it must be valid YAML
+- A `#!/some/path` line at the top identifies this user data as shell script
 
 ```
 #cloud-config
@@ -73,8 +81,8 @@ output : { all : '| tee -a /var/log/cloud-init-output.log' }
 
 Cloud init
 
-* Config: `/etc/cloud/cloud.cfg`
-* Logs `/var/log/cloud-init-output.log`
+- Config: `/etc/cloud/cloud.cfg`
+- Logs `/var/log/cloud-init-output.log`
 
 ```
 cloud-init features

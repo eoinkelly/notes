@@ -1,9 +1,10 @@
 ## Plug wiring in NZ
 
--   Since 2006 the live and neutral pins must be insulated on new appliances.
--   If the device has a 3 prong plug, then the earth pin is connected to the case in some way.
--   double insulated appliance is encased in 2 layers of insulation has a "square within a square"
-    symbol
+- Since 2006 the live and neutral pins must be insulated on new appliances.
+- If the device has a 3 prong plug, then the earth pin is connected to the case
+  in some way.
+- double insulated appliance is encased in 2 layers of insulation has a "square
+  within a square" symbol
 
 ## Class I (earthed) vs Class II (double insulated) devices
 
@@ -53,24 +54,27 @@ insulation of the flexible cord
 
 ### Class II devices
 
-An appliance with double insulation, also known as a Class II electrical appliance is one which has
-been built in such a way that it does not require a connection to electrical earth (ground), and has
-2 layers of insulation to protect the user.
+An appliance with double insulation, also known as a Class II electrical
+appliance is one which has been built in such a way that it does not require a
+connection to electrical earth (ground), and has 2 layers of insulation to
+protect the user.
 
-The basic requirement is that no single failure can result in dangerous voltage becoming exposed so
-that it might cause an electric shock and that this is achieved without relying on an earthed metal
-casing. This is usually achieved at least in part by having two layers of insulating material
-surrounding live parts or by using reinforced insulation.
+The basic requirement is that no single failure can result in dangerous voltage
+becoming exposed so that it might cause an electric shock and that this is
+achieved without relying on an earthed metal casing. This is usually achieved at
+least in part by having two layers of insulating material surrounding live parts
+or by using reinforced insulation.
 
-In the United Kingdom, a double insulated appliance must be labelled Class II, double insulated, or
-bear the double insulation symbol (a square inside another square).
+In the United Kingdom, a double insulated appliance must be labelled Class II,
+double insulated, or bear the double insulation symbol (a square inside another
+square).
 
-An example of a double insulated electrical appliance could be an electric drill or a desk fan.
-Other items that are class 2 could be a lamp or a hand blender.
+An example of a double insulated electrical appliance could be an electric drill
+or a desk fan. Other items that are class 2 could be a lamp or a hand blender.
 
-It does not make grounding not necessary, it just reduces the risk such that no single point of
-failure will zap you. Regulators have decided that's "good enough" to reasonably protect you from
-electrical shock.
+It does not make grounding not necessary, it just reduces the risk such that no
+single point of failure will zap you. Regulators have decided that's "good
+enough" to reasonably protect you from electrical shock.
 
-Basically, you want several things to have to go wrong for you to die, not just one, and that's the
-point of double insulation.
+Basically, you want several things to have to go wrong for you to die, not just
+one, and that's the point of double insulation.

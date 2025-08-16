@@ -1,6 +1,7 @@
 # openssl s_client
 
-The s_client command implements a generic SSL/TLS client which connects to a remote host using SSL/TLS.
+The s_client command implements a generic SSL/TLS client which connects to a
+remote host using SSL/TLS.
 
 It drops you into an interactive environment after it connects. Use `Q` to exit.
 
@@ -45,7 +46,6 @@ openssl s_client -showcerts -servername aaa.example.com -connect aaa.example.com
 -verify <depth>
 -verify 5
 ```
-
 
 Examples
 

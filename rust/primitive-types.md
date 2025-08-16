@@ -1,12 +1,11 @@
-
 creating
 
 Primitive types
 
-* i = int
-* u = unsigned int
-* isize
-    * pointer sized signed integer
+- i = int
+- u = unsigned int
+- isize
+    - pointer sized signed integer
 
 The syntax of assignment
 
@@ -22,5 +21,4 @@ let {name}: {type} = {expression that returns value};
 
 ```
 
-impl Int for isize
-impl {??} for {??}
+impl Int for isize impl {??} for {??}

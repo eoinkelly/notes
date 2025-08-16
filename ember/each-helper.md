@@ -9,11 +9,9 @@ currently in ember there are 2 forms
 
 The handlebars block helpers are
 
-* always context switching
+- always context switching
 
-    {{#each thing}}
-        new context, only has access to thing
-    {{/each}}
+    {{#each thing}} new context, only has access to thing {{/each}}
 
 then ember extended the them with
 
@@ -22,7 +20,8 @@ then ember extended the them with
     {{/each}}
 
 Ember only documents its own "non context swtiching" versions and it calls them
-"special forms" of the basic handlebars ones. There are currently two "special forms":
+"special forms" of the basic handlebars ones. There are currently two "special
+forms":
 
 ```
 {{#each post in posts}}
@@ -31,18 +30,14 @@ Ember only documents its own "non context swtiching" versions and it calls them
 
 With the Ember 2.0 "block paramaters" syntax:
 
-* any component or block helper will use the _same_ syntax
-* not just #each and #with anymore
+- any component or block helper will use the _same_ syntax
+- not just #each and #with anymore
 
-    <ui-calendar month={{currentMonth}} as |day|>
-    </ui-calendar>
+    <ui-calendar month={{currentMonth}} as |day|> </ui-calendar>
 
-    {{#each things as |thing|}}
-    {{/each}}
+    {{#each things as |thing|}} {{/each}}
 
-    {{#with things as |thing|}}
-    {{/with}}
-
+    {{#with things as |thing|}} {{/with}}
 
 Block params will land in 1.12 at which point
 

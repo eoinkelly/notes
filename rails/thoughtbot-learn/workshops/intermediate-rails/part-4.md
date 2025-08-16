@@ -2,7 +2,7 @@
 
 I like/use his trick of expressing what you want in english first, then code.
 
-* you can treat strings as an array in ruby!
+- you can treat strings as an array in ruby!
 
 ```ruby
 foo = "hello"
@@ -13,9 +13,9 @@ I still don't understand activerecord where() properly yet
 
 ## God objects
 
-* breaks single responsibility principle
-* tends to attract code - it encourages more of the same
-* Me: "code bases encourage more of the same of what they have"
+- breaks single responsibility principle
+- tends to attract code - it encourages more of the same
+- Me: "code bases encourage more of the same of what they have"
 
 ## Using symbol as arg to form_for
 
@@ -42,27 +42,22 @@ He really likes the pattern of using
     ```
 3. create the appropriate partial file
 
+## AR Callbacks and observers
 
-##  AR Callbacks and observers
+Why are ActiveRecord callbacks bad? Are observers better? Why?
 
-Why are ActiveRecord callbacks bad?
-Are observers better? Why?
+To use ovserver implement an interface (set of methods) on each model that
+should be observed have the observer call methods in that interface on anything
+it observes
 
-To use ovserver
-  implement an interface (set of methods) on each model that should be observed
-  have the observer call methods in that interface on anything it observes
+observers - hard ot know when they are active and when they are not new dev
+might not notice that extra stuff is happening observer does follow open-closed
 
-observers - hard ot know when they are active and when they are not
-new dev might not notice that extra stuff is happening
-observer does follow open-closed
-
-To do: research
-  sunspot_rails
-  sunspot_solr
+To do: research sunspot_rails sunspot_solr
 
 # Questions for Rose
 
-* What is a god object?
-    * Why is it a bad thing?
-* What does "Not invented here" syndrom mean?
-    * If you had to pick a search gem today, which one would you use? Why?
+- What is a god object?
+    - Why is it a bad thing?
+- What does "Not invented here" syndrom mean?
+    - If you had to pick a search gem today, which one would you use? Why?

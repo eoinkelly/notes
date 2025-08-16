@@ -1,4 +1,3 @@
-
 ```bash
 # To see connection metadata but not the response body:
 #
@@ -73,24 +72,28 @@ curl http://example.com --form profile=@portrait.jpg
 
 Scenario:
 
-You have an nginx server which terminates TLS and proxies requests to an application (e.g. Rails, Django PHP-fpm etc.)
+You have an nginx server which terminates TLS and proxies requests to an
+application (e.g. Rails, Django PHP-fpm etc.)
 
-The app will (sensibly) re-direct any HTTP requests to their HTTPS equivalent so you must make a HTTPS request to get a valid response.
+The app will (sensibly) re-direct any HTTP requests to their HTTPS equivalent so
+you must make a HTTPS request to get a valid response.
 
-The nginx server cert is signed but your `curl` installation probably doesn't have access to the certs required to verify it
+The nginx server cert is signed but your `curl` installation probably doesn't
+have access to the certs required to verify it
 
-How do you test that your application works from an SSH session in the VM running nginx and the app?
-
+How do you test that your application works from an SSH session in the VM
+running nginx and the app?
 
 Challenges
 
-1. You have to provide a `Host` HTTP header to tell nginx which site you want responses from
-    * Easy: pass the `-H "Host: myhostname.example.com"` option to curl
-2. You have to tell curl that it should not verify the cert because it probably doesn't have access to the correct root certificates
-    * Easy: pass the `--insecure` option to curl
+1. You have to provide a `Host` HTTP header to tell nginx which site you want
+   responses from
+    - Easy: pass the `-H "Host: myhostname.example.com"` option to curl
+2. You have to tell curl that it should not verify the cert because it probably
+   doesn't have access to the correct root certificates
+    - Easy: pass the `--insecure` option to curl
 3. You must fool SNI
-    * Harder
-
+    - Harder
 
 ```bash
 # for --resolve the host:port:address -  the address must be a numeric ip
@@ -98,7 +101,6 @@ Challenges
 # the domain names must match exactly in --resolve and what you use in your url
 curl --resolve myapp.myorg.org.au:127.0.0.1 -H "Host: myapp.myorg.org.au" https://127.0.0.1/users/sign_in -v --insecure
 ```
-
 
        --resolve <host:port:address>
               Provide  a custom address for a specific host and port pair. Using this, you can make the curl requests(s) use a specified address and prevent the otherwise nor‐

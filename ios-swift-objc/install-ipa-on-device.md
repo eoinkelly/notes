@@ -1,7 +1,7 @@
 # How to install a .ipa file on an iOS device
 
-* You need the provisioning profile installed on the device
-    * Drag & drop the provisioning profile onto your library in iTunes to
+- You need the provisioning profile installed on the device
+    - Drag & drop the provisioning profile onto your library in iTunes to
       install it. This seems to somehow "install" it into iTunes
 
 QUESTION: where does itunes keep provisioning profiles?
@@ -17,5 +17,3 @@ QUESTION What is diff between ad-hoc and enterprise build?
 
 Note: you cannot drag it directly onto the device without putting it in your
 list of apps first.
-
-
