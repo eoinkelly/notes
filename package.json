@@ -1,0 +1,14 @@
+{
+  "name": "eoin-notes",
+  "version": "1.0.0",
+  "description": "I have put these on github as a backup and also because it makes it easy to share parts of these with others. That being said, these notes are not designed for use by anybody other than me so YMMV on readability and even accuracy.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "prettier": "^3.4.2"
+  }
+}
