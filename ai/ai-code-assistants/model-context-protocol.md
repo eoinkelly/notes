@@ -50,7 +50,7 @@
 - Servers offer:
     - Resources
         - Lets you expose data to the LLM
-        - Conceptually they are GET endpoints the LLM can call (I think?)
+        - Conceptually they are GET endpoints a Host can call
         - they have a URL associated
         - client can list resources
             - it could present the list to the user for them to select
@@ -70,7 +70,6 @@
           an LLM prompt
         - clients can list available prompts
         - Reusable templates for LLM interactions
-        - can
 - Roles
     1. `user` - the user of the application
     2. `assistant` - the LLM (I think)

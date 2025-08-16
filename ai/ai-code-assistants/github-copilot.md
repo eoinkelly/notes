@@ -14,6 +14,17 @@ Cheatsheet: https://code.visualstudio.com/docs/copilot/copilot-vscode-features
 | `cmd-/`           | Attach file to context                                             |
 | `F2`              | AI renaming helper (also available via right-click, rename-symbol) |
 
+more keyboard shortcuts
+
+```
+opt-\ = trigger inline suggestion
+
+ctrl-enter = open the completions panel (to see all the suggestions copilot has for your current edit point)
+opt-] = go to next panel suggestion
+opt-[ = go to previous panel suggestions
+ctrl-/ = accept the current panel suggestion
+```
+
 ## Picking models
 
 I'm using Claude 3.5 as my baseline. Live with it and get used to it. Then try others to diff for
