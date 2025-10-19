@@ -78,10 +78,6 @@ Alternatives
 
 - Body
 
-## Glues
-
-TODO
-
 ## Construction
 
 ### Fretboard
