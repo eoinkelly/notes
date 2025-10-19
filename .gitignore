@@ -29,3 +29,4 @@ bower_components/
 
 .php_cs.cache
 .rubocop*
+.obsidian/
